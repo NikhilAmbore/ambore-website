@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ambore AI Resume — ATS-Optimized Resume Builder</title>
+<meta name="description" content="Upload your resume and job description. Ambore AI tailors your resume for 100% ATS alignment in seconds."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ══ AUTH SCREEN ══ */
+.auth-shell{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;
+  background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 30%,rgba(79,70,229,0.2) 0%,transparent 55%),
+                   radial-gradient(ellipse at 80% 70%,rgba(124,58,237,0.16) 0%,transparent 55%);
+}
+.auth-logo{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:32px}
+.logo-icon{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff}
+.auth-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:14px;text-align:center;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
+.auth-tab.active{color:#fff;border-bottom-color:#4F46E5}
+.auth-body{padding:24px}
+.auth-panel{display:none}
+.auth-panel.active{display:block}
+.auth-heading{font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:4px}
+.auth-sub{font-size:0.83rem;color:rgba(255,255,255,0.4);margin-bottom:20px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.field input{width:100%;padding:10px 13px;background:#13132a;border:1px solid var(--border);border-radius:9px;color:#fff;font-size:0.9rem;outline:none;transition:border-color 0.2s}
+.field input:focus{border-color:rgba(79,70,229,0.5)}
+.field input::placeholder{color:rgba(255,255,255,0.2)}
+.auth-err{font-size:0.8rem;color:var(--red);background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:8px 12px;margin-bottom:12px;display:none}
+.auth-err.show{display:block}
+.auth-btn{width:100%;padding:12px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity 0.2s}
+.auth-btn:hover{opacity:0.88}
+.auth-switch{text-align:center;margin-top:14px;font-size:0.82rem;color:rgba(255,255,255,0.35)}
+.auth-switch a{color:var(--accent);font-weight:600;cursor:pointer}
+
+/* ══ MAIN APP ══ */
+.app-shell{min-height:100vh;display:flex;flex-direction:column;background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(79,70,229,0.15) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.12) 0%,transparent 50%);
+}
+.topbar{
+  display:flex;align-items:center;gap:12px;padding:14px 24px;
+  border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);flex-shrink:0;
+}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff}
+.topbar .logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.topbar .brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:16px;margin-left:20px}
+.nav-links a{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.4);transition:color 0.2s;text-decoration:none}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:var(--accent)}
+.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6)}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+
+/* ══ INPUT SECTION ══ */
+.input-section{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 20px 48px;max-width:960px;margin:0 auto;width:100%}
+.page-heading{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px;text-align:center}
+.page-hint{font-size:0.9rem;color:rgba(255,255,255,0.4);margin-bottom:28px;text-align:center}
+.input-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-bottom:24px}
+@media(max-width:700px){.input-grid{grid-template-columns:1fr}}
+.input-field label{display:block;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.resume-tabs{display:flex;gap:6px;margin-bottom:8px}
+.rtab{padding:5px 12px;border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);transition:all 0.2s}
+.rtab.active{background:rgba(79,70,229,0.15);border-color:rgba(79,70,229,0.4);color:var(--accent)}
+.dropzone{
+  height:220px;border:2px dashed rgba(255,255,255,0.1);border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;cursor:pointer;transition:border-color 0.2s;text-align:center;padding:16px;
+}
+.dropzone:hover,.dropzone.drag-over{border-color:rgba(79,70,229,0.5)}
+.dropzone-icon{font-size:1.8rem;margin-bottom:4px}
+.dropzone-text{font-size:0.85rem;color:rgba(255,255,255,0.5)}
+.dropzone-sub{font-size:0.75rem;color:rgba(255,255,255,0.25)}
+.upload-btn{
+  padding:6px 14px;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);
+  border-radius:7px;color:var(--accent);font-size:0.8rem;font-weight:600;cursor:pointer;
+}
+.upload-btn input[type=file]{display:none}
+.file-status{font-size:0.78rem;padding:6px 10px;border-radius:6px;margin-top:6px}
+.file-status.ok{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.file-status.err{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.input-field textarea{
+  width:100%;height:220px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;color:#e2e8f0;
+  font-size:0.88rem;line-height:1.6;resize:vertical;outline:none;transition:border-color 0.2s;
+}
+.input-field textarea:focus{border-color:rgba(79,70,229,0.5)}
+.input-field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.generate-btn{
+  padding:15px 52px;background:var(--grad);border:none;border-radius:13px;
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(79,70,229,0.4);transition:transform 0.2s,box-shadow 0.2s;
+  display:flex;align-items:center;gap:8px;
+}
+.generate-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,70,229,0.55)}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ══ RESULT SECTION ══ */
+.result-section{flex:1;display:flex;flex-direction:column;max-width:960px;margin:0 auto;width:100%;padding:24px 20px 48px}
+.result-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.result-title{font-size:1.1rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:8px}
+.result-actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{
+  padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);
+  transition:all 0.15s;display:flex;align-items:center;gap:5px;
+}
+.action-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.action-btn.primary{background:var(--grad);border-color:transparent;color:#fff}
+.action-btn.primary:hover{opacity:0.85}
+.action-btn.copied{color:var(--green);border-color:rgba(34,197,94,0.3)}
+.back-btn{
+  padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;
+  border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);
+  transition:all 0.15s;
+}
+.back-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+
+/* Resume preview card */
+.resume-preview{
+  flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;
+  overflow-y:auto;padding:32px 40px;line-height:1.3;
+  font-family:'Times New Roman',Times,serif;
+}
+@media(max-width:700px){.resume-preview{padding:20px 16px}}
+.resume-preview .resume-header{text-align:center;margin-bottom:6px}
+.resume-preview h1{font-size:14pt;font-weight:900;color:#fff;margin-bottom:1px;text-align:center;font-family:'Times New Roman',Times,serif}
+.resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center}
+.resume-preview h2{font-size:11pt;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-top:8px;margin-bottom:3px;padding-bottom:1px;border-bottom:1px solid rgba(129,140,248,0.2);font-family:'Times New Roman',Times,serif}
+.resume-preview h3{font-size:10pt;font-weight:700;color:#fff;margin-top:4px;margin-bottom:1px;font-family:'Times New Roman',Times,serif}
+.resume-preview p{font-size:10pt;color:rgba(255,255,255,0.75);margin-bottom:2px;font-family:'Times New Roman',Times,serif}
+.resume-preview ul{padding-left:16px;margin-bottom:3px}
+.resume-preview li{font-size:10pt;color:rgba(255,255,255,0.72);margin-bottom:1px;list-style:disc;font-family:'Times New Roman',Times,serif}
+.resume-preview strong{color:#fff}
+.resume-preview em{color:rgba(255,255,255,0.5);font-style:italic}
+.resume-preview hr{border:none;border-top:1px solid var(--border);margin:8px 0}
+.resume-preview a{color:var(--accent);text-decoration:underline;font-size:10pt}
+
+/* Streaming cursor */
+.cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Status badge */
+.gen-status{font-size:0.72rem;padding:3px 10px;border-radius:10px;font-weight:600}
+.gen-status.thinking{color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)}
+.gen-status.done{color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2)}
+
+/* Print styles for PDF export — clean, no browser headers/footers */
+@page{
+  size:letter;
+  margin:0.5in 0.6in;
+}
+@media print{
+  body{background:#fff!important;color:#000!important;margin:0!important;padding:0!important}
+  .topbar,.result-topbar,.result-actions,.back-btn,.toast{display:none!important}
+  .app-shell{background:#fff!important;min-height:auto!important}
+  .result-section{padding:0!important;max-width:100%!important}
+  .resume-preview{
+    background:#fff!important;border:none!important;border-radius:0!important;
+    padding:0!important;color:#000!important;
+    font-family:'Times New Roman',Times,serif!important;
+    line-height:1.3!important;overflow:visible!important;
+  }
+  .resume-preview .resume-header{text-align:center!important;margin-bottom:6px!important}
+  .resume-preview h1{color:#000!important;text-align:center!important;font-size:14pt!important;margin-bottom:1px!important}
+  .resume-preview h2{color:#000!important;border-bottom:1px solid #000!important;font-size:11pt!important;margin-top:8px!important;margin-bottom:3px!important;padding-bottom:1px!important}
+  .resume-preview h3{color:#000!important;font-size:10pt!important;margin-top:4px!important;margin-bottom:1px!important}
+  .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
+  .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
+  .resume-preview ul{margin-bottom:3px!important;padding-left:16px!important}
+  .resume-preview strong{color:#000!important}
+  .resume-preview em{color:#333!important}
+  .resume-preview hr{border-top-color:#999!important;margin:4px 0!important}
+  .resume-preview a{color:#000!important;text-decoration:none!important}
+}
+
+/* ══ MOBILE RESPONSIVE ══ */
+@media(max-width:640px){
+  /* Topbar */
+  .topbar{flex-wrap:wrap;padding:10px 14px;gap:8px}
+  .topbar .logo{font-size:0.9rem}
+  .topbar .logo-icon-sm{width:24px;height:24px;font-size:0.75rem}
+  .topbar .brand-tag{font-size:0.62rem;padding:2px 6px}
+  .nav-links{margin-left:0;gap:10px;order:3;width:100%;justify-content:center;padding-top:6px;border-top:1px solid var(--border)}
+  .nav-links a{font-size:0.76rem}
+  .user-pill{gap:6px;font-size:0.78rem}
+  .user-name{font-size:0.75rem;padding:2px 8px}
+  .logout-btn{font-size:0.72rem}
+
+  /* Auth */
+  .auth-shell{padding:20px 14px}
+  .auth-logo{font-size:1.2rem;margin-bottom:20px}
+  .auth-card{border-radius:14px}
+  .auth-body{padding:18px 16px}
+  .auth-heading{font-size:1.05rem}
+  .auth-tab{padding:11px;font-size:0.84rem}
+
+  /* Input section */
+  .input-section{padding:20px 14px 36px}
+  .page-heading{font-size:1.3rem}
+  .page-hint{font-size:0.82rem;margin-bottom:20px}
+  .input-grid{gap:12px;margin-bottom:18px}
+  .dropzone{height:160px;padding:12px}
+  .dropzone-icon{font-size:1.4rem}
+  .dropzone-text{font-size:0.78rem}
+  .input-field textarea{height:180px;font-size:0.82rem;padding:10px 12px}
+  .generate-btn{width:100%;justify-content:center;padding:14px;font-size:0.92rem;border-radius:11px}
+
+  /* Result section */
+  .result-section{padding:16px 10px 36px}
+  .result-topbar{flex-direction:column;align-items:flex-start;gap:10px}
+  .result-topbar>div:first-child{width:100%;display:flex;align-items:center;gap:8px}
+  .result-title{font-size:0.95rem}
+  .result-actions{width:100%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+  .action-btn{padding:7px 8px;font-size:0.72rem;justify-content:center;white-space:nowrap}
+  .back-btn{padding:6px 12px;font-size:0.75rem}
+  .resume-preview{padding:16px 12px;border-radius:12px}
+  .resume-preview h1{font-size:12pt}
+  .resume-preview h2{font-size:10pt}
+}
+
+@media(max-width:400px){
+  .result-actions{grid-template-columns:1fr;gap:6px}
+  .action-btn{width:100%}
+  .topbar{padding:8px 10px}
+  .nav-links{gap:8px}
+  .input-section{padding:16px 10px 28px}
+  .page-heading{font-size:1.15rem}
+  .auth-body{padding:16px 12px}
+}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);
+  background:#1a1a30;border:1px solid rgba(255,255,255,0.15);color:#fff;
+  padding:10px 20px;border-radius:10px;font-size:0.82rem;z-index:9999;
+  box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:90vw;text-align:center;
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════ -->
+<div id="auth" class="auth-shell">
+  <div class="auth-logo"><div class="logo-icon">A</div>Ambore AI Resume</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
+      <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+    </div>
+    <div class="auth-body">
+      <div class="auth-panel active" id="panel-login">
+        <div class="auth-heading">Welcome back</div>
+        <div class="auth-sub">Log in to build your ATS-optimized resume</div>
+        <div class="auth-err" id="login-err"></div>
+        <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
+        <button class="auth-btn" onclick="handleLogin()">Log In</button>
+        <div class="auth-switch">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></div>
+      </div>
+      <div class="auth-panel" id="panel-signup">
+        <div class="auth-heading">Create account</div>
+        <div class="auth-sub">Free forever — no credit card needed</div>
+        <div class="auth-err" id="signup-err"></div>
+        <div class="field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name"/></div>
+        <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
+        <div class="field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
+        <button class="auth-btn" onclick="handleSignup()">Create Account</button>
+        <div class="auth-switch">Already have account? <a onclick="switchAuthTab('login')">Log in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     MAIN APP
+══════════════════════════════════════ -->
+<div id="app" class="app-shell hidden">
+  <div class="topbar">
+    <div class="logo"><div class="logo-icon-sm">A</div>Ambore<span class="brand-tag">AI Resume</span></div>
+    <div class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="app.html">Interview</a>
+      <a href="resume.html" class="active">Resume</a>
+    </div>
+    <div class="user-pill">
+      <span class="user-name" id="user-display">User</span>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- INPUT VIEW -->
+  <div id="input-view" class="input-section">
+    <h1 class="page-heading">Tailor Your Resume with AI</h1>
+    <p class="page-hint">Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.</p>
+
+    <div class="input-grid">
+      <!-- Resume upload -->
+      <div class="input-field">
+        <label>Your Resume</label>
+        <div class="resume-tabs">
+          <button class="rtab active" id="rtab-upload" onclick="setResumeMode('upload')">Upload File</button>
+          <button class="rtab" id="rtab-paste" onclick="setResumeMode('paste')">Paste Text</button>
+        </div>
+        <div id="resume-upload-area" class="dropzone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)" onclick="document.getElementById('resume-file').click()">
+          <div class="dropzone-icon">📄</div>
+          <div class="dropzone-text">Drop resume here or</div>
+          <label class="upload-btn" onclick="event.stopPropagation()">
+            Browse File
+            <input type="file" id="resume-file" accept=".pdf,.docx,.txt" onchange="handleResumeFile(this)"/>
+          </label>
+          <div class="dropzone-sub">Supports PDF, DOCX, TXT</div>
+          <div id="file-status"></div>
+        </div>
+        <div id="resume-paste-area" class="hidden">
+          <textarea id="resume-text" placeholder="Paste your full resume text here..."></textarea>
+        </div>
+      </div>
+
+      <!-- Job Description -->
+      <div class="input-field">
+        <label>Job Description</label>
+        <textarea id="jd-text" placeholder="Paste the full job description here...&#10;&#10;Include the role, responsibilities, requirements, and company info."></textarea>
+      </div>
+    </div>
+
+    <button class="generate-btn" id="gen-btn" onclick="generateResume()">
+      <span id="gen-btn-text">Generate Tailored Resume</span>
+    </button>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div id="result-view" class="result-section hidden">
+    <div class="result-topbar">
+      <div style="display:flex;align-items:center;gap:10px">
+        <button class="back-btn" onclick="showInputView()">← Back</button>
+        <div class="result-title">Your Tailored Resume <span class="gen-status" id="gen-status"></span></div>
+      </div>
+      <div class="result-actions">
+        <button class="action-btn" onclick="copyResume()">📋 Copy</button>
+        <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
+        <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
+      </div>
+    </div>
+    <div class="resume-preview" id="resume-output"></div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   SHARED DB & AUTH (same as app.html)
+═══════════════════════════════════════════ */
+const DB = {
+  KEY: 'ambore_db',
+  _get() { return JSON.parse(localStorage.getItem(this.KEY) || '{"users":[],"sessions":[]}'); },
+  _save(d) { localStorage.setItem(this.KEY, JSON.stringify(d)); },
+  findUser(email) { return this._get().users.find(u => u.email === email.toLowerCase()); },
+  createUser(name, email, password) {
+    const db = this._get();
+    const user = { id: 'u' + Date.now(), name, email: email.toLowerCase(), password, createdAt: new Date().toISOString() };
+    db.users.push(user);
+    this._save(db);
+    return user;
+  }
+};
+const Auth = {
+  getUser() {
+    const session = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+    if (!session) return null;
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      localStorage.removeItem('ambore_user');
+      return null;
+    }
+    return session;
+  },
+  login(user) {
+    const session = {
+      id: user.id, name: user.name, email: user.email,
+      token: 'tok_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      loginAt: Date.now(),
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000
+    };
+    localStorage.setItem('ambore_user', JSON.stringify(session));
+  },
+  logout() { localStorage.removeItem('ambore_user'); }
+};
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('panel-login').classList.toggle('active', tab==='login');
+  document.getElementById('panel-signup').classList.toggle('active', tab==='signup');
+}
+function showAuthErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+function handleLogin() {
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('li-pass').value;
+  if (!email || !pass) { showAuthErr('login-err', 'Please fill in all fields.'); return; }
+  const user = DB.findUser(email);
+  if (!user || user.password !== pass) { showAuthErr('login-err', 'Invalid email or password.'); return; }
+  Auth.login(user);
+  showApp();
+}
+function handleSignup() {
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const pass2 = document.getElementById('su-pass2').value;
+  if (!name) { showAuthErr('signup-err', 'Please enter your name.'); return; }
+  if (!email.includes('@')) { showAuthErr('signup-err', 'Enter a valid email.'); return; }
+  if (pass.length < 6) { showAuthErr('signup-err', 'Password must be at least 6 characters.'); return; }
+  if (pass !== pass2) { showAuthErr('signup-err', 'Passwords do not match.'); return; }
+  if (DB.findUser(email)) { showAuthErr('signup-err', 'User already registered.'); return; }
+  DB.createUser(name, email, pass);
+  const successEl = document.getElementById('signup-err');
+  successEl.textContent = 'Account created! Please log in.';
+  successEl.style.color = '#22c55e';
+  successEl.style.background = 'rgba(34,197,94,0.08)';
+  successEl.style.borderColor = 'rgba(34,197,94,0.2)';
+  successEl.classList.add('show');
+  document.getElementById('su-name').value = '';
+  document.getElementById('su-email').value = '';
+  document.getElementById('su-pass').value = '';
+  document.getElementById('su-pass2').value = '';
+  setTimeout(() => {
+    switchAuthTab('login');
+    successEl.classList.remove('show');
+    successEl.style.color = '';
+    successEl.style.background = '';
+    successEl.style.borderColor = '';
+  }, 1500);
+}
+function logout() {
+  Auth.logout();
+  document.getElementById('app').classList.add('hidden');
+  document.getElementById('auth').classList.remove('hidden');
+}
+function showApp() {
+  const user = Auth.getUser();
+  if (!user) { logout(); return; }
+  document.getElementById('user-display').textContent = user.name.split(' ')[0];
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('app').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   RESUME FILE UPLOAD
+═══════════════════════════════════════════ */
+let resumeText = '';
+let resumeMode = 'upload';
+
+function setResumeMode(mode) {
+  resumeMode = mode;
+  document.getElementById('rtab-upload').classList.toggle('active', mode==='upload');
+  document.getElementById('rtab-paste').classList.toggle('active', mode==='paste');
+  document.getElementById('resume-upload-area').classList.toggle('hidden', mode==='paste');
+  document.getElementById('resume-paste-area').classList.toggle('hidden', mode==='upload');
+}
+
+function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dropFile(e) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processResumeFile(file);
+}
+function handleResumeFile(input) { if (input.files[0]) processResumeFile(input.files[0]); }
+
+async function processResumeFile(file) {
+  const statusEl = document.getElementById('file-status');
+  statusEl.className = 'file-status'; statusEl.textContent = 'Reading file...';
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let text = '';
+    if (ext === 'txt') {
+      text = await new Promise((res, rej) => { const r = new FileReader(); r.onload = e => res(e.target.result); r.onerror = rej; r.readAsText(file); });
+    } else if (ext === 'pdf') {
+      if (typeof pdfjsLib === 'undefined') throw new Error('PDF reader not loaded. Try pasting text.');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const ab = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(it => it.str).join(' ') + '\n';
+      }
+    } else if (ext === 'docx') {
+      if (typeof mammoth === 'undefined') throw new Error('DOCX reader not loaded. Try pasting text.');
+      const ab = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: ab });
+      text = result.value;
+    } else {
+      throw new Error('Unsupported format. Use PDF, DOCX or TXT.');
+    }
+    resumeText = text.trim();
+    statusEl.className = 'file-status ok';
+    statusEl.textContent = `${file.name} — ${resumeText.length} characters read`;
+  } catch (err) {
+    statusEl.className = 'file-status err';
+    statusEl.textContent = err.message;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   VIEW MANAGEMENT
+═══════════════════════════════════════════ */
+function showInputView() {
+  document.getElementById('input-view').classList.remove('hidden');
+  document.getElementById('result-view').classList.add('hidden');
+}
+function showResultView() {
+  document.getElementById('input-view').classList.add('hidden');
+  document.getElementById('result-view').classList.remove('hidden');
+}
+
+/* ═══════════════════════════════════════════
+   AI RESUME GENERATION
+═══════════════════════════════════════════ */
+const CLAUDE_KEY = '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';
+const CLAUDE_MODEL = 'claude-sonnet-4-5-20250929';
+
+let generatedMarkdown = '';
+let isGenerating = false;
+
+function buildResumeSystemPrompt() {
+  return `You are Ambore AI Resume — an elite AI Resume Tailoring Engine built for achieving 100% ATS (Applicant Tracking System) scores.
+
+Your job is to take a user's resume and a job description (JD), then generate a fully rewritten, ATS-optimized resume with PERFECT keyword alignment.
+
+═══════════════════════════════════════
+ATS 100% SCORE — MANDATORY TECHNIQUES
+═══════════════════════════════════════
+
+A. EXACT KEYWORD MATCHING (Critical for ATS)
+   - Extract EVERY hard skill, soft skill, tool, technology, framework, methodology, certification, and domain term from the JD.
+   - Use the EXACT same spelling, capitalization, and phrasing as the JD. If the JD says "project management", write "project management" — not "managing projects".
+   - If the JD mentions an acronym AND its full form (e.g., "CI/CD (Continuous Integration/Continuous Deployment)"), include BOTH in the resume.
+   - Mirror the JD's job title in the Professional Summary. If JD says "Senior Software Engineer", the summary must contain "Senior Software Engineer".
+   - Every required skill listed in the JD MUST appear at least once in the resume (in Skills section AND woven into experience bullets).
+
+B. KEYWORD PLACEMENT STRATEGY
+   - Professional Summary: Include the exact job title + 3-5 top keywords from JD requirements.
+   - Skills Section: List ALL matching skills using the JD's exact terms. Group them clearly.
+   - Experience Bullets: Naturally embed remaining JD keywords into achievement statements.
+   - Education/Certifications: Match any degree or cert requirements from the JD word-for-word.
+
+C. ATS-SAFE FORMATTING RULES
+   - Use standard section headers ONLY: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, KEY ACHIEVEMENTS, PROJECTS.
+   - NO tables, columns, graphics, icons, or special characters.
+   - NO headers/footers — all content in the main body.
+   - Use simple bullet points (- ) for lists.
+   - Dates in format: Month Year – Month Year (e.g., January 2022 – Present).
+   - Job entries format: Job Title | Company Name | Location followed by date on next line.
+
+D. CONTENT TRANSFORMATION RULES
+   - Rewrite EVERY bullet to be:
+     • Action-verb-led (Led, Developed, Implemented, Optimized, Spearheaded, Architected, etc.)
+     • Quantified with metrics (%, $, time saved, team size, users impacted — use realistic numbers)
+     • Directly mapped to a JD requirement or responsibility
+   - FULL-TIME ROLES: Exactly 4-5 bullet points per job. Each bullet must be ONE line only (max 15-18 words).
+   - INTERNSHIPS: Exactly 3 bullet points per internship. Every bullet MUST include strong quantified metrics (e.g., "Reduced API response time by 40%", "Processed 50K+ records daily"). Keep each bullet to ONE line.
+   - Every bullet must connect to something in the JD.
+   - DO NOT write long multi-line bullets. Keep every bullet short and punchy.
+
+E. NO HALLUCINATIONS
+   - Do NOT invent tools, technologies, certifications, degrees, companies, or achievements the user never had.
+   - Only enhance and reframe what exists in the original resume.
+   - If the JD requires a skill the user has in a different form, reframe it. If the user completely lacks it, do NOT add it.
+
+F. PROFESSIONAL SUMMARY (Critical for ATS)
+   - 3-4 lines maximum.
+   - MUST include: exact job title from JD, years of experience, 4-6 top keywords from JD, and a measurable achievement.
+   - Example pattern: "[Title] with [X]+ years of experience in [JD keyword 1], [JD keyword 2], and [JD keyword 3]. Proven track record of [achievement with metric] in [JD domain]. Skilled in [JD keyword 4], [JD keyword 5], and [JD keyword 6]."
+
+G. SKILLS SECTION (Critical for ATS)
+   - List skills in comma-separated format grouped by category.
+   - Categories: Technical Skills, Tools & Technologies, Methodologies, Soft Skills.
+   - Use the EXACT terms from the JD — this is where ATS scanners look first.
+   - Include ALL skills from the JD that the candidate possesses.
+
+═══════════════════════════════════════
+OUTPUT FORMAT
+═══════════════════════════════════════
+
+Use clean Markdown with this exact hierarchy:
+- # for the candidate's full name (centered)
+- Contact line directly below name: email | phone | location | LinkedIn URL
+- If the candidate has a job title/tagline, put it between name and contact info
+- ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, KEY ACHIEVEMENTS, PROJECTS)
+- ### for each job entry: Job Title | Company Name | Location
+- Italic line for dates: *Month Year – Month Year*
+- - for bullet points
+- **Bold** for key metrics, numbers, and critical skills within bullets
+
+SECTION ORDER:
+1. Name & Contact Info
+2. Professional Summary
+3. Skills
+4. Professional Experience (most recent first)
+5. Key Achievements (if applicable)
+6. Education
+7. Certifications (if any)
+8. Projects (if relevant)
+
+═══════════════════════════════════════
+STRICT 2-PAGE LENGTH — HARD LIMIT
+═══════════════════════════════════════
+
+WARNING: The resume MUST NOT exceed 2 pages. Aim for 1.5 to 2 pages. Going over 2 pages is a FAILURE.
+
+STRICT CONTENT LIMITS:
+- Professional Summary: Exactly 3 lines. No more.
+- Skills: 3 categories max, comma-separated, 2 lines per category (6 lines total max).
+- Professional Experience: Max 3-4 roles. Full-time = 4-5 short bullets. Internship = 3 short bullets. Each bullet = 1 line only (max 18 words).
+- Education: 2-3 lines total. Degree, university, year. No coursework unless fresher.
+- Certifications: One-line list, comma-separated.
+- Projects: Max 2 projects, 2 bullets each. Skip entirely if experience section is strong.
+- Key Achievements: Skip unless resume is too short. Max 3 items if included.
+
+KEEP IT TIGHT. Short bullets. No filler. No verbose descriptions. Every word must earn its place.
+
+CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble, no "Here is your resume" — just the resume content starting with # Name.`;
+}
+
+async function generateResume() {
+  const resume = resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText;
+  const jd = document.getElementById('jd-text').value.trim();
+
+  if (!resume) { showToast('Please upload or paste your resume first.'); return; }
+  if (!jd) { showToast('Please paste the job description.'); return; }
+  if (isGenerating) return;
+
+  isGenerating = true;
+  generatedMarkdown = '';
+  const btn = document.getElementById('gen-btn');
+  const btnText = document.getElementById('gen-btn-text');
+  btn.disabled = true;
+  btnText.textContent = 'Generating...';
+
+  showResultView();
+  const output = document.getElementById('resume-output');
+  output.innerHTML = '<span class="cursor"></span>';
+  setGenStatus('thinking', 'Analyzing resume & JD...');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 2200,
+        stream: true,
+        system: buildResumeSystemPrompt(),
+        messages: [{
+          role: 'user',
+          content: `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
+        }]
+      })
+    });
+
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error?.message || 'API error ' + res.status);
+    }
+
+    setGenStatus('thinking', 'Writing tailored resume...');
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const p = JSON.parse(data);
+          if (p.type === 'content_block_delta' && p.delta?.text) {
+            generatedMarkdown += p.delta.text;
+            output.innerHTML = renderMarkdown(generatedMarkdown) + '<span class="cursor"></span>';
+            output.scrollTop = output.scrollHeight;
+          }
+        } catch (e) {}
+      }
+    }
+
+    // Final render without cursor
+    output.innerHTML = renderMarkdown(generatedMarkdown);
+    setGenStatus('done', 'Complete');
+    setTimeout(() => setGenStatus('', ''), 4000);
+  } catch (err) {
+    output.innerHTML = `<p style="color:var(--red);padding:20px">Error: ${err.message}<br><br><small style="opacity:0.6">Check your internet connection and try again.</small></p>`;
+    setGenStatus('', '');
+    showToast('Generation failed: ' + err.message);
+  } finally {
+    isGenerating = false;
+    btn.disabled = false;
+    btnText.textContent = 'Generate Tailored Resume';
+  }
+}
+
+/* ═══════════════════════════════════════════
+   MARKDOWN RENDERER
+═══════════════════════════════════════════ */
+function renderMarkdown(md) {
+  let html = md
+    // Headers
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    // Horizontal rule
+    .replace(/^---$/gm, '<hr/>')
+    // Bold and italic
+    .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    // Bullet lists — convert consecutive lines starting with - or • into <ul>
+    .replace(/(?:^|\n)((?:[\t ]*[-•] .+\n?)+)/g, (match, list) => {
+      const items = list.trim().split('\n').map(line => {
+        const content = line.replace(/^[\t ]*[-•] /, '').trim();
+        return `<li>${content}</li>`;
+      }).join('');
+      return `<ul>${items}</ul>`;
+    })
+    // Links
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+    // Paragraphs — wrap remaining lines
+    .replace(/^(?!<[hul1-9/]|<li|<hr)(.+)$/gm, '<p>$1</p>')
+    // Clean up empty paragraphs
+    .replace(/<p>\s*<\/p>/g, '');
+
+  // Wrap everything before the first <h2> in a centered header div
+  // This centers: name (h1), job title, contact info, links
+  const firstH2 = html.indexOf('<h2>');
+  if (firstH2 > 0) {
+    const headerPart = html.slice(0, firstH2);
+    const bodyPart = html.slice(firstH2);
+    html = '<div class="resume-header">' + headerPart + '</div>' + bodyPart;
+  }
+  return html;
+}
+
+/* ═══════════════════════════════════════════
+   STATUS
+═══════════════════════════════════════════ */
+function setGenStatus(type, text) {
+  const el = document.getElementById('gen-status');
+  if (!type) { el.className = 'gen-status'; el.textContent = ''; return; }
+  el.className = 'gen-status ' + type;
+  el.textContent = text;
+}
+
+/* ═══════════════════════════════════════════
+   EXPORT ACTIONS
+═══════════════════════════════════════════ */
+function copyResume() {
+  if (!generatedMarkdown) { showToast('No resume to copy.'); return; }
+  const plain = document.getElementById('resume-output').innerText;
+  navigator.clipboard.writeText(plain).then(() => {
+    showToast('Resume copied to clipboard!');
+  });
+}
+
+function printResume() {
+  if (!generatedMarkdown) { showToast('No resume to print.'); return; }
+  // Open a clean window for printing — no browser headers/footers/URL/date
+  const html = renderMarkdown(generatedMarkdown);
+  const printWin = window.open('', '_blank');
+  printWin.document.write(`<!DOCTYPE html>
+<html><head><title>Resume</title>
+<style>
+  @page { size: letter; margin: 0.5in 0.6in; }
+  body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.3; color: #000; margin: 0; padding: 0; }
+  .resume-header { text-align: center; margin-bottom: 6px; }
+  h1 { font-size: 14pt; font-weight: 900; text-align: center; margin: 0 0 1px 0; }
+  h2 { font-size: 11pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 3px 0; border-bottom: 1px solid #000; padding-bottom: 1px; }
+  h3 { font-size: 10pt; font-weight: 700; margin: 4px 0 1px 0; }
+  p { margin: 0 0 2px 0; font-size: 10pt; }
+  ul { padding-left: 16px; margin: 0 0 3px 0; }
+  li { margin-bottom: 1px; font-size: 10pt; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  hr { border: none; border-top: 1px solid #999; margin: 4px 0; }
+  a { color: #000; text-decoration: none; }
+</style>
+</head><body>${html}</body></html>`);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(() => { printWin.print(); printWin.close(); }, 300);
+}
+
+async function downloadDocx() {
+  if (!generatedMarkdown) { showToast('No resume to download.'); return; }
+
+  // Build a simple DOCX using plain text content with proper structure
+  const plain = document.getElementById('resume-output').innerText;
+  const lines = plain.split('\n').filter(l => l.trim());
+
+  // Create a minimal DOCX file using a Blob
+  // We'll use HTML-to-DOCX approach via mhtml format that Word can open
+  const htmlContent = `
+    <html xmlns:o="urn:schemas-microsoft-com:office:office"
+          xmlns:w="urn:schemas-microsoft-com:office:word"
+          xmlns="http://www.w3.org/TR/REC-html40">
+    <head>
+      <meta charset="utf-8"/>
+      <style>
+        body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.25; color: #000; margin: 0.5in 0.6in; }
+        .resume-header { text-align: center; margin-bottom: 4px; }
+        h1 { font-size: 14pt; font-weight: 900; color: #000; margin: 0 0 1px 0; text-align: center; }
+        h2 { font-size: 11pt; font-weight: 700; color: #000; text-transform: uppercase; letter-spacing: 0.5px; margin: 6px 0 2px 0; border-bottom: 1px solid #000; padding-bottom: 1px; }
+        h3 { font-size: 10pt; font-weight: 700; color: #000; margin: 3px 0 1px 0; }
+        p { margin: 0 0 1px 0; font-size: 10pt; }
+        ul { padding-left: 16px; margin: 1px 0; }
+        li { margin-bottom: 1px; font-size: 10pt; }
+        strong { font-weight: 700; }
+        em { font-style: italic; color: #333; }
+        hr { border: none; border-top: 1px solid #000; margin: 8px 0; }
+      </style>
+    </head>
+    <body>${renderMarkdown(generatedMarkdown)}</body>
+    </html>`;
+
+  const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'Tailored_Resume.doc';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  showToast('Resume downloaded! Open with Word to save as DOCX.');
+}
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(msg) {
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 4000);
+}
+
+/* ═══════════════════════════════════════════
+   BOOT
+═══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  if (Auth.getUser()) showApp();
+});
+</script>
+</body>
+</html>

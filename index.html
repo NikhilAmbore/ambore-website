@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ambore — AI Interview Co-Pilot</title>
+<meta name="description" content="Ambore listens in real time and gives you instant STAR-format answers during interviews. Land your dream job."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+/* ── RESET ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;font-size:16px}
+body{font-family:'Space Grotesk',sans-serif;background:#030305;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+ul{list-style:none}
+img{max-width:100%;display:block}
+button,input,textarea{font-family:inherit}
+
+/* ── GRAIN OVERLAY ── */
+body::before{
+  content:'';position:fixed;inset:0;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity:0.035;pointer-events:none;z-index:0;
+}
+
+/* ── VARIABLES ── */
+:root{
+  --ink:#030305;
+  --white:#ffffff;
+  --off:#a0a0b0;
+  --border:rgba(255,255,255,0.08);
+  --violet:#6d5cff;
+  --violet-glow:rgba(109,92,255,0.35);
+  --purple:#9c5fff;
+  --grad:linear-gradient(135deg,#6d5cff,#9c5fff);
+}
+
+/* ── CONTAINER ── */
+.container{max-width:1200px;margin:0 auto;padding:0 28px}
+
+/* ── GLOW ORBS ── */
+.orb{position:absolute;border-radius:50%;filter:blur(120px);pointer-events:none}
+
+/* ── NAVBAR ── */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:20px 0;
+  transition:background 0.4s,backdrop-filter 0.4s;
+}
+nav.scrolled{
+  background:rgba(3,3,5,0.85);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between}
+.nav-logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-0.02em}
+.nav-logo-icon{width:32px;height:32px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:36px}
+.nav-links a{font-size:0.9rem;font-weight:500;color:var(--off);transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-actions{display:flex;align-items:center;gap:12px}
+.btn-ghost{padding:9px 20px;border-radius:9px;font-size:0.88rem;font-weight:600;color:var(--off);background:transparent;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.25);color:#fff}
+.btn-cta{padding:9px 22px;border-radius:9px;font-size:0.88rem;font-weight:700;color:#fff;background:var(--grad);border:none;cursor:pointer;transition:opacity 0.2s;box-shadow:0 0 24px var(--violet-glow)}
+.btn-cta:hover{opacity:0.85}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+.hamburger span{width:22px;height:1.5px;background:#fff;border-radius:2px;display:block;transition:all 0.2s}
+
+/* ── MOBILE MENU ── */
+.mobile-menu{
+  display:none;position:fixed;top:70px;left:0;right:0;
+  background:rgba(5,5,10,0.98);backdrop-filter:blur(24px);
+  border-bottom:1px solid var(--border);
+  padding:24px 28px 32px;flex-direction:column;gap:2px;z-index:99;
+}
+.mobile-menu.open{display:flex}
+.mobile-menu a{padding:14px 0;border-bottom:1px solid var(--border);font-size:1rem;font-weight:500;color:rgba(255,255,255,0.7)}
+.mobile-menu a:last-child{border-bottom:none}
+.mobile-menu .btn-cta{margin-top:12px;text-align:center;display:block;padding:14px}
+
+/* ── NAV USER STATE ── */
+.nav-user{display:flex;align-items:center;gap:10px}
+.nav-user-name{font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.6);background:rgba(109,92,255,0.12);padding:4px 10px;border-radius:20px;border:1px solid rgba(109,92,255,0.25)}
+.nav-logout{background:none;border:none;font-size:0.82rem;color:rgba(255,255,255,0.3);cursor:pointer;transition:color 0.2s;font-family:inherit}
+.nav-logout:hover{color:#ef4444}
+
+/* ── HERO ── */
+.hero{
+  position:relative;min-height:100vh;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;text-align:center;
+  padding:120px 0 80px;
+}
+.hero-orb-1{width:700px;height:700px;background:radial-gradient(circle,rgba(109,92,255,0.22),transparent 70%);top:-200px;left:-200px}
+.hero-orb-2{width:600px;height:600px;background:radial-gradient(circle,rgba(156,95,255,0.18),transparent 70%);bottom:-150px;right:-150px}
+.hero-orb-3{width:400px;height:400px;background:radial-gradient(circle,rgba(109,92,255,0.12),transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%)}
+.hero-inner{position:relative;z-index:1;max-width:900px;margin:0 auto}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:7px 18px;border-radius:100px;
+  background:rgba(109,92,255,0.1);border:1px solid rgba(109,92,255,0.3);
+  font-size:0.82rem;font-weight:600;color:#a89fff;
+  margin-bottom:32px;letter-spacing:0.04em;text-transform:uppercase;
+}
+.hero-badge span{width:6px;height:6px;border-radius:50%;background:#6d5cff;animation:pulse-dot 2s infinite}
+@keyframes pulse-dot{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(109,92,255,0.6)}50%{opacity:0.7;box-shadow:0 0 0 6px rgba(109,92,255,0)}}
+.hero-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(3.2rem,8vw,6.5rem);
+  font-weight:800;
+  line-height:1.0;
+  letter-spacing:-0.035em;
+  margin-bottom:24px;
+}
+.hero-title .line{display:block}
+.hero-title .word-glow{
+  background:var(--grad);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+  filter:drop-shadow(0 0 40px rgba(109,92,255,0.5));
+}
+.hero-sub{
+  font-size:clamp(1rem,2vw,1.2rem);
+  color:var(--off);line-height:1.7;
+  max-width:560px;margin:0 auto 44px;
+  font-weight:400;
+}
+.hero-actions{display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap}
+.btn-hero{
+  padding:15px 36px;border-radius:12px;font-size:1rem;font-weight:700;
+  color:#fff;background:var(--grad);border:none;cursor:pointer;
+  box-shadow:0 0 40px rgba(109,92,255,0.45);transition:all 0.25s;
+}
+.btn-hero:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(109,92,255,0.6)}
+.btn-hero-ghost{
+  padding:15px 36px;border-radius:12px;font-size:1rem;font-weight:600;
+  color:rgba(255,255,255,0.7);background:rgba(255,255,255,0.05);
+  border:1px solid var(--border);cursor:pointer;transition:all 0.25s;
+}
+.btn-hero-ghost:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2)}
+.hero-scroll{margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.35}
+.hero-scroll span{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#fff}
+.hero-scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent)}
+
+/* ── MARQUEE STRIP ── */
+.marquee-strip{
+  padding:18px 0;
+  border-top:1px solid var(--border);
+  border-bottom:1px solid var(--border);
+  overflow:hidden;background:rgba(255,255,255,0.02);
+  position:relative;
+}
+.marquee-track{
+  display:flex;gap:0;white-space:nowrap;
+  animation:marquee 28s linear infinite;
+}
+.marquee-track:hover{animation-play-state:paused}
+.marquee-item{
+  display:inline-flex;align-items:center;gap:12px;
+  padding:0 36px;
+  font-size:0.82rem;font-weight:600;letter-spacing:0.1em;
+  text-transform:uppercase;color:rgba(255,255,255,0.3);
+}
+.marquee-dot{width:5px;height:5px;border-radius:50%;background:var(--violet);flex-shrink:0}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ── SECTION BASE ── */
+section{position:relative;padding:120px 0;overflow:hidden}
+.section-label{
+  display:inline-block;font-size:0.72rem;font-weight:700;
+  letter-spacing:0.18em;text-transform:uppercase;
+  color:var(--violet);margin-bottom:18px;
+}
+.section-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2rem,4.5vw,3.6rem);
+  font-weight:800;line-height:1.1;
+  letter-spacing:-0.03em;margin-bottom:18px;
+}
+.section-sub{
+  font-size:1rem;color:var(--off);line-height:1.75;
+  max-width:520px;font-weight:400;
+}
+
+/* ── FEATURES ── */
+.features-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  margin-top:72px;
+}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+.feat-card{
+  padding:40px 36px;
+  background:#050508;
+  transition:background 0.3s;
+  position:relative;overflow:hidden;
+}
+.feat-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 0 0,rgba(109,92,255,0.07),transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.feat-card:hover{background:#080810}
+.feat-card:hover::before{opacity:1}
+.feat-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(109,92,255,0.12);border:1px solid rgba(109,92,255,0.2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.2rem;margin-bottom:24px;
+}
+.feat-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.01em}
+.feat-desc{font-size:0.88rem;color:var(--off);line-height:1.7;font-weight:400}
+
+/* ── HOW IT WORKS ── */
+.how-bg{background:rgba(255,255,255,0.015)}
+.steps{display:flex;flex-direction:column;gap:0;margin-top:72px}
+.step{
+  display:grid;grid-template-columns:64px 1fr;gap:32px;
+  align-items:flex-start;padding:40px 0;
+  border-bottom:1px solid var(--border);
+}
+.step:last-child{border-bottom:none}
+.step-num{
+  width:44px;height:44px;border-radius:12px;
+  background:rgba(109,92,255,0.12);border:1px solid rgba(109,92,255,0.25);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:800;
+  color:var(--violet);flex-shrink:0;
+}
+.step-body h3{font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.01em}
+.step-body p{font-size:0.9rem;color:var(--off);line-height:1.7}
+
+/* ── STATS ── */
+.stats-row{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;
+  border:1px solid var(--border);border-radius:20px;overflow:hidden;
+  margin-top:0;
+}
+@media(max-width:768px){.stats-row{grid-template-columns:1fr 1fr}}
+.stat-cell{
+  padding:48px 36px;background:#050508;text-align:center;
+  position:relative;
+}
+.stat-val{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(2.5rem,4vw,3.5rem);
+  font-weight:800;letter-spacing:-0.04em;
+  background:var(--grad);-webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;background-clip:text;
+  display:block;margin-bottom:8px;
+}
+.stat-label{font-size:0.85rem;color:var(--off);font-weight:500}
+
+/* ── ROUNDS ── */
+.rounds-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:14px;
+  margin-top:64px;
+}
+@media(max-width:900px){.rounds-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.rounds-grid{grid-template-columns:1fr}}
+.round-card{
+  padding:28px 24px;
+  background:rgba(255,255,255,0.03);
+  border:1px solid var(--border);border-radius:16px;
+  transition:all 0.25s;cursor:default;
+}
+.round-card:hover{background:rgba(109,92,255,0.07);border-color:rgba(109,92,255,0.3);transform:translateY(-3px)}
+.round-num{font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;color:var(--violet);letter-spacing:-0.04em;margin-bottom:10px}
+.round-name{font-size:0.85rem;font-weight:600;color:#fff;margin-bottom:6px}
+.round-desc{font-size:0.78rem;color:var(--off);line-height:1.6}
+
+/* ── FAQ ── */
+.faq-list{margin-top:64px;display:flex;flex-direction:column;gap:0;border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.faq-item{border-bottom:1px solid var(--border)}
+.faq-item:last-child{border-bottom:none}
+.faq-q{
+  width:100%;display:flex;align-items:center;justify-content:space-between;
+  padding:24px 32px;background:transparent;border:none;
+  cursor:pointer;text-align:left;color:#fff;font-family:'Space Grotesk',sans-serif;
+  font-size:0.95rem;font-weight:600;transition:background 0.2s;gap:16px;
+}
+.faq-q:hover{background:rgba(255,255,255,0.02)}
+.faq-chevron{width:20px;height:20px;flex-shrink:0;color:var(--off);transition:transform 0.25s}
+.faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--violet)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s}
+.faq-item.open .faq-a{max-height:200px}
+.faq-a-inner{padding:0 32px 24px;font-size:0.9rem;color:var(--off);line-height:1.75}
+
+/* ── CTA BANNER ── */
+.cta-section{
+  text-align:center;
+  background:radial-gradient(ellipse at 50% 0%,rgba(109,92,255,0.2),transparent 65%);
+  border-top:1px solid var(--border);
+}
+.cta-section .section-title{max-width:680px;margin:0 auto 16px}
+.cta-section .section-sub{margin:0 auto 48px;max-width:480px}
+
+/* ── FOOTER ── */
+footer{
+  border-top:1px solid var(--border);
+  padding:60px 0 40px;background:#030305;
+}
+.footer-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:40px;flex-wrap:wrap;margin-bottom:48px}
+.footer-brand .nav-logo{margin-bottom:14px}
+.footer-brand p{font-size:0.85rem;color:var(--off);line-height:1.6;max-width:260px}
+.footer-links{display:flex;gap:48px;flex-wrap:wrap}
+.footer-col h5{font-size:0.75rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:16px}
+.footer-col a{display:block;font-size:0.88rem;color:var(--off);margin-bottom:10px;transition:color 0.2s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border-top:1px solid var(--border);padding-top:28px}
+.footer-bottom p{font-size:0.82rem;color:rgba(255,255,255,0.2)}
+.footer-bottom-links{display:flex;gap:20px}
+.footer-bottom-links a{font-size:0.82rem;color:rgba(255,255,255,0.2);transition:color 0.2s}
+.footer-bottom-links a:hover{color:rgba(255,255,255,0.6)}
+
+/* ── FADE IN ── */
+.reveal{opacity:0;transform:translateY(32px);transition:opacity 0.7s ease,transform 0.7s ease}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-d1{transition-delay:0.1s}
+.reveal-d2{transition-delay:0.2s}
+.reveal-d3{transition-delay:0.3s}
+.reveal-d4{transition-delay:0.4s}
+
+/* ── AUTH MODAL ── */
+.auth-overlay{
+  position:fixed;inset:0;background:rgba(0,0,0,0.8);
+  backdrop-filter:blur(12px);z-index:9999;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.auth-overlay.open{display:flex}
+.auth-modal{
+  background:#0a0a14;border:1px solid rgba(255,255,255,0.1);
+  border-radius:20px;width:100%;max-width:400px;overflow:hidden;
+}
+.auth-modal-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:20px 24px;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.auth-logo-sm{display:flex;align-items:center;gap:8px;font-family:'Syne',sans-serif;font-weight:800;font-size:1rem;color:#fff}
+.auth-logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.auth-close{background:none;border:none;color:rgba(255,255,255,0.3);font-size:1.5rem;cursor:pointer;line-height:1;padding:0 4px;transition:color 0.2s}
+.auth-close:hover{color:#fff}
+.auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,0.06)}
+.auth-tab{flex:1;padding:13px;text-align:center;font-size:0.88rem;font-weight:600;color:rgba(255,255,255,0.35);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
+.auth-tab.active{color:#fff;border-bottom-color:var(--violet)}
+.auth-panel{display:none;padding:24px}
+.auth-panel.active{display:block}
+.auth-field{margin-bottom:14px}
+.auth-field label{display:block;font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.35);margin-bottom:6px}
+.auth-field input{
+  width:100%;padding:11px 14px;
+  background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);
+  border-radius:9px;color:#fff;font-size:0.9rem;outline:none;
+  transition:border-color 0.2s;font-family:inherit;
+}
+.auth-field input:focus{border-color:rgba(109,92,255,0.5)}
+.auth-field input::placeholder{color:rgba(255,255,255,0.18)}
+.auth-err{
+  font-size:0.8rem;color:#f87171;
+  background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);
+  border-radius:8px;padding:8px 12px;margin-bottom:12px;display:none;
+}
+.auth-err.show{display:block}
+.auth-submit{
+  width:100%;padding:12px;border-radius:10px;
+  background:var(--grad);border:none;color:#fff;
+  font-size:0.92rem;font-weight:700;cursor:pointer;
+  margin-top:4px;transition:opacity 0.2s;
+  box-shadow:0 0 24px rgba(109,92,255,0.3);
+}
+.auth-submit:hover{opacity:0.85}
+.auth-switch{text-align:center;margin-top:14px;font-size:0.82rem;color:rgba(255,255,255,0.3)}
+.auth-switch a{color:#a89fff;font-weight:600;cursor:pointer}
+
+/* ── RESPONSIVE ── */
+@media(max-width:960px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+  .features-grid{grid-template-columns:1fr 1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .features-grid{grid-template-columns:1fr}
+  .hero-actions{flex-direction:column;align-items:stretch}
+  .btn-hero,.btn-hero-ghost{width:100%;justify-content:center}
+  .footer-inner{flex-direction:column}
+  section{padding:80px 0}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ NAV ══ -->
+<nav id="navbar">
+  <div class="container">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">
+        <div class="nav-logo-icon">A</div>
+        Ambore
+      </a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#rounds">Interview Rounds</a>
+        <a href="#faq">FAQ</a>
+        <a href="resume.html" style="color:var(--violet);font-weight:600">AI Resume</a>
+        <a href="jobs.html" style="color:var(--green);font-weight:600">Jobs</a>
+      </div>
+      <div class="nav-actions" id="nav-cta">
+        <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
+        <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup')">Get Started Free</a>
+      </div>
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ══ MOBILE MENU ══ -->
+<div class="mobile-menu" id="mobile-menu">
+  <a href="#features" onclick="toggleMenu()">Features</a>
+  <a href="#how" onclick="toggleMenu()">How It Works</a>
+  <a href="#rounds" onclick="toggleMenu()">Interview Rounds</a>
+  <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
+</div>
+
+<!-- ══ HERO ══ -->
+<section class="hero">
+  <div class="orb hero-orb-1"></div>
+  <div class="orb hero-orb-2"></div>
+  <div class="orb hero-orb-3"></div>
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-badge reveal"><span></span>AI-Powered Interview Assistant</div>
+      <h1 class="hero-title reveal reveal-d1">
+        <span class="line">Ace Every</span>
+        <span class="line word-glow">Interview.</span>
+        <span class="line">In Real Time.</span>
+      </h1>
+      <p class="hero-sub reveal reveal-d2">
+        Ambore listens to your interviewer, understands the question, and delivers a polished STAR-format answer in under 2 seconds. Your AI co-pilot for career success.
+      </p>
+      <div class="hero-actions reveal reveal-d3">
+        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Start Free Session →</button>
+        <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
+      </div>
+      <div class="hero-scroll reveal reveal-d4">
+        <span>Scroll</span>
+        <div class="hero-scroll-line"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ MARQUEE ══ -->
+<div class="marquee-strip">
+  <div class="marquee-track">
+    <div class="marquee-item"><span class="marquee-dot"></span>Behavioral Interviews</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Technical Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Coding Interviews</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>HR Screening</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Executive Rounds</div>
+    <!-- duplicate for seamless loop -->
+    <div class="marquee-item"><span class="marquee-dot"></span>Behavioral Interviews</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Technical Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Coding Interviews</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>HR Screening</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Executive Rounds</div>
+  </div>
+</div>
+
+<!-- ══ FEATURES ══ -->
+<section id="features">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">What Ambore Does</div>
+      <h2 class="section-title">Everything you need<br>to land the job</h2>
+    </div>
+    <div class="features-grid">
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">🎙</div>
+        <div class="feat-title">Live Voice Detection</div>
+        <p class="feat-desc">Ambore listens continuously via your microphone. The moment your interviewer finishes a question, it's captured and processed instantly.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Sub-2-Second Answers</div>
+        <p class="feat-desc">Streaming AI response starts appearing within 1–2 seconds of the question being detected. No waiting, no delay, no hesitation.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <div class="feat-icon">✦</div>
+        <div class="feat-title">STAR Method Format</div>
+        <p class="feat-desc">Every answer is structured with Situation, Task, Action, and Result — the gold standard for behavioral interview responses.</p>
+      </div>
+      <div class="feat-card reveal reveal-d1">
+        <div class="feat-icon">📄</div>
+        <div class="feat-title">Resume-Aware Answers</div>
+        <p class="feat-desc">Upload your resume (PDF, DOCX, TXT). Every answer uses your real experience, projects, and achievements — nothing fabricated.</p>
+      </div>
+      <div class="feat-card reveal reveal-d2">
+        <div class="feat-icon">📸</div>
+        <div class="feat-title">Screen Analysis</div>
+        <p class="feat-desc">Stuck on a coding problem? Hit Analyze Screen and Ambore reads the question on your screen and produces a working solution with explanation.</p>
+      </div>
+      <div class="feat-card reveal reveal-d3">
+        <div class="feat-icon">⏱</div>
+        <div class="feat-title">30-Min Session Timer</div>
+        <p class="feat-desc">Each session runs up to 30 minutes with a countdown. All sessions are saved so you can review your performance after the interview.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ STATS ══ -->
+<section style="padding:0">
+  <div class="container">
+    <div class="stats-row">
+      <div class="stat-cell reveal">
+        <span class="stat-val">&lt;2s</span>
+        <div class="stat-label">Average Answer Time</div>
+      </div>
+      <div class="stat-cell reveal reveal-d1">
+        <span class="stat-val">8</span>
+        <div class="stat-label">Interview Rounds Supported</div>
+      </div>
+      <div class="stat-cell reveal reveal-d2">
+        <span class="stat-val">100%</span>
+        <div class="stat-label">Based on Your Resume</div>
+      </div>
+      <div class="stat-cell reveal reveal-d3">
+        <span class="stat-val">0</span>
+        <div class="stat-label">Preparation Hours Needed</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ HOW IT WORKS ══ -->
+<section id="how" class="how-bg">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
+      <div class="reveal" style="position:sticky;top:120px">
+        <div class="section-label">The Process</div>
+        <h2 class="section-title">Up and running in 60 seconds</h2>
+        <p class="section-sub">No setup. No API keys. No training. Just log in, paste your details, and start your interview session.</p>
+      </div>
+      <div class="steps">
+        <div class="step reveal">
+          <div class="step-num">01</div>
+          <div class="step-body">
+            <h3>Create your account</h3>
+            <p>Sign up with email and password. Your account stores sessions so you can track your progress over time.</p>
+          </div>
+        </div>
+        <div class="step reveal reveal-d1">
+          <div class="step-num">02</div>
+          <div class="step-body">
+            <h3>Upload resume & paste JD</h3>
+            <p>Upload your resume as PDF, DOCX, or TXT. Paste the job description. Enter the role, company, and select the interview round.</p>
+          </div>
+        </div>
+        <div class="step reveal reveal-d2">
+          <div class="step-num">03</div>
+          <div class="step-body">
+            <h3>Start listening</h3>
+            <p>Click Start Listening and set the toggle to Interviewer mode. Ambore silently monitors the conversation in the background.</p>
+          </div>
+        </div>
+        <div class="step reveal reveal-d3">
+          <div class="step-num">04</div>
+          <div class="step-body">
+            <h3>Get your answer instantly</h3>
+            <p>The moment a question is detected, a STAR-format answer tailored to your resume appears in under 2 seconds — ready to deliver.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ ROUNDS ══ -->
+<section id="rounds">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Coverage</div>
+      <h2 class="section-title">Every round. Every stage.</h2>
+      <p class="section-sub">Ambore adapts its answers based on the round you select — from an HR screen to a final executive interview.</p>
+    </div>
+    <div class="rounds-grid">
+      <div class="round-card reveal">
+        <div class="round-num">1st</div>
+        <div class="round-name">Initial HR Screen</div>
+        <p class="round-desc">Introduction, motivation, culture fit questions</p>
+      </div>
+      <div class="round-card reveal reveal-d1">
+        <div class="round-num">2nd</div>
+        <div class="round-name">Technical Basics</div>
+        <p class="round-desc">Foundational knowledge and role-specific concepts</p>
+      </div>
+      <div class="round-card reveal reveal-d2">
+        <div class="round-num">3rd</div>
+        <div class="round-name">Technical Deep Dive</div>
+        <p class="round-desc">Advanced technical problems and architecture</p>
+      </div>
+      <div class="round-card reveal reveal-d3">
+        <div class="round-num">4th</div>
+        <div class="round-name">Coding Assessment</div>
+        <p class="round-desc">Live coding with screen analysis support</p>
+      </div>
+      <div class="round-card reveal">
+        <div class="round-num">5th</div>
+        <div class="round-name">System Design</div>
+        <p class="round-desc">Scalability, architecture and trade-off discussions</p>
+      </div>
+      <div class="round-card reveal reveal-d1">
+        <div class="round-num">6th</div>
+        <div class="round-name">Managerial / Behavioral</div>
+        <p class="round-desc">Leadership, conflict, and team dynamics stories</p>
+      </div>
+      <div class="round-card reveal reveal-d2">
+        <div class="round-num">Final</div>
+        <div class="round-name">Executive / CXO</div>
+        <p class="round-desc">Vision, strategy and executive-level conversations</p>
+      </div>
+      <div class="round-card reveal reveal-d3">
+        <div class="round-num">⚡</div>
+        <div class="round-name">Hackathon / Test</div>
+        <p class="round-desc">Timed coding challenges with AI solution support</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FAQ ══ -->
+<section id="faq" class="how-bg">
+  <div class="container" style="max-width:800px">
+    <div class="reveal" style="text-align:center;margin-bottom:0">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is Ambore detectable by the interviewer?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Ambore runs entirely in your browser on your machine. The interviewer sees nothing. There are no browser extensions, no screen sharing from your side, and no external indicators that you are using any assistance.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Does it work for video interviews like Zoom or Google Meet?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Yes. Ambore uses your microphone to capture audio from any source — Zoom, Google Meet, Microsoft Teams, or in-person. As long as your mic picks up the question, Ambore will process it.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What browser do I need?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Google Chrome is required for voice recognition (Web Speech API). All other features including manual text input and screen analysis work on any modern browser.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How accurate are the answers?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Answers are generated using Claude AI and grounded entirely in your resume. Ambore never fabricates achievements — it uses your real experience and maps it to the question and job description provided.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is my resume and data private?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">All your data is stored locally in your browser. Resume text, session history, and account information are saved in your browser's localStorage only — nothing is sent to any external server beyond the AI API call.</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CTA ══ -->
+<section class="cta-section">
+  <div class="container" style="text-align:center">
+    <div class="section-label reveal">Get Started</div>
+    <h2 class="section-title reveal reveal-d1">Your next interview<br>starts here.</h2>
+    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Create a free account and run your first session in under 60 seconds. No credit card required.</p>
+    <div class="reveal reveal-d3">
+      <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Start Free — No Credit Card →</button>
+    </div>
+  </div>
+</section>
+
+<!-- ══ FOOTER ══ -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <div class="nav-logo" style="margin-bottom:14px">
+          <div class="nav-logo-icon">A</div>
+          Ambore
+        </div>
+        <p>The AI co-pilot that helps you answer every interview question with confidence — in real time.</p>
+      </div>
+      <div class="footer-links">
+        <div class="footer-col">
+          <h5>Product</h5>
+          <a href="#features">Features</a>
+          <a href="#how">How It Works</a>
+          <a href="#rounds">Rounds</a>
+          <a href="app.html">Open App</a>
+        </div>
+        <div class="footer-col" id="footer-account">
+          <h5>Account</h5>
+          <a href="javascript:void(0)" onclick="openAuthModal('login')">Log In</a>
+          <a href="javascript:void(0)" onclick="openAuthModal('signup')">Sign Up Free</a>
+        </div>
+        <div class="footer-col">
+          <h5>Company</h5>
+          <a href="#">About</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 Ambore. All rights reserved.</p>
+      <div class="footer-bottom-links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ══ AUTH MODAL ══ -->
+<div class="auth-overlay" id="auth-overlay">
+  <div class="auth-modal">
+    <div class="auth-modal-head">
+      <div class="auth-logo-sm">
+        <div class="auth-logo-icon">A</div>
+        Ambore
+      </div>
+      <button class="auth-close" onclick="closeAuthModal()">×</button>
+    </div>
+    <div class="auth-tabs">
+      <div class="auth-tab active" data-tab="login" onclick="switchTab('login')">Log In</div>
+      <div class="auth-tab" data-tab="signup" onclick="switchTab('signup')">Sign Up</div>
+    </div>
+    <!-- Login -->
+    <div class="auth-panel active" id="panel-login">
+      <div class="auth-err" id="auth-err-login"></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
+      <button class="auth-submit" onclick="handleLogin(event)">Log In →</button>
+      <div class="auth-switch">No account? <a onclick="switchTab('signup')">Sign up free</a></div>
+    </div>
+    <!-- Signup -->
+    <div class="auth-panel" id="panel-signup">
+      <div class="auth-err" id="auth-err-signup"></div>
+      <div class="auth-field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
+      <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
+      <button class="auth-submit" onclick="handleSignup(event)">Create Account →</button>
+      <div class="auth-switch">Already have account? <a onclick="switchTab('login')">Log in</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── NAVBAR ── */
+const navbar=document.getElementById('navbar');
+window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.scrollY>60));
+
+/* ── MOBILE MENU ── */
+function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open')}
+document.addEventListener('click',e=>{
+  const m=document.getElementById('mobile-menu');
+  const h=document.getElementById('hamburger');
+  if(m.classList.contains('open')&&!m.contains(e.target)&&!h.contains(e.target))m.classList.remove('open');
+});
+
+/* ── SCROLL REVEAL ── */
+const revealObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
+},{threshold:0.07});
+document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
+
+/* ── FAQ ── */
+function toggleFaq(btn){
+  const item=btn.parentElement;
+  const isOpen=item.classList.contains('open');
+  document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+  if(!isOpen)item.classList.add('open');
+}
+
+/* ── AUTH MODAL ── */
+function openAuthModal(tab){
+  // If already logged in, never show auth modal — redirect to appropriate page
+  if(getSession()){
+    return;
+  }
+  document.getElementById('auth-overlay').classList.add('open');
+  switchTab(tab);
+  document.getElementById('auth-err-login').classList.remove('show');
+  document.getElementById('auth-err-signup').classList.remove('show');
+}
+function closeAuthModal(){document.getElementById('auth-overlay').classList.remove('open')}
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('auth-overlay').addEventListener('click',e=>{
+    if(e.target===document.getElementById('auth-overlay'))closeAuthModal();
+  });
+});
+function switchTab(tab){
+  document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
+  document.querySelectorAll('.auth-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+}
+
+/* ── AUTH LOGIC ── */
+/* Uses same ambore_db key as app.html so accounts work across both pages */
+function getDB(){return JSON.parse(localStorage.getItem('ambore_db')||'{"users":[],"sessions":[]}')}
+function saveDB(db){localStorage.setItem('ambore_db',JSON.stringify(db))}
+function getUsers(){return getDB().users}
+function saveUsers(users){const db=getDB();db.users=users;saveDB(db)}
+function getSession(){
+  const s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s)return null;
+  // Check token expiry
+  if(s.expiresAt&&Date.now()>s.expiresAt){localStorage.removeItem('ambore_user');return null}
+  return s;
+}
+function saveSession(user){
+  const session={
+    id:user.id,name:user.name,email:user.email,
+    token:'tok_'+Date.now()+'_'+Math.random().toString(36).slice(2),
+    loginAt:Date.now(),
+    expiresAt:Date.now()+7*24*60*60*1000
+  };
+  localStorage.setItem('ambore_user',JSON.stringify(session));
+}
+
+function handleLogin(e){
+  e.preventDefault();
+  const email=document.getElementById('li-email').value.trim().toLowerCase();
+  const pass=document.getElementById('li-pass').value;
+  const err=document.getElementById('auth-err-login');
+  const user=getUsers().find(u=>u.email===email&&u.password===pass);
+  if(!user){err.textContent='Invalid email or password.';err.classList.add('show');return}
+  saveSession(user);
+  closeAuthModal();
+  updateNavState();
+  updatePageForAuthState();
+  // Login → stay on main home page (already here)
+}
+function handleSignup(e){
+  e.preventDefault();
+  const name=document.getElementById('su-name').value.trim();
+  const email=document.getElementById('su-email').value.trim().toLowerCase();
+  const pass=document.getElementById('su-pass').value;
+  const pass2=document.getElementById('su-pass2').value;
+  const err=document.getElementById('auth-err-signup');
+  err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
+  if(!name){err.textContent='Please enter your name.';err.classList.add('show');return}
+  if(!email.includes('@')){err.textContent='Enter a valid email.';err.classList.add('show');return}
+  if(pass.length<6){err.textContent='Password must be 6+ characters.';err.classList.add('show');return}
+  if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}
+  const users=getUsers();
+  if(users.find(u=>u.email===email)){err.textContent='User already registered.';err.classList.add('show');return}
+  // Create account — do NOT auto-login
+  const newUser={id:'u'+Date.now(),name,email,password:pass,createdAt:new Date().toISOString()};
+  users.push(newUser);saveUsers(users);
+  // Show success, then switch to login tab
+  err.textContent='Account created successfully! Please log in.';
+  err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
+  err.classList.add('show');
+  document.getElementById('su-name').value='';
+  document.getElementById('su-email').value='';
+  document.getElementById('su-pass').value='';
+  document.getElementById('su-pass2').value='';
+  // Pre-fill email on login tab for convenience
+  setTimeout(()=>{
+    switchTab('login');
+    document.getElementById('li-email').value=email;
+    document.getElementById('li-pass').focus();
+    err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
+  },1500);
+}
+function handleLogout(){
+  localStorage.removeItem('ambore_user');
+  updateNavState();
+  updatePageForAuthState();
+}
+function updateNavState(){
+  const session=getSession();
+  const cta=document.getElementById('nav-cta');
+  if(session){
+    cta.innerHTML=`
+      <div class="nav-user">
+        <span class="nav-user-name">${session.name.split(' ')[0]}</span>
+        <a href="app.html" class="btn-cta" style="font-size:0.85rem;padding:8px 18px;">Interview</a>
+        <a href="resume.html" class="btn-cta" style="font-size:0.85rem;padding:8px 18px;background:rgba(124,58,237,0.9);">AI Resume</a>
+        <button class="nav-logout" onclick="handleLogout()">Log Out</button>
+      </div>`;
+  } else {
+    cta.innerHTML=`
+      <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
+      <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup')">Get Started Free</a>`;
+  }
+}
+/* Update all page buttons based on auth state */
+function updatePageForAuthState(){
+  const session=getSession();
+  const heroPrimary=document.getElementById('hero-cta-primary');
+  const heroLogin=document.getElementById('hero-cta-login');
+  const bottomCta=document.getElementById('bottom-cta');
+  if(session){
+    // Logged in — hero buttons go directly to app, hide login button
+    if(heroPrimary){heroPrimary.textContent='Open Interview App →';heroPrimary.onclick=()=>{window.location.href='app.html'}}
+    if(heroLogin){heroLogin.textContent='AI Resume';heroLogin.onclick=()=>{window.location.href='resume.html'}}
+    if(bottomCta){bottomCta.textContent='Open Interview App →';bottomCta.onclick=()=>{window.location.href='app.html'}}
+    // Close auth modal if somehow open
+    closeAuthModal();
+  } else {
+    // Not logged in — restore default auth modal triggers
+    if(heroPrimary){heroPrimary.textContent='Start Free Session →';heroPrimary.onclick=()=>{openAuthModal('signup')}}
+    if(heroLogin){heroLogin.textContent='Log In';heroLogin.onclick=()=>{openAuthModal('login')}}
+    if(bottomCta){bottomCta.textContent='Start Free — No Credit Card →';bottomCta.onclick=()=>{openAuthModal('signup')}}
+  }
+}
+updateNavState();
+updatePageForAuthState();
+
+/* ── HERO BADGE ANIMATION ALREADY IN CSS ── */
+</script>
+</body>
+</html>

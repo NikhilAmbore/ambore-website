@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ambore — AI Interview Assistant</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ══ AUTH SCREEN ══ */
+.auth-shell{
+  min-height:100vh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:32px 20px;
+  background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 30%,rgba(79,70,229,0.2) 0%,transparent 55%),
+                   radial-gradient(ellipse at 80% 70%,rgba(124,58,237,0.16) 0%,transparent 55%);
+}
+.auth-logo{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:32px}
+.logo-icon{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff}
+.auth-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:14px;text-align:center;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
+.auth-tab.active{color:#fff;border-bottom-color:#4F46E5}
+.auth-body{padding:24px}
+.auth-panel{display:none}
+.auth-panel.active{display:block}
+.auth-heading{font-size:1.2rem;font-weight:800;color:#fff;margin-bottom:4px}
+.auth-sub{font-size:0.83rem;color:rgba(255,255,255,0.4);margin-bottom:20px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:5px}
+.field input{width:100%;padding:10px 13px;background:#13132a;border:1px solid var(--border);border-radius:9px;color:#fff;font-size:0.9rem;outline:none;transition:border-color 0.2s}
+.field input:focus{border-color:rgba(79,70,229,0.5)}
+.field input::placeholder{color:rgba(255,255,255,0.2)}
+.auth-err{font-size:0.8rem;color:var(--red);background:rgba(197, 55, 55, 0.08);border:1px solid rgba(239,68,68,0.2);border-radius:7px;padding:8px 12px;margin-bottom:12px;display:none}
+.auth-err.show{display:block}
+.auth-btn{width:100%;padding:12px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:0.95rem;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity 0.2s}
+.auth-btn:hover{opacity:0.88}
+.auth-switch{text-align:center;margin-top:14px;font-size:0.82rem;color:rgba(255,255,255,0.35)}
+.auth-switch a{color:var(--accent);font-weight:600;cursor:pointer}
+
+/* ══ SETUP SCREEN ══ */
+.setup-shell{
+  min-height:100vh;display:flex;flex-direction:column;
+  background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(79,70,229,0.15) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.12) 0%,transparent 50%);
+}
+.setup-topbar{
+  display:flex;align-items:center;gap:12px;padding:14px 24px;
+  border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);
+}
+.setup-topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff}
+.setup-topbar .logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6)}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+.setup-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 20px 48px;max-width:880px;margin:0 auto;width:100%}
+.setup-heading{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
+.setup-hint{font-size:0.9rem;color:rgba(255,255,255,0.4);margin-bottom:28px}
+.setup-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;width:100%;margin-bottom:16px}
+@media(max-width:640px){.setup-row{grid-template-columns:1fr}}
+.setup-field label{display:block;font-size:0.78rem;font-weight:700;color:rgba(152, 71, 71, 0.5);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:6px}
+.setup-field input,.setup-field select{
+  width:100%;padding:10px 13px;background:var(--card);
+  border:1px solid var(--border);border-radius:10px;color:#fff;font-size:0.88rem;outline:none;transition:border-color 0.2s;
+}
+.setup-field input:focus,.setup-field select:focus{border-color:rgba(79,70,229,0.5)}
+.setup-field select option{background:#0e0e1d;color:#fff}
+.setup-main-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%;margin-bottom:20px}
+@media(max-width:640px){.setup-main-grid{grid-template-columns:1fr}}
+.resume-tabs{display:flex;gap:6px;margin-bottom:8px}
+.rtab{padding:5px 12px;border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);transition:all 0.2s}
+.rtab.active{background:rgba(79,70,229,0.15);border-color:rgba(79,70,229,0.4);color:var(--accent)}
+.dropzone{
+  height:180px;border:2px dashed rgba(255,255,255,0.1);border-radius:12px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;cursor:pointer;transition:border-color 0.2s;text-align:center;padding:16px;
+}
+.dropzone:hover,.dropzone.drag-over{border-color:rgba(79,70,229,0.5)}
+.dropzone-icon{font-size:1.8rem;margin-bottom:4px}
+.dropzone-text{font-size:0.85rem;color:rgba(255,255,255,0.5)}
+.dropzone-sub{font-size:0.75rem;color:rgba(255,255,255,0.25)}
+.upload-btn{
+  padding:6px 14px;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);
+  border-radius:7px;color:var(--accent);font-size:0.8rem;font-weight:600;cursor:pointer;
+}
+.upload-btn input[type=file]{display:none}
+.file-status{font-size:0.78rem;padding:6px 10px;border-radius:6px;margin-top:6px}
+.file-status.ok{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.file-status.err{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
+.setup-field textarea{
+  width:100%;height:180px;padding:12px 14px;background:var(--card);
+  border:1px solid var(--border);border-radius:12px;color:#e2e8f0;
+  font-size:0.88rem;line-height:1.6;resize:vertical;outline:none;transition:border-color 0.2s;
+}
+.setup-field textarea:focus{border-color:rgba(79,70,229,0.5)}
+.setup-field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.start-btn{
+  padding:15px 52px;background:var(--grad);border:none;border-radius:13px;
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(79,70,229,0.4);transition:transform 0.2s,box-shadow 0.2s;
+}
+.start-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,70,229,0.55)}
+
+/* ══ SESSION SCREEN ══ */
+.sess-shell{height:100vh;display:flex;flex-direction:column;background:#06060f;overflow:hidden}
+.sess-header{
+  display:flex;align-items:center;gap:12px;padding:10px 18px;
+  border-bottom:1px solid var(--border);background:rgba(14,14,29,0.96);flex-shrink:0;
+}
+.sess-logo{display:flex;align-items:center;gap:7px;font-size:0.95rem;font-weight:900;color:#fff}
+.sess-logo-icon{width:26px;height:26px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;color:#fff}
+.sess-meta{display:flex;align-items:center;gap:8px;margin-left:6px}
+.sess-badge{font-size:0.75rem;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.05);padding:2px 9px;border-radius:20px;border:1px solid var(--border);white-space:nowrap}
+.sess-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.countdown{
+  display:flex;align-items:center;gap:6px;
+  font-size:1rem;font-weight:800;font-variant-numeric:tabular-nums;
+  color:#fff;background:rgba(255,255,255,0.06);padding:4px 12px;border-radius:8px;
+  border:1px solid rgba(255,255,255,0.1);
+}
+.countdown{color:var(--green)!important;border-color:rgba(34,197,94,0.25)!important;background:rgba(34,197,94,0.07)!important}
+@keyframes pulse-border{0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.3)}50%{box-shadow:0 0 0 4px rgba(239,68,68,0)}}
+.mic-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);transition:background 0.3s}
+.mic-dot.live{background:var(--green);box-shadow:0 0 8px rgba(34,197,94,0.5);animation:blink-dot 1.5s infinite}
+@keyframes blink-dot{0%,100%{opacity:1}50%{opacity:0.4}}
+.btn-listen{padding:6px 14px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:0.78rem;font-weight:700;cursor:pointer;transition:opacity 0.2s}
+.btn-listen:hover{opacity:0.85}
+.btn-screen{padding:6px 14px;background:rgba(124,58,237,0.2);border:1px solid rgba(124,58,237,0.3);border-radius:8px;color:#a78bfa;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-screen:hover{background:rgba(124,58,237,0.3)}
+.btn-end{padding:6px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;color:var(--red);font-size:0.78rem;font-weight:600;cursor:pointer}
+.btn-end:hover{background:rgba(239,68,68,0.2)}
+.sess-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
+.panel{display:flex;flex-direction:column;overflow:hidden;border-bottom:1px solid var(--border);min-height:0}
+.panel:last-child{border-bottom:none;flex:1;min-height:0}
+.panel-title{padding:10px 16px;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.3);letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;flex-shrink:0}
+.ai-status{font-size:0.68rem;padding:2px 8px;border-radius:10px;font-weight:600;display:none}
+.ai-status.show{display:inline-flex;align-items:center;gap:4px}
+.ai-status.thinking{color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)}
+.ai-status.done{color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2)}
+
+/* transcript */
+.panel.transcript-panel{height:220px;flex-shrink:0}
+.transcript-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:9px;min-height:0}
+.t-empty{color:rgba(255,255,255,0.18);font-size:0.83rem;text-align:center;padding-top:36px;line-height:1.8}
+.chat-row{display:flex;gap:9px}
+.chat-av{width:26px;height:26px;border-radius:7px;flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:0.6rem;font-weight:800}
+.chat-av.them{background:rgba(79,70,229,0.2);color:var(--accent)}
+.chat-av.me{background:rgba(34,197,94,0.12);color:var(--green)}
+.chat-body{flex:1}
+.chat-who{font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.3);margin-bottom:2px}
+.chat-bubble{font-size:0.83rem;line-height:1.55;color:rgba(255,255,255,0.78);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;padding:7px 11px}
+.chat-bubble.q-detected{border-color:rgba(79,70,229,0.4);background:rgba(79,70,229,0.07);color:#fff}
+.q-chip{display:inline-block;font-size:0.62rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:1px 6px;border-radius:4px;margin-bottom:3px}
+.interim-bar{padding:7px 14px 9px;font-size:0.78rem;color:rgba(255,255,255,0.28);font-style:italic;border-top:1px solid var(--border);flex-shrink:0;min-height:32px}
+
+/* answers */
+.answers-body{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:12px;min-height:0}
+.a-empty{color:rgba(255,255,255,0.16);font-size:0.86rem;text-align:center;padding-top:40px;line-height:1.8;flex-shrink:0}
+.ans-card{background:var(--card2);border:1px solid rgba(79,70,229,0.22);border-radius:13px;overflow:hidden;animation:fadeUp 0.22s ease;flex-shrink:0}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.ans-card-head{padding:9px 13px 7px;border-bottom:1px solid rgba(255,255,255,0.05);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ans-q-label{font-size:0.7rem;color:rgba(255,255,255,0.38);font-style:italic;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.ans-badge{font-size:0.65rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:9px;white-space:nowrap;flex-shrink:0}
+
+/* STAR paragraph format */
+.star-para-wrap{padding:12px 16px;display:flex;flex-direction:column;gap:8px}
+.star-para-wrap p{font-size:0.88rem;line-height:1.7;color:#dde4f0;display:flex;gap:10px;align-items:flex-start}
+.sp-tag{font-size:0.58rem;font-weight:900;padding:2px 7px;border-radius:4px;flex-shrink:0;margin-top:4px;letter-spacing:0.07em;text-transform:uppercase}
+.sp-tag.s{background:rgba(79,70,229,0.22);color:#818CF8}
+.sp-tag.t{background:rgba(251,191,36,0.18);color:#fbbf24}
+.sp-tag.a{background:rgba(124,58,237,0.22);color:#a78bfa}
+.sp-tag.r{background:rgba(34,197,94,0.18);color:#22c55e}
+
+/* code answer */
+.code-answer{padding:12px 14px;font-size:0.85rem;line-height:1.7;color:#e2e8f0}
+.code-answer p{margin-bottom:8px}
+.code-answer p:last-child{margin-bottom:0}
+.code-block{background:#070710;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:11px 13px;margin:8px 0;font-family:'Courier New',monospace;font-size:0.8rem;line-height:1.6;color:#a5f3fc;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
+.streaming-text{padding:12px 14px;font-size:0.86rem;line-height:1.7;color:#e2e8f0}
+.streaming-text p{margin-bottom:8px}
+.cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ans-actions{padding:7px 13px 11px;display:flex;gap:7px}
+.act{padding:4px 11px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);transition:all 0.15s}
+.act:hover{border-color:rgba(255,255,255,0.18);color:#fff}
+.act.copied{color:var(--green);border-color:rgba(34,197,94,0.3)}
+
+/* bottom */
+.sess-bottom{padding:9px 14px;border-top:1px solid var(--border);background:rgba(14,14,29,0.96);display:flex;gap:9px;align-items:center;flex-shrink:0}
+.speaker-toggle{padding:7px 13px;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);transition:all 0.2s}
+.speaker-toggle.iv{border-color:rgba(79,70,229,0.4);color:var(--accent);background:rgba(79,70,229,0.1)}
+.manual-wrap{flex:1;display:flex;gap:8px}
+.manual-input{flex:1;padding:7px 13px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:8px;color:#fff;font-size:0.85rem;outline:none;transition:border-color 0.2s}
+.manual-input:focus{border-color:rgba(79,70,229,0.4)}
+.manual-input::placeholder{color:rgba(255,255,255,0.18)}
+.btn-send{padding:7px 16px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:0.8rem;font-weight:700;cursor:pointer}
+
+/* ══ END MODAL ══ */
+.end-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center;z-index:9999}
+.end-modal{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:36px;text-align:center;max-width:380px;width:90%;animation:fadeUp 0.25s ease}
+.end-icon{font-size:2.5rem;margin-bottom:12px}
+.end-modal h2{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:8px}
+.end-modal p{font-size:0.88rem;color:rgba(255,255,255,0.45);margin-bottom:20px}
+.end-stats{display:flex;gap:20px;justify-content:center;margin-bottom:20px}
+.end-stat{text-align:center}
+.end-val{font-size:1.6rem;font-weight:900;color:#fff;display:block}
+.end-lbl{font-size:0.72rem;color:rgba(255,255,255,0.35);font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.end-actions{display:flex;gap:10px;justify-content:center}
+.btn-new{padding:10px 22px;background:var(--grad);border:none;border-radius:10px;color:#fff;font-size:0.88rem;font-weight:700;cursor:pointer}
+.btn-home{padding:10px 22px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:10px;color:rgba(255,255,255,0.6);font-size:0.88rem;font-weight:600;cursor:pointer}
+
+/* ══ MOBILE RESPONSIVE ══ */
+@media(max-width:640px){
+  /* Auth */
+  .auth-shell{padding:20px 14px}
+  .auth-logo{font-size:1.2rem;margin-bottom:20px}
+  .auth-card{border-radius:14px}
+  .auth-body{padding:18px 16px}
+  .auth-heading{font-size:1.05rem}
+  .auth-tab{padding:11px;font-size:0.84rem}
+
+  /* Setup topbar */
+  .setup-topbar{padding:10px 14px;gap:8px}
+  .setup-topbar .logo{font-size:0.9rem}
+  .setup-topbar .logo-icon-sm{width:24px;height:24px;font-size:0.75rem}
+  .user-pill{gap:6px;font-size:0.78rem}
+  .user-name{font-size:0.75rem;padding:2px 8px}
+
+  /* Setup content */
+  .setup-content{padding:20px 14px 36px}
+  .setup-heading{font-size:1.3rem}
+  .setup-hint{font-size:0.82rem;margin-bottom:20px}
+  .setup-field input,.setup-field select{font-size:0.82rem;padding:9px 11px}
+  .setup-field textarea{height:160px;font-size:0.82rem}
+  .dropzone{height:140px;padding:12px}
+  .dropzone-icon{font-size:1.4rem}
+  .dropzone-text{font-size:0.78rem}
+  .start-btn{width:100%;padding:14px;font-size:0.92rem;border-radius:11px}
+
+  /* Session header */
+  .sess-header{flex-wrap:wrap;padding:8px 10px;gap:6px}
+  .sess-logo{font-size:0.85rem}
+  .sess-logo-icon{width:22px;height:22px;font-size:0.7rem}
+  .sess-meta{margin-left:0;gap:5px;order:3;width:100%}
+  .sess-badge{font-size:0.65rem;padding:2px 6px;overflow:hidden;text-overflow:ellipsis;max-width:45%}
+  .sess-right{margin-left:auto;gap:6px;flex-wrap:wrap;order:2;width:auto}
+  .countdown{font-size:0.82rem;padding:3px 8px}
+  .btn-listen{padding:5px 10px;font-size:0.7rem}
+  .btn-screen{padding:5px 10px;font-size:0.7rem}
+  .btn-end{padding:5px 10px;font-size:0.7rem}
+
+  /* Session body panels */
+  .panel.transcript-panel{height:180px}
+  .transcript-body{padding:8px 10px;gap:6px}
+  .chat-bubble{font-size:0.78rem;padding:6px 9px}
+  .chat-av{width:22px;height:22px;font-size:0.52rem}
+  .interim-bar{padding:5px 10px;font-size:0.72rem}
+  .answers-body{padding:8px 10px;gap:8px}
+  .ans-card-head{padding:7px 10px 5px}
+  .star-para-wrap{padding:8px 10px;gap:6px}
+  .star-para-wrap p{font-size:0.8rem;gap:6px}
+  .code-block{padding:8px 10px;font-size:0.72rem}
+  .streaming-text{padding:8px 10px;font-size:0.8rem}
+  .code-answer{padding:8px 10px;font-size:0.78rem}
+
+  /* Session bottom */
+  .sess-bottom{padding:7px 10px;gap:6px;flex-wrap:wrap}
+  .speaker-toggle{padding:6px 10px;font-size:0.72rem}
+  .manual-wrap{min-width:0}
+  .manual-input{padding:6px 10px;font-size:0.78rem}
+  .btn-send{padding:6px 12px;font-size:0.72rem}
+
+  /* End modal */
+  .end-modal{padding:24px 18px;border-radius:16px}
+  .end-icon{font-size:2rem;margin-bottom:8px}
+  .end-modal h2{font-size:1.2rem}
+  .end-modal p{font-size:0.82rem}
+  .end-stats{gap:14px}
+  .end-val{font-size:1.3rem}
+  .end-actions{flex-direction:column;gap:8px}
+  .btn-new,.btn-home{width:100%;text-align:center}
+}
+
+@media(max-width:400px){
+  .sess-header{padding:6px 8px}
+  .sess-right{width:100%;justify-content:space-between;order:3}
+  .sess-meta{order:2}
+  .setup-content{padding:16px 10px 28px}
+  .setup-heading{font-size:1.15rem}
+  .auth-body{padding:16px 12px}
+  .panel.transcript-panel{height:150px}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+     AUTH SCREEN
+══════════════════════════════════════ -->
+<div id="auth" class="auth-shell">
+  <div class="auth-logo"><div class="logo-icon">A</div>Ambore</div>
+  <div class="auth-card">
+    <div class="auth-tabs">
+      <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
+      <div class="auth-tab" onclick="switchAuthTab('signup')">Sign Up</div>
+    </div>
+    <div class="auth-body">
+      <!-- LOGIN -->
+      <div class="auth-panel active" id="panel-login">
+        <div class="auth-heading">Welcome back</div>
+        <div class="auth-sub">Log in to your Ambore account</div>
+        <div class="auth-err" id="login-err"></div>
+        <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
+        <button class="auth-btn" onclick="handleLogin()">Log In →</button>
+        <div class="auth-switch">No account? <a onclick="switchAuthTab('signup')">Sign up free</a></div>
+      </div>
+      <!-- SIGNUP -->
+      <div class="auth-panel" id="panel-signup">
+        <div class="auth-heading">Create account</div>
+        <div class="auth-sub">Free forever — no credit card needed</div>
+        <div class="auth-err" id="signup-err"></div>
+        <div class="field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name"/></div>
+        <div class="field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
+        <div class="field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
+        <div class="field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
+        <button class="auth-btn" onclick="handleSignup()">Create Account →</button>
+        <div class="auth-switch">Already have account? <a onclick="switchAuthTab('login')">Log in</a></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SETUP SCREEN
+══════════════════════════════════════ -->
+<div id="setup" class="setup-shell hidden">
+  <div class="setup-topbar">
+    <div class="logo"><div class="logo-icon-sm">A</div>Ambore</div>
+    <div class="user-pill">
+      <span class="user-name" id="user-display">User</span>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+  <div class="setup-content">
+    <h1 class="setup-heading">Set up your interview session</h1>
+    <p class="setup-hint">Fill in the details below — Ambore adapts its answers to your interview round (STAR, Technical, Coding, or System Design).</p>
+
+    <div class="setup-row">
+      <div class="setup-field"><label>Job Role</label><input type="text" id="s-role" placeholder="e.g. Software Engineer"/></div>
+      <div class="setup-field"><label>Company Name</label><input type="text" id="s-company" placeholder="e.g. Google"/></div>
+      <div class="setup-field">
+        <label>Interview Round</label>
+        <select id="s-round">
+          <option value="">Select round...</option>
+          <option>1st Round — Initial HR Screen</option>
+          <option>2nd Round — Technical Basics</option>
+          <option>3rd Round — Technical Deep Dive</option>
+          <option>4th Round — Coding Assessment</option>
+          <option>5th Round — System Design</option>
+          <option>6th Round — Managerial / Behavioral</option>
+          <option>Final Round — Executive / CXO</option>
+          <option>Coding Hackathon / Test</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="setup-main-grid">
+      <!-- Resume -->
+      <div class="setup-field">
+        <label>Your Resume</label>
+        <div class="resume-tabs">
+          <button class="rtab active" id="rtab-upload" onclick="setResumeMode('upload')">📎 Upload File</button>
+          <button class="rtab" id="rtab-paste" onclick="setResumeMode('paste')">✏️ Paste Text</button>
+        </div>
+        <div id="resume-upload-area" class="dropzone" ondragover="dragOver(event)" ondragleave="dragLeave(event)" ondrop="dropFile(event)" onclick="document.getElementById('resume-file').click()">
+          <div class="dropzone-icon">📄</div>
+          <div class="dropzone-text">Drop resume here or</div>
+          <label class="upload-btn" onclick="event.stopPropagation()">
+            Browse File
+            <input type="file" id="resume-file" accept=".pdf,.docx,.txt" onchange="handleResumeFile(this)"/>
+          </label>
+          <div class="dropzone-sub">Supports PDF, DOCX, TXT</div>
+          <div id="file-status"></div>
+        </div>
+        <div id="resume-paste-area" class="hidden">
+          <textarea id="resume-text" placeholder="Paste your resume or background experience here..."></textarea>
+        </div>
+      </div>
+      <!-- JD -->
+      <div class="setup-field">
+        <label>Job Description</label>
+        <textarea id="s-jd" style="height:224px" placeholder="Paste the full job description here...&#10;&#10;Include the role, responsibilities, requirements and company info."></textarea>
+      </div>
+    </div>
+
+    <button class="start-btn" onclick="startSession()">▶ Start Interview Session</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     SESSION SCREEN
+══════════════════════════════════════ -->
+<div id="session" class="sess-shell hidden">
+  <div class="sess-header">
+    <div class="sess-logo"><div class="sess-logo-icon">A</div>Ambore</div>
+    <div class="sess-meta">
+      <span class="sess-badge" id="sess-round">Interview</span>
+      <span class="sess-badge" id="sess-role"></span>
+    </div>
+    <div class="sess-right">
+      <div class="countdown" id="countdown" title="Elapsed time — no limit">00:00</div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <div class="mic-dot" id="mic-dot"></div>
+      </div>
+      <button class="btn-listen" id="btn-listen" onclick="toggleListen()">● Start Listening</button>
+      <button class="btn-screen" id="btn-screen" onclick="captureScreen()">📸 Analyze Screen</button>
+      <button class="btn-end" onclick="endSession(false)">End Session</button>
+    </div>
+  </div>
+
+  <div class="sess-body">
+    <!-- Top: Transcript -->
+    <div class="panel transcript-panel">
+      <div class="panel-title">🎙 Live Transcript</div>
+      <div id="transcript-body" class="transcript-body">
+        <div class="t-empty" id="t-empty">
+          Click <strong style="color:#fff">Start Listening</strong>, then switch to<br>
+          <strong style="color:var(--accent)">🎤 Interviewer</strong> mode when they speak.<br><br>
+          Questions are detected automatically.
+        </div>
+      </div>
+      <div class="interim-bar" id="interim-bar"></div>
+    </div>
+
+    <!-- Bottom: Answers -->
+    <div class="panel">
+      <div class="panel-title">
+        ✦ Ambore AI Answer
+        <span class="ai-status" id="ai-status"></span>
+      </div>
+      <div id="answers-body" class="answers-body">
+        <div class="a-empty" id="a-empty">
+          Answers appear here the instant a question is detected.<br><br>
+          You can also <strong style="color:#fff">type any question</strong> below and press Enter.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sess-bottom">
+    <button class="speaker-toggle iv" id="speaker-toggle" onclick="toggleSpeaker()">🎤 Interviewer</button>
+    <div class="manual-wrap">
+      <input class="manual-input" id="manual-q" placeholder="Type any question and press Enter..."/>
+      <button class="btn-send" onclick="handleManual()">→ Answer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     END MODAL
+══════════════════════════════════════ -->
+<div id="end-modal" class="end-overlay hidden">
+  <div class="end-modal">
+    <div class="end-icon" id="end-icon">✅</div>
+    <h2 id="end-title">Session Complete</h2>
+    <p id="end-msg">Your session has been saved.</p>
+    <div class="end-stats">
+      <div class="end-stat"><span class="end-val" id="end-duration">--:--</span><span class="end-lbl">Duration</span></div>
+      <div class="end-stat"><span class="end-val" id="end-questions">0</span><span class="end-lbl">Questions</span></div>
+      <div class="end-stat"><span class="end-val" id="end-round-stat">—</span><span class="end-lbl">Round</span></div>
+    </div>
+    <div class="end-actions">
+      <button class="btn-new" onclick="backToSetup()">New Session</button>
+      <button class="btn-home" onclick="window.location.href='index.html'">Home</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════
+   JSON DATABASE (localStorage)
+═══════════════════════════════════════════ */
+const DB = {
+  KEY: 'ambore_db',
+  _get() { return JSON.parse(localStorage.getItem(this.KEY) || '{"users":[],"sessions":[]}'); },
+  _save(d) { localStorage.setItem(this.KEY, JSON.stringify(d)); },
+  findUser(email) { return this._get().users.find(u => u.email === email.toLowerCase()); },
+  createUser(name, email, password) {
+    const db = this._get();
+    const user = { id: 'u' + Date.now(), name, email: email.toLowerCase(), password, createdAt: new Date().toISOString() };
+    db.users.push(user);
+    this._save(db);
+    return user;
+  },
+  saveSession(data) {
+    const db = this._get();
+    db.sessions.push({ id: 's' + Date.now(), ...data, savedAt: new Date().toISOString() });
+    this._save(db);
+  }
+};
+
+/* ═══════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════ */
+const Auth = {
+  getUser() {
+    const session = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+    if (!session) return null;
+    // Check token expiry (7 days)
+    if (session.expiresAt && Date.now() > session.expiresAt) {
+      localStorage.removeItem('ambore_user');
+      return null;
+    }
+    return session;
+  },
+  login(user) {
+    const session = {
+      id: user.id, name: user.name, email: user.email,
+      token: 'tok_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+      loginAt: Date.now(),
+      expiresAt: Date.now() + 7 * 24 * 60 * 60 * 1000 // 7 days
+    };
+    localStorage.setItem('ambore_user', JSON.stringify(session));
+  },
+  logout() { localStorage.removeItem('ambore_user'); }
+};
+
+function switchAuthTab(tab) {
+  document.querySelectorAll('.auth-tab').forEach((t,i) => t.classList.toggle('active', (i===0&&tab==='login')||(i===1&&tab==='signup')));
+  document.getElementById('panel-login').classList.toggle('active', tab==='login');
+  document.getElementById('panel-signup').classList.toggle('active', tab==='signup');
+}
+function showAuthErr(id, msg) {
+  const el = document.getElementById(id);
+  el.textContent = msg; el.classList.add('show');
+  setTimeout(() => el.classList.remove('show'), 4000);
+}
+function handleLogin() {
+  const email = document.getElementById('li-email').value.trim().toLowerCase();
+  const pass  = document.getElementById('li-pass').value;
+  if (!email || !pass) { showAuthErr('login-err', 'Please fill in all fields.'); return; }
+  const user = DB.findUser(email);
+  if (!user || user.password !== pass) { showAuthErr('login-err', 'Invalid email or password.'); return; }
+  Auth.login(user);
+  // Login on app.html → show setup screen (user came here to use the app)
+  showSetup();
+}
+function handleSignup() {
+  const name  = document.getElementById('su-name').value.trim();
+  const email = document.getElementById('su-email').value.trim();
+  const pass  = document.getElementById('su-pass').value;
+  const pass2 = document.getElementById('su-pass2').value;
+  if (!name) { showAuthErr('signup-err', 'Please enter your name.'); return; }
+  if (!email.includes('@')) { showAuthErr('signup-err', 'Enter a valid email.'); return; }
+  if (pass.length < 6) { showAuthErr('signup-err', 'Password must be at least 6 characters.'); return; }
+  if (pass !== pass2) { showAuthErr('signup-err', 'Passwords do not match.'); return; }
+  if (DB.findUser(email)) { showAuthErr('signup-err', 'User already registered.'); return; }
+  // Create account but do NOT auto-login
+  DB.createUser(name, email, pass);
+  // Show success and switch to login tab
+  showAuthErr('signup-err', ''); // clear any error
+  const successEl = document.getElementById('signup-err');
+  successEl.textContent = 'Account created! Please log in.';
+  successEl.style.color = '#22c55e';
+  successEl.style.background = 'rgba(34,197,94,0.08)';
+  successEl.style.borderColor = 'rgba(34,197,94,0.2)';
+  successEl.classList.add('show');
+  // Clear signup fields
+  document.getElementById('su-name').value = '';
+  document.getElementById('su-email').value = '';
+  document.getElementById('su-pass').value = '';
+  document.getElementById('su-pass2').value = '';
+  // Auto-switch to login tab after 1.5s
+  setTimeout(() => {
+    switchAuthTab('login');
+    successEl.classList.remove('show');
+    successEl.style.color = '';
+    successEl.style.background = '';
+    successEl.style.borderColor = '';
+  }, 1500);
+}
+function logout() {
+  Auth.logout();
+  // Redirect to login page
+  document.getElementById('session').classList.add('hidden');
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('auth').classList.remove('hidden');
+  // Clear any session state
+  if (typeof stopListen === 'function') try { stopListen(); } catch(e) {}
+  if (typeof countdownInt !== 'undefined') clearInterval(countdownInt);
+}
+
+/* ═══════════════════════════════════════════
+   SETUP SCREEN
+═══════════════════════════════════════════ */
+let resumeText = '';
+let resumeMode = 'upload';
+
+function showSetup() {
+  const user = Auth.getUser();
+  if (!user) {
+    // No login — always go back to auth screen
+    document.getElementById('session').classList.add('hidden');
+    document.getElementById('setup').classList.add('hidden');
+    document.getElementById('auth').classList.remove('hidden');
+    return;
+  }
+  document.getElementById('user-display').textContent = '👋 ' + user.name.split(' ')[0];
+  document.getElementById('auth').classList.add('hidden');
+  document.getElementById('session').classList.add('hidden');
+  document.getElementById('setup').classList.remove('hidden');
+  // Restore saved JD/resume
+  const savedJD = localStorage.getItem('ambore_jd');
+  const savedResume = localStorage.getItem('ambore_resume_text');
+  if (savedJD) document.getElementById('s-jd').value = savedJD;
+  if (savedResume) { resumeText = savedResume; setResumeMode('paste'); document.getElementById('resume-text').value = savedResume; }
+}
+
+function setResumeMode(mode) {
+  resumeMode = mode;
+  document.getElementById('rtab-upload').classList.toggle('active', mode==='upload');
+  document.getElementById('rtab-paste').classList.toggle('active', mode==='paste');
+  document.getElementById('resume-upload-area').classList.toggle('hidden', mode==='paste');
+  document.getElementById('resume-paste-area').classList.toggle('hidden', mode==='upload');
+}
+
+// Drag & drop
+function dragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function dragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function dropFile(e) {
+  e.preventDefault(); e.currentTarget.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) processResumeFile(file);
+}
+function handleResumeFile(input) { if (input.files[0]) processResumeFile(input.files[0]); }
+
+async function processResumeFile(file) {
+  const statusEl = document.getElementById('file-status');
+  statusEl.className = 'file-status'; statusEl.textContent = '⏳ Reading file...';
+  try {
+    const ext = file.name.split('.').pop().toLowerCase();
+    let text = '';
+    if (ext === 'txt') {
+      text = await new Promise((res, rej) => { const r=new FileReader(); r.onload=e=>res(e.target.result); r.onerror=rej; r.readAsText(file); });
+    } else if (ext === 'pdf') {
+      if (typeof pdfjsLib === 'undefined') throw new Error('PDF reader not loaded. Try pasting text.');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+      const ab = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: ab }).promise;
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const content = await page.getTextContent();
+        text += content.items.map(it => it.str).join(' ') + '\n';
+      }
+    } else if (ext === 'docx') {
+      if (typeof mammoth === 'undefined') throw new Error('DOCX reader not loaded. Try pasting text.');
+      const ab = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer: ab });
+      text = result.value;
+    } else {
+      throw new Error('Unsupported format. Use PDF, DOCX or TXT.');
+    }
+    resumeText = text.trim();
+    localStorage.setItem('ambore_resume_text', resumeText);
+    statusEl.className = 'file-status ok';
+    statusEl.textContent = `✓ ${file.name} — ${resumeText.length} characters read`;
+  } catch (err) {
+    statusEl.className = 'file-status err';
+    statusEl.textContent = '⚠️ ' + err.message;
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SESSION CONFIG
+═══════════════════════════════════════════ */
+const cfg = { jd:'', resume:'', role:'', company:'', round:'' };
+const CLAUDE_KEY = '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';
+const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+let isListening = false, speakerIsIV = true;
+let recognition = null, silenceTimer = null;
+let elapsedSecs = 0;
+let countdownInt = null;
+let isGenerating = false;
+let questionQueue = [];
+let cardCount = 0;
+let sessionStart = null;
+
+function startSession() {
+  cfg.role    = document.getElementById('s-role').value.trim();
+  cfg.company = document.getElementById('s-company').value.trim();
+  cfg.round   = document.getElementById('s-round').value;
+  cfg.jd      = document.getElementById('s-jd').value.trim();
+  cfg.resume  = resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText;
+
+  if (!cfg.role)    { alert('Please enter the Job Role.'); return; }
+  if (!cfg.company) { alert('Please enter the Company Name.'); return; }
+  if (!cfg.round)   { alert('Please select the Interview Round.'); return; }
+  if (!cfg.jd)      { alert('Please paste the Job Description.'); return; }
+  if (!cfg.resume)  { alert('Please upload your resume or paste your background.'); return; }
+
+  localStorage.setItem('ambore_jd', cfg.jd);
+
+  // Update header
+  document.getElementById('sess-round').textContent = cfg.round.split('—')[0].trim();
+  document.getElementById('sess-role').textContent = cfg.role + (cfg.company ? ' @ ' + cfg.company : '');
+
+  // Show session
+  document.getElementById('setup').classList.add('hidden');
+  document.getElementById('session').classList.remove('hidden');
+
+  // Reset state
+  elapsedSecs = 0;
+  cardCount = 0;
+  isGenerating = false;
+  questionQueue = [];
+  sessionStart = new Date();
+  document.getElementById('answers-body').innerHTML = '<div class="a-empty" id="a-empty">Answers appear here the instant a question is detected.<br><br>You can also <strong style="color:#fff">type any question</strong> below and press Enter.</div>';
+  document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong>, then switch to<br><strong style="color:var(--accent)">🎤 Interviewer</strong> mode when they speak.<br><br>Questions are detected automatically.</div>';
+
+  startCountdown();
+  initSpeech();
+  startListen();
+}
+
+/* ═══════════════════════════════════════════
+   ELAPSED TIMER (no session limit — unlimited)
+═══════════════════════════════════════════ */
+function startCountdown() {
+  updateCountdownDisplay();
+  countdownInt = setInterval(() => {
+    elapsedSecs++;
+    updateCountdownDisplay();
+  }, 1000);
+}
+function updateCountdownDisplay() {
+  const el = document.getElementById('countdown');
+  const h = Math.floor(elapsedSecs / 3600);
+  const m = Math.floor((elapsedSecs % 3600) / 60).toString().padStart(2,'0');
+  const s = (elapsedSecs % 60).toString().padStart(2,'0');
+  el.textContent = h > 0 ? `${h}:${m}:${s}` : `${m}:${s}`;
+  el.className = 'countdown';
+}
+
+/* ═══════════════════════════════════════════
+   END SESSION
+═══════════════════════════════════════════ */
+function endSession(timeUp) {
+  stopListen();
+  clearInterval(countdownInt);
+  const durationSec = elapsedSecs;
+  const m = Math.floor(durationSec/60).toString().padStart(2,'0');
+  const s = (durationSec%60).toString().padStart(2,'0');
+
+  // Save to DB
+  const user = Auth.getUser();
+  if (user) {
+    DB.saveSession({
+      userId: user.id,
+      role: cfg.role,
+      company: cfg.company,
+      round: cfg.round,
+      duration: durationSec,
+      questionsCount: cardCount
+    });
+  }
+
+  // Show end modal
+  document.getElementById('end-icon').textContent = '✅';
+  document.getElementById('end-title').textContent = 'Session Complete';
+  document.getElementById('end-msg').textContent = 'Great job! Your session has been saved.';
+  document.getElementById('end-duration').textContent = m + ':' + s;
+  document.getElementById('end-questions').textContent = cardCount;
+  document.getElementById('end-round-stat').textContent = cfg.round.split('—')[0].trim().split(' ')[0];
+  document.getElementById('end-modal').classList.remove('hidden');
+}
+function backToSetup() {
+  document.getElementById('end-modal').classList.add('hidden');
+  document.getElementById('session').classList.add('hidden');
+  showSetup();
+}
+
+/* ═══════════════════════════════════════════
+   ROUND TYPE DETECTION
+═══════════════════════════════════════════ */
+function getRoundType() {
+  const r = cfg.round.toLowerCase();
+  if (r.includes('coding') || r.includes('4th')) return 'coding';
+  if (r.includes('system design') || r.includes('5th')) return 'system-design';
+  if (r.includes('technical') || r.includes('2nd') || r.includes('3rd')) return 'technical';
+  // HR, Managerial, Behavioral, Executive → STAR
+  return 'behavioral';
+}
+
+/* ═══════════════════════════════════════════
+   SYSTEM PROMPT
+═══════════════════════════════════════════ */
+function buildSystemPrompt() {
+  const base = `CANDIDATE RESUME:\n${cfg.resume}\n\nJOB DESCRIPTION:\n${cfg.jd}\n\nROLE: ${cfg.role} at ${cfg.company}\nINTERVIEW ROUND: ${cfg.round}`;
+  const noFiller = `ABSOLUTE RULES:\n1. NEVER refuse to answer\n2. NEVER ask for clarification\n3. NEVER say "I need more context" or "Could you rephrase"\n4. NEVER say "I appreciate you testing" or use fillers like "Great question", "Certainly"\n5. If the question is short or unclear, make a reasonable assumption and answer directly`;
+
+  const type = getRoundType();
+
+  if (type === 'behavioral') {
+    return `You are Ambore AI — an elite interview coach giving LIVE real-time STAR-format behavioral answers.
+
+${base}
+
+${noFiller}
+6. ALWAYS start directly with "SITUATION:"
+
+MANDATORY FORMAT — use exactly these 4 labels:
+
+SITUATION: [1-2 sentences: when/where, using real resume details]
+TASK: [1 sentence: the specific challenge or responsibility]
+ACTION: [2-3 sentences: exactly what YOU did, using "I" statements]
+RESULT: [1-2 sentences: measurable outcome and relevance to ${cfg.company}]
+
+- Use REAL details from the resume — never invent facts
+- Confident, natural spoken English — complete sentences, no bullets
+- Keep total under 200 words`;
+  }
+
+  if (type === 'technical') {
+    return `You are Ambore AI — a senior technical interview coach giving LIVE real-time technical answers.
+
+${base}
+
+${noFiller}
+6. Answer the technical question directly and clearly
+7. Use the candidate's resume background to frame the answer where relevant
+
+MANDATORY FORMAT — use exactly these labels:
+
+CONCEPT: [1-2 sentences explaining what this concept/technology is]
+HOW IT WORKS: [2-4 sentences explaining the mechanism, process, or approach]
+EXAMPLE: [A concrete example, code snippet, or real-world analogy — use \`\`\` for code blocks]
+TRADE-OFFS: [1-2 sentences on pros/cons, when to use/not use it]
+
+- Be precise and technically correct — this is a technical round
+- Use code snippets where helpful
+- Keep total under 250 words`;
+  }
+
+  if (type === 'coding') {
+    return `You are Ambore AI — an expert competitive programmer giving LIVE real-time coding round answers.
+
+${base}
+
+${noFiller}
+6. Answer with a working solution to the coding problem
+7. Always include time and space complexity
+
+MANDATORY FORMAT — use exactly these labels:
+
+APPROACH: [1-2 sentences: which algorithm/pattern and why]
+CODE:
+\`\`\`
+[Write clean, working code with comments on key steps]
+\`\`\`
+COMPLEXITY: [Time: O(??) — Space: O(??) — brief explanation]
+EDGE CASES: [1-2 sentences: what edge cases to handle]
+
+- Write correct, efficient code — optimize after getting a working solution
+- Use the language most relevant to the job description (default: Python if unspecified)
+- Keep explanation concise — let the code speak`;
+  }
+
+  if (type === 'system-design') {
+    return `You are Ambore AI — a principal engineer giving LIVE real-time system design interview answers.
+
+${base}
+
+${noFiller}
+6. Walk through the design step by step
+7. Show depth in at least one component
+
+MANDATORY FORMAT — use exactly these labels:
+
+REQUIREMENTS: [Clarify functional and non-functional requirements assumed]
+HIGH-LEVEL DESIGN: [2-3 sentences describing major components and data flow]
+KEY COMPONENTS: [Bullet each major service/component with its role]
+DATA & SCALE: [Database choice, schema hints, estimated scale]
+TRADE-OFFS: [1-2 sentences on design decisions made and alternatives]
+
+- Think at scale (millions of users) unless stated otherwise
+- Mention real technologies (Kafka, Redis, S3, PostgreSQL, etc.)
+- Keep total under 300 words`;
+  }
+
+  // fallback
+  return buildSystemPrompt();
+}
+
+/* ═══════════════════════════════════════════
+   STREAM ANSWER — INTERVIEW QUESTION
+═══════════════════════════════════════════ */
+async function streamAnswer(question) {
+  if (isGenerating) return;
+  isGenerating = true;
+  // Safety: always unlock after 45s even if something goes wrong
+  const safetyTimer = setTimeout(() => { isGenerating = false; drainQueue(); }, 90000);
+  cardCount++;
+  setStatus('thinking', '⏳ Thinking...');
+  document.getElementById('a-empty')?.remove();
+
+  const roundType = getRoundType();
+  const badgeLabels = { behavioral:'✦ STAR', technical:'⚙ Technical', coding:'💻 Coding', 'system-design':'🏗 System Design' };
+  const roundBadge = badgeLabels[roundType] || '✦ Ambore AI';
+  const maxTok = (roundType === 'coding' || roundType === 'system-design') ? 900 : 500;
+
+  const id = 'card-' + cardCount;
+  const card = document.createElement('div');
+  card.className = 'ans-card'; card.id = id;
+  const qShort = question.length > 80 ? question.slice(0,80)+'…' : question;
+  const qEscaped = question.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
+  card.innerHTML = `
+    <div class="ans-card-head">
+      <div class="ans-q-label">"${qShort}"</div>
+      <div class="ans-badge">${roundBadge}</div>
+    </div>
+    <div class="streaming-text" id="txt-${id}"><span class="cursor"></span></div>
+    <div class="ans-actions">
+      <button class="act" onclick="copyCard('${id}')">📋 Copy</button>
+      <button class="act" onclick="regenCard('${id}','${qEscaped}')">↻ Regen</button>
+    </div>`;
+
+  const body = document.getElementById('answers-body');
+  body.appendChild(card);
+  body.scrollTop = body.scrollHeight;
+  const textDiv = document.getElementById('txt-' + id);
+  let fullText = '';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL, max_tokens: maxTok, stream: true,
+        system: buildSystemPrompt(),
+        messages:[{ role:'user', content: `Interview question: "${question}"` }]
+      })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
+
+    setStatus('thinking','✦ Writing...');
+    const reader = res.body.getReader(), decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read(); if (done) break;
+      buf += decoder.decode(value,{stream:true});
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data==='[DONE]') continue;
+        try {
+          const p = JSON.parse(data);
+          if (p.type==='content_block_delta' && p.delta?.text) {
+            fullText += p.delta.text;
+            // Show streaming text with cursor (render bold markdown)
+            const streamed = fullText.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+            textDiv.innerHTML = streamed.split(/\n\n+/).filter(Boolean).map(para=>`<p>${para.replace(/\n/g,'<br>')}</p>`).join('') + '<span class="cursor"></span>';
+            body.scrollTop = body.scrollHeight;
+          }
+        } catch(e) {}
+      }
+    }
+    // Render final answer using round-appropriate renderer
+    textDiv.innerHTML = '';
+    textDiv.className = '';
+    const rt = getRoundType();
+    if (rt === 'behavioral') {
+      renderSTAR(textDiv, fullText);
+    } else {
+      renderTechnical(textDiv, fullText, rt);
+    }
+    body.scrollTop = body.scrollHeight;
+    setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
+  } catch(err) {
+    textDiv.innerHTML = `<p style="color:var(--red);font-size:0.83rem;padding:12px 14px">⚠️ Error: ${err.message}<br><br><small style="opacity:0.6">Check internet connection or try the text box below.</small></p>`;
+    setStatus('',''); console.error('Ambore AI error:',err);
+    showToast('⚠️ AI error: ' + err.message);
+  } finally {
+    clearTimeout(safetyTimer);
+    isGenerating = false;
+    drainQueue(); // process next queued question immediately
+  }
+}
+
+/* ═══════════════════════════════════════════
+   STAR PARSER & RENDERER
+═══════════════════════════════════════════ */
+function renderSTAR(container, text) {
+  const S = text.match(/SITUATION:\s*([\s\S]*?)(?=\nTASK:|$)/i);
+  const T = text.match(/TASK:\s*([\s\S]*?)(?=\nACTION:|$)/i);
+  const A = text.match(/ACTION:\s*([\s\S]*?)(?=\nRESULT:|$)/i);
+  const R = text.match(/RESULT:\s*([\s\S]*?)$/i);
+
+  if (S && T && A && R) {
+    container.className = 'star-para-wrap';
+    [
+      { cls:'s', label:'S', text:S[1].trim() },
+      { cls:'t', label:'T', text:T[1].trim() },
+      { cls:'a', label:'A', text:A[1].trim() },
+      { cls:'r', label:'R', text:R[1].trim() }
+    ].forEach(sec => {
+      const p = document.createElement('p');
+      const rendered = sec.text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n+/g,' ');
+      p.innerHTML = `<span class="sp-tag ${sec.cls}">${sec.label}</span><span>${rendered}</span>`;
+      container.appendChild(p);
+    });
+  } else {
+    // Fallback: plain paragraphs with bold markdown
+    container.className = 'streaming-text';
+    container.innerHTML = text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,' ')}</p>`).join('');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   TECHNICAL / CODING / SYSTEM-DESIGN RENDERER
+═══════════════════════════════════════════ */
+function renderTechnical(container, text, roundType) {
+  // Define section labels per round type
+  const labelSets = {
+    'technical':     ['CONCEPT','HOW IT WORKS','EXAMPLE','TRADE-OFFS'],
+    'coding':        ['APPROACH','CODE','COMPLEXITY','EDGE CASES'],
+    'system-design': ['REQUIREMENTS','HIGH-LEVEL DESIGN','KEY COMPONENTS','DATA & SCALE','TRADE-OFFS']
+  };
+  const labels = labelSets[roundType] || labelSets['technical'];
+
+  // Tag colors for technical sections
+  const tagColors = {
+    'CONCEPT':          { bg:'rgba(79,70,229,0.22)',  color:'#818CF8' },
+    'HOW IT WORKS':     { bg:'rgba(251,191,36,0.18)', color:'#fbbf24' },
+    'EXAMPLE':          { bg:'rgba(124,58,237,0.22)', color:'#a78bfa' },
+    'TRADE-OFFS':       { bg:'rgba(34,197,94,0.18)',  color:'#22c55e' },
+    'APPROACH':         { bg:'rgba(79,70,229,0.22)',  color:'#818CF8' },
+    'CODE':             { bg:'rgba(14,165,233,0.18)', color:'#38bdf8' },
+    'COMPLEXITY':       { bg:'rgba(251,191,36,0.18)', color:'#fbbf24' },
+    'EDGE CASES':       { bg:'rgba(239,68,68,0.18)',  color:'#f87171' },
+    'REQUIREMENTS':     { bg:'rgba(79,70,229,0.22)',  color:'#818CF8' },
+    'HIGH-LEVEL DESIGN':{ bg:'rgba(251,191,36,0.18)', color:'#fbbf24' },
+    'KEY COMPONENTS':   { bg:'rgba(124,58,237,0.22)', color:'#a78bfa' },
+    'DATA & SCALE':     { bg:'rgba(14,165,233,0.18)', color:'#38bdf8' }
+  };
+
+  // Build regex to split on any known label
+  const escapedLabels = labels.map(l => l.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+  const splitRe = new RegExp(`(${escapedLabels.join('|')}):\\s*`, 'i');
+  const parts = text.split(splitRe).filter(s => s.trim());
+
+  container.className = 'star-para-wrap';
+  let i = 0;
+  while (i < parts.length) {
+    const matchedLabel = labels.find(l => parts[i].trim().toUpperCase() === l.toUpperCase());
+    if (matchedLabel && i + 1 < parts.length) {
+      const sectionText = parts[i + 1].trim();
+      const colors = tagColors[matchedLabel] || { bg:'rgba(79,70,229,0.22)', color:'#818CF8' };
+
+      // Check if section contains a code block
+      const codeMatch = sectionText.match(/```(?:\w+)?\n?([\s\S]*?)```/);
+      if (codeMatch) {
+        // Label header
+        const header = document.createElement('p');
+        header.innerHTML = `<span class="sp-tag" style="background:${colors.bg};color:${colors.color}">${matchedLabel}</span>`;
+        container.appendChild(header);
+        // Code block
+        const pre = document.createElement('pre');
+        pre.className = 'code-block';
+        pre.textContent = codeMatch[1].trim();
+        container.appendChild(pre);
+        // Any text before/after the code block
+        const before = sectionText.slice(0, sectionText.indexOf('```')).trim();
+        const after = sectionText.slice(sectionText.lastIndexOf('```') + 3).trim();
+        if (before) {
+          const p = document.createElement('p');
+          p.innerHTML = `<span style="margin-left:4px">${before.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')}</span>`;
+          container.insertBefore(p, pre);
+        }
+        if (after) {
+          const p = document.createElement('p');
+          p.style.marginLeft = '4px';
+          p.innerHTML = after.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+          container.appendChild(p);
+        }
+      } else {
+        // Bullet list or plain paragraph
+        const p = document.createElement('p');
+        const rendered = sectionText
+          .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
+          .replace(/^[-•]\s+/gm,'• ');
+        p.innerHTML = `<span class="sp-tag" style="background:${colors.bg};color:${colors.color}">${matchedLabel}</span><span>${rendered.replace(/\n/g,'<br>')}</span>`;
+        container.appendChild(p);
+      }
+      i += 2;
+    } else {
+      // Orphan text — render as plain paragraph
+      if (parts[i].trim()) {
+        const p = document.createElement('p');
+        p.innerHTML = parts[i].trim().replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+        container.appendChild(p);
+      }
+      i++;
+    }
+  }
+
+  // Fallback if nothing was parsed
+  if (!container.children.length) {
+    container.className = 'streaming-text';
+    container.innerHTML = text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   SCREEN CAPTURE + CODING ANALYSIS
+═══════════════════════════════════════════ */
+async function captureScreen() {
+  const btn = document.getElementById('btn-screen');
+  btn.textContent = '⏳ Capturing...'; btn.disabled = true;
+  try {
+    const stream = await navigator.mediaDevices.getDisplayMedia({ video:true, audio:false });
+    const video = document.createElement('video');
+    video.srcObject = stream; video.muted = true;
+    await new Promise(res => { video.onloadedmetadata = () => { video.play(); res(); }; });
+    await new Promise(res => requestAnimationFrame(res));
+    const canvas = document.createElement('canvas');
+    const scale = Math.min(1, 1280 / video.videoWidth);
+    canvas.width = video.videoWidth * scale;
+    canvas.height = video.videoHeight * scale;
+    canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+    stream.getTracks().forEach(t => t.stop());
+    const base64 = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
+    await streamCodeAnswer(base64);
+  } catch(e) {
+    showToast('Screen capture cancelled or denied.');
+  }
+  btn.textContent = '📸 Analyze Screen'; btn.disabled = false;
+}
+
+async function streamCodeAnswer(base64) {
+  if (isGenerating) return;
+  isGenerating = true;
+  cardCount++;
+  setStatus('thinking','🖥 Analyzing screen...');
+  document.getElementById('a-empty')?.remove();
+
+  const id = 'card-' + cardCount;
+  const card = document.createElement('div');
+  card.className = 'ans-card'; card.id = id;
+  card.innerHTML = `
+    <div class="ans-card-head">
+      <div class="ans-q-label">📸 Screen Analysis — Coding Problem</div>
+      <div class="ans-badge">🖥 Ambore AI</div>
+    </div>
+    <div class="code-answer" id="txt-${id}"><span class="cursor"></span></div>
+    <div class="ans-actions"><button class="act" onclick="copyCard('${id}')">📋 Copy</button></div>`;
+
+  const body = document.getElementById('answers-body');
+  body.appendChild(card);
+  body.scrollTop = body.scrollHeight;
+  const textDiv = document.getElementById('txt-'+id);
+  let fullText = '';
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key':CLAUDE_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL, max_tokens:1200, stream:true,
+        messages:[{ role:'user', content:[
+          { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:base64 }},
+          { type:'text', text:`You are Ambore AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
+        ]}]
+      })
+    });
+    if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    setStatus('thinking','🖥 Solving...');
+    const reader=res.body.getReader(), decoder=new TextDecoder(); let buf='';
+    while(true){
+      const{done,value}=await reader.read(); if(done)break;
+      buf+=decoder.decode(value,{stream:true});
+      const lines=buf.split('\n'); buf=lines.pop();
+      for(const line of lines){
+        if(!line.startsWith('data: '))continue;
+        const data=line.slice(6).trim();
+        if(!data||data==='[DONE]')continue;
+        try{
+          const p=JSON.parse(data);
+          if(p.type==='content_block_delta'&&p.delta?.text){
+            fullText+=p.delta.text;
+            textDiv.innerHTML=formatCodeText(fullText)+'<span class="cursor"></span>';
+            body.scrollTop=body.scrollHeight;
+          }
+        }catch(e){}
+      }
+    }
+    textDiv.innerHTML = formatCodeText(fullText);
+    body.scrollTop = body.scrollHeight;
+    setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
+  } catch(err){
+    textDiv.innerHTML=`<p style="color:var(--red)">⚠️ ${err.message}</p>`;
+    setStatus('','');
+  }
+  isGenerating=false;
+  drainQueue();
+}
+
+function formatCodeText(text) {
+  return text
+    .replace(/```[\w]*\n?([\s\S]*?)```/g, (_,code) => `<div class="code-block">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`)
+    .replace(/\*\*([^*\n]+)\*\*/g,'<strong style="color:var(--accent)">$1</strong>')
+    .split(/\n\n+/).filter(Boolean)
+    .map(p=>p.startsWith('<div class="code-block">')?p:`<p>${p.replace(/\n/g,'<br>')}</p>`)
+    .join('');
+}
+
+/* ═══════════════════════════════════════════
+   CARD ACTIONS
+═══════════════════════════════════════════ */
+function setStatus(type,text){
+  const el=document.getElementById('ai-status');
+  el.className='ai-status'+(type?' show '+type:'');
+  el.textContent=text;
+}
+function copyCard(id){
+  const div=document.getElementById('txt-'+id);
+  if(!div)return;
+  navigator.clipboard.writeText(div.innerText.trim()).then(()=>{
+    const btn=document.querySelector(`#${id} .act`);
+    if(!btn)return;
+    btn.textContent='✓ Copied!'; btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent='📋 Copy'; btn.classList.remove('copied'); },2000);
+  });
+}
+function regenCard(id,question){
+  document.getElementById(id)?.remove();
+  cardCount--;
+  // If currently generating, clear the queue and start fresh with this regen
+  if (isGenerating) {
+    questionQueue = [];
+    isGenerating = false;
+  }
+  streamAnswer(question);
+}
+
+/* ═══════════════════════════════════════════
+   QUESTION QUEUE — never drop a detected question
+═══════════════════════════════════════════ */
+function enqueueQuestion(q) {
+  if (isGenerating) {
+    questionQueue.push(q);
+    showToast(`⏳ Queued — AI is answering (${questionQueue.length} waiting)`);
+  } else {
+    streamAnswer(q);
+  }
+}
+function drainQueue() {
+  if (questionQueue.length > 0) {
+    const next = questionQueue.shift();
+    streamAnswer(next);
+  }
+}
+
+/* ═══════════════════════════════════════════
+   QUESTION DETECTION
+═══════════════════════════════════════════ */
+function isQuestion(txt){
+  // Only trigger for speech that is at least 4 words (avoids single words / noise)
+  const words = txt.trim().split(/\s+/).filter(Boolean);
+  return words.length >= 4;
+}
+
+/* ═══════════════════════════════════════════
+   SPEECH RECOGNITION — professional grade
+═══════════════════════════════════════════ */
+// Noise/filler words that should never trigger answers on their own
+const NOISE_WORDS = new Set(['um','uh','hmm','yeah','okay','ok','so','like','well','right','sure','you know','alright','ah','er']);
+
+function bestTranscript(result) {
+  // Pick alternative with highest confidence across all alternatives
+  let best = '', bestConf = -1;
+  for (let i = 0; i < result.length; i++) {
+    const alt = result[i];
+    if (alt.confidence > bestConf) { bestConf = alt.confidence; best = alt.transcript; }
+  }
+  return best.trim();
+}
+
+function cleanTranscript(text) {
+  // Remove leading/trailing noise words that are common mic artifacts
+  return text
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function isQuestion(txt){
+  const words = txt.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 4) return false;
+  // Filter out pure noise (all words are noise/filler)
+  const meaningful = words.filter(w => !NOISE_WORDS.has(w.toLowerCase().replace(/[^a-z]/g,'')));
+  return meaningful.length >= 3;
+}
+
+let speechErrorCount = 0;
+let speechRestartTimer = null;
+
+function initSpeech(){
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(!SR){ showToast('Voice needs Chrome or Edge. Use the text box to type questions.'); return; }
+
+  if (recognition) { try { recognition.stop(); } catch(e){} recognition = null; }
+
+  recognition = new SR();
+  recognition.continuous    = true;
+  recognition.interimResults= true;
+  recognition.lang          = 'en-US';
+  recognition.maxAlternatives = 3;  // Get top-3 interpretations, pick best
+
+  let buf = '';
+  let interimBuf = '';
+
+  recognition.onresult = e => {
+    interimBuf = '';
+    let finalAdded = false;
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      const result = e.results[i];
+      if (result.isFinal) {
+        const text = bestTranscript(result);
+        if (text) { buf += ' ' + text; finalAdded = true; }
+      } else {
+        interimBuf += bestTranscript(result) + ' ';
+      }
+    }
+    // Show live interim text
+    const bar = document.getElementById('interim-bar');
+    if (bar) bar.textContent = interimBuf.trim();
+
+    if (finalAdded) {
+      speechErrorCount = 0; // reset error streak on successful speech
+      clearTimeout(silenceTimer);
+      // 2500ms silence — enough for full interviewer sentences
+      silenceTimer = setTimeout(() => {
+        const text = cleanTranscript(buf); buf = '';
+        if (bar) bar.textContent = '';
+        if (text.length < 6) return; // too short — discard noise
+        const isQ = speakerIsIV && isQuestion(text);
+        addMsg(text, isQ);
+        if (isQ) enqueueQuestion(text); // queue — never drops
+      }, 2500);
+    }
+  };
+
+  recognition.onerror = e => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed') {
+      showToast('⚠️ Mic access denied. Allow microphone in Chrome settings.');
+      stopListen(); return;
+    }
+    if (e.error === 'no-speech') return; // normal — just silence, ignore
+    // For network/aborted/audio-capture errors: auto-restart after a short delay
+    speechErrorCount++;
+    if (speechErrorCount > 5) {
+      showToast('⚠️ Voice recognition lost. Click "Start Listening" to reconnect.');
+      stopListen(); return;
+    }
+  };
+
+  recognition.onend = () => {
+    if (!isListening) return;
+    // Auto-restart — critical for continuous listening
+    clearTimeout(speechRestartTimer);
+    speechRestartTimer = setTimeout(() => {
+      if (isListening) {
+        try { recognition.start(); } catch(e) { /* already started */ }
+      }
+    }, 150);
+  };
+}
+function startListen(){
+  speechErrorCount = 0; // reset error streak
+  initSpeech();         // always re-init for a clean start
+  isListening = true;
+  try{ recognition?.start(); }catch(e){}
+  document.getElementById('btn-listen').textContent='⏹ Stop Listening';
+  document.getElementById('mic-dot').classList.add('live');
+}
+function stopListen(){
+  isListening = false;
+  clearTimeout(speechRestartTimer);
+  clearTimeout(silenceTimer);
+  try{ recognition?.stop(); }catch(e){}
+  const bar = document.getElementById('interim-bar');
+  if (bar) bar.textContent = '';
+  document.getElementById('btn-listen').textContent='● Start Listening';
+  document.getElementById('mic-dot').classList.remove('live');
+}
+function toggleListen(){ isListening?stopListen():startListen(); }
+
+/* ═══════════════════════════════════════════
+   SPEAKER TOGGLE
+═══════════════════════════════════════════ */
+function toggleSpeaker(){
+  speakerIsIV=!speakerIsIV;
+  const btn=document.getElementById('speaker-toggle');
+  btn.textContent=speakerIsIV?'🎤 Interviewer':'🙋 Me (talking)';
+  btn.className='speaker-toggle'+(speakerIsIV?' iv':'');
+}
+
+/* ═══════════════════════════════════════════
+   TRANSCRIPT
+═══════════════════════════════════════════ */
+function addMsg(text,isQ){
+  const body=document.getElementById('transcript-body');
+  document.getElementById('t-empty')?.remove();
+  const who=speakerIsIV?'them':'me';
+  const whoLabel=speakerIsIV?'Interviewer':'You';
+  const row=document.createElement('div'); row.className='chat-row';
+  const textEscaped=text.replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/\n/g,' ');
+  row.innerHTML=`
+    <div class="chat-av ${who}">${who==='them'?'IV':'ME'}</div>
+    <div class="chat-body">
+      ${isQ?'<div class="q-chip">Question detected</div>':''}
+      <div class="chat-who">${whoLabel}</div>
+      <div class="chat-bubble ${who} ${isQ?'q-detected':''}">${text}</div>
+      ${who==='them'?`<button class="act" style="margin-top:5px;font-size:0.7rem" onclick="enqueueQuestion('${textEscaped}')">↻ Answer This</button>`:''}
+    </div>`;
+  body.appendChild(row);
+  body.scrollTop=body.scrollHeight;
+}
+
+/* ═══════════════════════════════════════════
+   MANUAL INPUT
+═══════════════════════════════════════════ */
+function handleManual(){
+  const input=document.getElementById('manual-q');
+  const text=input.value.trim(); if(!text)return;
+  addMsg(text,true); input.value=''; input.focus();
+  enqueueQuestion(text); // queue so manual questions don't get dropped either
+}
+document.getElementById('manual-q').addEventListener('keydown',e=>{ if(e.key==='Enter')handleManual(); });
+
+/* ═══════════════════════════════════════════
+   TOAST
+═══════════════════════════════════════════ */
+function showToast(msg){
+  const t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:65px;left:50%;transform:translateX(-50%);background:#1a1a30;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:10px 20px;border-radius:10px;font-size:0.82rem;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,0.5);max-width:90vw;text-align:center;';
+  t.textContent=msg; document.body.appendChild(t);
+  setTimeout(()=>t.remove(),5000);
+}
+
+/* ═══════════════════════════════════════════
+   BOOT — AUTH GUARD
+═══════════════════════════════════════════ */
+window.addEventListener('load', () => {
+  const user = Auth.getUser();
+  if (user) {
+    // Logged in → show setup screen, skip auth
+    showSetup();
+  }
+  // Not logged in → auth screen already visible by default
+});
+</script>
+</body>
+</html>
