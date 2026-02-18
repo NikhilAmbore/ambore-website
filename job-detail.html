@@ -212,7 +212,7 @@ function renderJob(job) {
       <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source)}</div></div>
     </div>
 
-    ${job.apply_url ? `<a href="${esc(job.apply_url)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>` : ''}
+    <a href="${getApplyUrl(job)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>
 
     ${skillsHtml}
 
@@ -224,19 +224,24 @@ function renderJob(job) {
     <div class="source-badge">Source: ${esc(job.source)} &middot; Job ID: ${job.id}</div>
   `;
 
-  // Populate sticky apply bar
+  // Populate sticky apply bar — always show
   const stickyBar = document.getElementById('apply-sticky');
-  if (job.apply_url) {
-    stickyBar.innerHTML = `
-      <div class="apply-sticky-inner">
-        <div class="apply-sticky-info">
-          <div class="apply-sticky-title">${esc(job.title)}</div>
-          <div class="apply-sticky-company">${esc(job.company)}</div>
-        </div>
-        <a href="${esc(job.apply_url)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
-      </div>`;
-    stickyBar.classList.add('visible');
-  }
+  stickyBar.innerHTML = `
+    <div class="apply-sticky-inner">
+      <div class="apply-sticky-info">
+        <div class="apply-sticky-title">${esc(job.title)}</div>
+        <div class="apply-sticky-company">${esc(job.company)}</div>
+      </div>
+      <a href="${getApplyUrl(job)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
+    </div>`;
+  stickyBar.classList.add('visible');
+}
+
+function getApplyUrl(job) {
+  if (job.apply_url) return esc(job.apply_url);
+  // No direct apply link — generate a Google search to find the application page
+  const query = encodeURIComponent(`${job.title} ${job.company} apply`);
+  return `https://www.google.com/search?q=${query}`;
 }
 
 function esc(str) {
