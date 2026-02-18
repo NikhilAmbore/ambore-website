@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ambore — AI Interview Co-Pilot</title>
-<meta name="description" content="Ambore listens in real time and gives you instant STAR-format answers during interviews. Land your dream job."/>
+<title>Ambore — AI Career Platform</title>
+<meta name="description" content="Ambore: Your all-in-one AI career platform. Real-time interview co-pilot, AI resume tailoring, and 1,000+ tech job listings updated daily across the USA."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -226,6 +226,65 @@ section{position:relative;padding:120px 0;overflow:hidden}
 .feat-title{font-family:'Syne',sans-serif;font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.01em}
 .feat-desc{font-size:0.88rem;color:var(--off);line-height:1.7;font-weight:400}
 
+/* ── PRODUCT CARDS ── */
+.products-row{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:24px;
+  margin-top:72px;
+}
+@media(max-width:960px){.products-row{grid-template-columns:1fr}}
+.product-card{
+  padding:36px 32px;
+  background:#050508;border:1px solid var(--border);border-radius:20px;
+  display:flex;flex-direction:column;
+  transition:all 0.3s;position:relative;overflow:hidden;
+}
+.product-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 30% 0%,var(--accent-bg),transparent 60%);
+  opacity:0;transition:opacity 0.3s;
+}
+.product-card:hover{border-color:var(--accent-border);transform:translateY(-4px)}
+.product-card:hover::before{opacity:1}
+.product-icon{font-size:2rem;margin-bottom:16px;position:relative;z-index:1}
+.product-badge{
+  display:inline-block;font-size:0.7rem;font-weight:700;
+  letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--accent);padding:4px 12px;
+  background:var(--accent-bg);border:1px solid var(--accent-border);
+  border-radius:100px;margin-bottom:16px;width:fit-content;
+  position:relative;z-index:1;
+}
+.product-title{
+  font-family:'Syne',sans-serif;font-size:1.15rem;font-weight:700;
+  color:#fff;margin-bottom:10px;letter-spacing:-0.01em;
+  position:relative;z-index:1;
+}
+.product-desc{
+  font-size:0.88rem;color:var(--off);line-height:1.7;
+  margin-bottom:20px;position:relative;z-index:1;
+}
+.product-features{
+  list-style:none;margin:0 0 24px;padding:0;
+  display:flex;flex-direction:column;gap:8px;
+  flex:1;position:relative;z-index:1;
+}
+.product-features li{
+  font-size:0.82rem;color:rgba(255,255,255,0.55);
+  padding-left:18px;position:relative;line-height:1.5;
+}
+.product-features li::before{
+  content:'';position:absolute;left:0;top:7px;
+  width:6px;height:6px;border-radius:50%;
+  background:var(--accent);opacity:0.6;
+}
+.product-btn{
+  display:block;text-align:center;
+  padding:12px 20px;border-radius:10px;
+  font-size:0.88rem;font-weight:700;color:#fff;
+  transition:opacity 0.2s;position:relative;z-index:1;
+}
+.product-btn:hover{opacity:0.85}
+
 /* ── HOW IT WORKS ── */
 .how-bg{background:rgba(255,255,255,0.015)}
 .steps{display:flex;flex-direction:column;gap:0;margin-top:72px}
@@ -401,6 +460,8 @@ footer{
   .btn-hero,.btn-hero-ghost{width:100%;justify-content:center}
   .footer-inner{flex-direction:column}
   section{padding:80px 0}
+  #how .container > div{grid-template-columns:1fr!important;gap:40px!important}
+  #how .container > div > div:first-child{position:static!important}
 }
 </style>
 </head>
@@ -415,12 +476,12 @@ footer{
         Ambore
       </a>
       <div class="nav-links">
-        <a href="#features">Features</a>
+        <a href="#features">Products</a>
         <a href="#how">How It Works</a>
-        <a href="#rounds">Interview Rounds</a>
         <a href="#faq">FAQ</a>
-        <a href="resume.html" style="color:var(--violet);font-weight:600">AI Resume</a>
-        <a href="jobs.html" style="color:var(--green);font-weight:600">Jobs</a>
+        <a href="jobs.html" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
+        <a href="resume.html" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
+        <a href="app.html" style="color:var(--violet);font-weight:600">Interview</a>
       </div>
       <div class="nav-actions" id="nav-cta">
         <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
@@ -435,10 +496,12 @@ footer{
 
 <!-- ══ MOBILE MENU ══ -->
 <div class="mobile-menu" id="mobile-menu">
-  <a href="#features" onclick="toggleMenu()">Features</a>
+  <a href="#features" onclick="toggleMenu()">Products</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
-  <a href="#rounds" onclick="toggleMenu()">Interview Rounds</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
+  <a href="jobs.html" onclick="toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
+  <a href="resume.html" onclick="toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
+  <a href="app.html" onclick="toggleMenu()" style="color:var(--violet)">Interview AI</a>
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
 </div>
 
@@ -449,17 +512,17 @@ footer{
   <div class="orb hero-orb-3"></div>
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-badge reveal"><span></span>AI-Powered Interview Assistant</div>
+      <div class="hero-badge reveal"><span></span>AI-Powered Career Platform</div>
       <h1 class="hero-title reveal reveal-d1">
-        <span class="line">Ace Every</span>
-        <span class="line word-glow">Interview.</span>
-        <span class="line">In Real Time.</span>
+        <span class="line">Interview. Resume.</span>
+        <span class="line word-glow">Jobs.</span>
+        <span class="line">All AI-Powered.</span>
       </h1>
       <p class="hero-sub reveal reveal-d2">
-        Ambore listens to your interviewer, understands the question, and delivers a polished STAR-format answer in under 2 seconds. Your AI co-pilot for career success.
+        Ace interviews with real-time AI answers, tailor your resume to any job in seconds, and browse 1,000+ tech jobs updated daily. One platform for your entire career.
       </p>
       <div class="hero-actions reveal reveal-d3">
-        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Start Free Session →</button>
+        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Get Started Free →</button>
         <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
       </div>
       <div class="hero-scroll reveal reveal-d4">
@@ -473,23 +536,27 @@ footer{
 <!-- ══ MARQUEE ══ -->
 <div class="marquee-strip">
   <div class="marquee-track">
-    <div class="marquee-item"><span class="marquee-dot"></span>Behavioral Interviews</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Technical Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>1,000+ Tech Jobs</div>
     <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Daily Job Scraping</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Coding Interviews</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>HR Screening</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Executive Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Remote &amp; Onsite Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>8 Interview Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>5 Job Sources</div>
     <!-- duplicate for seamless loop -->
-    <div class="marquee-item"><span class="marquee-dot"></span>Behavioral Interviews</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Technical Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>1,000+ Tech Jobs</div>
     <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Real-Time AI</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Daily Job Scraping</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Coding Interviews</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>HR Screening</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Executive Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Remote &amp; Onsite Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>8 Interview Rounds</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>5 Job Sources</div>
   </div>
 </div>
 
@@ -497,39 +564,53 @@ footer{
 <section id="features">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">What Ambore Does</div>
+      <div class="section-label">Three Products, One Platform</div>
       <h2 class="section-title">Everything you need<br>to land the job</h2>
+      <p class="section-sub">From finding the right job to tailoring your resume to acing the interview — Ambore covers your entire job search.</p>
     </div>
-    <div class="features-grid">
-      <div class="feat-card reveal reveal-d1">
-        <div class="feat-icon">🎙</div>
-        <div class="feat-title">Live Voice Detection</div>
-        <p class="feat-desc">Ambore listens continuously via your microphone. The moment your interviewer finishes a question, it's captured and processed instantly.</p>
+
+    <!-- ── PRODUCT CARDS ── -->
+    <div class="products-row">
+      <div class="product-card reveal reveal-d1" style="--accent:#6d5cff;--accent-bg:rgba(109,92,255,0.1);--accent-border:rgba(109,92,255,0.25)">
+        <div class="product-icon">🎙</div>
+        <div class="product-badge">AI Interview</div>
+        <h3 class="product-title">Real-Time Interview Co-Pilot</h3>
+        <p class="product-desc">Ambore listens to your interviewer, understands the question, and delivers a polished STAR-format answer in under 2 seconds.</p>
+        <ul class="product-features">
+          <li>Live voice detection & instant AI answers</li>
+          <li>STAR method format for behavioral rounds</li>
+          <li>Screen analysis for coding problems</li>
+          <li>8 interview round types supported</li>
+        </ul>
+        <a href="app.html" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
       </div>
-      <div class="feat-card reveal reveal-d2">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">Sub-2-Second Answers</div>
-        <p class="feat-desc">Streaming AI response starts appearing within 1–2 seconds of the question being detected. No waiting, no delay, no hesitation.</p>
+
+      <div class="product-card reveal reveal-d2" style="--accent:#9c5fff;--accent-bg:rgba(124,58,237,0.1);--accent-border:rgba(124,58,237,0.25)">
+        <div class="product-icon">📄</div>
+        <div class="product-badge">AI Resume</div>
+        <h3 class="product-title">Smart Resume Tailoring Engine</h3>
+        <p class="product-desc">Paste any job description and get an ATS-optimized, tailored resume in seconds — built from your real experience.</p>
+        <ul class="product-features">
+          <li>One-click resume tailoring to any JD</li>
+          <li>ATS keyword optimization & scoring</li>
+          <li>Multiple export formats (PDF, DOCX)</li>
+          <li>Skills gap analysis & suggestions</li>
+        </ul>
+        <a href="resume.html" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
       </div>
-      <div class="feat-card reveal reveal-d3">
-        <div class="feat-icon">✦</div>
-        <div class="feat-title">STAR Method Format</div>
-        <p class="feat-desc">Every answer is structured with Situation, Task, Action, and Result — the gold standard for behavioral interview responses.</p>
-      </div>
-      <div class="feat-card reveal reveal-d1">
-        <div class="feat-icon">📄</div>
-        <div class="feat-title">Resume-Aware Answers</div>
-        <p class="feat-desc">Upload your resume (PDF, DOCX, TXT). Every answer uses your real experience, projects, and achievements — nothing fabricated.</p>
-      </div>
-      <div class="feat-card reveal reveal-d2">
-        <div class="feat-icon">📸</div>
-        <div class="feat-title">Screen Analysis</div>
-        <p class="feat-desc">Stuck on a coding problem? Hit Analyze Screen and Ambore reads the question on your screen and produces a working solution with explanation.</p>
-      </div>
-      <div class="feat-card reveal reveal-d3">
-        <div class="feat-icon">⏱</div>
-        <div class="feat-title">30-Min Session Timer</div>
-        <p class="feat-desc">Each session runs up to 30 minutes with a countdown. All sessions are saved so you can review your performance after the interview.</p>
+
+      <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
+        <div class="product-icon">💼</div>
+        <div class="product-badge">Job Portal</div>
+        <h3 class="product-title">1,000+ Tech Jobs, Updated Daily</h3>
+        <p class="product-desc">Browse aggregated tech & IT jobs from USAJobs, Adzuna, The Muse, Remotive, and Google Jobs — all in one place.</p>
+        <ul class="product-features">
+          <li>Auto-scraped from 5 sources every 24 hours</li>
+          <li>Search, filter by state, category, work type</li>
+          <li>Remote, hybrid, and onsite listings</li>
+          <li>Salary data & direct apply links</li>
+        </ul>
+        <a href="jobs.html" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
       </div>
     </div>
   </div>
@@ -540,20 +621,20 @@ footer{
   <div class="container">
     <div class="stats-row">
       <div class="stat-cell reveal">
-        <span class="stat-val">&lt;2s</span>
-        <div class="stat-label">Average Answer Time</div>
+        <span class="stat-val">1,000+</span>
+        <div class="stat-label">Active Tech Jobs</div>
       </div>
       <div class="stat-cell reveal reveal-d1">
-        <span class="stat-val">8</span>
-        <div class="stat-label">Interview Rounds Supported</div>
+        <span class="stat-val">5</span>
+        <div class="stat-label">Job Sources Scraped Daily</div>
       </div>
       <div class="stat-cell reveal reveal-d2">
-        <span class="stat-val">100%</span>
-        <div class="stat-label">Based on Your Resume</div>
+        <span class="stat-val">&lt;2s</span>
+        <div class="stat-label">AI Answer Time</div>
       </div>
       <div class="stat-cell reveal reveal-d3">
-        <span class="stat-val">0</span>
-        <div class="stat-label">Preparation Hours Needed</div>
+        <span class="stat-val">8</span>
+        <div class="stat-label">Interview Rounds Covered</div>
       </div>
     </div>
   </div>
@@ -564,37 +645,37 @@ footer{
   <div class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
       <div class="reveal" style="position:sticky;top:120px">
-        <div class="section-label">The Process</div>
-        <h2 class="section-title">Up and running in 60 seconds</h2>
-        <p class="section-sub">No setup. No API keys. No training. Just log in, paste your details, and start your interview session.</p>
+        <div class="section-label">How It Works</div>
+        <h2 class="section-title">Your complete career toolkit</h2>
+        <p class="section-sub">Sign up once, access everything. Find jobs, tailor your resume, and ace your interview — all from one platform.</p>
       </div>
       <div class="steps">
         <div class="step reveal">
           <div class="step-num">01</div>
           <div class="step-body">
-            <h3>Create your account</h3>
-            <p>Sign up with email and password. Your account stores sessions so you can track your progress over time.</p>
+            <h3>Create your free account</h3>
+            <p>Sign up in seconds. Your account unlocks all three tools — Interview AI, Resume Builder, and the Job Portal.</p>
           </div>
         </div>
         <div class="step reveal reveal-d1">
           <div class="step-num">02</div>
           <div class="step-body">
-            <h3>Upload resume & paste JD</h3>
-            <p>Upload your resume as PDF, DOCX, or TXT. Paste the job description. Enter the role, company, and select the interview round.</p>
+            <h3>Find the right job</h3>
+            <p>Browse 1,000+ tech jobs aggregated daily from USAJobs, Adzuna, The Muse, Remotive, and Google Jobs. Filter by state, category, salary, and work type.</p>
           </div>
         </div>
         <div class="step reveal reveal-d2">
           <div class="step-num">03</div>
           <div class="step-body">
-            <h3>Start listening</h3>
-            <p>Click Start Listening and set the toggle to Interviewer mode. Ambore silently monitors the conversation in the background.</p>
+            <h3>Tailor your resume</h3>
+            <p>Paste the job description into our AI Resume tool. It rewrites your resume to match the role — optimized for ATS systems and hiring managers.</p>
           </div>
         </div>
         <div class="step reveal reveal-d3">
           <div class="step-num">04</div>
           <div class="step-body">
-            <h3>Get your answer instantly</h3>
-            <p>The moment a question is detected, a STAR-format answer tailored to your resume appears in under 2 seconds — ready to deliver.</p>
+            <h3>Ace the interview</h3>
+            <p>Use the AI Interview Co-Pilot during your call. It listens in real time and gives you STAR-format answers in under 2 seconds — based on your resume.</p>
           </div>
         </div>
       </div>
@@ -602,54 +683,54 @@ footer{
   </div>
 </section>
 
-<!-- ══ ROUNDS ══ -->
+<!-- ══ WHY AMBORE ══ -->
 <section id="rounds">
   <div class="container">
-    <div class="reveal">
-      <div class="section-label">Coverage</div>
-      <h2 class="section-title">Every round. Every stage.</h2>
-      <p class="section-sub">Ambore adapts its answers based on the round you select — from an HR screen to a final executive interview.</p>
+    <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto">
+      <div class="section-label">Why Ambore</div>
+      <h2 class="section-title">Built for job seekers<br>who mean business</h2>
+      <p class="section-sub" style="margin:0 auto">Every feature is designed to save you time and maximize your chances of landing the right role.</p>
     </div>
     <div class="rounds-grid">
       <div class="round-card reveal">
-        <div class="round-num">1st</div>
-        <div class="round-name">Initial HR Screen</div>
-        <p class="round-desc">Introduction, motivation, culture fit questions</p>
+        <div class="round-num" style="font-size:1.4rem">🔍</div>
+        <div class="round-name">5 Job Sources</div>
+        <p class="round-desc">USAJobs, Adzuna, The Muse, Remotive, and Google Jobs — aggregated automatically</p>
       </div>
       <div class="round-card reveal reveal-d1">
-        <div class="round-num">2nd</div>
-        <div class="round-name">Technical Basics</div>
-        <p class="round-desc">Foundational knowledge and role-specific concepts</p>
+        <div class="round-num" style="font-size:1.4rem">⏰</div>
+        <div class="round-name">Updated Daily</div>
+        <p class="round-desc">Jobs scraped every 24 hours at 2 AM EST so you always see fresh listings</p>
       </div>
       <div class="round-card reveal reveal-d2">
-        <div class="round-num">3rd</div>
-        <div class="round-name">Technical Deep Dive</div>
-        <p class="round-desc">Advanced technical problems and architecture</p>
+        <div class="round-num" style="font-size:1.4rem">🎯</div>
+        <div class="round-name">ATS-Optimized</div>
+        <p class="round-desc">AI resume tailoring matches keywords and formatting that ATS systems look for</p>
       </div>
       <div class="round-card reveal reveal-d3">
-        <div class="round-num">4th</div>
-        <div class="round-name">Coding Assessment</div>
-        <p class="round-desc">Live coding with screen analysis support</p>
+        <div class="round-num" style="font-size:1.4rem">⚡</div>
+        <div class="round-name">Sub-2s Answers</div>
+        <p class="round-desc">Interview AI delivers STAR-format answers in under 2 seconds — real time</p>
       </div>
       <div class="round-card reveal">
-        <div class="round-num">5th</div>
-        <div class="round-name">System Design</div>
-        <p class="round-desc">Scalability, architecture and trade-off discussions</p>
+        <div class="round-num" style="font-size:1.4rem">🎙</div>
+        <div class="round-name">8 Round Types</div>
+        <p class="round-desc">HR screen to executive round — the AI adapts its answers for each stage</p>
       </div>
       <div class="round-card reveal reveal-d1">
-        <div class="round-num">6th</div>
-        <div class="round-name">Managerial / Behavioral</div>
-        <p class="round-desc">Leadership, conflict, and team dynamics stories</p>
+        <div class="round-num" style="font-size:1.4rem">📸</div>
+        <div class="round-name">Screen Analysis</div>
+        <p class="round-desc">Stuck on a coding problem? Capture your screen and get instant solutions</p>
       </div>
       <div class="round-card reveal reveal-d2">
-        <div class="round-num">Final</div>
-        <div class="round-name">Executive / CXO</div>
-        <p class="round-desc">Vision, strategy and executive-level conversations</p>
+        <div class="round-num" style="font-size:1.4rem">🔒</div>
+        <div class="round-name">100% Private</div>
+        <p class="round-desc">All data stays in your browser — no server storage, no tracking, fully local</p>
       </div>
       <div class="round-card reveal reveal-d3">
-        <div class="round-num">⚡</div>
-        <div class="round-name">Hackathon / Test</div>
-        <p class="round-desc">Timed coding challenges with AI solution support</p>
+        <div class="round-num" style="font-size:1.4rem">💰</div>
+        <div class="round-name">Completely Free</div>
+        <p class="round-desc">No credit card, no trial limits — all features available at zero cost</p>
       </div>
     </div>
   </div>
@@ -665,38 +746,38 @@ footer{
     <div class="faq-list">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Is Ambore detectable by the interviewer?
+          What is Ambore?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Ambore runs entirely in your browser on your machine. The interviewer sees nothing. There are no browser extensions, no screen sharing from your side, and no external indicators that you are using any assistance.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Ambore is a free, all-in-one AI career platform with three tools: a Job Portal with 1,000+ daily-updated tech jobs, an AI Resume Builder that tailors your resume to any job description, and an AI Interview Co-Pilot that gives you real-time answers during interviews.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Does it work for video interviews like Zoom or Google Meet?
+          Where do the job listings come from?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Yes. Ambore uses your microphone to capture audio from any source — Zoom, Google Meet, Microsoft Teams, or in-person. As long as your mic picks up the question, Ambore will process it.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Jobs are automatically scraped from 5 sources: USAJobs.gov (government tech jobs), Adzuna (aggregates Indeed, Monster, etc.), The Muse (top tech companies), Remotive (remote jobs), and Google Jobs. New listings are added every 24 hours.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          What browser do I need?
+          How does the AI Resume Builder work?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Google Chrome is required for voice recognition (Web Speech API). All other features including manual text input and screen analysis work on any modern browser.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Upload your existing resume and paste the job description. The AI analyzes both, then rewrites your resume to highlight relevant skills, match keywords, and optimize formatting for ATS (Applicant Tracking Systems). You get a tailored resume in seconds.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          How accurate are the answers?
+          Is the Interview AI detectable?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Answers are generated using Claude AI and grounded entirely in your resume. Ambore never fabricates achievements — it uses your real experience and maps it to the question and job description provided.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Ambore runs entirely in your browser. There are no extensions, no screen sharing, and no external indicators. It works with Zoom, Google Meet, Microsoft Teams, and in-person interviews — as long as your mic picks up the question.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
-          Is my resume and data private?
+          Is my data private? Does it cost anything?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">All your data is stored locally in your browser. Resume text, session history, and account information are saved in your browser's localStorage only — nothing is sent to any external server beyond the AI API call.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Everything is free — no credit card, no trial limits. All personal data (resume, sessions, account) is stored locally in your browser's localStorage. Nothing is sent to external servers beyond the AI API calls needed to generate answers and resumes.</div></div>
       </div>
     </div>
   </div>
@@ -706,10 +787,11 @@ footer{
 <section class="cta-section">
   <div class="container" style="text-align:center">
     <div class="section-label reveal">Get Started</div>
-    <h2 class="section-title reveal reveal-d1">Your next interview<br>starts here.</h2>
-    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Create a free account and run your first session in under 60 seconds. No credit card required.</p>
-    <div class="reveal reveal-d3">
-      <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Start Free — No Credit Card →</button>
+    <h2 class="section-title reveal reveal-d1">Your dream job<br>starts here.</h2>
+    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, and ace your interview — all free, all AI-powered. No credit card required.</p>
+    <div class="reveal reveal-d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+      <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free →</button>
+      <a href="jobs.html" class="btn-hero-ghost">Browse Jobs</a>
     </div>
   </div>
 </section>
@@ -723,15 +805,14 @@ footer{
           <div class="nav-logo-icon">A</div>
           Ambore
         </div>
-        <p>The AI co-pilot that helps you answer every interview question with confidence — in real time.</p>
+        <p>Your all-in-one AI career platform — jobs, resumes, and interview prep, all in one place.</p>
       </div>
       <div class="footer-links">
         <div class="footer-col">
-          <h5>Product</h5>
-          <a href="#features">Features</a>
-          <a href="#how">How It Works</a>
-          <a href="#rounds">Rounds</a>
-          <a href="app.html">Open App</a>
+          <h5>Products</h5>
+          <a href="jobs.html">Job Portal</a>
+          <a href="resume.html">AI Resume</a>
+          <a href="app.html">Interview AI</a>
         </div>
         <div class="footer-col" id="footer-account">
           <h5>Account</h5>
@@ -747,7 +828,7 @@ footer{
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2025 Ambore. All rights reserved.</p>
+      <p>© 2026 Ambore. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
@@ -1001,17 +1082,17 @@ function updatePageForAuthState(){
   const heroLogin=document.getElementById('hero-cta-login');
   const bottomCta=document.getElementById('bottom-cta');
   if(session){
-    // Logged in — hero buttons go directly to app, hide login button
-    if(heroPrimary){heroPrimary.textContent='Open Interview App →';heroPrimary.onclick=()=>{window.location.href='app.html'}}
-    if(heroLogin){heroLogin.textContent='AI Resume';heroLogin.onclick=()=>{window.location.href='resume.html'}}
-    if(bottomCta){bottomCta.textContent='Open Interview App →';bottomCta.onclick=()=>{window.location.href='app.html'}}
+    // Logged in — hero buttons go to products
+    if(heroPrimary){heroPrimary.textContent='Browse Jobs →';heroPrimary.onclick=()=>{window.location.href='jobs.html'}}
+    if(heroLogin){heroLogin.textContent='Interview AI';heroLogin.onclick=()=>{window.location.href='app.html'}}
+    if(bottomCta){bottomCta.textContent='Browse Jobs →';bottomCta.onclick=()=>{window.location.href='jobs.html'}}
     // Close auth modal if somehow open
     closeAuthModal();
   } else {
     // Not logged in — restore default auth modal triggers
-    if(heroPrimary){heroPrimary.textContent='Start Free Session →';heroPrimary.onclick=()=>{openAuthModal('signup')}}
+    if(heroPrimary){heroPrimary.textContent='Get Started Free →';heroPrimary.onclick=()=>{openAuthModal('signup')}}
     if(heroLogin){heroLogin.textContent='Log In';heroLogin.onclick=()=>{openAuthModal('login')}}
-    if(bottomCta){bottomCta.textContent='Start Free — No Credit Card →';bottomCta.onclick=()=>{openAuthModal('signup')}}
+    if(bottomCta){bottomCta.textContent='Get Started Free →';bottomCta.onclick=()=>{openAuthModal('signup')}}
   }
 }
 updateNavState();
