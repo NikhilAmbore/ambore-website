@@ -25,7 +25,7 @@ a{text-decoration:none;color:inherit}
 .nav-links a.active{color:var(--accent)}
 
 /* Main content */
-.content{max-width:820px;margin:0 auto;padding:24px 24px 60px}
+.content{max-width:820px;margin:0 auto;padding:24px 24px 100px}
 .back-link{display:inline-flex;align-items:center;gap:6px;font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:20px;transition:color 0.2s}
 .back-link:hover{color:#fff}
 
@@ -77,12 +77,31 @@ a{text-decoration:none;color:inherit}
 .loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
+/* Sticky apply bar — always visible at bottom */
+.apply-sticky{
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  padding:12px 24px;background:rgba(6,6,15,0.95);backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);display:none;
+}
+.apply-sticky.visible{display:block}
+.apply-sticky-inner{max-width:820px;margin:0 auto;display:flex;align-items:center;gap:14px}
+.apply-sticky-info{flex:1;min-width:0}
+.apply-sticky-title{font-size:0.88rem;font-weight:700;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.apply-sticky-company{font-size:0.75rem;color:rgba(255,255,255,0.4)}
+.apply-sticky a{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:12px 32px;background:var(--grad);border-radius:12px;
+  color:#fff;font-size:0.95rem;font-weight:800;white-space:nowrap;
+  transition:opacity 0.2s;flex-shrink:0;
+}
+.apply-sticky a:hover{opacity:0.88}
+
 /* Mobile */
 @media(max-width:640px){
   .topbar{padding:10px 14px;gap:8px;flex-wrap:wrap}
   .topbar .logo{font-size:0.9rem}
   .nav-links{margin-left:0;gap:10px;order:3;width:100%;justify-content:center;padding-top:6px;border-top:1px solid var(--border)}
-  .content{padding:16px 14px 40px}
+  .content{padding:16px 14px 90px}
   .job-header{flex-direction:column;gap:12px}
   .jh-logo{width:48px;height:48px;font-size:1.2rem}
   .jh-title{font-size:1.2rem}
@@ -91,6 +110,9 @@ a{text-decoration:none;color:inherit}
   .info-item{padding:10px}
   .desc-card{padding:16px}
   .apply-btn{width:100%;justify-content:center}
+  .apply-sticky{padding:10px 14px}
+  .apply-sticky-info{display:none}
+  .apply-sticky a{width:100%;justify-content:center;padding:14px}
 }
 </style>
 </head>
@@ -109,6 +131,9 @@ a{text-decoration:none;color:inherit}
 <div class="content" id="content">
   <div class="loading"><div class="loading-spinner"></div>Loading job details...</div>
 </div>
+
+<!-- Sticky apply bar (shown on all screen sizes) -->
+<div class="apply-sticky" id="apply-sticky"></div>
 
 <script>
 const API_BASE = 'https://web-production-d62ab.up.railway.app';
@@ -198,6 +223,20 @@ function renderJob(job) {
 
     <div class="source-badge">Source: ${esc(job.source)} &middot; Job ID: ${job.id}</div>
   `;
+
+  // Populate sticky apply bar
+  const stickyBar = document.getElementById('apply-sticky');
+  if (job.apply_url) {
+    stickyBar.innerHTML = `
+      <div class="apply-sticky-inner">
+        <div class="apply-sticky-info">
+          <div class="apply-sticky-title">${esc(job.title)}</div>
+          <div class="apply-sticky-company">${esc(job.company)}</div>
+        </div>
+        <a href="${esc(job.apply_url)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
+      </div>`;
+    stickyBar.classList.add('visible');
+  }
 }
 
 function esc(str) {
