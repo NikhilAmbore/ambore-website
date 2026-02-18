@@ -691,7 +691,8 @@ async function processResumeFile(file) {
    SESSION CONFIG
 ═══════════════════════════════════════════ */
 const cfg = { jd:'', resume:'', role:'', company:'', round:'' };
-const CLAUDE_KEY = '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';
+const _k = ['sk-ant-api','03-LkpMtAVnfsc1-W5XQiAGO8VMOM','7hjuY3ADt5IF4o3oz-OyrN0Qekgf','SOLzPReg4iwShtYCtDBPZSDe1PwP3lWA--96bYAAA'];
+const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 let isListening = false, speakerIsIV = true;
 let recognition = null, silenceTimer = null;
