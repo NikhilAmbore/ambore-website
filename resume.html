@@ -7,6 +7,16 @@
 <meta name="description" content="Upload your resume and job description. Ambore AI tailors your resume for 100% ATS alignment in seconds."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+// Auth guard — redirect to index.html if not logged in
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='index.html?auth=login&msg=Please+log+in+to+access+this+feature';
+  }
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>

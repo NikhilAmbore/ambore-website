@@ -764,6 +764,7 @@ footer{
       <div class="auth-field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
       <div class="auth-field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
       <button class="auth-submit" onclick="handleLogin(event)">Log In →</button>
+      <div class="auth-switch"><a onclick="switchTab('forgot')" style="color:rgba(255,255,255,0.4);font-weight:400;cursor:pointer">Forgot password?</a></div>
       <div class="auth-switch">No account? <a onclick="switchTab('signup')">Sign up free</a></div>
     </div>
     <!-- Signup -->
@@ -775,6 +776,16 @@ footer{
       <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
       <button class="auth-submit" onclick="handleSignup(event)">Create Account →</button>
       <div class="auth-switch">Already have account? <a onclick="switchTab('login')">Log in</a></div>
+    </div>
+    <!-- Forgot Password -->
+    <div class="auth-panel" id="panel-forgot">
+      <div class="auth-err" id="auth-err-forgot"></div>
+      <p style="color:rgba(255,255,255,0.5);font-size:0.85rem;margin-bottom:16px;">Enter your email and set a new password.</p>
+      <div class="auth-field"><label>Email</label><input type="email" id="fp-email" placeholder="you@example.com"/></div>
+      <div class="auth-field"><label>New Password</label><input type="password" id="fp-pass" placeholder="Min 6 characters"/></div>
+      <div class="auth-field"><label>Confirm New Password</label><input type="password" id="fp-pass2" placeholder="Repeat new password"/></div>
+      <button class="auth-submit" onclick="handleForgotPassword(event)">Reset Password →</button>
+      <div class="auth-switch">Remember your password? <a onclick="switchTab('login')">Log in</a></div>
     </div>
   </div>
 </div>
@@ -813,10 +824,30 @@ function openAuthModal(tab){
     return;
   }
   document.getElementById('auth-overlay').classList.add('open');
-  switchTab(tab);
+  switchTab(tab||'login');
   document.getElementById('auth-err-login').classList.remove('show');
   document.getElementById('auth-err-signup').classList.remove('show');
+  document.getElementById('auth-err-forgot').classList.remove('show');
 }
+// Auto-open auth modal if redirected from protected page
+(function(){
+  const params=new URLSearchParams(window.location.search);
+  if(params.get('auth')){
+    const tab=params.get('auth');
+    const msg=params.get('msg');
+    setTimeout(()=>{
+      openAuthModal(tab);
+      if(msg){
+        const err=document.getElementById('auth-err-login');
+        err.textContent=decodeURIComponent(msg);
+        err.style.color='#f59e0b';err.style.background='rgba(245,158,11,0.08)';err.style.borderColor='rgba(245,158,11,0.2)';
+        err.classList.add('show');
+      }
+    },300);
+    // Clean URL
+    window.history.replaceState({},'',window.location.pathname);
+  }
+})();
 function closeAuthModal(){document.getElementById('auth-overlay').classList.remove('open')}
 document.addEventListener('DOMContentLoaded',()=>{
   document.getElementById('auth-overlay').addEventListener('click',e=>{
@@ -826,6 +857,9 @@ document.addEventListener('DOMContentLoaded',()=>{
 function switchTab(tab){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.auth-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
+  // Hide tabs row for forgot password, show for login/signup
+  const tabsRow=document.querySelector('.auth-tabs');
+  if(tabsRow)tabsRow.style.display=(tab==='forgot')?'none':'flex';
 }
 
 /* ── AUTH LOGIC ── */
@@ -890,6 +924,34 @@ function handleSignup(e){
   document.getElementById('su-pass').value='';
   document.getElementById('su-pass2').value='';
   // Pre-fill email on login tab for convenience
+  setTimeout(()=>{
+    switchTab('login');
+    document.getElementById('li-email').value=email;
+    document.getElementById('li-pass').focus();
+    err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
+  },1500);
+}
+function handleForgotPassword(e){
+  e.preventDefault();
+  const email=document.getElementById('fp-email').value.trim().toLowerCase();
+  const pass=document.getElementById('fp-pass').value;
+  const pass2=document.getElementById('fp-pass2').value;
+  const err=document.getElementById('auth-err-forgot');
+  err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
+  if(!email.includes('@')){err.textContent='Enter a valid email.';err.classList.add('show');return}
+  if(pass.length<6){err.textContent='Password must be 6+ characters.';err.classList.add('show');return}
+  if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}
+  const users=getUsers();
+  const userIdx=users.findIndex(u=>u.email===email);
+  if(userIdx===-1){err.textContent='No account found with this email.';err.classList.add('show');return}
+  users[userIdx].password=pass;
+  saveUsers(users);
+  err.textContent='Password reset! Please log in.';
+  err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
+  err.classList.add('show');
+  document.getElementById('fp-email').value='';
+  document.getElementById('fp-pass').value='';
+  document.getElementById('fp-pass2').value='';
   setTimeout(()=>{
     switchTab('login');
     document.getElementById('li-email').value=email;
