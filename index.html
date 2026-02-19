@@ -484,8 +484,8 @@ footer{
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
         <a href="jobs.html" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
-        <a href="resume.html" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
-        <a href="app.html" style="color:var(--violet);font-weight:600">Interview</a>
+        <a href="javascript:void(0)" onclick="goToFeature('resume.html')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
+        <a href="javascript:void(0)" onclick="goToFeature('app.html')" style="color:var(--violet);font-weight:600">Interview</a>
       </div>
       <div class="nav-actions" id="nav-cta">
         <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
@@ -504,8 +504,8 @@ footer{
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
   <a href="jobs.html" onclick="toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
-  <a href="resume.html" onclick="toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
-  <a href="app.html" onclick="toggleMenu()" style="color:var(--violet)">Interview AI</a>
+  <a href="javascript:void(0)" onclick="goToFeature('resume.html');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
+  <a href="javascript:void(0)" onclick="goToFeature('app.html');toggleMenu()" style="color:var(--violet)">Interview AI</a>
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
 </div>
 
@@ -586,7 +586,7 @@ footer{
           <li>Screen analysis for coding problems</li>
           <li>8 interview round types supported</li>
         </ul>
-        <a href="app.html" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('app.html')" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
       </div>
 
       <div class="product-card reveal reveal-d2" style="--accent:#9c5fff;--accent-bg:rgba(124,58,237,0.1);--accent-border:rgba(124,58,237,0.25)">
@@ -600,7 +600,7 @@ footer{
           <li>Multiple export formats (PDF, DOCX)</li>
           <li>Skills gap analysis & suggestions</li>
         </ul>
-        <a href="resume.html" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('resume.html')" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
       </div>
 
       <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
@@ -815,8 +815,8 @@ footer{
         <div class="footer-col">
           <h5>Products</h5>
           <a href="jobs.html">Job Portal</a>
-          <a href="resume.html">AI Resume</a>
-          <a href="app.html">Interview AI</a>
+          <a href="javascript:void(0)" onclick="goToFeature('resume.html')">AI Resume</a>
+          <a href="javascript:void(0)" onclick="goToFeature('app.html')">Interview AI</a>
         </div>
         <div class="footer-col" id="footer-account">
           <h5>Account</h5>
@@ -915,11 +915,13 @@ function toggleFaq(btn){
 }
 
 /* ── AUTH MODAL ── */
+function goToFeature(page){
+  if(getSession()){window.location.href=page;return;}
+  _pendingRedirect=page;
+  openAuthModal('login');
+}
 function openAuthModal(tab){
-  // If already logged in, never show auth modal — redirect to appropriate page
-  if(getSession()){
-    return;
-  }
+  if(getSession()){return;}
   document.getElementById('auth-overlay').classList.add('open');
   switchTab(tab||'login');
   document.getElementById('auth-err-login').classList.remove('show');
@@ -927,11 +929,13 @@ function openAuthModal(tab){
   document.getElementById('auth-err-forgot').classList.remove('show');
 }
 // Auto-open auth modal if redirected from protected page
+let _pendingRedirect = null;
 (function(){
   const params=new URLSearchParams(window.location.search);
   if(params.get('auth')){
     const tab=params.get('auth');
     const msg=params.get('msg');
+    _pendingRedirect=params.get('redirect')||null;
     setTimeout(()=>{
       openAuthModal(tab);
       if(msg){
@@ -991,9 +995,9 @@ function handleLogin(e){
   if(!user){err.textContent='Invalid email or password.';err.classList.add('show');return}
   saveSession(user);
   closeAuthModal();
+  if(_pendingRedirect){window.location.href=_pendingRedirect;return;}
   updateNavState();
   updatePageForAuthState();
-  // Login → stay on main home page (already here)
 }
 function handleSignup(e){
   e.preventDefault();

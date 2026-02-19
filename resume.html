@@ -17,7 +17,7 @@ window.addEventListener('load',()=>track('page_view','resume'));
   var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
   if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
     localStorage.removeItem('ambore_user');
-    window.location.href='index.html?auth=login&msg=Please+log+in+to+access+this+feature';
+    window.location.href='index.html?auth=login&redirect=resume.html&msg=Please+log+in+to+access+this+feature';
   }
 })();
 </script>
