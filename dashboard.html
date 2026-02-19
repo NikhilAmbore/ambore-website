@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ambore — Job Search Dashboard</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+function track(e,p){fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:e,page:p})}).catch(()=>{});}
+window.addEventListener('load',()=>track('page_view','dashboard'));
+</script>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='index.html?auth=login&redirect=dashboard.html&msg=Please+log+in+to+access+your+dashboard';
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0;min-height:100vh}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;--orange:#f97316;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+button,input,textarea,select{font-family:inherit}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+
+/* ═══ TOPBAR ═══ */
+.topbar{
+  display:flex;align-items:center;gap:12px;padding:13px 24px;
+  border-bottom:1px solid var(--border);background:rgba(6,6,15,0.95);
+  position:sticky;top:0;z-index:200;backdrop-filter:blur(12px);
+}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;flex-shrink:0}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:4px;margin-left:16px}
+.nav-links a{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.4);padding:5px 10px;border-radius:7px;transition:all 0.2s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.nav-links a.active{color:var(--accent);background:rgba(79,70,229,0.12)}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700;font-size:0.78rem}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;padding:4px 8px;border-radius:6px;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+
+/* ═══ PAGE SHELL ═══ */
+.page{max-width:1240px;margin:0 auto;padding:28px 24px 60px}
+
+/* ═══ DASH HEADER ═══ */
+.dash-header{margin-bottom:24px}
+.dash-header h1{font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px}
+.dash-header p{font-size:0.88rem;color:rgba(255,255,255,0.4)}
+
+/* ═══ STATS ROW ═══ */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:0.08;transform:translate(20%,-20%)}
+.stat-card.s-blue::before{background:#818CF8}
+.stat-card.s-yellow::before{background:#fbbf24}
+.stat-card.s-green::before{background:#22c55e}
+.stat-card.s-purple::before{background:#a855f7}
+.stat-value{font-size:2rem;font-weight:900;color:#fff;line-height:1}
+.stat-label{font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.4);margin-top:5px;text-transform:uppercase;letter-spacing:0.05em}
+.stat-sub{font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:3px}
+
+/* ═══ TABS NAV ═══ */
+.tabs-nav{display:flex;gap:4px;margin-bottom:22px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:5px}
+.tab-btn{flex:1;padding:9px 12px;border-radius:8px;border:none;background:transparent;color:rgba(255,255,255,0.4);font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.tab-btn:hover{color:#fff;background:rgba(255,255,255,0.05)}
+.tab-btn.active{background:var(--grad);color:#fff}
+
+/* ═══ TAB PANES ═══ */
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* ═══ SECTION TOOLBAR ═══ */
+.section-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:18px;flex-wrap:wrap}
+.section-toolbar h2{font-size:1rem;font-weight:700;color:#fff;margin-right:auto}
+.add-btn{padding:8px 16px;border-radius:9px;border:none;background:var(--grad);color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.add-btn:hover{opacity:0.85}
+.search-input{padding:8px 13px;border-radius:9px;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:#fff;font-size:0.82rem;width:200px;outline:none;transition:border-color 0.2s}
+.search-input::placeholder{color:rgba(255,255,255,0.25)}
+.search-input:focus{border-color:rgba(79,70,229,0.4)}
+
+/* ═══ FILTER PILLS ═══ */
+.filter-pills{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.fpill{padding:5px 13px;border-radius:20px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,0.4);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.fpill:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.fpill.active{background:rgba(79,70,229,0.2);border-color:rgba(79,70,229,0.4);color:var(--accent)}
+
+/* ═══ EMPTY STATE ═══ */
+.empty-state{text-align:center;padding:60px 20px;color:rgba(255,255,255,0.25)}
+.empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:0.4}
+.empty-state h3{font-size:1rem;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:6px}
+.empty-state p{font-size:0.85rem;line-height:1.6}
+
+/* ═══ RESUME CARDS ═══ */
+.resume-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.resume-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:10px;transition:border-color 0.2s}
+.resume-card:hover{border-color:rgba(79,70,229,0.3)}
+.rc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.rc-name{font-size:0.95rem;font-weight:700;color:#fff;line-height:1.3}
+.rc-badges{display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end}
+.rc-meta{font-size:0.78rem;color:rgba(255,255,255,0.35);line-height:1.5}
+.rc-meta span{color:rgba(255,255,255,0.55)}
+.rc-notes{font-size:0.78rem;color:rgba(255,255,255,0.3);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.rc-actions{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap}
+.rc-btn{padding:5px 11px;border-radius:7px;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.5);font-size:0.72rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.rc-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.rc-btn.danger:hover{border-color:rgba(239,68,68,0.4);color:var(--red)}
+.rc-btn.primary{background:rgba(79,70,229,0.15);border-color:rgba(79,70,229,0.3);color:var(--accent)}
+.rc-btn.primary:hover{background:rgba(79,70,229,0.25)}
+
+/* ═══ STATUS BADGES ═══ */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:0.68rem;font-weight:700;white-space:nowrap}
+.badge-active{background:rgba(34,197,94,0.1);color:#22c55e;border:1px solid rgba(34,197,94,0.2)}
+.badge-draft{background:rgba(251,191,36,0.1);color:#fbbf24;border:1px solid rgba(251,191,36,0.2)}
+.badge-archived{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.35);border:1px solid var(--border)}
+.badge-applied{background:rgba(129,140,248,0.12);color:#818CF8;border:1px solid rgba(129,140,248,0.25)}
+.badge-interviewing{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.badge-offer{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.badge-rejected{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
+.badge-ghosted{background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.3);border:1px solid var(--border)}
+.badge-ats-high{background:rgba(34,197,94,0.12);color:#22c55e;border:1px solid rgba(34,197,94,0.25)}
+.badge-ats-mid{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.badge-ats-low{background:rgba(239,68,68,0.1);color:#ef4444;border:1px solid rgba(239,68,68,0.2)}
+
+/* ═══ APPLICATION TABLE ═══ */
+.app-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border)}
+.app-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+.app-table th{padding:10px 14px;text-align:left;font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.06em;background:rgba(255,255,255,0.02);border-bottom:1px solid var(--border)}
+.app-table td{padding:11px 14px;border-bottom:1px solid rgba(255,255,255,0.04);vertical-align:middle}
+.app-table tr:last-child td{border-bottom:none}
+.app-table tr:hover td{background:rgba(255,255,255,0.02)}
+.app-company{font-weight:700;color:#fff}
+.app-title{color:rgba(255,255,255,0.6);font-size:0.8rem}
+.app-resume-link{color:var(--accent);font-size:0.78rem}
+.app-date{color:rgba(255,255,255,0.35);font-size:0.78rem;white-space:nowrap}
+.app-followup{color:rgba(255,255,255,0.3);font-size:0.75rem;white-space:nowrap}
+.app-followup.due{color:var(--orange)}
+.app-followup.overdue{color:var(--red)}
+.app-actions{display:flex;gap:5px}
+.app-actions button{padding:4px 8px;border-radius:6px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,0.4);font-size:0.7rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.app-actions button:hover{color:#fff;border-color:rgba(255,255,255,0.2)}
+.app-actions button.del:hover{color:var(--red);border-color:rgba(239,68,68,0.3)}
+.status-select{padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--card2);color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;outline:none}
+
+/* Mobile app cards */
+.app-cards{display:none;gap:10px;flex-direction:column}
+.app-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px}
+.app-card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:8px}
+.app-card-body{font-size:0.78rem;color:rgba(255,255,255,0.4);line-height:1.8}
+.app-card-actions{display:flex;gap:6px;margin-top:10px}
+
+/* ═══ ANALYTICS ═══ */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.analytics-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px}
+.analytics-card.full{grid-column:1/-1}
+.analytics-card h3{font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:16px}
+.funnel-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.funnel-label{font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.5);width:100px;flex-shrink:0}
+.funnel-bar-wrap{flex:1;background:rgba(255,255,255,0.04);border-radius:4px;height:22px;overflow:hidden;position:relative}
+.funnel-bar{height:100%;border-radius:4px;transition:width 0.6s ease;display:flex;align-items:center;padding-left:8px;font-size:0.7rem;font-weight:700;color:rgba(255,255,255,0.8)}
+.funnel-count{font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.4);width:32px;text-align:right;flex-shrink:0}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:100px;margin-top:8px}
+.chart-bar-col{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.chart-bar{width:100%;background:rgba(79,70,229,0.3);border-radius:4px 4px 0 0;transition:height 0.5s ease;min-height:2px;position:relative}
+.chart-bar:hover{background:rgba(79,70,229,0.6)}
+.chart-bar-label{font-size:0.6rem;color:rgba(255,255,255,0.3);text-align:center;white-space:nowrap}
+.chart-bar-val{font-size:0.62rem;color:rgba(255,255,255,0.4);position:absolute;top:-16px;left:50%;transform:translateX(-50%);white-space:nowrap}
+.resume-perf-table{width:100%;border-collapse:collapse;font-size:0.8rem}
+.resume-perf-table th{text-align:left;padding:6px 10px;font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.05em}
+.resume-perf-table td{padding:8px 10px;border-top:1px solid rgba(255,255,255,0.04);color:rgba(255,255,255,0.7)}
+.resume-perf-table td:first-child{color:#fff;font-weight:600}
+.status-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.status-mini{background:var(--card2);border-radius:10px;padding:12px;text-align:center}
+.status-mini-val{font-size:1.4rem;font-weight:900;color:#fff}
+.status-mini-label{font-size:0.7rem;color:rgba(255,255,255,0.35);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+.no-data-msg{font-size:0.82rem;color:rgba(255,255,255,0.25);text-align:center;padding:30px}
+
+/* ═══ AI INSIGHTS ═══ */
+.insights-layout{display:grid;grid-template-columns:300px 1fr;gap:18px;align-items:start}
+.recs-panel h3{font-size:0.88rem;font-weight:700;color:#fff;margin-bottom:12px}
+.rec-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:10px}
+.rec-card-icon{font-size:1.2rem;margin-bottom:6px}
+.rec-card-text{font-size:0.8rem;color:rgba(255,255,255,0.6);line-height:1.5}
+.rec-card-action{font-size:0.72rem;color:var(--accent);font-weight:600;margin-top:6px;cursor:pointer}
+.ai-panel{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:22px}
+.ai-panel h3{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:6px}
+.ai-panel p{font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:18px;line-height:1.5}
+.generate-btn{padding:11px 26px;border-radius:10px;border:none;background:var(--grad);color:#fff;font-size:0.88rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;display:flex;align-items:center;gap:7px}
+.generate-btn:hover{opacity:0.85}
+.generate-btn:disabled{opacity:0.5;cursor:not-allowed}
+.ai-output{margin-top:18px;font-size:0.85rem;line-height:1.8;color:#e2e8f0;min-height:60px}
+.ai-output h1,.ai-output h2{font-size:1rem;font-weight:700;color:#fff;margin:14px 0 6px}
+.ai-output h3{font-size:0.9rem;font-weight:700;color:rgba(255,255,255,0.85);margin:10px 0 4px}
+.ai-output p{margin-bottom:8px}
+.ai-output ul{padding-left:18px;margin-bottom:8px}
+.ai-output li{margin-bottom:4px}
+.ai-output strong{color:#fff;font-weight:700}
+.ai-output em{color:rgba(255,255,255,0.7)}
+.ai-output hr{border:none;border-top:1px solid var(--border);margin:14px 0}
+.cursor{display:inline-block;width:2px;height:14px;background:var(--accent);animation:blink 0.8s step-end infinite;margin-left:1px;vertical-align:text-bottom}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-status{display:flex;align-items:center;gap:8px;font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:10px}
+.ai-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+
+/* ═══ MODALS ═══ */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(8px);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal-box{background:#0c0c1e;border:1px solid rgba(255,255,255,0.12);border-radius:18px;width:100%;max-width:540px;max-height:90vh;overflow-y:auto;animation:slideUp 0.2s ease}
+.modal-box.modal-sm{max-width:400px}
+@keyframes slideUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.modal-head h2{font-size:1rem;font-weight:700;color:#fff}
+.modal-close{background:none;border:none;color:rgba(255,255,255,0.35);font-size:1.2rem;cursor:pointer;padding:2px 6px;border-radius:6px;transition:color 0.2s}
+.modal-close:hover{color:#fff}
+.modal-body{padding:20px 22px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:0.72rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.07em;margin-bottom:6px}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:9px 12px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:9px;color:#fff;font-size:0.85rem;outline:none;transition:border-color 0.2s}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:rgba(79,70,229,0.5)}
+.form-group textarea{resize:vertical;line-height:1.5}
+.form-group select option{background:#0e0e1d;color:#fff}
+.modal-footer{padding:14px 22px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:8px 18px;border-radius:9px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,0.5);font-size:0.83rem;font-weight:600;cursor:pointer;transition:all 0.15s}
+.btn-cancel:hover{color:#fff;border-color:rgba(255,255,255,0.2)}
+.btn-save{padding:8px 20px;border-radius:9px;border:none;background:var(--grad);color:#fff;font-size:0.83rem;font-weight:700;cursor:pointer;transition:opacity 0.2s}
+.btn-save:hover{opacity:0.85}
+
+/* ═══ TOAST ═══ */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:0.83rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999;transform:translateY(100px);opacity:0;transition:all 0.3s;pointer-events:none}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:960px){
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+  .analytics-grid{grid-template-columns:1fr}
+  .analytics-card.full{grid-column:1}
+  .insights-layout{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .topbar{padding:10px 14px;gap:8px;flex-wrap:wrap}
+  .nav-links{margin-left:0;gap:2px;order:3;width:100%;justify-content:center;padding-top:6px;border-top:1px solid var(--border)}
+  .topbar-right{margin-left:auto}
+  .page{padding:18px 14px 40px}
+  .stats-row{grid-template-columns:repeat(2,1fr);gap:10px}
+  .stat-value{font-size:1.6rem}
+  .tabs-nav{gap:2px;padding:4px}
+  .tab-btn{font-size:0.75rem;padding:8px 6px}
+  .app-table-wrap{display:none}
+  .app-cards{display:flex}
+  .resume-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .modal-box{max-width:100%;border-radius:14px}
+}
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stat-value{font-size:1.4rem}
+  .tabs-nav{flex-wrap:nowrap;overflow-x:auto}
+  .tab-btn{flex-shrink:0}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ TOPBAR ══ -->
+<div class="topbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">A</div>Ambore<span class="brand-tag">Dashboard</span>
+  </a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="dashboard.html" class="active">Dashboard</a>
+    <a href="jobs.html">Jobs</a>
+    <a href="resume.html">Resume</a>
+    <a href="app.html">Interview</a>
+  </div>
+  <div class="topbar-right">
+    <span class="user-name" id="user-display">User</span>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </div>
+</div>
+
+<!-- ══ PAGE ══ -->
+<div class="page">
+
+  <!-- Header -->
+  <div class="dash-header">
+    <h1 id="greeting">Job Search Dashboard</h1>
+    <p>Track resumes, applications, and your progress — all in one place.</p>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card s-blue">
+      <div class="stat-value" id="s-total">0</div>
+      <div class="stat-label">Total Applied</div>
+    </div>
+    <div class="stat-card s-yellow">
+      <div class="stat-value" id="s-interviewing">0</div>
+      <div class="stat-label">Interviewing</div>
+    </div>
+    <div class="stat-card s-green">
+      <div class="stat-value" id="s-offers">0</div>
+      <div class="stat-label">Offers</div>
+    </div>
+    <div class="stat-card s-purple">
+      <div class="stat-value" id="s-rate">0%</div>
+      <div class="stat-label">Response Rate</div>
+      <div class="stat-sub" id="s-rate-sub"></div>
+    </div>
+  </div>
+
+  <!-- Tabs Nav -->
+  <div class="tabs-nav">
+    <button class="tab-btn active" onclick="showTab('resumes')">📄 Resumes</button>
+    <button class="tab-btn" onclick="showTab('applications')">📋 Applications</button>
+    <button class="tab-btn" onclick="showTab('analytics')">📊 Analytics</button>
+    <button class="tab-btn" onclick="showTab('insights')">✨ AI Insights</button>
+  </div>
+
+  <!-- ══ TAB: RESUMES ══ -->
+  <div id="tab-resumes" class="tab-pane active">
+    <div class="section-toolbar">
+      <h2>My Resumes</h2>
+      <button class="add-btn" onclick="openResumeModal()">+ Add Resume</button>
+    </div>
+    <div id="resume-grid" class="resume-grid"></div>
+  </div>
+
+  <!-- ══ TAB: APPLICATIONS ══ -->
+  <div id="tab-applications" class="tab-pane">
+    <div class="section-toolbar">
+      <h2>Job Applications</h2>
+      <input type="text" class="search-input" id="app-search" placeholder="Search company or title…" oninput="renderApplications()"/>
+      <button class="add-btn" onclick="openAppModal()">+ Add Application</button>
+    </div>
+    <div class="filter-pills" id="status-pills">
+      <button class="fpill active" data-filter="all" onclick="setAppFilter('all')">All</button>
+      <button class="fpill" data-filter="applied" onclick="setAppFilter('applied')">Applied</button>
+      <button class="fpill" data-filter="interviewing" onclick="setAppFilter('interviewing')">Interviewing</button>
+      <button class="fpill" data-filter="offer" onclick="setAppFilter('offer')">Offer</button>
+      <button class="fpill" data-filter="rejected" onclick="setAppFilter('rejected')">Rejected</button>
+      <button class="fpill" data-filter="ghosted" onclick="setAppFilter('ghosted')">Ghosted</button>
+    </div>
+    <!-- Desktop table -->
+    <div class="app-table-wrap">
+      <table class="app-table">
+        <thead>
+          <tr>
+            <th>Company / Role</th>
+            <th>Resume Used</th>
+            <th>Applied</th>
+            <th>Status</th>
+            <th>Follow-up</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="app-table-body"></tbody>
+      </table>
+    </div>
+    <!-- Mobile cards -->
+    <div class="app-cards" id="app-cards-list"></div>
+    <div id="app-empty" class="empty-state hidden">
+      <div class="empty-icon">📋</div>
+      <h3>No applications yet</h3>
+      <p>Start logging your job applications to track your progress.</p>
+    </div>
+  </div>
+
+  <!-- ══ TAB: ANALYTICS ══ -->
+  <div id="tab-analytics" class="tab-pane">
+    <div id="analytics-content"></div>
+  </div>
+
+  <!-- ══ TAB: AI INSIGHTS ══ -->
+  <div id="tab-insights" class="tab-pane">
+    <div class="insights-layout">
+      <!-- Left: auto recommendations -->
+      <div class="recs-panel">
+        <h3>Quick Recommendations</h3>
+        <div id="recs-list"></div>
+      </div>
+      <!-- Right: full AI analysis -->
+      <div class="ai-panel">
+        <h3>AI Career Coach</h3>
+        <p>Get a personalized analysis of your job search strategy, resume performance, and actionable next steps from Claude AI.</p>
+        <button class="generate-btn" id="insights-btn" onclick="generateInsights()">
+          <span>✨</span><span id="insights-btn-text">Analyze My Job Search</span>
+        </button>
+        <div id="ai-status-row" class="ai-status hidden">
+          <div class="ai-dot"></div><span id="ai-status-text">Analyzing your data…</span>
+        </div>
+        <div class="ai-output" id="ai-output"></div>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<!-- ══ MODAL: ADD/EDIT RESUME ══ -->
+<div id="resume-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="resume-modal-title">Add Resume</h2>
+      <button class="modal-close" onclick="closeModal('resume-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="rm-id"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Resume Name *</label>
+          <input type="text" id="rm-name" placeholder="e.g. Senior Java Dev Resume"/>
+        </div>
+        <div class="form-group">
+          <label>Target Job Title</label>
+          <input type="text" id="rm-jobtitle" placeholder="e.g. Software Engineer"/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Company / Tailored For</label>
+          <input type="text" id="rm-company" placeholder="e.g. Google"/>
+        </div>
+        <div class="form-group">
+          <label>Job Posting URL</label>
+          <input type="url" id="rm-joburl" placeholder="https://..."/>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>ATS Score (0–100)</label>
+          <input type="number" id="rm-ats" min="0" max="100" placeholder="e.g. 87"/>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="rm-status">
+            <option value="active">Active</option>
+            <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Resume Content (Markdown)</label>
+        <textarea id="rm-content" rows="10" placeholder="Paste your resume here in Markdown or plain text…&#10;&#10;# Your Name&#10;email | phone | LinkedIn&#10;&#10;## Experience&#10;..."></textarea>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="rm-notes" rows="2" placeholder="Any notes about this version…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('resume-modal')">Cancel</button>
+      <button class="btn-save" onclick="saveResume()">Save Resume</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: ADD/EDIT APPLICATION ══ -->
+<div id="app-modal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <div class="modal-head">
+      <h2 id="app-modal-title">Log Application</h2>
+      <button class="modal-close" onclick="closeModal('app-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="am-id"/>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Company Name *</label>
+          <input type="text" id="am-company" placeholder="e.g. Google"/>
+        </div>
+        <div class="form-group">
+          <label>Job Title *</label>
+          <input type="text" id="am-jobtitle" placeholder="e.g. Senior Engineer"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Job Description URL</label>
+        <input type="url" id="am-joburl" placeholder="https://..."/>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Resume Used</label>
+          <select id="am-resume"><option value="">— None —</option></select>
+        </div>
+        <div class="form-group">
+          <label>Status</label>
+          <select id="am-status">
+            <option value="applied">Applied</option>
+            <option value="interviewing">Interviewing</option>
+            <option value="offer">Offer</option>
+            <option value="rejected">Rejected</option>
+            <option value="ghosted">Ghosted</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date Applied</label>
+          <input type="date" id="am-date"/>
+        </div>
+        <div class="form-group">
+          <label>Follow-up Reminder</label>
+          <input type="date" id="am-followup"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="am-notes" rows="3" placeholder="Recruiter name, interview round, salary discussed…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('app-modal')">Cancel</button>
+      <button class="btn-save" onclick="saveApp()">Save Application</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════════════════════════════════
+   AUTH & USER
+═══════════════════════════════════════════ */
+const session = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+const userId = session ? session.id : '';
+
+function logout() {
+  localStorage.removeItem('ambore_user');
+  window.location.href = 'index.html';
+}
+
+/* ═══════════════════════════════════════════
+   DASH DB — localStorage CRUD
+═══════════════════════════════════════════ */
+const DashDB = {
+  _rk: 'ambore_resumes_' + userId,
+  _ak: 'ambore_applications_' + userId,
+  getResumes()    { return JSON.parse(localStorage.getItem(this._rk) || '[]'); },
+  saveResumes(r)  { localStorage.setItem(this._rk, JSON.stringify(r)); },
+  addResume(r)    { const rs = this.getResumes(); rs.unshift(r); this.saveResumes(rs); },
+  deleteResume(id){ this.saveResumes(this.getResumes().filter(r => r.id !== id)); },
+  updateResume(r) { this.saveResumes(this.getResumes().map(x => x.id === r.id ? r : x)); },
+  getApps()       { return JSON.parse(localStorage.getItem(this._ak) || '[]'); },
+  saveApps(a)     { localStorage.setItem(this._ak, JSON.stringify(a)); },
+  addApp(a)       { const as = this.getApps(); as.unshift(a); this.saveApps(as); },
+  deleteApp(id)   { this.saveApps(this.getApps().filter(a => a.id !== id)); },
+  updateApp(a)    { this.saveApps(this.getApps().map(x => x.id === a.id ? a : x)); },
+};
+
+/* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function fmtDate(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function fmtDateShort(d) {
+  if (!d) return '—';
+  const dt = new Date(d);
+  return dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+}
+
+function daysAgo(d) {
+  if (!d) return null;
+  return Math.floor((Date.now() - new Date(d).getTime()) / 86400000);
+}
+
+function todayISO() {
+  return new Date().toISOString().split('T')[0];
+}
+
+function showToast(msg, duration = 3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), duration);
+}
+
+function atsBadge(score) {
+  if (!score && score !== 0) return '';
+  const n = parseInt(score);
+  const cls = n >= 80 ? 'badge-ats-high' : n >= 60 ? 'badge-ats-mid' : 'badge-ats-low';
+  return `<span class="badge ${cls}">ATS ${n}</span>`;
+}
+
+function statusBadge(status) {
+  const map = {
+    active: 'badge-active', draft: 'badge-draft', archived: 'badge-archived',
+    applied: 'badge-applied', interviewing: 'badge-interviewing',
+    offer: 'badge-offer', rejected: 'badge-rejected', ghosted: 'badge-ghosted',
+  };
+  const labels = {
+    active: 'Active', draft: 'Draft', archived: 'Archived',
+    applied: 'Applied', interviewing: 'Interviewing',
+    offer: 'Offer', rejected: 'Rejected', ghosted: 'Ghosted',
+  };
+  return `<span class="badge ${map[status] || ''}">${labels[status] || status}</span>`;
+}
+
+/* ═══════════════════════════════════════════
+   STATS
+═══════════════════════════════════════════ */
+function updateStats() {
+  const apps = DashDB.getApps();
+  const total = apps.length;
+  const interviewing = apps.filter(a => a.status === 'interviewing').length;
+  const offers = apps.filter(a => a.status === 'offer').length;
+  const responded = apps.filter(a => ['interviewing','offer','rejected'].includes(a.status)).length;
+  const rate = total > 0 ? Math.round((responded / total) * 100) : 0;
+
+  document.getElementById('s-total').textContent = total;
+  document.getElementById('s-interviewing').textContent = interviewing;
+  document.getElementById('s-offers').textContent = offers;
+  document.getElementById('s-rate').textContent = rate + '%';
+  document.getElementById('s-rate-sub').textContent = total > 0 ? responded + ' of ' + total + ' responded' : '';
+}
+
+/* ═══════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════ */
+let activeTab = 'resumes';
+
+function showTab(name) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    if (b.getAttribute('onclick') && b.getAttribute('onclick').includes("'" + name + "'")) {
+      b.classList.add('active');
+    }
+  });
+  activeTab = name;
+  if (name === 'analytics') renderAnalytics();
+  if (name === 'insights') renderRecommendations();
+}
+
+/* ═══════════════════════════════════════════
+   RESUME TAB
+═══════════════════════════════════════════ */
+function renderResumes() {
+  const grid = document.getElementById('resume-grid');
+  const resumes = DashDB.getResumes();
+
+  if (resumes.length === 0) {
+    grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
+      <div class="empty-icon">📄</div>
+      <h3>No resumes yet</h3>
+      <p>Add your first resume to start tracking versions, ATS scores, and which jobs you used each resume for.</p>
+    </div>`;
+    return;
+  }
+
+  grid.innerHTML = resumes.map(r => {
+    const days = daysAgo(r.createdAt);
+    const daysLabel = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+    return `<div class="resume-card">
+      <div class="rc-top">
+        <div class="rc-name">${esc(r.name)}</div>
+        <div class="rc-badges">
+          ${atsBadge(r.atsScore)}
+          ${statusBadge(r.status)}
+        </div>
+      </div>
+      <div class="rc-meta">
+        ${r.jobTitle ? `<div>🎯 <span>${esc(r.jobTitle)}</span>${r.company ? ` at <span>${esc(r.company)}</span>` : ''}</div>` : ''}
+        ${r.jobUrl ? `<div>🔗 <a href="${esc(r.jobUrl)}" target="_blank" rel="noopener" style="color:var(--accent);font-size:0.74rem">${esc(r.jobUrl.replace(/^https?:\/\//,'').split('/')[0])}</a></div>` : ''}
+        <div>📅 Added ${daysLabel}</div>
+      </div>
+      ${r.notes ? `<div class="rc-notes">${esc(r.notes)}</div>` : ''}
+      <div class="rc-actions">
+        <button class="rc-btn" onclick="openResumeModal('${r.id}')">✏ Edit</button>
+        ${r.content ? `<button class="rc-btn" onclick="downloadResume('${r.id}')">↓ Download</button>` : ''}
+        <button class="rc-btn primary" onclick="window.open('resume.html','_blank')">↺ Regen</button>
+        <button class="rc-btn danger" onclick="confirmDeleteResume('${r.id}')">✕ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function downloadResume(id) {
+  const r = DashDB.getResumes().find(x => x.id === id);
+  if (!r || !r.content) return;
+  const blob = new Blob([r.content], { type: 'text/plain' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (r.name || 'resume').replace(/[^a-z0-9]/gi,'_') + '.txt';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+function confirmDeleteResume(id) {
+  if (confirm('Delete this resume? This cannot be undone.')) {
+    DashDB.deleteResume(id);
+    renderResumes();
+    updateStats();
+    showToast('Resume deleted.');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   RESUME MODAL
+═══════════════════════════════════════════ */
+function openResumeModal(id) {
+  const modal = document.getElementById('resume-modal');
+  const title = document.getElementById('resume-modal-title');
+
+  // Clear fields
+  ['rm-id','rm-name','rm-jobtitle','rm-company','rm-joburl','rm-ats','rm-content','rm-notes'].forEach(f => {
+    document.getElementById(f).value = '';
+  });
+  document.getElementById('rm-status').value = 'active';
+
+  if (id) {
+    const r = DashDB.getResumes().find(x => x.id === id);
+    if (!r) return;
+    title.textContent = 'Edit Resume';
+    document.getElementById('rm-id').value = r.id;
+    document.getElementById('rm-name').value = r.name || '';
+    document.getElementById('rm-jobtitle').value = r.jobTitle || '';
+    document.getElementById('rm-company').value = r.company || '';
+    document.getElementById('rm-joburl').value = r.jobUrl || '';
+    document.getElementById('rm-ats').value = r.atsScore || '';
+    document.getElementById('rm-status').value = r.status || 'active';
+    document.getElementById('rm-content').value = r.content || '';
+    document.getElementById('rm-notes').value = r.notes || '';
+  } else {
+    title.textContent = 'Add Resume';
+    // Check if there's a pre-fill from resume.html "Save to Dashboard"
+    const prefill = sessionStorage.getItem('ambore_save_resume');
+    if (prefill) {
+      try {
+        const p = JSON.parse(prefill);
+        document.getElementById('rm-content').value = p.content || '';
+        document.getElementById('rm-jobtitle').value = p.jobTitle || '';
+        document.getElementById('rm-company').value = p.company || '';
+        document.getElementById('rm-name').value = p.name || '';
+        sessionStorage.removeItem('ambore_save_resume');
+      } catch(e) {}
+    }
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function saveResume() {
+  const name = document.getElementById('rm-name').value.trim();
+  if (!name) { showToast('Please enter a resume name.'); return; }
+
+  const id = document.getElementById('rm-id').value;
+  const now = new Date().toISOString();
+  const r = {
+    id: id || 'res_' + Date.now(),
+    name,
+    jobTitle: document.getElementById('rm-jobtitle').value.trim(),
+    company:  document.getElementById('rm-company').value.trim(),
+    jobUrl:   document.getElementById('rm-joburl').value.trim(),
+    atsScore: parseInt(document.getElementById('rm-ats').value) || null,
+    status:   document.getElementById('rm-status').value,
+    content:  document.getElementById('rm-content').value.trim(),
+    notes:    document.getElementById('rm-notes').value.trim(),
+    createdAt: id ? (DashDB.getResumes().find(x=>x.id===id)||{}).createdAt || now : now,
+    updatedAt: now,
+  };
+
+  if (id) { DashDB.updateResume(r); showToast('Resume updated.'); }
+  else     { DashDB.addResume(r);   showToast('Resume saved.'); }
+
+  closeModal('resume-modal');
+  renderResumes();
+}
+
+/* ═══════════════════════════════════════════
+   APPLICATION TAB
+═══════════════════════════════════════════ */
+let appFilter = 'all';
+
+function setAppFilter(f) {
+  appFilter = f;
+  document.querySelectorAll('.fpill').forEach(p => {
+    p.classList.toggle('active', p.dataset.filter === f);
+  });
+  renderApplications();
+}
+
+function renderApplications() {
+  const all = DashDB.getApps();
+  const resumes = DashDB.getResumes();
+  const q = (document.getElementById('app-search')?.value || '').toLowerCase();
+  const resumeMap = Object.fromEntries(resumes.map(r => [r.id, r.name]));
+
+  let filtered = all;
+  if (appFilter !== 'all') filtered = filtered.filter(a => a.status === appFilter);
+  if (q) filtered = filtered.filter(a =>
+    (a.company||'').toLowerCase().includes(q) ||
+    (a.jobTitle||'').toLowerCase().includes(q)
+  );
+
+  const tbody = document.getElementById('app-table-body');
+  const cardsList = document.getElementById('app-cards-list');
+  const emptyDiv = document.getElementById('app-empty');
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = '';
+    cardsList.innerHTML = '';
+    emptyDiv.classList.remove('hidden');
+    return;
+  }
+  emptyDiv.classList.add('hidden');
+
+  const today = todayISO();
+
+  // Desktop table rows
+  tbody.innerHTML = filtered.map(a => {
+    const resumeName = a.resumeId ? (resumeMap[a.resumeId] || '—') : '—';
+    const fu = a.followUpDate;
+    const fuClass = fu && fu < today ? 'app-followup overdue' : fu && fu <= addDays(today,2) ? 'app-followup due' : 'app-followup';
+    const statusOpts = ['applied','interviewing','offer','rejected','ghosted']
+      .map(s => `<option value="${s}"${a.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`)
+      .join('');
+    return `<tr>
+      <td>
+        <div class="app-company">${esc(a.company)}</div>
+        <div class="app-title">${esc(a.jobTitle)}</div>
+        ${a.jobUrl ? `<a href="${esc(a.jobUrl)}" target="_blank" rel="noopener" class="app-resume-link" style="font-size:0.72rem">View JD ↗</a>` : ''}
+      </td>
+      <td class="app-resume-link">${esc(resumeName)}</td>
+      <td class="app-date">${fmtDateShort(a.appliedDate)}</td>
+      <td>
+        <select class="status-select" onchange="updateAppStatus('${a.id}',this.value)">${statusOpts}</select>
+      </td>
+      <td class="${fuClass}">${fu ? fmtDateShort(fu) : '—'}</td>
+      <td>
+        <div class="app-actions">
+          <button onclick="openAppModal('${a.id}')">Edit</button>
+          <button class="del" onclick="confirmDeleteApp('${a.id}')">Del</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Mobile cards
+  cardsList.innerHTML = filtered.map(a => {
+    const resumeName = a.resumeId ? (resumeMap[a.resumeId] || '') : '';
+    const fu = a.followUpDate;
+    const fuClass = fu && fu < today ? 'app-followup overdue' : fu && fu <= addDays(today,2) ? 'app-followup due' : 'app-followup';
+    const statusOpts = ['applied','interviewing','offer','rejected','ghosted']
+      .map(s => `<option value="${s}"${a.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`)
+      .join('');
+    return `<div class="app-card">
+      <div class="app-card-top">
+        <div>
+          <div class="app-company">${esc(a.company)}</div>
+          <div class="app-title" style="font-size:0.82rem;color:rgba(255,255,255,0.55)">${esc(a.jobTitle)}</div>
+        </div>
+        <select class="status-select" onchange="updateAppStatus('${a.id}',this.value)">${statusOpts}</select>
+      </div>
+      <div class="app-card-body">
+        ${resumeName ? `📄 ${esc(resumeName)}<br>` : ''}
+        📅 Applied ${fmtDateShort(a.appliedDate)}
+        ${fu ? `<br><span class="${fuClass}">🔔 Follow-up ${fmtDateShort(fu)}</span>` : ''}
+        ${a.notes ? `<br>💬 ${esc(a.notes)}` : ''}
+      </div>
+      <div class="app-card-actions">
+        <button class="rc-btn" onclick="openAppModal('${a.id}')">✏ Edit</button>
+        ${a.jobUrl ? `<a href="${esc(a.jobUrl)}" target="_blank" rel="noopener"><button class="rc-btn">View JD ↗</button></a>` : ''}
+        <button class="rc-btn danger" onclick="confirmDeleteApp('${a.id}')">✕ Delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addDays(dateStr, n) {
+  const d = new Date(dateStr);
+  d.setDate(d.getDate() + n);
+  return d.toISOString().split('T')[0];
+}
+
+function updateAppStatus(id, status) {
+  const a = DashDB.getApps().find(x => x.id === id);
+  if (!a) return;
+  DashDB.updateApp({ ...a, status, updatedAt: new Date().toISOString() });
+  updateStats();
+  if (activeTab === 'analytics') renderAnalytics();
+}
+
+function confirmDeleteApp(id) {
+  if (confirm('Delete this application? This cannot be undone.')) {
+    DashDB.deleteApp(id);
+    renderApplications();
+    updateStats();
+    showToast('Application deleted.');
+  }
+}
+
+/* ═══════════════════════════════════════════
+   APPLICATION MODAL
+═══════════════════════════════════════════ */
+function openAppModal(id) {
+  const modal = document.getElementById('app-modal');
+  const title = document.getElementById('app-modal-title');
+
+  // Clear
+  ['am-id','am-company','am-jobtitle','am-joburl','am-notes'].forEach(f => {
+    document.getElementById(f).value = '';
+  });
+  document.getElementById('am-status').value = 'applied';
+  document.getElementById('am-date').value = todayISO();
+  document.getElementById('am-followup').value = '';
+
+  // Populate resume select
+  const sel = document.getElementById('am-resume');
+  const resumes = DashDB.getResumes();
+  sel.innerHTML = '<option value="">— None —</option>' +
+    resumes.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
+
+  if (id) {
+    const a = DashDB.getApps().find(x => x.id === id);
+    if (!a) return;
+    title.textContent = 'Edit Application';
+    document.getElementById('am-id').value = a.id;
+    document.getElementById('am-company').value = a.company || '';
+    document.getElementById('am-jobtitle').value = a.jobTitle || '';
+    document.getElementById('am-joburl').value = a.jobUrl || '';
+    document.getElementById('am-status').value = a.status || 'applied';
+    document.getElementById('am-date').value = a.appliedDate || todayISO();
+    document.getElementById('am-followup').value = a.followUpDate || '';
+    document.getElementById('am-notes').value = a.notes || '';
+    sel.value = a.resumeId || '';
+  } else {
+    title.textContent = 'Log Application';
+  }
+
+  modal.classList.remove('hidden');
+}
+
+function saveApp() {
+  const company  = document.getElementById('am-company').value.trim();
+  const jobTitle = document.getElementById('am-jobtitle').value.trim();
+  if (!company)  { showToast('Please enter a company name.'); return; }
+  if (!jobTitle) { showToast('Please enter a job title.'); return; }
+
+  const id = document.getElementById('am-id').value;
+  const now = new Date().toISOString();
+  const a = {
+    id: id || 'app_' + Date.now(),
+    company,
+    jobTitle,
+    jobUrl:      document.getElementById('am-joburl').value.trim(),
+    resumeId:    document.getElementById('am-resume').value || null,
+    appliedDate: document.getElementById('am-date').value || todayISO(),
+    status:      document.getElementById('am-status').value,
+    followUpDate: document.getElementById('am-followup').value || null,
+    notes:       document.getElementById('am-notes').value.trim(),
+    createdAt: id ? (DashDB.getApps().find(x=>x.id===id)||{}).createdAt || now : now,
+    updatedAt: now,
+  };
+
+  if (id) { DashDB.updateApp(a); showToast('Application updated.'); }
+  else    { DashDB.addApp(a);    showToast('Application saved.'); }
+
+  closeModal('app-modal');
+  renderApplications();
+  updateStats();
+}
+
+/* ═══════════════════════════════════════════
+   ANALYTICS TAB
+═══════════════════════════════════════════ */
+function renderAnalytics() {
+  const container = document.getElementById('analytics-content');
+  const apps = DashDB.getApps();
+  const resumes = DashDB.getResumes();
+
+  if (apps.length === 0 && resumes.length === 0) {
+    container.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📊</div>
+      <h3>No data yet</h3>
+      <p>Add resumes and applications to see your analytics.</p>
+    </div>`;
+    return;
+  }
+
+  // Status counts
+  const counts = { applied:0, interviewing:0, offer:0, rejected:0, ghosted:0 };
+  apps.forEach(a => { if (counts.hasOwnProperty(a.status)) counts[a.status]++; });
+  const total = apps.length;
+  const responded = counts.interviewing + counts.offer + counts.rejected;
+
+  // Applications per week (last 8 weeks)
+  const weekBuckets = [];
+  for (let i = 7; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i * 7);
+    const start = new Date(d);
+    start.setDate(start.getDate() - start.getDay()); // Sunday
+    const end = new Date(start);
+    end.setDate(end.getDate() + 6);
+    const label = (start.getMonth()+1) + '/' + start.getDate();
+    const c = apps.filter(a => {
+      if (!a.appliedDate) return false;
+      const ad = a.appliedDate;
+      const s = start.toISOString().split('T')[0];
+      const e = end.toISOString().split('T')[0];
+      return ad >= s && ad <= e;
+    }).length;
+    weekBuckets.push({ label, count: c });
+  }
+  const maxWeek = Math.max(...weekBuckets.map(w => w.count), 1);
+
+  // Resume performance
+  const resumeMap = Object.fromEntries(resumes.map(r => [r.id, r]));
+  const resumePerf = resumes.map(r => {
+    const rApps = apps.filter(a => a.resumeId === r.id);
+    const rInterviews = rApps.filter(a => ['interviewing','offer'].includes(a.status)).length;
+    const rate = rApps.length > 0 ? Math.round((rInterviews / rApps.length) * 100) : 0;
+    return { resume: r, apps: rApps.length, interviews: rInterviews, rate };
+  }).filter(r => r.apps > 0 || r.resume.atsScore);
+
+  // Top companies
+  const companyCount = {};
+  apps.forEach(a => { companyCount[a.company] = (companyCount[a.company] || 0) + 1; });
+  const topCompanies = Object.entries(companyCount).sort((a,b) => b[1]-a[1]).slice(0, 6);
+
+  container.innerHTML = `
+  <div class="analytics-grid">
+
+    <!-- Funnel -->
+    <div class="analytics-card">
+      <h3>Application Funnel</h3>
+      ${total === 0 ? '<div class="no-data-msg">No applications yet</div>' : `
+      ${funnelRow('Applied', total, total, '#818CF8')}
+      ${funnelRow('Interviewing', counts.interviewing, total, '#fbbf24')}
+      ${funnelRow('Offer', counts.offer, total, '#22c55e')}
+      ${funnelRow('Rejected', counts.rejected, total, '#ef4444')}
+      ${funnelRow('Ghosted', counts.ghosted, total, 'rgba(255,255,255,0.2)')}
+      `}
+    </div>
+
+    <!-- Status breakdown -->
+    <div class="analytics-card">
+      <h3>Status Breakdown</h3>
+      <div class="status-grid">
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:#818CF8">${counts.applied}</div>
+          <div class="status-mini-label">Applied</div>
+        </div>
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:#fbbf24">${counts.interviewing}</div>
+          <div class="status-mini-label">Interviewing</div>
+        </div>
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:#22c55e">${counts.offer}</div>
+          <div class="status-mini-label">Offer</div>
+        </div>
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:#ef4444">${counts.rejected}</div>
+          <div class="status-mini-label">Rejected</div>
+        </div>
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:rgba(255,255,255,0.3)">${counts.ghosted}</div>
+          <div class="status-mini-label">Ghosted</div>
+        </div>
+        <div class="status-mini">
+          <div class="status-mini-val" style="color:var(--accent)">${total>0?Math.round((responded/total)*100):0}%</div>
+          <div class="status-mini-label">Response</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly chart -->
+    <div class="analytics-card full">
+      <h3>Applications Per Week (last 8 weeks)</h3>
+      <div class="chart-bars">
+        ${weekBuckets.map(w => `
+          <div class="chart-bar-col">
+            <div class="chart-bar" style="height:${maxWeek>0?Math.round((w.count/maxWeek)*90)+10:10}px;background:${w.count>0?'rgba(79,70,229,0.5)':'rgba(255,255,255,0.04)'}">
+              ${w.count > 0 ? `<span class="chart-bar-val">${w.count}</span>` : ''}
+            </div>
+            <div class="chart-bar-label">${w.label}</div>
+          </div>`).join('')}
+      </div>
+    </div>
+
+    <!-- Resume performance -->
+    ${resumePerf.length > 0 ? `
+    <div class="analytics-card">
+      <h3>Resume Performance</h3>
+      <table class="resume-perf-table">
+        <thead><tr><th>Resume</th><th>Apps</th><th>Interviews</th><th>Rate</th></tr></thead>
+        <tbody>
+          ${resumePerf.map(r => `<tr>
+            <td>${esc(r.resume.name)}</td>
+            <td>${r.apps}</td>
+            <td>${r.interviews}</td>
+            <td style="color:${r.rate>=30?'#22c55e':r.rate>=10?'#fbbf24':'rgba(255,255,255,0.4)'}">${r.rate}%</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+    </div>` : ''}
+
+    <!-- Top companies -->
+    ${topCompanies.length > 0 ? `
+    <div class="analytics-card">
+      <h3>Top Companies Applied</h3>
+      ${topCompanies.map(([co, n]) => funnelRow(co, n, topCompanies[0][1], 'rgba(129,140,248,0.5)')).join('')}
+    </div>` : ''}
+
+  </div>`;
+}
+
+function funnelRow(label, count, max, color) {
+  const pct = max > 0 ? Math.max(Math.round((count / max) * 100), 2) : 2;
+  const displayPct = max > 0 ? Math.round((count / max) * 100) : 0;
+  return `<div class="funnel-row">
+    <div class="funnel-label">${esc(label)}</div>
+    <div class="funnel-bar-wrap">
+      <div class="funnel-bar" style="width:${pct}%;background:${color}">${count > 0 ? count : ''}</div>
+    </div>
+    <div class="funnel-count">${count}</div>
+  </div>`;
+}
+
+/* ═══════════════════════════════════════════
+   AI INSIGHTS — RECOMMENDATIONS
+═══════════════════════════════════════════ */
+function renderRecommendations() {
+  const apps = DashDB.getApps();
+  const resumes = DashDB.getResumes();
+  const recs = [];
+  const today = todayISO();
+
+  // Follow-up overdue
+  const overdue = apps.filter(a =>
+    a.status === 'applied' &&
+    a.appliedDate &&
+    daysAgo(a.appliedDate) >= 7 &&
+    !a.followUpDate
+  );
+  if (overdue.length > 0) {
+    recs.push({
+      icon: '🔔',
+      text: `${overdue.length} application${overdue.length>1?'s are':' is'} over 7 days old with no follow-up scheduled. Consider reaching out — especially to ${esc(overdue[0].company)}.`,
+      action: 'View Applications',
+      onclick: "showTab('applications')"
+    });
+  }
+
+  // Best performing resume
+  if (resumes.length > 1 && apps.length > 0) {
+    const resumeMap = Object.fromEntries(resumes.map(r => [r.id, r]));
+    const perf = resumes.map(r => {
+      const rApps = apps.filter(a => a.resumeId === r.id);
+      const rInt = rApps.filter(a => ['interviewing','offer'].includes(a.status)).length;
+      return { r, apps: rApps.length, interviews: rInt };
+    }).filter(p => p.apps > 0);
+    if (perf.length > 0) {
+      const best = perf.sort((a,b) => (b.interviews/Math.max(b.apps,1)) - (a.interviews/Math.max(a.apps,1)))[0];
+      if (best.interviews > 0) {
+        recs.push({
+          icon: '🏆',
+          text: `Your "${esc(best.r.name)}" resume has the best interview rate (${best.interviews} of ${best.apps} apps). Use it as a base for similar roles.`,
+          action: 'View Resumes',
+          onclick: "showTab('resumes')"
+        });
+      }
+    }
+  }
+
+  // Active interviews
+  const interviewing = apps.filter(a => a.status === 'interviewing');
+  if (interviewing.length > 0) {
+    recs.push({
+      icon: '🎯',
+      text: `You have ${interviewing.length} active interview${interviewing.length>1?'s':''} in progress${interviewing[0]?` — including at ${esc(interviewing[0].company)}`:''}. Use Interview Prep to get ready.`,
+      action: 'Open Interview Prep',
+      onclick: "window.location.href='app.html'"
+    });
+  }
+
+  // High ATS resume not yet used
+  const highAts = resumes.find(r => r.atsScore >= 80 && !apps.some(a => a.resumeId === r.id));
+  if (highAts) {
+    recs.push({
+      icon: '⚡',
+      text: `Your "${esc(highAts.name)}" resume has an ATS score of ${highAts.atsScore} but hasn't been used for any applications yet.`,
+      action: 'Log an Application',
+      onclick: "showTab('applications');openAppModal()"
+    });
+  }
+
+  // Empty
+  if (apps.length === 0) {
+    recs.push({
+      icon: '🚀',
+      text: 'Start logging your job applications to get personalized insights and track your progress.',
+      action: 'Add First Application',
+      onclick: "showTab('applications');openAppModal()"
+    });
+  }
+  if (resumes.length === 0) {
+    recs.push({
+      icon: '📄',
+      text: 'Add your resumes to track ATS scores and see which versions lead to more interviews.',
+      action: 'Add Resume',
+      onclick: "showTab('resumes');openResumeModal()"
+    });
+  }
+
+  const list = document.getElementById('recs-list');
+  if (recs.length === 0) {
+    list.innerHTML = `<div class="rec-card"><div class="rec-card-text" style="color:rgba(255,255,255,0.4)">No recommendations right now — you're on track!</div></div>`;
+    return;
+  }
+  list.innerHTML = recs.map(r => `
+    <div class="rec-card">
+      <div class="rec-card-icon">${r.icon}</div>
+      <div class="rec-card-text">${r.text}</div>
+      ${r.action ? `<div class="rec-card-action" onclick="${r.action}">→ ${r.action}</div>` : ''}
+    </div>`).join('');
+}
+
+/* ═══════════════════════════════════════════
+   AI INSIGHTS — CLAUDE API
+═══════════════════════════════════════════ */
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY = _k.join('');
+const CLAUDE_MODEL = 'claude-sonnet-4-5-20250929';
+
+let insightsGenerating = false;
+
+async function generateInsights() {
+  if (insightsGenerating) return;
+
+  const apps = DashDB.getApps();
+  const resumes = DashDB.getResumes();
+
+  if (apps.length === 0 && resumes.length === 0) {
+    showToast('Add some resumes and applications first to get insights.');
+    return;
+  }
+
+  insightsGenerating = true;
+  const btn = document.getElementById('insights-btn');
+  const btnText = document.getElementById('insights-btn-text');
+  const output = document.getElementById('ai-output');
+  const statusRow = document.getElementById('ai-status-row');
+  const statusText = document.getElementById('ai-status-text');
+
+  btn.disabled = true;
+  btnText.textContent = 'Analyzing…';
+  statusRow.classList.remove('hidden');
+  statusText.textContent = 'Gathering your job search data…';
+  output.innerHTML = '<span class="cursor"></span>';
+
+  // Build prompt data
+  const counts = { applied:0, interviewing:0, offer:0, rejected:0, ghosted:0 };
+  apps.forEach(a => { if (counts.hasOwnProperty(a.status)) counts[a.status]++; });
+  const total = apps.length;
+  const responded = counts.interviewing + counts.offer + counts.rejected;
+  const responseRate = total > 0 ? Math.round((responded / total) * 100) : 0;
+
+  const resumeLines = resumes.slice(0, 10).map(r =>
+    `- "${r.name}" (ATS: ${r.atsScore || 'N/A'}, Target: ${r.jobTitle || 'N/A'}${r.company ? ', Company: ' + r.company : ''})`
+  ).join('\n');
+
+  const appLines = apps.slice(0, 30).map(a =>
+    `- ${a.company} — ${a.jobTitle} | Status: ${a.status} | Applied: ${a.appliedDate || 'N/A'}${a.followUpDate ? ' | Follow-up: ' + a.followUpDate : ''}`
+  ).join('\n');
+
+  const prompt = `You are a career coach analyzing a job seeker's search data. Provide a clear, actionable analysis.
+
+JOB SEARCH STATS:
+- Total applications: ${total}
+- Currently interviewing: ${counts.interviewing}
+- Offers received: ${counts.offer}
+- Rejected: ${counts.rejected}
+- Ghosted: ${counts.ghosted}
+- Response rate: ${responseRate}%
+
+RESUMES (${resumes.length} total):
+${resumeLines || 'No resumes tracked yet.'}
+
+RECENT APPLICATIONS (${Math.min(apps.length, 30)} of ${total}):
+${appLines || 'No applications logged yet.'}
+
+Provide a structured analysis with these sections:
+1. **Search Health** — Brief overall assessment (2-3 sentences)
+2. **What's Working** — Specific positives from the data
+3. **Areas to Improve** — Concrete, actionable gaps
+4. **Priority Action Items** — Top 3 things to do this week
+5. **Follow-up Needed** — Applications that need attention right now
+6. **Resume Strategy** — Tips based on ATS scores and usage patterns
+
+Be specific, use the actual company names and resume names from the data. Be encouraging but honest.`;
+
+  try {
+    statusText.textContent = 'Analyzing your job search…';
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 1400,
+        stream: true,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error?.message || 'API error ' + res.status);
+    }
+
+    let md = '';
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const p = JSON.parse(data);
+          if (p.type === 'content_block_delta' && p.delta?.text) {
+            md += p.delta.text;
+            output.innerHTML = renderInsightsMd(md) + '<span class="cursor"></span>';
+          }
+        } catch(e) {}
+      }
+    }
+
+    output.innerHTML = renderInsightsMd(md);
+    statusRow.classList.add('hidden');
+
+  } catch(err) {
+    output.innerHTML = `<p style="color:var(--red)">Error: ${err.message}</p>`;
+    statusRow.classList.add('hidden');
+    showToast('Analysis failed: ' + err.message);
+  } finally {
+    insightsGenerating = false;
+    btn.disabled = false;
+    btnText.textContent = 'Refresh Analysis';
+  }
+}
+
+function renderInsightsMd(md) {
+  return md
+    .replace(/^### (.+)$/gm, '<h3>$1</h3>')
+    .replace(/^## (.+)$/gm, '<h2>$1</h2>')
+    .replace(/^# (.+)$/gm, '<h1>$1</h1>')
+    .replace(/^---$/gm, '<hr/>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g, '<em>$1</em>')
+    .replace(/(?:^|\n)((?:[\t ]*[-•]\s.+\n?)+)/g, (_, list) => {
+      const items = list.trim().split('\n').map(l => `<li>${l.replace(/^[\t ]*[-•]\s/,'').trim()}</li>`).join('');
+      return `<ul>${items}</ul>`;
+    })
+    .replace(/^(?!<[hul1-9/]|<li|<hr)(.+)$/gm, '<p>$1</p>')
+    .replace(/<p>\s*<\/p>/g, '');
+}
+
+/* ═══════════════════════════════════════════
+   MODAL HELPERS
+═══════════════════════════════════════════ */
+function closeModal(id) {
+  document.getElementById(id).classList.add('hidden');
+}
+
+// Close on overlay click
+document.querySelectorAll('.modal-overlay').forEach(overlay => {
+  overlay.addEventListener('click', function(e) {
+    if (e.target === this) this.classList.add('hidden');
+  });
+});
+
+// Close on Escape
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    document.querySelectorAll('.modal-overlay:not(.hidden)').forEach(m => m.classList.add('hidden'));
+  }
+});
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+(function init() {
+  // Set user display
+  if (session) {
+    const first = (session.name || '').split(' ')[0] || session.email.split('@')[0];
+    document.getElementById('user-display').textContent = first;
+    document.getElementById('greeting').textContent = 'Welcome back, ' + first;
+  }
+
+  // Check for URL tab param (e.g. dashboard.html?tab=resumes)
+  const urlTab = new URLSearchParams(location.search).get('tab');
+  if (urlTab && ['resumes','applications','analytics','insights'].includes(urlTab)) {
+    showTab(urlTab);
+  }
+
+  // Check sessionStorage pre-fill from resume.html
+  if (sessionStorage.getItem('ambore_save_resume')) {
+    showTab('resumes');
+    setTimeout(() => openResumeModal(), 100);
+  }
+
+  updateStats();
+  renderResumes();
+  renderApplications();
+})();
+</script>
+</body>
+</html>

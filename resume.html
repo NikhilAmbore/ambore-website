@@ -329,6 +329,8 @@ button,input,textarea,select{font-family:inherit}
     <div class="logo"><div class="logo-icon-sm">A</div>Ambore<span class="brand-tag">AI Resume</span></div>
     <div class="nav-links">
       <a href="index.html">Home</a>
+      <a href="dashboard.html">Dashboard</a>
+      <a href="jobs.html">Jobs</a>
       <a href="app.html">Interview</a>
       <a href="resume.html" class="active">Resume</a>
     </div>
@@ -406,6 +408,7 @@ button,input,textarea,select{font-family:inherit}
         <button class="action-btn" onclick="copyResume()">📋 Copy</button>
         <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
         <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
+        <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(129,140,248,0.4);color:#818CF8">💾 Save to Dashboard</button>
       </div>
     </div>
     <div class="resume-preview" id="resume-output"></div>
@@ -791,6 +794,24 @@ async function generateResume() {
     btn.disabled = false;
     btnText.textContent = 'Generate Tailored Resume';
   }
+}
+
+/* ═══════════════════════════════════════════
+   SAVE TO DASHBOARD
+═══════════════════════════════════════════ */
+function saveToDashboard() {
+  if (!generatedMarkdown) { showToast('Generate a resume first.'); return; }
+  const jd = document.getElementById('jd-text').value.trim();
+  // Extract company/job title hint from JD (first line or empty)
+  const jdFirst = jd.split('\n').find(l => l.trim()) || '';
+  const prefill = {
+    content:  generatedMarkdown,
+    name:     'AI Resume — ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    jobTitle: '',
+    company:  jdFirst.length < 80 ? jdFirst : '',
+  };
+  sessionStorage.setItem('ambore_save_resume', JSON.stringify(prefill));
+  window.location.href = 'dashboard.html?tab=resumes';
 }
 
 /* ═══════════════════════════════════════════
