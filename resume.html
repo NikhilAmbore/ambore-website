@@ -122,6 +122,16 @@ button,input,textarea,select{font-family:inherit}
 }
 .input-field textarea:focus{border-color:rgba(79,70,229,0.5)}
 .input-field textarea::placeholder{color:rgba(255,255,255,0.18)}
+/* Links row */
+.links-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;width:100%;margin-bottom:20px}
+@media(max-width:700px){.links-row{grid-template-columns:1fr}}
+.link-field{display:flex;flex-direction:column;gap:5px}
+.link-field label{font-size:0.76rem;font-weight:700;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:0.06em;display:flex;align-items:center;gap:5px}
+.link-field label span{font-size:0.72rem;font-weight:500;color:rgba(255,255,255,0.25);text-transform:none;letter-spacing:0}
+.link-input{width:100%;padding:9px 12px;background:var(--card);border:1px solid var(--border);border-radius:9px;color:#e2e8f0;font-size:0.85rem;outline:none;transition:border-color 0.2s}
+.link-input:focus{border-color:rgba(79,70,229,0.45)}
+.link-input::placeholder{color:rgba(255,255,255,0.18)}
+.links-section-label{font-size:0.78rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.06em;width:100%;margin-bottom:6px}
 .generate-btn{
   padding:15px 52px;background:var(--grad);border:none;border-radius:13px;
   color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
@@ -363,6 +373,23 @@ button,input,textarea,select{font-family:inherit}
       </div>
     </div>
 
+    <!-- Professional Links -->
+    <p class="links-section-label">Professional Links <span style="font-weight:400;text-transform:none;font-size:0.72rem;color:rgba(255,255,255,0.25)">(optional — included in your resume header)</span></p>
+    <div class="links-row">
+      <div class="link-field">
+        <label>LinkedIn <span>linkedin.com/in/...</span></label>
+        <input type="url" id="link-linkedin" class="link-input" placeholder="https://linkedin.com/in/yourname"/>
+      </div>
+      <div class="link-field">
+        <label>GitHub <span>github.com/...</span></label>
+        <input type="url" id="link-github" class="link-input" placeholder="https://github.com/yourname"/>
+      </div>
+      <div class="link-field">
+        <label>Portfolio <span>yoursite.com</span></label>
+        <input type="url" id="link-portfolio" class="link-input" placeholder="https://yourportfolio.com"/>
+      </div>
+    </div>
+
     <button class="generate-btn" id="gen-btn" onclick="generateResume()">
       <span id="gen-btn-text">Generate Tailored Resume</span>
     </button>
@@ -565,7 +592,13 @@ const CLAUDE_MODEL = 'claude-sonnet-4-5-20250929';
 let generatedMarkdown = '';
 let isGenerating = false;
 
-function buildResumeSystemPrompt() {
+function buildResumeSystemPrompt(links) {
+  const linkLine = [
+    links.linkedin  ? `[LinkedIn](${links.linkedin})`   : '',
+    links.github    ? `[GitHub](${links.github})`       : '',
+    links.portfolio ? `[Portfolio](${links.portfolio})` : '',
+  ].filter(Boolean).join(' | ');
+
   return `You are Ambore AI Resume — an elite AI Resume Tailoring Engine built for achieving 100% ATS (Applicant Tracking System) scores.
 
 Your job is to take a user's resume and a job description (JD), then generate a fully rewritten, ATS-optimized resume with PERFECT keyword alignment.
@@ -628,9 +661,9 @@ OUTPUT FORMAT
 Use clean Markdown with this exact hierarchy:
 - # for the candidate's full name (centered)
 - If the candidate has a job title/tagline, put it between name and contact info
-- Contact line directly below name using this EXACT format (preserve actual URLs from the resume):
-  email | phone | City, State | [LinkedIn](https://linkedin.com/in/...) | [GitHub](https://github.com/...) | [Portfolio](https://...)
-- IMPORTANT: Wrap LinkedIn, GitHub, Portfolio as markdown links [LinkedIn](actual-url) — use the exact URLs from the candidate's resume. Do NOT fabricate URLs.
+- Contact line directly below name: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
+- The candidate's professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
+- If a link was not provided, do NOT invent or add one.
 - ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, KEY ACHIEVEMENTS, PROJECTS)
 - ### for each job entry: Job Title | Company Name | Location
 - Italic line for dates: *Month Year – Month Year*
@@ -670,6 +703,11 @@ CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no
 async function generateResume() {
   const resume = resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText;
   const jd = document.getElementById('jd-text').value.trim();
+  const links = {
+    linkedin:  document.getElementById('link-linkedin').value.trim(),
+    github:    document.getElementById('link-github').value.trim(),
+    portfolio: document.getElementById('link-portfolio').value.trim(),
+  };
 
   if (!resume) { showToast('Please upload or paste your resume first.'); return; }
   track('resume_start', 'resume');
@@ -701,7 +739,7 @@ async function generateResume() {
         model: CLAUDE_MODEL,
         max_tokens: 2200,
         stream: true,
-        system: buildResumeSystemPrompt(),
+        system: buildResumeSystemPrompt(links),
         messages: [{
           role: 'user',
           content: `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
