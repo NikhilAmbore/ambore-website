@@ -1437,16 +1437,13 @@ function showToast(msg){
 }
 
 /* ═══════════════════════════════════════════
-   BOOT — AUTH GUARD
+   BOOT — runs immediately (script is at end of body, DOM is ready)
 ═══════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  const user = Auth.getUser();
-  if (user) {
-    showSetup();
-  } else {
-    window.location.href = 'index.html?auth=login&redirect=app.html&msg=Please+log+in+to+access+this+feature';
-  }
-});
+if (Auth.getUser()) {
+  showSetup();
+} else {
+  window.location.href = 'index.html?auth=login&redirect=app.html&msg=Please+log+in+to+access+this+feature';
+}
 </script>
 </body>
 </html>

@@ -904,15 +904,13 @@ function showToast(msg) {
 }
 
 /* ═══════════════════════════════════════════
-   BOOT
+   BOOT — runs immediately (script is at end of body, DOM is ready)
 ═══════════════════════════════════════════ */
-document.addEventListener('DOMContentLoaded', () => {
-  if (Auth.getUser()) {
-    showApp();
-  } else {
-    window.location.href = 'index.html?auth=login&redirect=resume.html&msg=Please+log+in+to+access+this+feature';
-  }
-});
+if (Auth.getUser()) {
+  showApp();
+} else {
+  window.location.href = 'index.html?auth=login&redirect=resume.html&msg=Please+log+in+to+access+this+feature';
+}
 </script>
 </body>
 </html>
