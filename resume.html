@@ -906,7 +906,7 @@ function showToast(msg) {
 /* ═══════════════════════════════════════════
    BOOT
 ═══════════════════════════════════════════ */
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   if (Auth.getUser()) {
     showApp();
   } else {

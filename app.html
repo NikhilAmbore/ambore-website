@@ -1439,7 +1439,7 @@ function showToast(msg){
 /* ═══════════════════════════════════════════
    BOOT — AUTH GUARD
 ═══════════════════════════════════════════ */
-window.addEventListener('load', () => {
+document.addEventListener('DOMContentLoaded', () => {
   const user = Auth.getUser();
   if (user) {
     showSetup();
