@@ -391,15 +391,59 @@ async function loadLocations() {
 }
 
 /* ═══════════════════════════════════════════
+   SMART QUERY NORMALIZER
+   Expands abbreviations and tech synonyms before search
+═══════════════════════════════════════════ */
+const ABBREV_MAP = {
+  'js': 'javascript', 'ts': 'typescript', 'py': 'python',
+  'ml': 'machine learning', 'ai': 'artificial intelligence',
+  'dba': 'database administrator', 'qa': 'quality assurance',
+  'sre': 'site reliability', 'ui': 'user interface', 'ux': 'user experience',
+  'ios': 'iOS mobile', 'k8s': 'kubernetes', 'tf': 'terraform',
+};
+const SYNONYM_MAP = {
+  'full stack': 'fullstack full-stack frontend backend',
+  'fullstack':  'full stack full-stack frontend backend',
+  'frontend':   'front-end ui developer react angular vue',
+  'backend':    'back-end server-side api developer',
+  'devops':     'site reliability infrastructure platform engineer cicd',
+  'data science': 'data scientist analytics machine learning',
+  'developer':  'engineer programmer',
+  'engineer':   'developer programmer',
+  'manager':    'lead director head',
+  'architect':  'senior lead principal',
+  'analyst':    'specialist consultant associate',
+};
+
+function normalizeQuery(raw) {
+  let q = raw.toLowerCase().trim();
+  // Expand abbreviations (whole-word match only)
+  Object.entries(ABBREV_MAP).forEach(([abbr, full]) => {
+    q = q.replace(new RegExp(`\\b${abbr}\\b`, 'g'), full);
+  });
+  // Add synonyms for known phrases (append, don't replace)
+  let extras = '';
+  Object.entries(SYNONYM_MAP).forEach(([phrase, syns]) => {
+    if (q.includes(phrase)) extras += ' ' + syns;
+  });
+  return (q + extras).trim();
+}
+
+/* ═══════════════════════════════════════════
    FETCH & RENDER JOBS
 ═══════════════════════════════════════════ */
 async function fetchJobs() {
   const list = document.getElementById('jobs-list');
   list.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading jobs...</div>';
 
+  // Clear any previous smart-search banner
+  const prevBanner = document.getElementById('smart-search-banner');
+  if (prevBanner) prevBanner.remove();
+
   // Build query params
   const params = new URLSearchParams();
-  const q = document.getElementById('search-input').value.trim();
+  const rawQ = document.getElementById('search-input').value.trim();
+  const q = rawQ ? normalizeQuery(rawQ) : '';
   const state = document.getElementById('state-select').value;
   const sort = document.getElementById('sort-select').value;
   const dateFilter = document.getElementById('filter-date').value;
@@ -434,10 +478,23 @@ async function fetchJobs() {
     const data = await res.json();
 
     totalPages = data.total_pages;
-    document.getElementById('jobs-count').innerHTML = `<strong>${data.total.toLocaleString()}</strong> jobs found`;
+
+    // Show smart-search banner when query is active
+    if (rawQ && data.total > 0) {
+      const isExpanded = q !== rawQ.toLowerCase().trim();
+      const keywords = [...new Set(rawQ.split(/\s+/).filter(w => w.length > 2))];
+      const banner = document.createElement('div');
+      banner.id = 'smart-search-banner';
+      banner.style.cssText = 'background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.2);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:0.8rem;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
+      banner.innerHTML = `<span style="color:#818CF8;font-weight:700">&#9670; Smart Search</span> Showing <strong style="color:#fff">${data.total.toLocaleString()}</strong> results for: ${keywords.map(k => `<span style="background:rgba(129,140,248,0.15);color:#818CF8;padding:1px 7px;border-radius:4px;font-size:0.76rem">${k}</span>`).join(' ')}${isExpanded ? ' <span style="opacity:0.5">+ related terms</span>' : ''}`;
+      list.parentNode.insertBefore(banner, list);
+      document.getElementById('jobs-count').innerHTML = `<strong>${data.total.toLocaleString()}</strong> jobs found`;
+    } else {
+      document.getElementById('jobs-count').innerHTML = `<strong>${data.total.toLocaleString()}</strong> jobs found`;
+    }
 
     if (data.jobs.length === 0) {
-      list.innerHTML = '<div class="empty-state"><p>No jobs match your filters. Try broadening your search.</p></div>';
+      list.innerHTML = '<div class="empty-state"><p>No jobs found. Try a different keyword or remove some filters.</p></div>';
       document.getElementById('pagination').innerHTML = '';
       return;
     }
