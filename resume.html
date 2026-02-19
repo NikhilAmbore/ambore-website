@@ -627,8 +627,10 @@ OUTPUT FORMAT
 
 Use clean Markdown with this exact hierarchy:
 - # for the candidate's full name (centered)
-- Contact line directly below name: email | phone | location | LinkedIn URL
 - If the candidate has a job title/tagline, put it between name and contact info
+- Contact line directly below name using this EXACT format (preserve actual URLs from the resume):
+  `email | phone | City, State | [LinkedIn](https://linkedin.com/in/...) | [GitHub](https://github.com/...) | [Portfolio](https://...)`
+- IMPORTANT: Wrap LinkedIn, GitHub, Portfolio as markdown links `[LinkedIn](actual-url)` — use the exact URLs from the candidate's resume. Do NOT fabricate URLs.
 - ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, KEY ACHIEVEMENTS, PROJECTS)
 - ### for each job entry: Job Title | Company Name | Location
 - Italic line for dates: *Month Year – Month Year*
@@ -776,8 +778,10 @@ function renderMarkdown(md) {
       }).join('');
       return `<ul>${items}</ul>`;
     })
-    // Links
-    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank">$1</a>')
+    // Named links [text](url)
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+    // Bare URLs (https://... not already inside an href)
+    .replace(/(?<!href=")(?<!["(])(https?:\/\/[^\s<>")|]+)/g, '<a href="$1" target="_blank" rel="noopener">$1</a>')
     // Paragraphs — wrap remaining lines
     .replace(/^(?!<[hul1-9/]|<li|<hr)(.+)$/gm, '<p>$1</p>')
     // Clean up empty paragraphs
@@ -835,7 +839,7 @@ function printResume() {
   strong { font-weight: 700; }
   em { font-style: italic; }
   hr { border: none; border-top: 1px solid #999; margin: 4px 0; }
-  a { color: #000; text-decoration: none; }
+  a { color: #1155CC; text-decoration: underline; }
 </style>
 </head><body>${html}</body></html>`);
   printWin.document.close();
@@ -870,6 +874,7 @@ async function downloadDocx() {
         strong { font-weight: 700; }
         em { font-style: italic; color: #333; }
         hr { border: none; border-top: 1px solid #000; margin: 8px 0; }
+        a { color: #1155CC; text-decoration: underline; }
       </style>
     </head>
     <body>${renderMarkdown(generatedMarkdown)}</body>
