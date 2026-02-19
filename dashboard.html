@@ -241,6 +241,50 @@ a{text-decoration:none;color:inherit}
 .toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;border:1px solid var(--border);border-radius:10px;padding:10px 16px;font-size:0.83rem;color:#fff;box-shadow:0 8px 32px rgba(0,0,0,0.4);z-index:999;transform:translateY(100px);opacity:0;transition:all 0.3s;pointer-events:none}
 .toast.show{transform:translateY(0);opacity:1}
 
+/* ═══ UPLOAD ZONE ═══ */
+.upload-zone{border:2px dashed rgba(255,255,255,0.12);border-radius:12px;padding:22px 20px;text-align:center;cursor:pointer;transition:all 0.2s;margin-bottom:18px;background:rgba(255,255,255,0.02)}
+.upload-zone:hover,.upload-zone.drag-over{border-color:rgba(79,70,229,0.5);background:rgba(79,70,229,0.06)}
+.upload-zone-icon{font-size:1.6rem;margin-bottom:6px}
+.upload-zone-text{font-size:0.83rem;color:rgba(255,255,255,0.35);line-height:1.5}
+.upload-zone-text span{color:var(--accent);font-weight:600;cursor:pointer;text-decoration:underline}
+.upload-zone-mini{border:1px dashed rgba(255,255,255,0.15);border-radius:9px;padding:10px 14px;cursor:pointer;transition:all 0.2s;background:rgba(255,255,255,0.02);font-size:0.82rem;color:rgba(255,255,255,0.3);display:flex;align-items:center;gap:8px}
+.upload-zone-mini:hover{border-color:rgba(79,70,229,0.4);color:var(--accent)}
+.upload-zone-mini.has-file{border-color:rgba(34,197,94,0.35);color:#22c55e;background:rgba(34,197,94,0.05)}
+
+/* ═══ FILE BADGES ═══ */
+.file-badge{display:inline-flex;align-items:center;padding:2px 7px;border-radius:5px;font-size:0.62rem;font-weight:800;letter-spacing:0.05em}
+.file-badge-pdf{background:rgba(239,68,68,0.15);color:#ef4444;border:1px solid rgba(239,68,68,0.25)}
+.file-badge-docx,.file-badge-doc{background:rgba(59,130,246,0.15);color:#60a5fa;border:1px solid rgba(59,130,246,0.25)}
+.file-badge-txt{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.4);border:1px solid var(--border)}
+.rc-file-info{font-size:0.72rem;color:rgba(255,255,255,0.25);display:flex;align-items:center;gap:5px;margin-top:1px}
+
+/* ═══ TAB COUNT ═══ */
+.tab-count{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;border-radius:9px;background:rgba(255,255,255,0.15);color:inherit;font-size:0.68rem;font-weight:700;padding:0 5px;margin-left:4px;line-height:1}
+.tab-btn.active .tab-count{background:rgba(255,255,255,0.25)}
+
+/* ═══ SAVED JOBS ═══ */
+.saved-job-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 18px;display:flex;align-items:flex-start;gap:14px;transition:border-color 0.2s;position:relative}
+.saved-job-card:hover{border-color:rgba(79,70,229,0.25)}
+.sj-logo{width:40px;height:40px;border-radius:10px;background:rgba(255,255,255,0.06);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:1rem;color:rgba(255,255,255,0.4);flex-shrink:0;overflow:hidden}
+.sj-logo img{width:100%;height:100%;object-fit:contain}
+.sj-body{flex:1;min-width:0}
+.sj-title{font-size:0.92rem;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sj-company{font-size:0.8rem;color:rgba(255,255,255,0.45);margin-bottom:6px}
+.sj-tags{display:flex;gap:5px;flex-wrap:wrap}
+.sj-tag{font-size:0.68rem;padding:2px 8px;border-radius:5px;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.4)}
+.sj-tag.remote{color:#22c55e;border-color:rgba(34,197,94,0.2);background:rgba(34,197,94,0.06)}
+.sj-tag.hybrid{color:#fbbf24;border-color:rgba(251,191,36,0.2);background:rgba(251,191,36,0.06)}
+.sj-right{display:flex;flex-direction:column;align-items:flex-end;gap:7px;flex-shrink:0}
+.apply-toggle{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;font-size:0.78rem;font-weight:700;cursor:pointer;transition:all 0.2s;white-space:nowrap}
+.apply-toggle.not-applied{color:rgba(255,255,255,0.5)}
+.apply-toggle.not-applied:hover{border-color:rgba(79,70,229,0.4);color:var(--accent)}
+.apply-toggle.applied{background:rgba(34,197,94,0.12);border-color:rgba(34,197,94,0.3);color:#22c55e}
+.apply-toggle.applied:hover{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:var(--red)}
+.sj-applied-meta{font-size:0.72rem;color:rgba(255,255,255,0.3);text-align:right;line-height:1.4}
+.sj-remove{position:absolute;top:10px;right:10px;background:none;border:none;color:rgba(255,255,255,0.2);font-size:0.9rem;cursor:pointer;padding:2px 5px;border-radius:5px;transition:color 0.15s}
+.sj-remove:hover{color:var(--red)}
+.sj-jobs-list{display:flex;flex-direction:column;gap:10px}
+
 /* ═══ RESPONSIVE ═══ */
 @media(max-width:960px){
   .stats-row{grid-template-columns:repeat(2,1fr)}
@@ -325,6 +369,7 @@ a{text-decoration:none;color:inherit}
   <div class="tabs-nav">
     <button class="tab-btn active" onclick="showTab('resumes')">📄 Resumes</button>
     <button class="tab-btn" onclick="showTab('applications')">📋 Applications</button>
+    <button class="tab-btn" onclick="showTab('saved-jobs')">🔖 Saved Jobs <span class="tab-count" id="tc-saved">0</span></button>
     <button class="tab-btn" onclick="showTab('analytics')">📊 Analytics</button>
     <button class="tab-btn" onclick="showTab('insights')">✨ AI Insights</button>
   </div>
@@ -334,6 +379,12 @@ a{text-decoration:none;color:inherit}
     <div class="section-toolbar">
       <h2>My Resumes</h2>
       <button class="add-btn" onclick="openResumeModal()">+ Add Resume</button>
+    </div>
+    <!-- Upload drop zone -->
+    <div class="upload-zone" id="resume-drop-zone" onclick="document.getElementById('resume-file-input').click()">
+      <div class="upload-zone-icon">📁</div>
+      <div class="upload-zone-text">Drop a PDF, DOCX, or TXT resume here — or <span>click to browse</span></div>
+      <input type="file" id="resume-file-input" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleDropUpload(this.files[0])"/>
     </div>
     <div id="resume-grid" class="resume-grid"></div>
   </div>
@@ -406,6 +457,20 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
+  <!-- ══ TAB: SAVED JOBS ══ -->
+  <div id="tab-saved-jobs" class="tab-pane">
+    <div class="section-toolbar">
+      <h2>Saved Jobs</h2>
+      <a href="jobs.html" class="add-btn" style="text-decoration:none">Browse Jobs →</a>
+    </div>
+    <div class="filter-pills" id="sj-pills">
+      <button class="fpill active" data-filter="all" onclick="setSJFilter('all')">All</button>
+      <button class="fpill" data-filter="not-applied" onclick="setSJFilter('not-applied')">Not Applied</button>
+      <button class="fpill" data-filter="applied" onclick="setSJFilter('applied')">Applied</button>
+    </div>
+    <div id="saved-jobs-list" class="sj-jobs-list"></div>
+  </div>
+
 </div><!-- /page -->
 
 <!-- ══ MODAL: ADD/EDIT RESUME ══ -->
@@ -417,6 +482,13 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="modal-body">
       <input type="hidden" id="rm-id"/>
+      <div class="form-group">
+        <label>Upload File <span style="opacity:0.4;font-weight:400;text-transform:none;letter-spacing:0">(optional — PDF, DOCX, TXT)</span></label>
+        <div class="upload-zone-mini" id="modal-drop-zone" onclick="document.getElementById('rm-file').click()">
+          <span>📎</span><span id="rm-file-label">Click or drop file here</span>
+        </div>
+        <input type="file" id="rm-file" accept=".pdf,.docx,.doc,.txt" style="display:none" onchange="handleModalFileSelect(this)"/>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label>Resume Name *</label>
@@ -528,6 +600,42 @@ a{text-decoration:none;color:inherit}
   </div>
 </div>
 
+<!-- ══ MODAL: MARK AS APPLIED ══ -->
+<div id="apply-modal" class="modal-overlay hidden">
+  <div class="modal-box modal-sm">
+    <div class="modal-head">
+      <h2>Mark as Applied</h2>
+      <button class="modal-close" onclick="closeModal('apply-modal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="apm-job-id"/>
+      <div class="form-group" id="apm-job-info" style="background:rgba(255,255,255,0.03);border-radius:9px;padding:10px 12px;margin-bottom:14px;font-size:0.83rem;color:rgba(255,255,255,0.6)"></div>
+      <div class="form-group">
+        <label>Resume Used</label>
+        <select id="apm-resume"><option value="">— None —</option></select>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date Applied</label>
+          <input type="date" id="apm-date"/>
+        </div>
+        <div class="form-group">
+          <label>Follow-up Reminder</label>
+          <input type="date" id="apm-followup"/>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Notes</label>
+        <textarea id="apm-notes" rows="2" placeholder="Recruiter name, salary, next steps…"></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-cancel" onclick="closeModal('apply-modal')">Cancel</button>
+      <button class="btn-save" onclick="confirmApply()">✓ Mark Applied</button>
+    </div>
+  </div>
+</div>
+
 <!-- Toast -->
 <div class="toast" id="toast"></div>
 
@@ -544,11 +652,61 @@ function logout() {
 }
 
 /* ═══════════════════════════════════════════
+   FILE STORE — IndexedDB for binary files
+═══════════════════════════════════════════ */
+const FileStore = {
+  db: null,
+  async open() {
+    if (this.db) return this.db;
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('ambore_files', 1);
+      req.onupgradeneeded = e => {
+        const db = e.target.result;
+        if (!db.objectStoreNames.contains('files')) {
+          const st = db.createObjectStore('files', { keyPath: 'id' });
+          st.createIndex('userId', 'userId', { unique: false });
+        }
+      };
+      req.onsuccess = e => { this.db = e.target.result; resolve(this.db); };
+      req.onerror  = e => reject(e.target.error);
+    });
+  },
+  async save(rec) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').put(rec);
+      tx.oncomplete = () => resolve();
+      tx.onerror    = e => reject(e.target.error);
+    });
+  },
+  async get(id) {
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const req = db.transaction('files','readonly').objectStore('files').get(id);
+      req.onsuccess = e => resolve(e.target.result || null);
+      req.onerror   = e => reject(e.target.error);
+    });
+  },
+  async remove(id) {
+    if (!id) return;
+    const db = await this.open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror    = e => reject(e.target.error);
+    });
+  },
+};
+
+/* ═══════════════════════════════════════════
    DASH DB — localStorage CRUD
 ═══════════════════════════════════════════ */
 const DashDB = {
   _rk: 'ambore_resumes_' + userId,
   _ak: 'ambore_applications_' + userId,
+  _jk: 'ambore_saved_jobs_' + userId,
   getResumes()    { return JSON.parse(localStorage.getItem(this._rk) || '[]'); },
   saveResumes(r)  { localStorage.setItem(this._rk, JSON.stringify(r)); },
   addResume(r)    { const rs = this.getResumes(); rs.unshift(r); this.saveResumes(rs); },
@@ -559,7 +717,17 @@ const DashDB = {
   addApp(a)       { const as = this.getApps(); as.unshift(a); this.saveApps(as); },
   deleteApp(id)   { this.saveApps(this.getApps().filter(a => a.id !== id)); },
   updateApp(a)    { this.saveApps(this.getApps().map(x => x.id === a.id ? a : x)); },
+  getSavedJobs()    { return JSON.parse(localStorage.getItem(this._jk) || '[]'); },
+  saveSavedJobs(j)  { localStorage.setItem(this._jk, JSON.stringify(j)); },
+  addSavedJob(j)    { const js = this.getSavedJobs(); if (!js.some(x=>x.id===j.id)) { js.unshift(j); this.saveSavedJobs(js); } },
+  removeSavedJob(id){ this.saveSavedJobs(this.getSavedJobs().filter(j => j.id !== id)); },
+  updateSavedJob(j) { this.saveSavedJobs(this.getSavedJobs().map(x => x.id === j.id ? j : x)); },
 };
+
+/* ═══════════════════════════════════════════
+   PENDING FILE STATE (for modal file upload)
+═══════════════════════════════════════════ */
+let pendingFile = null; // { buffer, name, type, size } or null
 
 /* ═══════════════════════════════════════════
    UTILS
@@ -587,6 +755,17 @@ function daysAgo(d) {
 
 function todayISO() {
   return new Date().toISOString().split('T')[0];
+}
+
+function formatFileSize(bytes) {
+  if (!bytes) return '';
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(1) + ' MB';
+}
+
+function getFileExt(name) {
+  return (name || '').split('.').pop().toLowerCase();
 }
 
 function showToast(msg, duration = 3000) {
@@ -650,8 +829,9 @@ function showTab(name) {
     }
   });
   activeTab = name;
-  if (name === 'analytics') renderAnalytics();
-  if (name === 'insights') renderRecommendations();
+  if (name === 'analytics')   renderAnalytics();
+  if (name === 'insights')    renderRecommendations();
+  if (name === 'saved-jobs')  renderSavedJobs();
 }
 
 /* ═══════════════════════════════════════════
@@ -665,7 +845,7 @@ function renderResumes() {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
       <div class="empty-icon">📄</div>
       <h3>No resumes yet</h3>
-      <p>Add your first resume to start tracking versions, ATS scores, and which jobs you used each resume for.</p>
+      <p>Drop a PDF/DOCX above to upload, or click "+ Add Resume" to paste content manually.</p>
     </div>`;
     return;
   }
@@ -673,9 +853,17 @@ function renderResumes() {
   grid.innerHTML = resumes.map(r => {
     const days = daysAgo(r.createdAt);
     const daysLabel = days === 0 ? 'Today' : days === 1 ? 'Yesterday' : days + 'd ago';
+    const typeBadge = r.fileType
+      ? `<span class="file-badge file-badge-${r.fileType}">${r.fileType.toUpperCase()}</span>`
+      : '';
+    const sizeStr = r.fileSize ? formatFileSize(r.fileSize) : '';
+    const hasDownload = r.content || r.fileId;
     return `<div class="resume-card">
       <div class="rc-top">
-        <div class="rc-name">${esc(r.name)}</div>
+        <div>
+          <div class="rc-name">${esc(r.name)}</div>
+          ${typeBadge || sizeStr ? `<div class="rc-file-info">${typeBadge}${sizeStr ? `<span>${sizeStr}</span>` : ''}</div>` : ''}
+        </div>
         <div class="rc-badges">
           ${atsBadge(r.atsScore)}
           ${statusBadge(r.status)}
@@ -689,27 +877,62 @@ function renderResumes() {
       ${r.notes ? `<div class="rc-notes">${esc(r.notes)}</div>` : ''}
       <div class="rc-actions">
         <button class="rc-btn" onclick="openResumeModal('${r.id}')">✏ Edit</button>
-        ${r.content ? `<button class="rc-btn" onclick="downloadResume('${r.id}')">↓ Download</button>` : ''}
-        <button class="rc-btn primary" onclick="window.open('resume.html','_blank')">↺ Regen</button>
+        ${hasDownload ? `<button class="rc-btn primary" onclick="downloadResume('${r.id}')">↓ Download</button>` : ''}
+        <button class="rc-btn" onclick="window.open('resume.html','_blank')">↺ Regen</button>
         <button class="rc-btn danger" onclick="confirmDeleteResume('${r.id}')">✕ Delete</button>
       </div>
     </div>`;
   }).join('');
 }
 
-function downloadResume(id) {
+async function downloadResume(id) {
   const r = DashDB.getResumes().find(x => x.id === id);
-  if (!r || !r.content) return;
-  const blob = new Blob([r.content], { type: 'text/plain' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = (r.name || 'resume').replace(/[^a-z0-9]/gi,'_') + '.txt';
-  a.click();
-  URL.revokeObjectURL(a.href);
+  if (!r) return;
+
+  if (r.fileId) {
+    // Retrieve original file from IndexedDB
+    try {
+      const rec = await FileStore.get(r.fileId);
+      if (!rec) { showToast('File not found — try re-uploading.'); return; }
+      const mimeMap = {
+        pdf:  'application/pdf',
+        docx: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        doc:  'application/msword',
+        txt:  'text/plain',
+      };
+      const mime = mimeMap[r.fileType] || 'application/octet-stream';
+      const blob = new Blob([rec.buffer], { type: mime });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = r.fileName || ((r.name || 'resume').replace(/[^a-z0-9]/gi,'_') + '.' + (r.fileType || 'pdf'));
+      a.click();
+      URL.revokeObjectURL(a.href);
+    } catch(e) {
+      showToast('Download failed: ' + e.message);
+    }
+    return;
+  }
+
+  // Fallback: text content download
+  if (r.content) {
+    const blob = new Blob([r.content], { type: 'text/plain' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = (r.name || 'resume').replace(/[^a-z0-9]/gi,'_') + '.txt';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
 }
 
 function confirmDeleteResume(id) {
-  if (confirm('Delete this resume? This cannot be undone.')) {
+  const r = DashDB.getResumes().find(x => x.id === id);
+  if (!r) return;
+  const linkedApps = DashDB.getApps().filter(a => a.resumeId === id);
+  const msg = linkedApps.length > 0
+    ? `This resume is linked to ${linkedApps.length} application${linkedApps.length > 1 ? 's' : ''}.\nDeleting it will remove those links. Continue?`
+    : 'Delete this resume? This cannot be undone.';
+  if (confirm(msg)) {
+    if (r.fileId) FileStore.remove(r.fileId).catch(()=>{});
     DashDB.deleteResume(id);
     renderResumes();
     updateStats();
@@ -724,7 +947,11 @@ function openResumeModal(id) {
   const modal = document.getElementById('resume-modal');
   const title = document.getElementById('resume-modal-title');
 
-  // Clear fields
+  // Clear fields + pending file
+  pendingFile = null;
+  document.getElementById('rm-file-label').textContent = 'Click or drop file here';
+  document.getElementById('modal-drop-zone').classList.remove('has-file');
+  document.getElementById('rm-file').value = '';
   ['rm-id','rm-name','rm-jobtitle','rm-company','rm-joburl','rm-ats','rm-content','rm-notes'].forEach(f => {
     document.getElementById(f).value = '';
   });
@@ -762,12 +989,39 @@ function openResumeModal(id) {
   modal.classList.remove('hidden');
 }
 
-function saveResume() {
+async function saveResume() {
   const name = document.getElementById('rm-name').value.trim();
   if (!name) { showToast('Please enter a resume name.'); return; }
 
   const id = document.getElementById('rm-id').value;
+  const existing = id ? DashDB.getResumes().find(x => x.id === id) : null;
   const now = new Date().toISOString();
+
+  // Handle file upload
+  let fileId = existing?.fileId || null;
+  let fileType = existing?.fileType || null;
+  let fileSize = existing?.fileSize || null;
+  let fileName = existing?.fileName || null;
+
+  if (pendingFile) {
+    // Remove old file from IndexedDB if replacing
+    if (fileId) FileStore.remove(fileId).catch(()=>{});
+    fileId = 'file_' + Date.now();
+    await FileStore.save({
+      id: fileId,
+      userId,
+      name: pendingFile.name,
+      type: pendingFile.type,
+      size: pendingFile.size,
+      buffer: pendingFile.buffer,
+      createdAt: now,
+    });
+    fileType = pendingFile.ext;
+    fileSize = pendingFile.size;
+    fileName = pendingFile.name;
+    pendingFile = null;
+  }
+
   const r = {
     id: id || 'res_' + Date.now(),
     name,
@@ -778,7 +1032,8 @@ function saveResume() {
     status:   document.getElementById('rm-status').value,
     content:  document.getElementById('rm-content').value.trim(),
     notes:    document.getElementById('rm-notes').value.trim(),
-    createdAt: id ? (DashDB.getResumes().find(x=>x.id===id)||{}).createdAt || now : now,
+    fileId, fileType, fileSize, fileName,
+    createdAt: existing?.createdAt || now,
     updatedAt: now,
   };
 
@@ -788,6 +1043,78 @@ function saveResume() {
   closeModal('resume-modal');
   renderResumes();
 }
+
+/* ═══════════════════════════════════════════
+   FILE UPLOAD HANDLERS
+═══════════════════════════════════════════ */
+function readFileAsBuffer(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = e => resolve(e.target.result);
+    reader.onerror = () => reject(new Error('File read failed'));
+    reader.readAsArrayBuffer(file);
+  });
+}
+
+async function handleModalFileSelect(input) {
+  const file = input.files[0];
+  if (!file) return;
+  try {
+    const buffer = await readFileAsBuffer(file);
+    const ext = getFileExt(file.name);
+    pendingFile = { buffer, name: file.name, type: file.type, size: file.size, ext };
+    document.getElementById('rm-file-label').textContent = '✓ ' + file.name + ' (' + formatFileSize(file.size) + ')';
+    document.getElementById('modal-drop-zone').classList.add('has-file');
+    // Auto-fill name if empty
+    if (!document.getElementById('rm-name').value) {
+      document.getElementById('rm-name').value = file.name.replace(/\.[^/.]+$/, '');
+    }
+  } catch(e) {
+    showToast('Could not read file: ' + e.message);
+  }
+}
+
+async function handleDropUpload(file) {
+  if (!file) return;
+  const allowed = ['pdf','docx','doc','txt'];
+  const ext = getFileExt(file.name);
+  if (!allowed.includes(ext)) { showToast('Please upload a PDF, DOCX, or TXT file.'); return; }
+
+  try {
+    const buffer = await readFileAsBuffer(file);
+    const now = new Date().toISOString();
+    const fileId = 'file_' + Date.now();
+    await FileStore.save({ id: fileId, userId, name: file.name, type: file.type, size: file.size, buffer, createdAt: now });
+
+    const r = {
+      id: 'res_' + Date.now(),
+      name: file.name.replace(/\.[^/.]+$/, ''),
+      jobTitle: '', company: '', jobUrl: '',
+      atsScore: null, status: 'active', content: '', notes: '',
+      fileId, fileType: ext, fileSize: file.size, fileName: file.name,
+      createdAt: now, updatedAt: now,
+    };
+    DashDB.addResume(r);
+    renderResumes();
+    showToast('Resume uploaded: ' + file.name);
+  } catch(e) {
+    showToast('Upload failed: ' + e.message);
+  }
+}
+
+// Drag and drop on the main upload zone
+(function setupDropZone() {
+  const zone = document.getElementById('resume-drop-zone');
+  if (!zone) return;
+  zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('drag-over'));
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    zone.classList.remove('drag-over');
+    const file = e.dataTransfer.files[0];
+    if (file) handleDropUpload(file);
+  });
+})();
 
 /* ═══════════════════════════════════════════
    APPLICATION TAB
@@ -1393,6 +1720,149 @@ function renderInsightsMd(md) {
 }
 
 /* ═══════════════════════════════════════════
+   SAVED JOBS TAB
+═══════════════════════════════════════════ */
+let sjFilter = 'all';
+
+function setSJFilter(f) {
+  sjFilter = f;
+  document.querySelectorAll('#sj-pills .fpill').forEach(p => {
+    p.classList.toggle('active', p.dataset.filter === f);
+  });
+  renderSavedJobs();
+}
+
+function updateSavedJobsCount() {
+  const n = DashDB.getSavedJobs().length;
+  const el = document.getElementById('tc-saved');
+  if (el) el.textContent = n > 0 ? n : '0';
+}
+
+function renderSavedJobs() {
+  updateSavedJobsCount();
+  const list = document.getElementById('saved-jobs-list');
+  const resumes = DashDB.getResumes();
+  const resumeMap = Object.fromEntries(resumes.map(r => [r.id, r.name]));
+  let jobs = DashDB.getSavedJobs();
+
+  if (sjFilter === 'applied')     jobs = jobs.filter(j => j.isApplied);
+  if (sjFilter === 'not-applied') jobs = jobs.filter(j => !j.isApplied);
+
+  if (jobs.length === 0) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">🔖</div>
+      <h3>${sjFilter !== 'all' ? 'No ' + sjFilter.replace('-',' ') + ' jobs' : 'No saved jobs yet'}</h3>
+      <p>Browse jobs and click ⊕ Save to track them here.</p>
+    </div>`;
+    return;
+  }
+
+  const location = j => [j.location_city, j.location_state].filter(Boolean).join(', ') || 'USA';
+  const salary = j => {
+    if (!j.salary_min && !j.salary_max) return '';
+    const mn = j.salary_min ? '$' + Math.round(j.salary_min/1000) + 'k' : '';
+    const mx = j.salary_max ? '$' + Math.round(j.salary_max/1000) + 'k' : '';
+    return mn && mx && mn !== mx ? mn + '–' + mx : mx || mn;
+  };
+
+  list.innerHTML = jobs.map(j => {
+    const sal = salary(j);
+    const wtClass = j.work_type === 'remote' ? 'remote' : j.work_type === 'hybrid' ? 'hybrid' : '';
+    const resumeName = j.applicationId ? resumeMap[DashDB.getApps().find(a=>a.id===j.applicationId)?.resumeId] || '' : '';
+    const appDate = j.applicationId ? DashDB.getApps().find(a=>a.id===j.applicationId)?.appliedDate || '' : '';
+    return `<div class="saved-job-card">
+      <button class="sj-remove" onclick="removeSavedJob('${j.id}')" title="Remove">✕</button>
+      <div class="sj-logo">${j.company ? j.company.charAt(0) : '?'}</div>
+      <div class="sj-body">
+        <div class="sj-title">${esc(j.title)}</div>
+        <div class="sj-company">${esc(j.company)} &middot; ${esc(location(j))}</div>
+        <div class="sj-tags">
+          ${j.work_type ? `<span class="sj-tag ${wtClass}">${j.work_type}</span>` : ''}
+          ${sal ? `<span class="sj-tag" style="color:var(--accent)">${sal}</span>` : ''}
+          ${j.category ? `<span class="sj-tag">${esc(j.category)}</span>` : ''}
+        </div>
+      </div>
+      <div class="sj-right">
+        <button class="apply-toggle ${j.isApplied ? 'applied' : 'not-applied'}"
+          onclick="${j.isApplied ? `unmarkApplied('${j.id}')` : `openApplyModal('${j.id}')`}">
+          ${j.isApplied ? '✓ Applied' : '+ Mark Applied'}
+        </button>
+        ${j.apply_url ? `<a href="${esc(j.apply_url)}" target="_blank" rel="noopener" style="font-size:0.75rem;color:var(--accent)">View Job ↗</a>` : ''}
+        ${j.isApplied && (resumeName || appDate) ? `<div class="sj-applied-meta">${resumeName ? esc(resumeName) + '<br>' : ''}${appDate ? 'Applied ' + fmtDateShort(appDate) : ''}</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function removeSavedJob(id) {
+  if (!confirm('Remove this job from your saved list?')) return;
+  DashDB.removeSavedJob(id);
+  renderSavedJobs();
+  showToast('Job removed.');
+}
+
+/* ═══════════════════════════════════════════
+   APPLY MODAL
+═══════════════════════════════════════════ */
+function openApplyModal(jobId) {
+  const job = DashDB.getSavedJobs().find(j => j.id === jobId);
+  if (!job) return;
+
+  document.getElementById('apm-job-id').value = jobId;
+  document.getElementById('apm-job-info').innerHTML =
+    `<strong style="color:#fff">${esc(job.title)}</strong> at ${esc(job.company)}`;
+  document.getElementById('apm-date').value = todayISO();
+  document.getElementById('apm-followup').value = '';
+  document.getElementById('apm-notes').value = '';
+
+  const sel = document.getElementById('apm-resume');
+  const resumes = DashDB.getResumes();
+  sel.innerHTML = '<option value="">— None —</option>' +
+    resumes.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
+
+  document.getElementById('apply-modal').classList.remove('hidden');
+}
+
+function confirmApply() {
+  const jobId = document.getElementById('apm-job-id').value;
+  const job = DashDB.getSavedJobs().find(j => j.id === jobId);
+  if (!job) return;
+
+  const now = new Date().toISOString();
+  const appId = 'app_' + Date.now();
+  const app = {
+    id: appId,
+    company:     job.company,
+    jobTitle:    job.title,
+    jobUrl:      job.apply_url || '',
+    resumeId:    document.getElementById('apm-resume').value || null,
+    appliedDate: document.getElementById('apm-date').value || todayISO(),
+    status:      'applied',
+    followUpDate: document.getElementById('apm-followup').value || null,
+    notes:       document.getElementById('apm-notes').value.trim(),
+    createdAt:   now,
+    updatedAt:   now,
+  };
+
+  DashDB.addApp(app);
+  DashDB.updateSavedJob({ ...job, isApplied: true, applicationId: appId });
+  closeModal('apply-modal');
+  renderSavedJobs();
+  renderApplications();
+  updateStats();
+  showToast('Marked as applied — added to Applications tab.');
+}
+
+function unmarkApplied(jobId) {
+  const job = DashDB.getSavedJobs().find(j => j.id === jobId);
+  if (!job) return;
+  if (!confirm('Unmark this job as applied? The application record will remain in the Applications tab.')) return;
+  DashDB.updateSavedJob({ ...job, isApplied: false, applicationId: null });
+  renderSavedJobs();
+  showToast('Reverted to Not Applied.');
+}
+
+/* ═══════════════════════════════════════════
    MODAL HELPERS
 ═══════════════════════════════════════════ */
 function closeModal(id) {
@@ -1424,9 +1894,13 @@ document.addEventListener('keydown', e => {
     document.getElementById('greeting').textContent = 'Welcome back, ' + first;
   }
 
-  // Check for URL tab param (e.g. dashboard.html?tab=resumes)
+  // Initialize IndexedDB
+  FileStore.open().catch(e => console.warn('IndexedDB init failed:', e));
+
+  // Check for URL tab param
   const urlTab = new URLSearchParams(location.search).get('tab');
-  if (urlTab && ['resumes','applications','analytics','insights'].includes(urlTab)) {
+  const validTabs = ['resumes','applications','saved-jobs','analytics','insights'];
+  if (urlTab && validTabs.includes(urlTab)) {
     showTab(urlTab);
   }
 
@@ -1437,6 +1911,7 @@ document.addEventListener('keydown', e => {
   }
 
   updateStats();
+  updateSavedJobsCount();
   renderResumes();
   renderApplications();
 })();

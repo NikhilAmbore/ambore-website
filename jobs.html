@@ -140,9 +140,18 @@ a{text-decoration:none;color:inherit}
 .job-card{
   background:var(--card);border:1px solid var(--border);border-radius:14px;
   padding:18px 20px;margin-bottom:10px;transition:border-color 0.2s;cursor:pointer;
-  display:block;
+  display:block;position:relative;
 }
 .job-card:hover{border-color:rgba(79,70,229,0.4)}
+.save-job-btn{
+  position:absolute;top:12px;right:12px;
+  background:rgba(255,255,255,0.04);border:1px solid var(--border);
+  border-radius:7px;padding:4px 9px;font-size:0.75rem;font-weight:600;
+  color:rgba(255,255,255,0.35);cursor:pointer;z-index:2;transition:all 0.15s;
+  line-height:1.3;
+}
+.save-job-btn:hover{color:var(--accent);border-color:rgba(129,140,248,0.4);background:rgba(79,70,229,0.08)}
+.save-job-btn.saved{color:#818CF8;border-color:rgba(129,140,248,0.35);background:rgba(79,70,229,0.1)}
 .job-card-top{display:flex;align-items:flex-start;gap:14px}
 .job-logo{
   width:44px;height:44px;border-radius:10px;background:rgba(79,70,229,0.15);
@@ -347,6 +356,7 @@ const API_BASE = 'https://web-production-d62ab.up.railway.app';
 let currentPage = 1;
 let currentCategory = '';
 let totalPages = 0;
+const _jobsMap = {};  // cache for save button lookup
 
 /* ═══════════════════════════════════════════
    LOAD STATS + CATEGORIES ON PAGE LOAD
@@ -507,6 +517,8 @@ async function fetchJobs() {
 }
 
 function renderJobCard(job) {
+  _jobsMap[job.id] = job;  // cache for toggleSaveJob
+
   const logo = job.company_logo
     ? `<img src="${job.company_logo}" alt="" onerror="this.parentElement.innerHTML='${job.company.charAt(0)}'">`
     : job.company.charAt(0);
@@ -526,9 +538,13 @@ function renderJobCard(job) {
   const categoryTag = job.category ? `<span class="job-tag">${job.category}</span>` : '';
   const sourceTag = `<span class="job-tag">${job.source}</span>`;
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
+  const saved = isSavedJob(job.id);
 
   return `
     <a href="job-detail.html?id=${job.id}" class="job-card">
+      <button id="svbtn-${job.id}" class="save-job-btn ${saved ? 'saved' : ''}"
+        onclick="toggleSaveJob(event,'${job.id}')"
+        title="${saved ? 'Saved to Dashboard' : 'Save job'}">${saved ? '🔖' : '⊕ Save'}</button>
       <div class="job-card-top">
         <div class="job-logo">${logo}</div>
         <div class="job-info">
@@ -626,6 +642,72 @@ function escapeHtml(str) {
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;
+}
+
+/* ═══════════════════════════════════════════
+   SAVE JOB — localStorage helpers
+═══════════════════════════════════════════ */
+function savedJobsKey() {
+  const s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  return s ? 'ambore_saved_jobs_' + s.id : null;
+}
+
+function isSavedJob(jobId) {
+  const key = savedJobsKey();
+  if (!key) return false;
+  return JSON.parse(localStorage.getItem(key) || '[]').some(j => j.id === jobId);
+}
+
+function toggleSaveJob(e, jobId) {
+  e.preventDefault();
+  e.stopPropagation();
+  const key = savedJobsKey();
+  if (!key) { showToast('Please log in to save jobs.'); return; }
+  const job = _jobsMap[jobId];
+  if (!job) return;
+  let saved = JSON.parse(localStorage.getItem(key) || '[]');
+  const already = saved.some(j => j.id === jobId);
+  if (already) {
+    saved = saved.filter(j => j.id !== jobId);
+    showToast('Removed from Dashboard');
+  } else {
+    saved.unshift({
+      id: job.id, title: job.title, company: job.company,
+      location_city: job.location_city, location_state: job.location_state,
+      apply_url: job.apply_url, salary_min: job.salary_min, salary_max: job.salary_max,
+      work_type: job.work_type, category: job.category, source: job.source,
+      posted_at: job.posted_at, savedAt: new Date().toISOString(),
+      isApplied: false, applicationId: null
+    });
+    showToast('Saved to Dashboard →');
+  }
+  localStorage.setItem(key, JSON.stringify(saved));
+  const btn = document.getElementById('svbtn-' + jobId);
+  if (btn) {
+    if (already) {
+      btn.textContent = '⊕ Save';
+      btn.title = 'Save job';
+      btn.classList.remove('saved');
+    } else {
+      btn.textContent = '🔖';
+      btn.title = 'Saved to Dashboard';
+      btn.classList.add('saved');
+    }
+  }
+}
+
+function showToast(msg) {
+  let t = document.getElementById('jobs-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'jobs-toast';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:10px 20px;border-radius:10px;font-size:0.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity 0.3s;pointer-events:none;';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._to);
+  t._to = setTimeout(() => { t.style.opacity = '0'; }, 2500);
 }
 
 /* ═══════════════════════════════════════════
