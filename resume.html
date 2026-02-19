@@ -279,7 +279,7 @@ button,input,textarea,select{font-family:inherit}
 <!-- ══════════════════════════════════════
      AUTH SCREEN
 ══════════════════════════════════════ -->
-<div id="auth" class="auth-shell">
+<div id="auth" class="auth-shell hidden">
   <div class="auth-logo"><div class="logo-icon">A</div>Ambore AI Resume</div>
   <div class="auth-card">
     <div class="auth-tabs">
@@ -907,7 +907,11 @@ function showToast(msg) {
    BOOT
 ═══════════════════════════════════════════ */
 window.addEventListener('load', () => {
-  if (Auth.getUser()) showApp();
+  if (Auth.getUser()) {
+    showApp();
+  } else {
+    window.location.href = 'index.html?auth=login&redirect=resume.html&msg=Please+log+in+to+access+this+feature';
+  }
 });
 </script>
 </body>

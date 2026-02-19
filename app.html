@@ -327,7 +327,7 @@ button,input,textarea,select{font-family:inherit}
 <!-- ══════════════════════════════════════
      AUTH SCREEN
 ══════════════════════════════════════ -->
-<div id="auth" class="auth-shell">
+<div id="auth" class="auth-shell hidden">
   <div class="auth-logo"><div class="logo-icon">A</div>Ambore</div>
   <div class="auth-card">
     <div class="auth-tabs">
@@ -1442,10 +1442,10 @@ function showToast(msg){
 window.addEventListener('load', () => {
   const user = Auth.getUser();
   if (user) {
-    // Logged in → show setup screen, skip auth
     showSetup();
+  } else {
+    window.location.href = 'index.html?auth=login&redirect=app.html&msg=Please+log+in+to+access+this+feature';
   }
-  // Not logged in → auth screen already visible by default
 });
 </script>
 </body>
