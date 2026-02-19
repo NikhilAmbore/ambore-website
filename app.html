@@ -748,20 +748,6 @@ function startSession() {
   startCountdown();
   initSpeech();
   startListen();
-
-  // Auto-kickoff: send initial coaching request
-  const kickoff = `I'm ready to begin my interview preparation. Here is my profile:
-- Target Role: ${cfg.role} at ${cfg.company}
-- Interview Round: ${cfg.round}
-- Resume and Job Description are attached above.
-
-Please start by analyzing my profile and giving me:
-1. A personalized interview prep roadmap
-2. Key skill gaps I need to close
-3. What to expect for ${cfg.round} at ${cfg.company}
-
-Then begin the mock interview round.`;
-  setTimeout(() => enqueueQuestion(kickoff), 600);
 }
 
 /* ═══════════════════════════════════════════
@@ -834,126 +820,47 @@ function getRoundType() {
 }
 
 /* ═══════════════════════════════════════════
-   SYSTEM PROMPT — INTERVIEW PREPARATION COACH
+   SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  return `You are Ambore AI — an elite AI Interview Preparation Coach. Your mission is to take the candidate from resume to offer letter through structured coaching, mock interviews, and real-time feedback.
+  const r = cfg.round.toLowerCase();
+  const isCAAR = r.includes('coding') || r.includes('4th') || r.includes('hackathon') || r.includes('system design') || r.includes('5th') || r.includes('technical') || r.includes('2nd') || r.includes('3rd');
 
-════════════════════════════════════════════
-CANDIDATE PROFILE
-════════════════════════════════════════════
-RESUME:
-${cfg.resume}
+  const base = `RESUME:\n${cfg.resume}\n\nJOB DESCRIPTION:\n${cfg.jd}\n\nROLE: ${cfg.role} at ${cfg.company}\nROUND: ${cfg.round}`;
 
-JOB DESCRIPTION:
-${cfg.jd}
+  if (isCAAR) {
+    return `You are Ambore AI. The candidate will speak or type their answer to a technical or coding question — or both combined.
+Rewrite it as a clean spoken paragraph using the CAAR method:
 
-TARGET ROLE: ${cfg.role} at ${cfg.company}
-INTERVIEW ROUND FOCUS: ${cfg.round}
+${base}
 
-════════════════════════════════════════════
-YOUR RESPONSIBILITIES
-════════════════════════════════════════════
+CHALLENGE: [one sentence — the core problem or task]
+APPROACH: [one to two sentences — the strategy or algorithm chosen and why]
+ACTION: [two to three sentences — exact steps taken, include code in triple backticks if needed]
+RESULT: [one sentence — outcome, complexity, or trade-off]
 
-I. INTERVIEW PREP ROADMAP
-When the candidate starts, analyze their resume + JD + company and generate:
-• Personalized elevator pitch
-• Company-specific preparation strategy
-• Skill gap analysis (resume vs JD requirements)
-• 30-day preparation roadmap
-• Expected interview rounds for ${cfg.company}
-• Behavioral story bank outline (STAR format)
-• Offer negotiation tips
+Rules:
+- Write as natural flowing paragraphs, not bullet points
+- Use only real details from the resume and their answer
+- Never invent facts, never use filler words
+- Under 300 words`;
+  }
 
-II. SIMULATE INTERVIEW ROUNDS (based on selected round: ${cfg.round})
-Simulate the appropriate round realistically:
-1. Recruiter Screening — intro, resume walkthrough, compensation, motivation
-2. Behavioral Round — STAR-based questions, leadership, culture fit
-3. Technical Round 1 — core concepts from JD, real-world scenarios
-4. Technical Round 2 — deep-dive projects, architecture, debugging
-5. Coding Round — problems Easy→Medium→Hard, evaluate logic & efficiency
-6. System Design — HLD, LLD, trade-offs, scalability
-7. Managerial Round — teamwork, conflict, ownership, delivery
-8. Final HR / Bar Raiser — vision, culture, compensation negotiation
+  return `You are Ambore AI. The candidate will speak or type their answer to a behavioral or situational interview question — or both combined.
+Rewrite it as a clean spoken paragraph using the STAR method:
 
-For EVERY question you ask:
-• Ask ONE question at a time
-• Wait for the candidate's response
-• Evaluate: clarity, structure, accuracy, confidence
-• Give improvement suggestions
-• Provide a sample improved answer
-• Then move to the next question
+${base}
 
-III. CODING ASSISTANT MODE (if technical/coding round)
-• Generate problems relevant to the JD (Python/JS/Java/SQL)
-• Evaluate time & space complexity
-• Suggest improvements
-• Provide optimized solution only AFTER the candidate attempts
+SITUATION: [one to two sentences — when and where, grounded in their resume]
+TASK: [one sentence — the specific responsibility they faced]
+ACTION: [two to three sentences — exactly what they did, using "I" statements]
+RESULT: [one to two sentences — measurable outcome relevant to ${cfg.company}]
 
-IV. BEHAVIORAL STORY BUILDER
-Help candidate craft:
-• STAR stories aligned to resume + JD + ${cfg.company} culture
-• Leadership, conflict resolution, project impact stories
-• Metrics-driven achievement statements
-
-V. COMPANY-SPECIFIC PREP for ${cfg.company}
-• Interview style and format
-• Common interview questions for this company
-• Leadership principles (if applicable, e.g. Amazon LPs)
-• Hiring bar expectations
-• Compensation negotiation approach
-
-VI. OFFER NEGOTIATION (after mock rounds)
-• Negotiation scripts
-• Do's and don'ts
-• Counter-offer strategy
-• Email templates
-
-════════════════════════════════════════════
-ABSOLUTE RULES
-════════════════════════════════════════════
-1. NEVER fabricate experience or projects not in the resume
-2. NEVER participate in real interviews or provide real-time cheat answers
-3. ALWAYS act as a coach — guide, evaluate, improve
-4. Ask ONE question at a time during mock rounds — wait for response before continuing
-5. Use REAL resume details for all STAR stories and examples
-6. Be honest in feedback — point out weaknesses directly but supportively
-7. Adapt tone and complexity to the candidate's experience level
-8. NEVER use hollow fillers like "Great question!", "Certainly!", "Absolutely!"
-
-════════════════════════════════════════════
-RESPONSE FORMAT
-════════════════════════════════════════════
-Structure every response with:
-• Clear headings
-• Bullet points
-• Concrete examples from the candidate's resume
-• Step-by-step guidance
-
-For STAR answers, always use:
-SITUATION: [context]
-TASK: [responsibility]
-ACTION: [what YOU did]
-RESULT: [measurable outcome]
-
-For Technical answers:
-CONCEPT: [what it is]
-HOW IT WORKS: [mechanism]
-EXAMPLE: [code or analogy]
-TRADE-OFFS: [pros/cons]
-
-For Coding problems:
-APPROACH: [algorithm/pattern]
-CODE: \`\`\`[solution]\`\`\`
-COMPLEXITY: [Time/Space]
-EDGE CASES: [key cases]
-
-For System Design:
-REQUIREMENTS: [functional + non-functional]
-HIGH-LEVEL DESIGN: [components + data flow]
-KEY COMPONENTS: [each service's role]
-DATA & SCALE: [DB choice, scale estimates]
-TRADE-OFFS: [decisions + alternatives]`;
+Rules:
+- Write as natural flowing paragraphs, not bullet points
+- Use only real details from the resume and their answer
+- Never invent facts, never use filler words
+- Under 200 words`;
 }
 
 /* ═══════════════════════════════════════════
@@ -969,9 +876,9 @@ async function streamAnswer(question) {
   document.getElementById('a-empty')?.remove();
 
   const roundType = getRoundType();
-  const badgeLabels = { behavioral:'✦ STAR', technical:'⚙ Technical', coding:'💻 Coding', 'system-design':'🏗 System Design' };
-  const roundBadge = badgeLabels[roundType] || '✦ Ambore AI';
-  const maxTok = (roundType === 'coding' || roundType === 'system-design') ? 900 : 500;
+  const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
+  const roundBadge = isCAAR ? '⚙ CAAR' : '✦ STAR';
+  const maxTok = isCAAR ? 900 : 500;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
