@@ -10,6 +10,16 @@
 function track(event,page){fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,page})}).catch(()=>{});}
 window.addEventListener('load',()=>track('page_view','job_detail'));
 </script>
+<script>
+// Auth guard
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='index.html?auth=login&redirect=jobs.html&msg=Please+log+in+to+view+job+details';
+  }
+})();
+</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{min-height:100vh;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}

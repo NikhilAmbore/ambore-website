@@ -483,7 +483,7 @@ footer{
         <a href="#features">Products</a>
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
-        <a href="jobs.html" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
+        <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
         <a href="javascript:void(0)" onclick="goToFeature('resume.html')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
         <a href="javascript:void(0)" onclick="goToFeature('app.html')" style="color:var(--violet);font-weight:600">Interview</a>
       </div>
@@ -503,7 +503,7 @@ footer{
   <a href="#features" onclick="toggleMenu()">Products</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <a href="jobs.html" onclick="toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
+  <a href="javascript:void(0)" onclick="goToFeature('jobs.html');toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
   <a href="javascript:void(0)" onclick="goToFeature('resume.html');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
   <a href="javascript:void(0)" onclick="goToFeature('app.html');toggleMenu()" style="color:var(--violet)">Interview AI</a>
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
@@ -614,7 +614,7 @@ footer{
           <li>Remote, hybrid, and onsite listings</li>
           <li>Salary data & direct apply links</li>
         </ul>
-        <a href="jobs.html" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
       </div>
     </div>
   </div>
@@ -795,7 +795,7 @@ footer{
     <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, and ace your interview — all free, all AI-powered. No credit card required.</p>
     <div class="reveal reveal-d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
       <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free →</button>
-      <a href="jobs.html" class="btn-hero-ghost">Browse Jobs</a>
+      <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="btn-hero-ghost">Browse Jobs</a>
     </div>
   </div>
 </section>
@@ -814,7 +814,7 @@ footer{
       <div class="footer-links">
         <div class="footer-col">
           <h5>Products</h5>
-          <a href="jobs.html">Job Portal</a>
+          <a href="javascript:void(0)" onclick="goToFeature('jobs.html')">Job Portal</a>
           <a href="javascript:void(0)" onclick="goToFeature('resume.html')">AI Resume</a>
           <a href="javascript:void(0)" onclick="goToFeature('app.html')">Interview AI</a>
         </div>
@@ -1073,6 +1073,7 @@ function updateNavState(){
       <div class="nav-user">
         <span class="nav-user-name">${session.name.split(' ')[0]}</span>
         <a href="jobs.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(34,197,94,0.85);">Jobs</a>
+
         <a href="app.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;">Interview</a>
         <a href="resume.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(124,58,237,0.9);">Resume</a>
         <button class="nav-logout" onclick="handleLogout()">Log Out</button>
