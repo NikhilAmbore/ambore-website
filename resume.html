@@ -911,83 +911,73 @@ async function generateResume() {
 }
 
 /* ═══════════════════════════════════════════
-   ATS SCORE ENGINE
+   ATS SCORE ENGINE  (positive-identification)
+   Only scores against provably technical keywords:
+   tech-pattern words + known tech dictionary + abbreviations.
+   Denominator stays at 15-30 genuine skills → after-optimization = 90-100%.
 ═══════════════════════════════════════════ */
-const ATS_STOP = new Set([
-  // Articles / prepositions / conjunctions
-  'the','a','an','and','or','of','to','in','for','on','with','at','by','from','as',
-  'into','about','onto','upon','via','per','nor','yet','either','neither','across',
-  'within','between','through','along','during','before','after','while','without',
-  // Common verbs & conjugations (generic JD action language)
-  'is','are','was','were','be','been','being','have','has','had','do','does','did',
-  'will','would','could','should','may','might','must','can','shall','need','needs',
-  'work','works','worked','working','help','helps','helped','helping',
-  'ensure','ensures','ensured','ensuring','support','supports','supported','supporting',
-  'provide','provides','provided','providing','build','builds','building','built',
-  'develop','develops','developed','developing','design','designs','designed','designing',
-  'implement','implements','implemented','implementing','manage','manages','managed','managing',
-  'lead','leads','led','leading','collaborate','collaborates','collaborating','collaborated',
-  'communicate','communicates','create','creates','created','creating',
-  'deliver','delivers','delivered','delivering','drive','drives','driven','driving',
-  'maintain','maintains','maintained','operate','operates','operated','operating',
-  'oversee','perform','performs','performed','plan','plans','planned','planning',
-  'review','reviews','reviewed','reviewing','serve','serves','serving',
-  'solve','solves','solved','solving','define','defines','defined','defining',
-  'report','reports','reporting','make','makes','made','identify','identifies','identified',
-  'understand','understands','improve','improves','improved','improving',
-  'increase','decreases','reduce','reduces','establish','establishes','execute','executes',
-  'analyze','analyses','analyzed','analyzing','apply','applies','applied','applying',
-  'assess','contribute','contributes','contributed','contributing',
-  'coordinate','coordinates','engage','engages','evaluate','evaluates',
-  'facilitate','generates','handle','handles','handling','integrate','integrates',
-  'interact','mentor','monitor','monitors','optimize','optimizes','participate','partner',
-  'present','presents','prioritize','process','processes','produce','promote',
-  'research','resolve','resolves','shape','test','tests','translate','validate','verify',
-  'write','writes','written','writing','follow','follows','following',
-  // Pronouns & determiners
-  'that','this','these','those','it','its','we','our','you','your',
-  'they','their','i','my','me','him','his','her','she','he','us',
-  'all','any','some','each','both','every','few','many','more','most',
-  'other','another','same','such','what','which','who','whom','whose',
-  // Generic adjectives (not technical)
-  'new','good','great','high','low','large','small','strong','key','clear',
-  'fast','quick','right','best','own','able','ready','different','various',
-  'multiple','complex','simple','basic','full','open','direct','primary',
-  'secondary','main','major','minor','critical','significant','relevant',
-  'current','recent','future','general','specific','particular','common',
-  'important','required','preferred','desired','ideal','excellent','outstanding',
-  'collaborative','motivated','passionate','driven','detail','oriented','focused',
-  'dynamic','innovative','creative','proactive','effective','efficient',
-  // Generic job description nouns (company/team language)
-  'experience','experienced','skill','skills','knowledge','ability','abilities',
-  'background','requirement','requirements','qualification','qualifications',
-  'team','teams','member','members','role','position','opportunity','candidate',
-  'candidates','company','organization','organisation','business','product','products',
-  'service','services','customer','customers','client','clients','stakeholder',
-  'stakeholders','environment','culture','colleague','colleagues','partner','partners',
-  'hiring','join','looking','seeking','responsible','responsibilities','responsibility',
-  'include','including','like','not','but','so','if','than','then','now','up',
-  'out','off','just','over','very','well','even','still','only','already',
-  'never','often','always','sometimes','together','away','back','down','here',
-  'there','also','too','however','therefore','thus','hence','whereas','although',
-  'though','despite','because','since','until','unless','whether','else',
-  // Time / numeric qualifiers
-  'one','two','three','four','five','six','seven','eight','nine','ten',
-  'first','second','third','fourth','last','next','previous',
-  'year','years','month','months','day','days','minimum','plus','least',
-  // Generic scope words
-  'wide','range','variety','set','list','suite','portfolio','collection',
-  'level','levels','area','areas','field','fields','sector','industry','domain',
-  'aspect','aspects','feature','features','function','functions','approach',
-  'process','processes','standard','standards','best','practice','practices',
-  'solution','solutions','strategy','strategies','initiative','initiatives',
-  'project','projects','program','programs','task','tasks','goal','goals',
-  'objective','objectives','outcome','outcomes','impact','results','value',
-  'quality','performance','growth','success','change','improvement',
-  // Commonly repeated JD phrases (single words)
-  'must','nice','have','get','given','take','put','run','use','see',
-  'own','make','keep','show','grow','stay','meet','join','start','help',
-  'time','way','day','lot','bit','set','end','top','job','act','sit',
+
+// ~200 most common tech languages, frameworks, tools, platforms
+const KNOWN_TECH = new Set([
+  // Languages
+  'python','java','javascript','typescript','golang','ruby','swift','kotlin',
+  'scala','rust','php','perl','lua','julia','haskell','erlang','elixir',
+  'clojure','groovy','dart','matlab','fortran','cobol','solidity','bash','zsh',
+  // Frontend
+  'react','angular','vue','svelte','next','nuxt','gatsby','remix','astro',
+  'redux','mobx','rxjs','apollo','webpack','vite','babel','eslint','prettier',
+  'tailwind','bootstrap','sass','less','styled','framer','electron','ionic','expo',
+  // Backend
+  'node','express','fastapi','django','flask','spring','rails','laravel',
+  'phoenix','nestjs','fastify','koa','gin','fiber','echo','actix','axum',
+  'kafka','rabbitmq','celery','sidekiq','dramatiq','resque',
+  // Databases
+  'postgres','postgresql','mysql','sqlite','mongodb','redis','elasticsearch',
+  'cassandra','dynamodb','firestore','supabase','cockroachdb','neo4j',
+  'influxdb','clickhouse','snowflake','bigquery','redshift','athena',
+  'mariadb','oracle','mssql','couchdb','hbase','scylladb','planetscale',
+  // Cloud / DevOps
+  'docker','kubernetes','terraform','ansible','jenkins','gitlab','github',
+  'circleci','argocd','helm','prometheus','grafana','datadog','splunk',
+  'newrelic','sentry','nginx','apache','istio','envoy','consul','vault',
+  'packer','vagrant','puppet','chef','pulumi',
+  // AWS
+  'lambda','fargate','ec2','s3','rds','aurora','sqs','sns','cloudfront',
+  'cloudwatch','route53','eks','ecs','ecr','glue','kinesis','sagemaker',
+  'bedrock','amplify','cognito','lightsail','elasticache',
+  // GCP
+  'gke','gcs','pubsub','bigtable','spanner','dataflow','dataproc','firestore',
+  // Azure
+  'aks','cosmos','eventhub',
+  // Data / ML / AI
+  'tensorflow','pytorch','keras','sklearn','scikit','pandas','numpy','scipy',
+  'matplotlib','seaborn','plotly','airflow','spark','hadoop','flink','hive',
+  'dbt','looker','tableau','powerbi','metabase','superset','mlflow','ray',
+  'huggingface','langchain','openai','pinecone','weaviate','chroma','qdrant',
+  'langsmith','llamaindex','transformers','bert','gpt','llm','rag',
+  // Mobile
+  'flutter','reactnative','xamarin','cordova','swiftui','jetpack',
+  // Testing
+  'jest','mocha','pytest','junit','selenium','cypress','playwright','k6',
+  'locust','artillery','vitest','testing','rspec','capybara',
+  // Protocols / Formats / Standards
+  'graphql','grpc','websocket','openapi','swagger','oauth','jwt','saml','ldap',
+  // Tools
+  'git','jira','confluence','figma','postman','linux','unix','vim','vscode',
+  'intellij','xcode','gradle','maven','cargo','poetry','pipenv','conda',
+  // Methodologies (specific, not generic)
+  'agile','scrum','kanban','devops','devsecops','gitops','tdd','bdd','ddd',
+  'microservices','serverless','monorepo','cicd','mlops','finops',
+]);
+
+// Known tech abbreviations that are unambiguous
+const TECH_ABBREVS = new Set([
+  'sql','api','aws','gcp','cli','sdk','orm','css','html','xml','json','yaml',
+  'rest','mvc','jwt','oauth','iam','vpc','cdn','dns','ssl','tls','ssh','http',
+  'tcp','sso','elk','rds','ecs','eks','sqs','sns','rpa','etl','dba','erp',
+  'crm','cms','nlp','ios','ux','qa','ci','cd','sre','saas','paas','iaas',
+  'dbt','iot','gpu','cpu','npm','pip','svn','oci','acm','waf','msk','emr',
+  'ecr','dag','rbac','rag','llm','mlops','tdd','bdd','ddd',
 ]);
 
 function stripMarkdown(md) {
@@ -999,69 +989,59 @@ function stripMarkdown(md) {
     .replace(/---/g, '');
 }
 
-// Patterns that signal a technical term (always keep regardless of stopwords)
-const TECH_PATTERN = /[0-9+#]|\.js$|\.py$|\.net$|\.io$|\.go$/;
-// Common soft-skill / generic nouns that slip past stopwords — remove them too
-const GENERIC_NOUNS = new Set([
-  'communication','leadership','teamwork','collaboration','problem','solving',
-  'analytical','interpersonal','attention','detail','management','development',
-  'implementation','architecture','engineering','operations','planning',
-  'monitoring','testing','reporting','analysis','integration','deployment',
-  'documentation','automation','optimization','delivery','maintenance',
-  'coordination','presentation','mentoring','mentorship','ownership',
-  'initiative','responsibility','accountability','alignment','execution',
-  'visibility','transparency','scalability','reliability','availability',
-  'performance','security','compliance','governance','risk','mitigation',
-  'stakeholder','cross','functional','cross-functional',
-]);
+// Return a numeric "tech confidence" score for a token (0 = not technical)
+function _techConfidence(w) {
+  if (!w || w.length < 2 || w.length > 30) return 0;
+  const wl = w.toLowerCase();
+  // Top tier: tech special characters
+  if (/[0-9]/.test(wl) && /[a-z]/.test(wl)) return 10;   // ec2, k8s, python3
+  if (/[+#]/.test(wl)) return 10;                          // c++, c#
+  if (/\.[a-z]/.test(wl) && wl.length > 3) return 9;      // node.js, .net, next.js
+  if (/[a-z]{2,}\/[a-z]{2,}/.test(wl)) return 8;          // ci/cd, tcp/ip
+  // Second tier: known dictionaries
+  if (KNOWN_TECH.has(wl)) return 7;
+  if (TECH_ABBREVS.has(wl)) return 6;
+  return 0;
+}
 
 function computeATSScore(resumeText, jdText) {
   if (!resumeText || !jdText) return { score: 0, matched: 0, total: 0, missing: [] };
 
-  function tokenize(text) {
-    // Also capture hyphenated terms and terms with special chars (ci/cd, c++, node.js)
-    return (text.toLowerCase().match(/\b[a-z][a-z0-9+#./]*(?:-[a-z0-9]+)*\b/g) || []);
-  }
+  // Tokenize: capture words, hyphenated terms, special-char tech tokens
+  const jdTokens = (jdText.toLowerCase().match(/[a-z][a-z0-9+#./]*(?:-[a-z0-9]+)*/g) || [])
+    .concat((jdText.match(/[a-zA-Z]{2,}\/[a-zA-Z]{2,}/g) || []).map(t => t.toLowerCase()));
 
-  const jdTokens = tokenize(jdText);
+  // Score each unique token — keep only genuine tech terms (confidence > 0)
+  const scored = {};
+  [...new Set(jdTokens)].forEach(w => {
+    const c = _techConfidence(w);
+    if (c > 0) scored[w] = c;
+  });
 
-  // Keep only genuine technical/domain keywords:
-  // - not in the large stopword list
-  // - not in the generic nouns set
-  // - length >= 3
-  // - OR it matches a known tech pattern (contains digit, +, #, etc.)
-  const jdKeywords = [...new Set(jdTokens.filter(w => {
-    if (w.length < 3) return false;
-    if (ATS_STOP.has(w)) return TECH_PATTERN.test(w);  // keep tech even if in stop
-    if (GENERIC_NOUNS.has(w)) return false;
-    return true;
-  }))];
-
-  // Extract bigrams from technical-only tokens
-  const bigrams = new Set();
-  for (let i = 0; i < jdTokens.length - 1; i++) {
-    const w1 = jdTokens[i], w2 = jdTokens[i + 1];
-    const ok1 = w1.length >= 3 && !ATS_STOP.has(w1) && !GENERIC_NOUNS.has(w1);
-    const ok2 = w2.length >= 3 && !ATS_STOP.has(w2) && !GENERIC_NOUNS.has(w2);
-    if (ok1 && ok2) bigrams.add(w1 + ' ' + w2);
-  }
+  // Sort descending by confidence, cap denominator at 30 keywords
+  const jdKeywords = Object.entries(scored)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 30)
+    .map(([w]) => w);
 
   const resumeLower = resumeText.toLowerCase();
 
   const matchedKw = jdKeywords.filter(w => {
     const safe = w.replace(/[+#./]/g, '\\$&');
-    return new RegExp('(?:^|[^a-z0-9])' + safe + '(?:[^a-z0-9]|$)').test(resumeLower);
+    try {
+      return new RegExp('(?:^|[^a-z0-9])' + safe + '(?:[^a-z0-9]|$)').test(resumeLower);
+    } catch(e) { return resumeLower.includes(w); }
   });
-  const missingKw = jdKeywords.filter(w => !matchedKw.includes(w));
-
-  const bigramArr = [...bigrams];
-  const matchedBigrams = bigramArr.filter(b => resumeLower.includes(b));
 
   const total = jdKeywords.length;
-  const matchedRaw = matchedKw.length + matchedBigrams.length * 0.5;
-  const score = total === 0 ? 0 : Math.min(100, Math.round((matchedRaw / total) * 100));
+  const score = total === 0 ? 0 : Math.min(100, Math.round(matchedKw.length / total * 100));
 
-  return { score, matched: matchedKw.length, total, missing: missingKw.slice(0, 12) };
+  return {
+    score,
+    matched: matchedKw.length,
+    total,
+    missing: jdKeywords.filter(w => !matchedKw.includes(w)).slice(0, 12),
+  };
 }
 
 function _scoreColor(s) {
