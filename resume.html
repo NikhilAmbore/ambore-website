@@ -762,6 +762,10 @@ H. MANDATORY TECHNICAL KEYWORD AUDIT (Run this before outputting — non-negotia
    EXAMPLE: If JD lists "Terraform, GitHub Actions, Datadog, Prometheus" → all four MUST
    appear in Skills AND at least one Experience bullet. No exceptions.
 
+   ABBREVIATIONS: Always use the EXACT abbreviation from the JD. If JD says "GCP", write
+   "GCP" in Skills — do NOT expand to "Google Cloud Platform" unless the JD uses both forms.
+   Same rule for AWS, k8s, EC2, S3, W2, CI/CD, etc. ATS scanners match exact tokens.
+
 ═══════════════════════════════════════
 OUTPUT FORMAT
 ═══════════════════════════════════════
@@ -948,7 +952,10 @@ const KNOWN_TECH = new Set([
   // GCP
   'gke','gcs','pubsub','bigtable','spanner','dataflow','dataproc','firestore',
   // Azure
-  'aks','cosmos','eventhub',
+  'azure','aks','cosmos','eventhub','blob','keyvault','devops',
+  // Other Cloud / Platforms
+  'firebase','vercel','netlify','heroku','render','fly','cloudflare',
+  'stripe','twilio','sendgrid','auth0','okta','segment','mixpanel',
   // Data / ML / AI
   'tensorflow','pytorch','keras','sklearn','scikit','pandas','numpy','scipy',
   'matplotlib','seaborn','plotly','airflow','spark','hadoop','flink','hive',
@@ -993,14 +1000,15 @@ function stripMarkdown(md) {
 function _techConfidence(w) {
   if (!w || w.length < 2 || w.length > 30) return 0;
   const wl = w.toLowerCase();
-  // Top tier: tech special characters
-  if (/[0-9]/.test(wl) && /[a-z]/.test(wl)) return 10;   // ec2, k8s, python3
-  if (/[+#]/.test(wl)) return 10;                          // c++, c#
-  if (/\.[a-z]/.test(wl) && wl.length > 3) return 9;      // node.js, .net, next.js
-  if (/[a-z]{2,}\/[a-z]{2,}/.test(wl)) return 8;          // ci/cd, tcp/ip
-  // Second tier: known dictionaries
+  // Check known dictionaries FIRST — catches s3, ec2, gcp, etc. unambiguously
   if (KNOWN_TECH.has(wl)) return 7;
   if (TECH_ABBREVS.has(wl)) return 6;
+  // Tech special characters (c++, c#)
+  if (/[+#]/.test(wl)) return 10;
+  // Version / numbered tech tokens — require length >= 3 to exclude w2, r2, d2 (tax/generic)
+  if (/[0-9]/.test(wl) && /[a-z]/.test(wl) && wl.length >= 3) return 10;   // k8s, python3
+  // Dot-separated tech (node.js, next.js) — length > 3 avoids false positives
+  if (/\.[a-z]/.test(wl) && wl.length > 3) return 9;
   return 0;
 }
 
@@ -1008,8 +1016,8 @@ function computeATSScore(resumeText, jdText) {
   if (!resumeText || !jdText) return { score: 0, matched: 0, total: 0, missing: [] };
 
   // Tokenize: capture words, hyphenated terms, special-char tech tokens
-  const jdTokens = (jdText.toLowerCase().match(/[a-z][a-z0-9+#./]*(?:-[a-z0-9]+)*/g) || [])
-    .concat((jdText.match(/[a-zA-Z]{2,}\/[a-zA-Z]{2,}/g) || []).map(t => t.toLowerCase()));
+  // Note: no slash in charset — ec2/az splits into ec2 + az (both matched separately)
+  const jdTokens = (jdText.toLowerCase().match(/[a-z][a-z0-9+#.]*(?:-[a-z0-9]+)*/g) || []);
 
   // Score each unique token — keep only genuine tech terms (confidence > 0)
   const scored = {};
