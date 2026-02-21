@@ -172,6 +172,27 @@ a{text-decoration:none;color:inherit}
 .job-tag.salary{color:var(--accent);border-color:rgba(79,70,229,0.25);background:rgba(79,70,229,0.08)}
 .job-time{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-left:auto}
 
+/* Job card action row */
+.job-card-actions{
+  display:flex;align-items:center;gap:8px;margin-top:12px;
+  padding-top:11px;border-top:1px solid var(--border);
+}
+.btn-tailor{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 13px;border-radius:8px;font-size:0.76rem;font-weight:700;
+  background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.3);
+  color:var(--accent);cursor:pointer;transition:all 0.15s;white-space:nowrap;
+}
+.btn-tailor:hover{background:rgba(79,70,229,0.22);border-color:rgba(129,140,248,0.5);color:#fff}
+.btn-apply{
+  margin-left:auto;
+  display:inline-flex;align-items:center;gap:4px;
+  padding:6px 14px;border-radius:8px;font-size:0.76rem;font-weight:700;
+  background:var(--grad);border:none;color:#fff;
+  cursor:pointer;text-decoration:none;transition:opacity 0.15s;white-space:nowrap;
+}
+.btn-apply:hover{opacity:0.85}
+
 /* Pagination */
 .pagination{display:flex;gap:6px;justify-content:center;margin-top:24px;flex-wrap:wrap}
 .page-btn{
@@ -613,14 +634,14 @@ function renderJobCard(job) {
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
   const saved   = isSavedJob(job.id);
+  const jid     = escapeHtml(job.id);
 
-  // Card links directly to the external apply URL (target=_blank)
   return `
-    <a href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" class="job-card">
-      <button id="svbtn-${job.id}" class="save-job-btn ${saved ? 'saved' : ''}"
-        onclick="toggleSaveJob(event,'${job.id}')"
+    <div class="job-card">
+      <button id="svbtn-${jid}" class="save-job-btn ${saved ? 'saved' : ''}"
+        onclick="toggleSaveJob(event,'${jid}')"
         title="${saved ? 'Saved to Dashboard' : 'Save job'}">${saved ? '🔖' : '⊕ Save'}</button>
-      <div class="job-card-top">
+      <div class="job-card-top" onclick="window.open('${escapeHtml(job.url)}','_blank','noopener')" style="cursor:pointer">
         <div class="job-logo">${initial}</div>
         <div class="job-info">
           <div class="job-title">${escapeHtml(job.title)}</div>
@@ -631,7 +652,11 @@ function renderJobCard(job) {
           </div>
         </div>
       </div>
-    </a>`;
+      <div class="job-card-actions">
+        <button class="btn-tailor" onclick="tailorResume('${jid}')">✨ Tailor Resume</button>
+        <a class="btn-apply" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer">Apply →</a>
+      </div>
+    </div>`;
 }
 
 function renderPagination(current, total) {
@@ -765,6 +790,35 @@ function toggleSaveJob(e, jobId) {
     if (already) { btn.textContent = '⊕ Save'; btn.title = 'Save job'; btn.classList.remove('saved'); }
     else         { btn.textContent = '🔖';     btn.title = 'Saved to Dashboard'; btn.classList.add('saved'); }
   }
+}
+
+function tailorResume(jobId) {
+  const job = _jobsMap[jobId];
+  if (!job) return;
+
+  // Build a clean job description text for the resume tailoring tool
+  let desc = '';
+  if (job.title)   desc += `Job Title: ${job.title}\n`;
+  if (job.company) desc += `Company: ${job.company}\n`;
+  if (job.location)desc += `Location: ${job.location}\n`;
+  if (job.salary_min || job.salary_max) {
+    const lo = job.salary_min ? `$${(job.salary_min/1000).toFixed(0)}k` : '';
+    const hi = job.salary_max ? `$${(job.salary_max/1000).toFixed(0)}k` : '';
+    desc += `Salary: ${lo && hi ? lo+'–'+hi : hi||lo}\n`;
+  }
+  if (job.department) desc += `Department: ${job.department}\n`;
+  desc += '\n';
+  if (job.description) desc += job.description;
+
+  // Store in localStorage so resume.html can pre-fill the JD textarea
+  localStorage.setItem('ambore_prefill_job', JSON.stringify({
+    title:    job.title   || '',
+    company:  job.company || '',
+    applyUrl: job.url     || '',
+    description: desc,
+  }));
+
+  window.location.href = 'resume.html';
 }
 
 function showToast(msg) {
