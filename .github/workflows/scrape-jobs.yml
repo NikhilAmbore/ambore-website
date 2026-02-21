@@ -1,12 +1,13 @@
-name: Daily Job Scraper
+name: Hourly Job Scraper
 
 on:
   schedule:
-    # Runs every day at 06:00 UTC  (1 AM EST / 10 PM PST)
-    # Change cron expression to run more frequently if needed:
-    #   Every 12h: '0 6,18 * * *'
-    #   Every 8h:  '0 6,14,22 * * *'
-    - cron: '0 6 * * *'
+    # Runs every hour at :00  (free for public repos — unlimited Actions minutes)
+    # To reduce frequency, change to:
+    #   Every 6h:  '0 */6 * * *'
+    #   Every 12h: '0 */12 * * *'
+    #   Daily:     '0 6 * * *'
+    - cron: '0 * * * *'
 
   workflow_dispatch:
     # Manual trigger — available from GitHub Actions UI
