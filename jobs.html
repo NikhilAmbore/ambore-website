@@ -319,11 +319,9 @@ a{text-decoration:none;color:inherit}
       <div class="filter-title">Source</div>
       <select class="filter-select" id="filter-source" onchange="applyFilters()">
         <option value="">All sources</option>
-        <option value="usajobs">USAJobs.gov</option>
-        <option value="adzuna">Adzuna</option>
-        <option value="themuse">The Muse</option>
-        <option value="remotive">Remotive</option>
-        <option value="google_jobs">Google Jobs (via Apify)</option>
+        <option value="greenhouse">Greenhouse</option>
+        <option value="lever">Lever</option>
+        <option value="ashby">Ashby</option>
       </select>
     </div>
 
@@ -347,63 +345,84 @@ a{text-decoration:none;color:inherit}
 </div>
 
 <script>
-/* ═══════════════════════════════════════════
-   CONFIG
-═══════════════════════════════════════════ */
-// IMPORTANT: Change this to your Railway backend URL after deployment
-const API_BASE = 'https://web-production-d62ab.up.railway.app';
+/* ═══════════════════════════════════════════════════════════════
+   DATA SOURCE
+   All jobs are loaded once from backend/jobs.json (scraped data).
+   Filtering, searching, sorting, and pagination are all client-side.
+═══════════════════════════════════════════════════════════════ */
+const JOBS_JSON_URL = 'backend/jobs.json';
+const PER_PAGE = 20;
 
-let currentPage = 1;
+let _allJobs   = [];   // full dataset loaded once
+let _filtered  = [];   // subset after filters/search
+let _jobsMap   = {};   // id → job, for save-button lookup
+let currentPage     = 1;
 let currentCategory = '';
-let totalPages = 0;
-const _jobsMap = {};  // cache for save button lookup
+let totalPages      = 0;
 
 /* ═══════════════════════════════════════════
-   LOAD STATS + CATEGORIES ON PAGE LOAD
+   LOAD + BOOTSTRAP
 ═══════════════════════════════════════════ */
-async function loadStats() {
+async function loadJobsData() {
+  const list = document.getElementById('jobs-list');
+  list.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading jobs...</div>';
   try {
-    const res = await fetch(`${API_BASE}/api/stats`);
-    if (!res.ok) throw new Error('API error');
-    const data = await res.json();
-
-    document.getElementById('stat-jobs').textContent = data.active_jobs.toLocaleString();
-    document.getElementById('stat-companies').textContent = data.total_companies.toLocaleString();
-    document.getElementById('stat-updated').textContent = data.last_scraped
-      ? timeAgo(new Date(data.last_scraped))
-      : 'never';
-
-    // Build category pills
-    const pills = document.getElementById('category-pills');
-    pills.innerHTML = '<button class="cat-pill active" onclick="selectCategory(\'\',this)">All Jobs</button>';
-    data.categories.forEach(cat => {
-      pills.innerHTML += `<button class="cat-pill" onclick="selectCategory('${cat.category}',this)">${cat.category} (${cat.count})</button>`;
-    });
+    const res = await fetch(JOBS_JSON_URL);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    _allJobs = await res.json();
   } catch (e) {
-    console.error('Failed to load stats:', e);
+    list.innerHTML = `<div class="empty-state"><p>Could not load jobs.json — ${e.message}</p></div>`;
+    return false;
   }
+  return true;
 }
 
-async function loadLocations() {
-  try {
-    const res = await fetch(`${API_BASE}/api/jobs/locations`);
-    if (!res.ok) return;
-    const data = await res.json();
-    const select = document.getElementById('state-select');
-    data.forEach(loc => {
+function computeStats() {
+  const companies = new Set(_allJobs.map(j => j.company)).size;
+  const remote    = _allJobs.filter(j => j.is_remote).length;
+  document.getElementById('stat-jobs').textContent      = _allJobs.length.toLocaleString();
+  document.getElementById('stat-companies').textContent = companies.toLocaleString();
+  document.getElementById('stat-updated').textContent   = 'today';
+  // show remote count in third chip
+  const chip = document.querySelector('.stat-chip:nth-child(3)');
+  if (chip) chip.innerHTML = `<strong>${remote.toLocaleString()}</strong> remote jobs`;
+}
+
+function buildCategoryPills() {
+  const counts = {};
+  _allJobs.forEach(j => {
+    if (j.department) counts[j.department] = (counts[j.department] || 0) + 1;
+  });
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 14);
+
+  const pills = document.getElementById('category-pills');
+  pills.innerHTML = '<button class="cat-pill active" onclick="selectCategory(\'\',this)">All Jobs</button>';
+  top.forEach(([dept, cnt]) => {
+    const safe = dept.replace(/'/g, "\\'");
+    pills.innerHTML += `<button class="cat-pill" onclick="selectCategory('${safe}',this)">${escapeHtml(dept)} <span style="opacity:0.5;font-size:0.72em">(${cnt})</span></button>`;
+  });
+}
+
+function buildStateDropdown() {
+  const STATE_RE = /,\s*([A-Z]{2})(?:\s|$|,)/;
+  const counts = {};
+  _allJobs.forEach(j => {
+    const m = STATE_RE.exec(j.location || '');
+    if (m) counts[m[1]] = (counts[m[1]] || 0) + 1;
+  });
+  const sel = document.getElementById('state-select');
+  Object.entries(counts)
+    .sort((a, b) => b[1] - a[1])
+    .forEach(([st, cnt]) => {
       const opt = document.createElement('option');
-      opt.value = loc.state;
-      opt.textContent = `${loc.state} (${loc.count})`;
-      select.appendChild(opt);
+      opt.value = st;
+      opt.textContent = `${st} (${cnt})`;
+      sel.appendChild(opt);
     });
-  } catch (e) {
-    console.error('Failed to load locations:', e);
-  }
 }
 
 /* ═══════════════════════════════════════════
    SMART QUERY NORMALIZER
-   Expands abbreviations and tech synonyms before search
 ═══════════════════════════════════════════ */
 const ABBREV_MAP = {
   'js': 'javascript', 'ts': 'typescript', 'py': 'python',
@@ -413,24 +432,22 @@ const ABBREV_MAP = {
   'ios': 'iOS mobile', 'k8s': 'kubernetes', 'tf': 'terraform',
 };
 const SYNONYM_MAP = {
-  'full stack': 'fullstack full-stack',
-  'fullstack':  'full stack full-stack',
-  'frontend':   'front-end react angular vue',
-  'backend':    'back-end server-side api',
-  'devops':     'site reliability infrastructure cicd',
-  'data science': 'data scientist analytics machine learning',
+  'full stack':       'fullstack full-stack',
+  'fullstack':        'full stack full-stack',
+  'frontend':         'front-end react angular vue',
+  'backend':          'back-end server-side api',
+  'devops':           'site reliability infrastructure cicd',
+  'data science':     'data scientist analytics machine learning',
   'machine learning': 'ml deep learning ai artificial intelligence',
-  'ios':        'swift mobile apple',
-  'android':    'kotlin mobile',
+  'ios':              'swift mobile apple',
+  'android':          'kotlin mobile',
 };
 
 function normalizeQuery(raw) {
   let q = raw.toLowerCase().trim();
-  // Expand abbreviations (whole-word match only)
   Object.entries(ABBREV_MAP).forEach(([abbr, full]) => {
     q = q.replace(new RegExp(`\\b${abbr}\\b`, 'g'), full);
   });
-  // Add synonyms for known phrases (append, don't replace)
   let extras = '';
   Object.entries(SYNONYM_MAP).forEach(([phrase, syns]) => {
     if (q.includes(phrase)) extras += ' ' + syns;
@@ -439,119 +456,165 @@ function normalizeQuery(raw) {
 }
 
 /* ═══════════════════════════════════════════
-   FETCH & RENDER JOBS
+   EXPERIENCE LEVEL INFERENCE FROM JOB TITLE
 ═══════════════════════════════════════════ */
-async function fetchJobs() {
-  const list = document.getElementById('jobs-list');
-  list.innerHTML = '<div class="loading"><div class="loading-spinner"></div>Loading jobs...</div>';
-
-  // Clear any previous smart-search banner
-  const prevBanner = document.getElementById('smart-search-banner');
-  if (prevBanner) prevBanner.remove();
-
-  // Build query params
-  const params = new URLSearchParams();
-  const rawQ = document.getElementById('search-input').value.trim();
-  const q = rawQ ? normalizeQuery(rawQ) : '';
-  const state = document.getElementById('state-select').value;
-  const sort = document.getElementById('sort-select').value;
-  const dateFilter = document.getElementById('filter-date').value;
-  const salaryFilter = document.getElementById('filter-salary').value;
-  const sourceFilter = document.getElementById('filter-source').value;
-
-  if (q) params.set('q', q);
-  if (state) params.set('state', state);
-  if (currentCategory) params.set('category', currentCategory);
-  if (sort) params.set('sort', sort);
-  if (dateFilter) params.set('posted_within', dateFilter);
-  if (salaryFilter) params.set('salary_min', salaryFilter);
-  if (sourceFilter) params.set('source', sourceFilter);
-  params.set('page', currentPage);
-  params.set('per_page', 20);
-
-  // Work type checkboxes
-  const workTypes = [...document.querySelectorAll('.sidebar input[type=checkbox][value="remote"],.sidebar input[type=checkbox][value="hybrid"],.sidebar input[type=checkbox][value="onsite"]')]
-    .filter(cb => cb.checked)
-    .map(cb => cb.value);
-  if (workTypes.length === 1) params.set('work_type', workTypes[0]);
-
-  // Experience checkboxes
-  const expLevels = [...document.querySelectorAll('.sidebar input[type=checkbox][value="entry"],.sidebar input[type=checkbox][value="mid"],.sidebar input[type=checkbox][value="senior"],.sidebar input[type=checkbox][value="executive"]')]
-    .filter(cb => cb.checked)
-    .map(cb => cb.value);
-  if (expLevels.length === 1) params.set('experience', expLevels[0]);
-
-  try {
-    const res = await fetch(`${API_BASE}/api/jobs?${params.toString()}`);
-    if (!res.ok) throw new Error('API error ' + res.status);
-    const data = await res.json();
-
-    totalPages = data.total_pages;
-
-    // Show smart-search banner when query is active
-    if (rawQ && data.total > 0) {
-      const isExpanded = q !== rawQ.toLowerCase().trim();
-      const keywords = [...new Set(rawQ.split(/\s+/).filter(w => w.length > 2))];
-      const banner = document.createElement('div');
-      banner.id = 'smart-search-banner';
-      banner.style.cssText = 'background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.2);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:0.8rem;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:8px;flex-wrap:wrap;';
-      banner.innerHTML = `<span style="color:#818CF8;font-weight:700">&#9670; Smart Search</span> Showing <strong style="color:#fff">${data.total.toLocaleString()}</strong> results for: ${keywords.map(k => `<span style="background:rgba(129,140,248,0.15);color:#818CF8;padding:1px 7px;border-radius:4px;font-size:0.76rem">${k}</span>`).join(' ')}${isExpanded ? ' <span style="opacity:0.5">+ related terms</span>' : ''}`;
-      list.parentNode.insertBefore(banner, list);
-      document.getElementById('jobs-count').innerHTML = `<strong>${data.total.toLocaleString()}</strong> jobs found`;
-    } else {
-      document.getElementById('jobs-count').innerHTML = `<strong>${data.total.toLocaleString()}</strong> jobs found`;
-    }
-
-    if (data.jobs.length === 0) {
-      list.innerHTML = '<div class="empty-state"><p>No jobs found. Try a different keyword or remove some filters.</p></div>';
-      document.getElementById('pagination').innerHTML = '';
-      return;
-    }
-
-    list.innerHTML = data.jobs.map(job => renderJobCard(job)).join('');
-    renderPagination(data.page, data.total_pages);
-  } catch (e) {
-    console.error('Failed to fetch jobs:', e);
-    list.innerHTML = `<div class="empty-state"><p>Could not load jobs. Make sure the backend is running.</p><p style="font-size:0.75rem;margin-top:8px;opacity:0.5">${e.message}</p></div>`;
-  }
+function inferLevel(title) {
+  const t = (title || '').toLowerCase();
+  if (/\b(director|vp |vice president|head of|chief|cto|ceo|coo|svp|evp)\b/.test(t)) return 'executive';
+  if (/\b(senior|sr\.|staff|principal|lead|architect)\b/.test(t)) return 'senior';
+  if (/\b(junior|jr\.|entry.?level|associate|intern|graduate|new grad)\b/.test(t)) return 'entry';
+  return 'mid';
 }
 
-function renderJobCard(job) {
-  _jobsMap[job.id] = job;  // cache for toggleSaveJob
+/* ═══════════════════════════════════════════
+   CLIENT-SIDE FILTER + SORT + PAGINATE
+═══════════════════════════════════════════ */
+const DATE_MS = { '1d': 864e5, '3d': 2592e5, '7d': 6048e5, '14d': 1209.6e6, '30d': 2592e6 };
 
-  const logo = job.company_logo
-    ? `<img src="${job.company_logo}" alt="" onerror="this.parentElement.innerHTML='${job.company.charAt(0)}'">`
-    : job.company.charAt(0);
+function applyAndRender() {
+  const rawQ        = document.getElementById('search-input').value.trim();
+  const q           = rawQ ? normalizeQuery(rawQ) : '';
+  const stateFilter = document.getElementById('state-select').value;
+  const sortBy      = document.getElementById('sort-select').value;
+  const dateFilter  = document.getElementById('filter-date').value;
+  const salaryMin   = parseInt(document.getElementById('filter-salary').value) || 0;
+  const sourceFilter= document.getElementById('filter-source').value;
 
-  const location = [job.location_city, job.location_state].filter(Boolean).join(', ') || 'USA';
+  const workTypes = [...document.querySelectorAll(
+    '.sidebar input[type=checkbox][value="remote"],' +
+    '.sidebar input[type=checkbox][value="hybrid"],' +
+    '.sidebar input[type=checkbox][value="onsite"]'
+  )].filter(cb => cb.checked).map(cb => cb.value);
 
-  let salaryTag = '';
-  if (job.salary_min || job.salary_max) {
-    const min = job.salary_min ? `$${(job.salary_min / 1000).toFixed(0)}k` : '';
-    const max = job.salary_max ? `$${(job.salary_max / 1000).toFixed(0)}k` : '';
-    const salary = min && max && min !== max ? `${min}–${max}` : (max || min);
-    salaryTag = `<span class="job-tag salary">${salary}</span>`;
+  const expLevels = [...document.querySelectorAll(
+    '.sidebar input[type=checkbox][value="entry"],' +
+    '.sidebar input[type=checkbox][value="mid"],' +
+    '.sidebar input[type=checkbox][value="senior"],' +
+    '.sidebar input[type=checkbox][value="executive"]'
+  )].filter(cb => cb.checked).map(cb => cb.value);
+
+  const now = Date.now();
+
+  _filtered = _allJobs.filter(j => {
+    // ── Text search (every word must appear somewhere)
+    if (q) {
+      const hay = `${j.title} ${j.company} ${j.location} ${j.department||''} ${j.description||''}`.toLowerCase();
+      if (!q.split(/\s+/).every(w => hay.includes(w))) return false;
+    }
+    // ── Department / category pill
+    if (currentCategory && j.department !== currentCategory) return false;
+    // ── US state
+    if (stateFilter && !(j.location || '').includes(stateFilter)) return false;
+    // ── Work type
+    if (workTypes.length) {
+      const wt = j.is_remote ? 'remote' : 'onsite';
+      if (!workTypes.includes(wt)) return false;
+    }
+    // ── ATS source
+    if (sourceFilter && j.ats !== sourceFilter) return false;
+    // ── Minimum salary
+    if (salaryMin && (!j.salary_min || j.salary_min < salaryMin)) return false;
+    // ── Date posted
+    if (dateFilter && j.posted_at) {
+      if (now - new Date(j.posted_at).getTime() > (DATE_MS[dateFilter] || Infinity)) return false;
+    }
+    // ── Experience level
+    if (expLevels.length && !expLevels.includes(inferLevel(j.title))) return false;
+    return true;
+  });
+
+  // ── Sort
+  if (sortBy === 'salary_max') {
+    _filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
+  } else {
+    _filtered.sort((a, b) => {
+      const da = a.posted_at ? new Date(a.posted_at).getTime() : 0;
+      const db = b.posted_at ? new Date(b.posted_at).getTime() : 0;
+      return db - da;
+    });
   }
 
-  const workTypeClass = job.work_type === 'remote' ? 'remote' : job.work_type === 'hybrid' ? 'hybrid' : '';
-  const workTypeTag = job.work_type ? `<span class="job-tag ${workTypeClass}">${job.work_type}</span>` : '';
-  const categoryTag = job.category ? `<span class="job-tag">${job.category}</span>` : '';
-  const sourceTag = `<span class="job-tag">${job.source}</span>`;
-  const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
-  const saved = isSavedJob(job.id);
+  totalPages = Math.ceil(_filtered.length / PER_PAGE);
+  const page = _filtered.slice((currentPage - 1) * PER_PAGE, currentPage * PER_PAGE);
 
+  const list = document.getElementById('jobs-list');
+
+  // Smart-search banner
+  const prevBanner = document.getElementById('smart-search-banner');
+  if (prevBanner) prevBanner.remove();
+  if (rawQ && _filtered.length > 0) {
+    const q2 = normalizeQuery(rawQ);
+    const isExpanded = q2 !== rawQ.toLowerCase().trim();
+    const kws = [...new Set(rawQ.split(/\s+/).filter(w => w.length > 2))];
+    const banner = document.createElement('div');
+    banner.id = 'smart-search-banner';
+    banner.style.cssText = 'background:rgba(79,70,229,0.08);border:1px solid rgba(79,70,229,0.2);border-radius:8px;padding:8px 14px;margin-bottom:12px;font-size:0.8rem;color:rgba(255,255,255,0.55);display:flex;align-items:center;gap:8px;flex-wrap:wrap';
+    banner.innerHTML = `<span style="color:#818CF8;font-weight:700">&#9670; Smart Search</span>
+      Showing <strong style="color:#fff">${_filtered.length.toLocaleString()}</strong> results for:
+      ${kws.map(k => `<span style="background:rgba(129,140,248,0.15);color:#818CF8;padding:1px 7px;border-radius:4px;font-size:0.76rem">${escapeHtml(k)}</span>`).join(' ')}
+      ${isExpanded ? '<span style="opacity:0.5">+ related terms</span>' : ''}`;
+    list.parentNode.insertBefore(banner, list);
+  }
+
+  document.getElementById('jobs-count').innerHTML = `<strong>${_filtered.length.toLocaleString()}</strong> jobs found`;
+
+  if (page.length === 0) {
+    list.innerHTML = '<div class="empty-state"><p>No jobs match your search. Try different keywords or clear some filters.</p></div>';
+    document.getElementById('pagination').innerHTML = '';
+    return;
+  }
+
+  list.innerHTML = page.map(renderJobCard).join('');
+  renderPagination(currentPage, totalPages);
+}
+
+/* ═══════════════════════════════════════════
+   RENDER A SINGLE JOB CARD
+═══════════════════════════════════════════ */
+function renderJobCard(job) {
+  _jobsMap[job.id] = job;
+
+  const initial  = (job.company || '?').charAt(0).toUpperCase();
+  const location = job.location || 'USA';
+
+  // Work-type tag
+  const wtClass = job.is_remote ? 'remote' : '';
+  const wtLabel = job.is_remote ? 'Remote' : '';
+  const workTypeTag = wtLabel ? `<span class="job-tag ${wtClass}">${wtLabel}</span>` : '';
+
+  // Salary tag
+  let salaryTag = '';
+  if (job.salary_min || job.salary_max) {
+    const lo = job.salary_min ? `$${(job.salary_min / 1000).toFixed(0)}k` : '';
+    const hi = job.salary_max ? `$${(job.salary_max / 1000).toFixed(0)}k` : '';
+    salaryTag = `<span class="job-tag salary">${lo && hi && lo !== hi ? `${lo}–${hi}` : hi || lo}</span>`;
+  }
+
+  // Department tag
+  const deptTag = job.department
+    ? `<span class="job-tag">${escapeHtml(job.department)}</span>`
+    : '';
+
+  // ATS source badge
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', html: 'Direct' };
+  const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
+
+  const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
+  const saved   = isSavedJob(job.id);
+
+  // Card links directly to the external apply URL (target=_blank)
   return `
-    <a href="job-detail.html?id=${job.id}" class="job-card">
+    <a href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" class="job-card">
       <button id="svbtn-${job.id}" class="save-job-btn ${saved ? 'saved' : ''}"
         onclick="toggleSaveJob(event,'${job.id}')"
         title="${saved ? 'Saved to Dashboard' : 'Save job'}">${saved ? '🔖' : '⊕ Save'}</button>
       <div class="job-card-top">
-        <div class="job-logo">${logo}</div>
+        <div class="job-logo">${initial}</div>
         <div class="job-info">
           <div class="job-title">${escapeHtml(job.title)}</div>
           <div class="job-company">${escapeHtml(job.company)} &middot; ${escapeHtml(location)}</div>
           <div class="job-meta">
-            ${workTypeTag}${salaryTag}${categoryTag}${sourceTag}
+            ${workTypeTag}${salaryTag}${deptTag}${atsTag}
             <span class="job-time">${timeStr}</span>
           </div>
         </div>
@@ -563,61 +626,51 @@ function renderPagination(current, total) {
   const container = document.getElementById('pagination');
   if (total <= 1) { container.innerHTML = ''; return; }
 
-  let html = '';
-  html += `<button class="page-btn" onclick="goToPage(${current - 1})" ${current <= 1 ? 'disabled' : ''}>Prev</button>`;
+  let html = `<button class="page-btn" onclick="goToPage(${current - 1})" ${current <= 1 ? 'disabled' : ''}>Prev</button>`;
 
-  // Show max 7 page buttons
   let start = Math.max(1, current - 3);
-  let end = Math.min(total, start + 6);
+  let end   = Math.min(total, start + 6);
   if (end - start < 6) start = Math.max(1, end - 6);
 
   for (let i = start; i <= end; i++) {
     html += `<button class="page-btn ${i === current ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
   }
-
   html += `<button class="page-btn" onclick="goToPage(${current + 1})" ${current >= total ? 'disabled' : ''}>Next</button>`;
   container.innerHTML = html;
 }
 
 /* ═══════════════════════════════════════════
-   INTERACTIONS
+   INTERACTION HANDLERS
 ═══════════════════════════════════════════ */
-function doSearch() {
-  currentPage = 1;
-  fetchJobs();
-}
+function doSearch()    { currentPage = 1; applyAndRender(); }
+function applyFilters(){ currentPage = 1; applyAndRender(); }
 
 function selectCategory(cat, el) {
   currentCategory = cat;
   currentPage = 1;
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   if (el) el.classList.add('active');
-  fetchJobs();
-}
-
-function applyFilters() {
-  currentPage = 1;
-  fetchJobs();
+  applyAndRender();
 }
 
 function clearAllFilters() {
-  document.getElementById('search-input').value = '';
-  document.getElementById('state-select').value = '';
-  document.getElementById('filter-date').value = '';
+  document.getElementById('search-input').value  = '';
+  document.getElementById('state-select').value  = '';
+  document.getElementById('filter-date').value   = '';
   document.getElementById('filter-salary').value = '';
   document.getElementById('filter-source').value = '';
   document.querySelectorAll('.sidebar input[type=checkbox]').forEach(cb => cb.checked = false);
   currentCategory = '';
-  currentPage = 1;
+  currentPage     = 1;
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   document.querySelector('.cat-pill')?.classList.add('active');
-  fetchJobs();
+  applyAndRender();
 }
 
 function goToPage(page) {
   if (page < 1 || page > totalPages) return;
   currentPage = page;
-  fetchJobs();
+  applyAndRender();
   window.scrollTo({ top: 300, behavior: 'smooth' });
 }
 
@@ -625,27 +678,26 @@ function goToPage(page) {
    UTILS
 ═══════════════════════════════════════════ */
 function timeAgo(date) {
-  const now = new Date();
-  const diffMs = now - date;
-  const mins = Math.floor(diffMs / 60000);
-  if (mins < 1) return 'just now';
+  const diff = Date.now() - date;
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1)  return 'just now';
   if (mins < 60) return `${mins}m ago`;
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return `${hours}h ago`;
-  const days = Math.floor(hours / 24);
-  if (days === 1) return '1 day ago';
-  if (days < 30) return `${days} days ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24)  return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  if (days === 1)  return '1 day ago';
+  if (days < 30)   return `${days} days ago`;
   return date.toLocaleDateString();
 }
 
 function escapeHtml(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
+  const d = document.createElement('div');
+  d.textContent = str || '';
+  return d.innerHTML;
 }
 
 /* ═══════════════════════════════════════════
-   SAVE JOB — localStorage helpers
+   SAVE JOB — localStorage (dashboard-compatible schema)
 ═══════════════════════════════════════════ */
 function savedJobsKey() {
   const s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
@@ -665,34 +717,41 @@ function toggleSaveJob(e, jobId) {
   if (!key) { showToast('Please log in to save jobs.'); return; }
   const job = _jobsMap[jobId];
   if (!job) return;
-  let saved = JSON.parse(localStorage.getItem(key) || '[]');
+
+  let saved  = JSON.parse(localStorage.getItem(key) || '[]');
   const already = saved.some(j => j.id === jobId);
+
   if (already) {
     saved = saved.filter(j => j.id !== jobId);
     showToast('Removed from Dashboard');
   } else {
+    // Map scraped schema → dashboard Saved Jobs schema
+    const locParts = (job.location || '').split(',').map(s => s.trim());
     saved.unshift({
-      id: job.id, title: job.title, company: job.company,
-      location_city: job.location_city, location_state: job.location_state,
-      apply_url: job.apply_url, salary_min: job.salary_min, salary_max: job.salary_max,
-      work_type: job.work_type, category: job.category, source: job.source,
-      posted_at: job.posted_at, savedAt: new Date().toISOString(),
-      isApplied: false, applicationId: null
+      id:             job.id,
+      title:          job.title,
+      company:        job.company,
+      location_city:  locParts[0] || '',
+      location_state: locParts[1] || '',
+      apply_url:      job.url,           // scraped: job.url = apply link
+      salary_min:     job.salary_min,
+      salary_max:     job.salary_max,
+      work_type:      job.is_remote ? 'remote' : 'onsite',
+      category:       job.department || '',
+      source:         job.ats || '',
+      posted_at:      job.posted_at,
+      savedAt:        new Date().toISOString(),
+      isApplied:      false,
+      applicationId:  null,
     });
     showToast('Saved to Dashboard →');
   }
+
   localStorage.setItem(key, JSON.stringify(saved));
   const btn = document.getElementById('svbtn-' + jobId);
   if (btn) {
-    if (already) {
-      btn.textContent = '⊕ Save';
-      btn.title = 'Save job';
-      btn.classList.remove('saved');
-    } else {
-      btn.textContent = '🔖';
-      btn.title = 'Saved to Dashboard';
-      btn.classList.add('saved');
-    }
+    if (already) { btn.textContent = '⊕ Save'; btn.title = 'Save job'; btn.classList.remove('saved'); }
+    else         { btn.textContent = '🔖';     btn.title = 'Saved to Dashboard'; btn.classList.add('saved'); }
   }
 }
 
@@ -701,7 +760,7 @@ function showToast(msg) {
   if (!t) {
     t = document.createElement('div');
     t.id = 'jobs-toast';
-    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:10px 20px;border-radius:10px;font-size:0.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity 0.3s;pointer-events:none;';
+    t.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:10px 20px;border-radius:10px;font-size:0.85rem;font-weight:600;z-index:9999;box-shadow:0 4px 20px rgba(0,0,0,0.4);transition:opacity 0.3s;pointer-events:none';
     document.body.appendChild(t);
   }
   t.textContent = msg;
@@ -713,16 +772,20 @@ function showToast(msg) {
 /* ═══════════════════════════════════════════
    BOOT
 ═══════════════════════════════════════════ */
-window.addEventListener('load', () => {
-  // Check URL params for pre-set filters
-  const urlParams = new URLSearchParams(window.location.search);
-  if (urlParams.get('q')) document.getElementById('search-input').value = urlParams.get('q');
-  if (urlParams.get('category')) currentCategory = urlParams.get('category');
-  if (urlParams.get('state')) document.getElementById('state-select').value = urlParams.get('state');
+window.addEventListener('load', async () => {
+  // Apply URL params for pre-set search/filters
+  const p = new URLSearchParams(window.location.search);
+  if (p.get('q'))        document.getElementById('search-input').value = p.get('q');
+  if (p.get('category')) currentCategory = p.get('category');
+  if (p.get('state'))    document.getElementById('state-select').value = p.get('state');
 
-  loadStats();
-  loadLocations();
-  fetchJobs();
+  const ok = await loadJobsData();
+  if (!ok) return;
+
+  computeStats();
+  buildCategoryPills();
+  buildStateDropdown();
+  applyAndRender();
 });
 </script>
 </body>
