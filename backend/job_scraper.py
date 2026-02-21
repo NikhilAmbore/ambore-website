@@ -2466,6 +2466,186 @@ class TaleoScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# LinkedIn Guest API  (no login · no API key · completely free)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class LinkedInGuestScraper(BaseScraper):
+    """
+    Scrapes LinkedIn jobs via the public guest API — no login, no API key.
+
+    Two unauthenticated LinkedIn endpoints (same ones used by the public
+    https://www.linkedin.com/jobs/search page before you log in):
+      1. GET /jobs-guest/jobs/api/seeMoreJobPostings/search
+         → Returns an HTML fragment of job cards for a keyword + location.
+      2. GET /jobs-guest/jobs/api/jobPosting/{id}
+         → Returns full job detail HTML for a single posting.
+
+    target.company     — primary keyword  (e.g. "software engineer")
+    target.api_secret  — optional JSON array of additional keywords:
+                         '["data scientist","product manager","devops engineer"]'
+    """
+
+    ATS_NAME    = "linkedin"
+    _SEARCH_URL = "https://www.linkedin.com/jobs-guest/jobs/api/seeMoreJobPostings/search"
+    _DETAIL_URL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}"
+    _GEO_ID     = "103644278"   # United States
+    _PAGE_SIZE  = 25
+    _MAX_PAGES  = 4             # 4 × 25 = up to 100 results per keyword
+
+    _HEADERS: dict[str, str] = {
+        "User-Agent":         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+                              "AppleWebKit/537.36 (KHTML, like Gecko) "
+                              "Chrome/124.0.0.0 Safari/537.36",
+        "Accept":             "*/*",
+        "Accept-Language":    "en-US,en;q=0.9",
+        "csrf-token":         "ajax:0000000000000000000",
+        "sec-ch-ua":          '"Chromium";v="124", "Google Chrome";v="124"',
+        "sec-ch-ua-mobile":   "?0",
+        "sec-ch-ua-platform": '"macOS"',
+        "sec-fetch-dest":     "empty",
+        "sec-fetch-mode":     "cors",
+        "sec-fetch-site":     "same-origin",
+        "Referer":            "https://www.linkedin.com/jobs/search"
+                              "?keywords=software+engineer&location=United+States",
+    }
+
+    def _search_page(self, keyword: str, start: int) -> list[str]:
+        """Return job IDs from one search result page."""
+        params: dict[str, str] = {
+            "keywords": keyword,
+            "location": "United States",
+            "geoId":    self._GEO_ID,
+            "f_TPR":    "r604800",   # last 7 days
+            "start":    str(start),
+        }
+        try:
+            resp = self.client.get(self._SEARCH_URL, params=params,
+                                   headers=self._HEADERS)
+            resp.raise_for_status()
+        except Exception as exc:
+            log.debug("[LinkedIn] search error (kw=%r start=%d): %s", keyword, start, exc)
+            return []
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+        ids: list[str] = []
+        for card in soup.select(".job-search-card"):
+            urn = card.get("data-entity-urn", "")
+            job_id = urn.split(":")[-1] if ":" in urn else ""
+            if job_id and job_id.isdigit():
+                ids.append(job_id)
+        return ids
+
+    def _fetch_detail(self, job_id: str) -> Job | None:
+        """Parse a single job posting page into a Job object."""
+        url = self._DETAIL_URL.format(id=job_id)
+        try:
+            resp = self.client.get(url, headers=self._HEADERS)
+            resp.raise_for_status()
+        except Exception as exc:
+            log.debug("[LinkedIn] detail error (id=%s): %s", job_id, exc)
+            return None
+
+        soup = BeautifulSoup(resp.text, "html.parser")
+
+        title_el   = (soup.select_one(".topcard__title") or
+                      soup.select_one(".top-card-layout__title"))
+        company_el = (soup.select_one(".topcard__org-name-link") or
+                      soup.select_one(".top-card-layout__company"))
+        loc_el     = (soup.select_one(".topcard__flavor--bullet") or
+                      soup.select_one(".top-card-layout__first-subline"))
+        desc_el    = (soup.select_one(".show-more-less-html__markup") or
+                      soup.select_one(".description__text"))
+        posted_el  = (soup.select_one(".posted-time-ago__text") or
+                      soup.select_one("time"))
+        link_el    = (soup.select_one("a.topcard__link") or
+                      soup.select_one('a[href*="/jobs/view/"]'))
+
+        title_str   = title_el.get_text(strip=True)                   if title_el   else ""
+        company_str = company_el.get_text(strip=True)                 if company_el else ""
+        loc_str     = loc_el.get_text(strip=True).replace("\n", " ")  if loc_el     else ""
+        desc_str    = _strip_html(str(desc_el))                       if desc_el    else ""
+        job_url     = (link_el.get("href", "").split("?")[0]          if link_el    else
+                       f"https://www.linkedin.com/jobs/view/{job_id}")
+        posted_str: str | None = None
+        if posted_el:
+            posted_str = (posted_el.get("datetime") or
+                          posted_el.get_text(strip=True) or None)
+
+        # Employment type from criteria items
+        emp_type = ""
+        for item in soup.select(".description__job-criteria-item"):
+            lbl = item.select_one(".description__job-criteria-subheader")
+            val = item.select_one(".description__job-criteria-text--criteria")
+            if lbl and val and "employment" in lbl.get_text(strip=True).lower():
+                emp_type = val.get_text(strip=True)
+                break
+
+        if not title_str or not job_url:
+            return None
+
+        # Guest API filters to US via geoId — trust when location is ambiguous
+        is_usa, _ = _classify_location(loc_str)
+        if (not is_usa and loc_str
+                and "united states" not in loc_str.lower()
+                and "remote" not in loc_str.lower()):
+            return None
+
+        return self._make_job(
+            title=title_str,
+            location=loc_str or "United States",
+            url=job_url,
+            description=desc_str,
+            department=None,
+            employment_type=emp_type or None,
+            salary_text="",
+            posted_at=str(posted_str) if posted_str else None,
+            company_override=company_str or None,
+        )
+
+    def fetch_jobs(self) -> list[Job]:
+        # Resolve keyword list
+        keywords: list[str] = []
+        raw = self.target.api_secret
+        if raw:
+            try:
+                parsed = json.loads(raw)
+                if isinstance(parsed, list):
+                    keywords = [str(k) for k in parsed if k]
+                elif isinstance(parsed, str):
+                    keywords = [parsed]
+            except json.JSONDecodeError:
+                keywords = [raw]
+        if self.target.company and self.target.company not in keywords:
+            keywords.insert(0, self.target.company)
+        if not keywords:
+            keywords = ["software engineer"]
+
+        seen_ids: set[str] = set()
+        jobs: list[Job] = []
+
+        for kw in keywords:
+            log.info("[LinkedIn] searching: %r", kw)
+            for page in range(self._MAX_PAGES):
+                ids = self._search_page(kw, page * self._PAGE_SIZE)
+                if not ids:
+                    break
+                new_ids = [i for i in ids if i not in seen_ids]
+                seen_ids.update(new_ids)
+                for job_id in new_ids:
+                    job = self._fetch_detail(job_id)
+                    if job:
+                        jobs.append(job)
+                    time.sleep(0.4)   # be polite to LinkedIn's guest servers
+                    if len(jobs) >= MAX_JOBS_PER_SRC:
+                        break
+                if len(jobs) >= MAX_JOBS_PER_SRC or len(ids) < self._PAGE_SIZE:
+                    break
+
+        log.info("[LinkedIn] %d US jobs collected", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -2489,6 +2669,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "adzuna":          AdzunaScraper,       # free API key required
     "serpapi":         SerpAPIGoogleJobsScraper,  # Google Jobs; free key required
     "apify":           ApifyJobsScraper,    # cloud actors; free tier available
+    "linkedin":        LinkedInGuestScraper, # LinkedIn guest API — no key needed
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -2792,18 +2973,16 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     #   Set SERPAPI_KEY                       →  https://serpapi.com/
     {"ats": "serpapi",  "company": "serpapi",  "company_name": "Google Jobs"},
     #
+    # ── LinkedIn — public guest API (FREE, no key required) ──────────────────
+    # Uses linkedin.com/jobs-guest/ endpoints — same HTML that non-logged-in
+    # visitors see.  No token, no Apify, no cost.
+    {"ats": "linkedin", "company": "software engineer", "company_name": "LinkedIn",
+     "api_secret": '["data scientist", "product manager", "machine learning engineer", "devops engineer", "backend engineer", "frontend engineer", "software developer", "full stack developer"]'},
+    #
     # ── Apify cloud actors ────────────────────────────────────────────────────
     # Free tier: $5 platform credits / month  →  https://apify.com/
-    # Add APIFY_TOKEN as a GitHub repository secret to enable these.
-    # If APIFY_TOKEN is missing the scraper logs a warning and skips gracefully.
-    #
-    # These are run by the DAILY Apify workflow (scrape-jobs-apify.yml), NOT
-    # the hourly workflow, to avoid burning credits on every run.
-    #
-    # LinkedIn Jobs — worldunboxer/rapid-linkedin-scraper (TRULY FREE, compute-only)
-    {"ats": "apify", "company": "worldunboxer/rapid-linkedin-scraper",
-     "company_name": "LinkedIn (via Apify)",
-     "api_secret": '{"keywords": "software engineer OR data scientist OR product manager OR machine learning engineer OR software developer OR devops engineer OR backend engineer OR frontend engineer", "location": "United States", "maxItems": 200}'},
+    # Add APIFY_TOKEN as a GitHub repository secret to enable.
+    # Run by the DAILY Apify workflow (scrape-jobs-apify.yml), not hourly.
     #
     # Indeed Jobs — valig/indeed-jobs-scraper (~$0.02/run at 200 results)
     {"ats": "apify", "company": "valig/indeed-jobs-scraper",

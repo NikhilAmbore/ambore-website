@@ -332,7 +332,8 @@ a{text-decoration:none;color:inherit}
         <option value="usajobs">USAJobs (Gov)</option>
         <option value="taleo">Taleo</option>
         <option value="icims">iCIMS</option>
-        <option value="apify">Apify (LinkedIn/Indeed)</option>
+        <option value="linkedin">LinkedIn</option>
+        <option value="apify">Indeed (via Apify)</option>
       </select>
     </div>
 
@@ -607,7 +608,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn / Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', linkedin: 'LinkedIn', apify: 'Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';

@@ -1,4 +1,4 @@
-name: Daily Apify Scraper (LinkedIn & Indeed)
+name: Daily Apify Scraper (Indeed)
 
 on:
   schedule:
