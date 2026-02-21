@@ -1,0 +1,82 @@
+name: Daily Job Scraper
+
+on:
+  schedule:
+    # Runs every day at 06:00 UTC (1 AM EST / 10 PM PST)
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual trigger from GitHub Actions UI
+    inputs:
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write   # needed to push updated jobs.json
+
+jobs:
+  scrape:
+    name: Scrape & Publish Jobs
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
+
+      - name: Run scraper
+        env:
+          # Optional: add your USAJobs API key as a repository secret
+          # to enable government job listings
+          USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
+          USAJOBS_EMAIL:   ${{ secrets.USAJOBS_EMAIL }}
+        run: |
+          VERBOSE_FLAG=""
+          if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
+            VERBOSE_FLAG="--verbose"
+          fi
+          python backend/job_scraper.py \
+            --output backend/jobs.json \
+            $VERBOSE_FLAG
+          echo "=== jobs.json stats ==="
+          wc -c backend/jobs.json
+          python -c "
+          import json
+          jobs = json.load(open('backend/jobs.json'))
+          remote  = sum(1 for j in jobs if j['is_remote'])
+          sources = {}
+          for j in jobs:
+              sources[j['ats']] = sources.get(j['ats'], 0) + 1
+          print(f'Total: {len(jobs)} jobs  |  Remote: {remote}')
+          for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
+              print(f'  {ats}: {cnt}')
+          "
+
+      - name: Commit & push updated jobs.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backend/jobs.json
+          # Only commit if the file actually changed
+          if git diff --staged --quiet; then
+            echo "No changes to jobs.json — skipping commit"
+          else
+            TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
+            git commit -m "chore: refresh jobs.json — ${TOTAL} US jobs ($(date -u '+%Y-%m-%d'))"
+            git push
+          fi

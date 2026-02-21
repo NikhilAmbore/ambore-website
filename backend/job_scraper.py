@@ -459,6 +459,9 @@ class ScraperTarget:
     wd_instance:      str  = "wd5"
     # HTML / Playwright
     careers_url:      str  = ""
+    # API credentials (USAJobs, future paid APIs)
+    api_key:          str  = ""
+    user_email:       str  = ""
     # Behaviour
     assume_us_remote: bool = True
 
@@ -492,22 +495,25 @@ class BaseScraper(ABC):
 
     def _make_job(
         self,
-        title:           str,
-        location:        str,
-        url:             str,
-        description:     str        = "",
-        department:      str | None = None,
-        employment_type: str | None = None,
-        salary_text:     str | None = None,
-        posted_at:       str | None = None,
+        title:            str,
+        location:         str,
+        url:              str,
+        description:      str        = "",
+        department:       str | None = None,
+        employment_type:  str | None = None,
+        salary_text:      str | None = None,
+        posted_at:        str | None = None,
+        company_override: str | None = None,   # aggregators pass real company name
     ) -> Job | None:
         """
         Normalise raw fields and return a ``Job``, or ``None`` if the listing
         is not in the USA (after applying the ``assume_us_remote`` heuristic).
+        ``company_override`` lets aggregator scrapers (The Muse, Remotive, USAJobs)
+        pass the real hiring-company name without changing ``target.company_name``.
         """
         title    = (title or "").strip()
         location = (location or "").strip()
-        company  = self.target.company_name
+        company  = company_override or self.target.company_name
 
         if not title:
             return None
@@ -1126,6 +1132,286 @@ class PlaywrightScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# The Muse  (API/Feed Integration — free, no auth)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TheMuseScraper(BaseScraper):
+    """
+    The Muse public jobs API — no authentication required.
+
+    Docs: https://www.themuse.com/developers/api/v2
+    Endpoint: GET https://www.themuse.com/api/public/jobs
+    Fetches US tech jobs across 7 categories, up to 5 pages each.
+    """
+
+    ATS_NAME = "themuse"
+    _API_URL  = "https://www.themuse.com/api/public/jobs"
+    _TECH_CATEGORIES = [
+        "Engineering", "Data Science", "IT", "Product",
+        "Design", "Computer Science", "User Experience",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        log.info("[TheMuse] Fetching US tech jobs")
+        jobs:     list[Job] = []
+        seen_ids: set[str]  = set()
+
+        for category in self._TECH_CATEGORIES:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            for page in range(10):          # max 10 pages × 20 = 200 per category
+                if len(jobs) >= MAX_JOBS_PER_SRC:
+                    break
+                try:
+                    resp = self.client.get(self._API_URL, params={
+                        "category": category,
+                        "page": page,
+                        "per_page": 20,
+                    })
+                    data = _safe_json(resp)
+                except Exception as exc:
+                    log.error("[TheMuse] %s p%d — %s", category, page, exc)
+                    break
+
+                results = data.get("results", [])
+                if not results:
+                    break
+
+                for raw in results:
+                    job_id = str(raw.get("id", ""))
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+
+                    locs     = raw.get("locations", [])
+                    location = "; ".join(l.get("name", "") for l in locs if l.get("name")) or ""
+
+                    levels   = raw.get("levels", [])
+                    emp_type = levels[0].get("name") if levels else None
+
+                    cats = raw.get("categories", [])
+                    dept = cats[0].get("name") if cats else category
+
+                    company_name = (raw.get("company") or {}).get("name", "")
+                    job_url      = (raw.get("refs") or {}).get("landing_page", "")
+                    posted_at    = raw.get("publication_date")
+
+                    job = self._make_job(
+                        title=raw.get("name", ""),
+                        location=location,
+                        url=job_url,
+                        description=raw.get("contents", ""),
+                        department=dept,
+                        employment_type=emp_type,
+                        posted_at=posted_at,
+                        company_override=company_name or "The Muse",
+                    )
+                    if job:
+                        jobs.append(job)
+
+                # Stop if this was the last page
+                if len(results) < 20:
+                    break
+
+            log.info("[TheMuse] %s — %d US jobs so far", category, len(jobs))
+
+        log.info("[TheMuse] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Remotive  (API/Feed Integration — free, no auth, remote-only)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class RemotiveScraper(BaseScraper):
+    """
+    Remotive public remote-jobs API — no authentication required.
+
+    Docs: https://remotive.com/api
+    Endpoint: GET https://remotive.com/api/remote-jobs
+    All Remotive jobs are remote; we include ones with US-allowed locations.
+    """
+
+    ATS_NAME = "remotive"
+    _API_URL  = "https://remotive.com/api/remote-jobs"
+    _TECH_CATEGORIES = [
+        "software-dev", "devops", "data", "product", "design",
+        "qa", "backend", "frontend", "mobile", "engineering",
+    ]
+
+    # Candidate-location strings that indicate US-allowed roles
+    _US_HINTS = re.compile(
+        r"\b(usa|united\s+states|u\.s|north\s+america|americas|worldwide|anywhere)\b",
+        re.IGNORECASE,
+    )
+
+    def fetch_jobs(self) -> list[Job]:
+        log.info("[Remotive] Fetching remote US-eligible tech jobs")
+        jobs:     list[Job] = []
+        seen_ids: set[str]  = set()
+
+        for category in self._TECH_CATEGORIES:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            try:
+                resp = self.client.get(self._API_URL, params={
+                    "category": category,
+                    "limit": 100,
+                })
+                data = _safe_json(resp)
+            except Exception as exc:
+                log.error("[Remotive] %s — %s", category, exc)
+                continue
+
+            for raw in data.get("jobs", []):
+                job_id = str(raw.get("id", ""))
+                if job_id in seen_ids:
+                    continue
+                seen_ids.add(job_id)
+
+                # Filter: only jobs open to US candidates
+                candidate_loc = raw.get("candidate_required_location", "")
+                if candidate_loc and not self._US_HINTS.search(candidate_loc):
+                    continue
+
+                location  = f"Remote — {candidate_loc}" if candidate_loc else "Remote, US"
+                posted_at = raw.get("publication_date")
+
+                job = self._make_job(
+                    title=raw.get("title", ""),
+                    location=location,
+                    url=raw.get("url", ""),
+                    description=raw.get("description", ""),
+                    department=raw.get("category", category),
+                    employment_type=raw.get("job_type"),
+                    salary_text=raw.get("salary", ""),
+                    posted_at=posted_at,
+                    company_override=raw.get("company_name", ""),
+                )
+                if job:
+                    jobs.append(job)
+
+            log.info("[Remotive] %s — %d US jobs so far", category, len(jobs))
+
+        log.info("[Remotive] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# USAJobs  (API/Feed Integration — free with API key, government postings)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class USAJobsScraper(BaseScraper):
+    """
+    USAJobs.gov official REST API — free, requires registration.
+
+    Register at: https://developer.usajobs.gov/
+    Requires ``target.api_key`` and ``target.user_email``.
+
+    Docs: https://developer.usajobs.gov/APIs/Search
+    Endpoint: GET https://data.usajobs.gov/api/search
+    Fetches US federal government tech job postings.
+    """
+
+    ATS_NAME = "usajobs"
+    _API_URL  = "https://data.usajobs.gov/api/search"
+    _KEYWORDS = [
+        "software engineer", "data scientist", "cybersecurity",
+        "cloud engineer", "devops", "IT specialist", "systems administrator",
+        "machine learning", "python developer", "network engineer",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        api_key = self.target.api_key
+        email   = self.target.user_email
+        if not api_key or not email:
+            log.warning("[USAJobs] api_key and user_email are required — skipping")
+            return []
+
+        log.info("[USAJobs] Fetching government tech jobs")
+        jobs:     list[Job] = []
+        seen_ids: set[str]  = set()
+        auth_headers = {
+            "Authorization-Key": api_key,
+            "User-Agent":        email,
+            "Host":              "data.usajobs.gov",
+        }
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            page = 1
+            while len(jobs) < MAX_JOBS_PER_SRC:
+                try:
+                    resp = self.client.get(
+                        self._API_URL,
+                        params={
+                            "Keyword":        keyword,
+                            "ResultsPerPage": 25,
+                            "Page":           page,
+                            "WhoMayApply":    "public",
+                        },
+                        headers=auth_headers,
+                    )
+                    data = _safe_json(resp)
+                except Exception as exc:
+                    log.error("[USAJobs] %s p%d — %s", keyword, page, exc)
+                    break
+
+                results = (
+                    data.get("SearchResult", {})
+                        .get("SearchResultItems", [])
+                )
+                if not results:
+                    break
+
+                for raw in results:
+                    mv = raw.get("MatchedObjectDescriptor", {})
+                    job_id = mv.get("PositionID", "")
+                    if job_id in seen_ids:
+                        continue
+                    seen_ids.add(job_id)
+
+                    locs = mv.get("PositionLocation", [])
+                    location = "; ".join(
+                        f"{l.get('CityName', '')}, {l.get('CountrySubDivisionCode', '')}".strip(", ")
+                        for l in locs
+                    ) or "United States"
+
+                    pay = mv.get("PositionRemuneration", [{}])[0]
+                    sal_min = float(pay.get("MinimumRange", 0) or 0) or None
+                    sal_max = float(pay.get("MaximumRange", 0) or 0) or None
+                    sal_txt = f"{sal_min}-{sal_max}" if sal_min else ""
+
+                    start_date = mv.get("PublicationStartDate", "")
+                    end_date   = mv.get("ApplicationCloseDate", "")
+
+                    job = self._make_job(
+                        title=mv.get("PositionTitle", ""),
+                        location=location,
+                        url=mv.get("PositionURI", ""),
+                        description=mv.get("QualificationSummary", ""),
+                        department=mv.get("OrganizationName", ""),
+                        employment_type=mv.get("PositionSchedule", [{}])[0].get("Name"),
+                        salary_text=sal_txt,
+                        posted_at=start_date or None,
+                        company_override=mv.get("DepartmentName", "US Government"),
+                    )
+                    if job:
+                        jobs.append(job)
+
+                count_so_far = data.get("SearchResult", {}).get("SearchResultCountAll", 0)
+                if page * 25 >= count_so_far:
+                    break
+                page += 1
+
+            log.info("[USAJobs] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[USAJobs] Total: %d US government jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -1135,6 +1421,9 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "workday":         WorkdayScraper,
     "smartrecruiters": SmartRecruitersScraper,
     "ashby":           AshbyScraper,
+    "themuse":         TheMuseScraper,
+    "remotive":        RemotiveScraper,
+    "usajobs":         USAJobsScraper,
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
 }
@@ -1264,6 +1553,16 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "ashby", "company": "clerk",   "company_name": "Clerk"},
     {"ats": "ashby", "company": "loom",    "company_name": "Loom"},
     {"ats": "ashby", "company": "retool",  "company_name": "Retool"},
+    # ── The Muse (themuse.com/api/public/jobs — free, no auth) ───────────────
+    # Single entry fetches tech/data/product roles across all companies on platform
+    {"ats": "themuse", "company": "themuse-aggregator", "company_name": "The Muse"},
+    # ── Remotive (remotive.com/api/remote-jobs — free, no auth) ─────────────
+    # Single entry fetches all remote tech jobs; US-hinted locations are kept
+    {"ats": "remotive", "company": "remotive-aggregator", "company_name": "Remotive"},
+    # ── USAJobs (data.usajobs.gov — free, requires API key + email) ──────────
+    # Uncomment and fill in your credentials to enable government job listings:
+    # {"ats": "usajobs", "company": "usajobs", "company_name": "USAJobs",
+    #  "api_key": "YOUR_USAJOBS_API_KEY", "user_email": "your@email.com"},
 ]
 
 
@@ -1283,7 +1582,8 @@ def main() -> None:
         epilog=(
             "Example targets file (JSON array of objects):\n"
             '  [{"ats":"greenhouse","company":"stripe","company_name":"Stripe"}]\n\n'
-            "Supported ATS values: greenhouse, lever, workday, smartrecruiters, ashby, html, playwright"
+            "Supported ATS values: greenhouse, lever, workday, smartrecruiters, ashby, "
+            "themuse, remotive, usajobs, html, playwright"
         ),
     )
     parser.add_argument(

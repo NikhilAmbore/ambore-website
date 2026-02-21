@@ -322,6 +322,8 @@ a{text-decoration:none;color:inherit}
         <option value="greenhouse">Greenhouse</option>
         <option value="lever">Lever</option>
         <option value="ashby">Ashby</option>
+        <option value="remotive">Remotive (Remote)</option>
+        <option value="themuse">The Muse</option>
       </select>
     </div>
 
@@ -596,7 +598,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', usajobs: 'USAJobs', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
