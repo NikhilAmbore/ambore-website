@@ -70,9 +70,11 @@ import logging
 import re
 import time
 import urllib.robotparser
+import xml.etree.ElementTree as ET
 from abc import ABC, abstractmethod
 from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
+from email.utils import parsedate_to_datetime
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
@@ -1412,18 +1414,356 @@ class USAJobsScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# RemoteOK  (public JSON API — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class RemoteOKScraper(BaseScraper):
+    """
+    RemoteOK public JSON API — https://remoteok.com/api
+    No auth required.  Returns remote tech jobs; we keep US-hinted or
+    worldwide/unspecified positions (treating them as US-eligible).
+    """
+
+    ATS_NAME = "remoteok"
+    _API_URL  = "https://remoteok.com/api"
+
+    # Location strings that indicate worldwide / US-eligible
+    _US_HINTS = re.compile(
+        r"\b(usa|united\s+states|u\.s|north\s+america|americas|worldwide|anywhere|global)\b",
+        re.IGNORECASE,
+    )
+
+    def fetch_jobs(self) -> list[Job]:
+        log.info("[RemoteOK] Fetching remote tech jobs")
+        try:
+            resp = self.client.get(self._API_URL)
+            data = _safe_json(resp)
+        except Exception as exc:
+            log.error("[RemoteOK] Fetch failed: %s", exc)
+            return []
+
+        if isinstance(data, list) and data:
+            data = data[1:]   # first element is metadata/legal notice
+
+        jobs: list[Job] = []
+        for raw in data:
+            if not isinstance(raw, dict):
+                continue
+
+            title   = raw.get("position", "")
+            company = raw.get("company", "")
+            url     = raw.get("url", "")
+            if not title or not url:
+                continue
+
+            location = (raw.get("location") or "").strip()
+            tags     = raw.get("tags") or []
+            desc_raw = raw.get("description", "") or ", ".join(str(t) for t in tags)
+
+            is_usa, is_remote = _classify_location(location)
+            is_remote = True   # all RemoteOK jobs are remote
+            if not is_usa:
+                loc_lower = location.lower()
+                # Accept: blank, worldwide, "usa", explicit US phrases
+                if (not loc_lower
+                        or self._US_HINTS.search(loc_lower)
+                        or "us" == loc_lower.strip("()")):
+                    is_usa = True
+
+            if not is_usa:
+                continue
+
+            salary_text = raw.get("salary", "") or ""
+            posted_at   = raw.get("date") or None
+            department  = str(tags[0]) if tags else None
+
+            job = self._make_job(
+                title=title,
+                location=location or "Remote, US",
+                url=url,
+                description=_strip_html(str(desc_raw)),
+                department=department,
+                salary_text=str(salary_text),
+                posted_at=posted_at,
+                company_override=company,
+            )
+            if job:
+                jobs.append(job)
+
+        log.info("[RemoteOK] Total: %d US-eligible remote jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# WeWorkRemotely  (public RSS feeds — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class WeWorkRemotelyScraper(BaseScraper):
+    """
+    WeWorkRemotely RSS feeds — https://weworkremotely.com
+    No auth required.  All jobs are remote; treated as US-eligible.
+    Fetches programming, DevOps, product, design, and data science feeds.
+    """
+
+    ATS_NAME = "weworkremotely"
+    _FEEDS: list[tuple[str, str]] = [
+        ("https://weworkremotely.com/categories/remote-programming-jobs.rss",     "Engineering"),
+        ("https://weworkremotely.com/categories/remote-devops-sysadmin-jobs.rss", "DevOps"),
+        ("https://weworkremotely.com/categories/remote-product-jobs.rss",         "Product"),
+        ("https://weworkremotely.com/categories/remote-design-jobs.rss",          "Design"),
+        ("https://weworkremotely.com/categories/remote-full-stack-programming-jobs.rss", "Full Stack"),
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        log.info("[WeWorkRemotely] Fetching remote RSS feeds")
+        jobs:  list[Job] = []
+        seen:  set[str]  = set()
+
+        for feed_url, category in self._FEEDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            try:
+                resp = self.client.get(feed_url)
+                root = ET.fromstring(resp.content)
+            except Exception as exc:
+                log.error("[WWR] %s — %s", feed_url, exc)
+                continue
+
+            channel = root.find("channel")
+            if channel is None:
+                continue
+
+            for item in channel.findall("item"):
+                link_el  = item.find("link")
+                title_el = item.find("title")
+                desc_el  = item.find("description")
+                pub_el   = item.find("pubDate")
+                guid_el  = item.find("guid")
+
+                link      = (link_el.text  or "").strip() if link_el  is not None else ""
+                title_raw = (title_el.text or "").strip() if title_el is not None else ""
+                desc_raw  = (desc_el.text  or "").strip() if desc_el  is not None else ""
+                pub_date  = (pub_el.text   or "").strip() if pub_el   is not None else ""
+                guid      = (guid_el.text  or link).strip() if guid_el is not None else link
+
+                if not link or guid in seen:
+                    continue
+                seen.add(guid)
+
+                # WWR title format: "Company: Job Title"
+                company = ""
+                title   = title_raw
+                if ": " in title_raw:
+                    parts   = title_raw.split(": ", 1)
+                    company = parts[0].strip()
+                    title   = parts[1].strip()
+
+                # Remove trailing " at Company" or " — Company"
+                for sep in (" at ", " — ", " - "):
+                    if sep in title:
+                        title = title.rsplit(sep, 1)[0].strip()
+                        break
+
+                posted_at: str | None = None
+                if pub_date:
+                    try:
+                        posted_at = parsedate_to_datetime(pub_date).isoformat()
+                    except Exception:
+                        posted_at = pub_date
+
+                job = self._make_job(
+                    title=title,
+                    location="Remote, US",
+                    url=link,
+                    description=_strip_html(desc_raw),
+                    department=category,
+                    posted_at=posted_at,
+                    company_override=company or self.target.company_name,
+                )
+                if job:
+                    jobs.append(job)
+
+            log.info("[WeWorkRemotely] %s — %d jobs so far", category, len(jobs))
+
+        log.info("[WeWorkRemotely] Total: %d remote jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# BambooHR  (per-company public JSON board — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class BambooHRScraper(BaseScraper):
+    """
+    BambooHR public careers JSON API — https://{slug}.bamboohr.com/careers/list
+
+    ``target.company`` must be the BambooHR subdomain slug (e.g. "procore").
+    No auth required.
+    """
+
+    ATS_NAME = "bamboohr"
+
+    def fetch_jobs(self) -> list[Job]:
+        slug = self.target.company
+        url  = f"https://{slug}.bamboohr.com/careers/list"
+        log.info("[BambooHR] %s — fetching job list", slug)
+
+        try:
+            resp = self.client.get(url, headers={"Accept": "application/json"})
+            data = _safe_json(resp)
+        except Exception as exc:
+            log.error("[BambooHR] %s — %s", slug, exc)
+            return []
+
+        result = data.get("result", []) if isinstance(data, dict) else []
+        jobs: list[Job] = []
+
+        for raw in result:
+            loc_obj  = raw.get("location") or {}
+            city     = loc_obj.get("city",  "") or ""
+            state    = loc_obj.get("state", "") or ""
+            country  = (loc_obj.get("country", "") or "").upper()
+            remote   = bool(raw.get("isRemote") or raw.get("remote"))
+
+            parts = [p for p in [city, state] if p]
+            location = ", ".join(parts) if parts else ("Remote, US" if remote else "")
+
+            is_usa, is_remote = _classify_location(location)
+            if remote:
+                is_remote = True
+                if not is_usa:
+                    is_usa = True   # assume US remote
+            if not is_usa and country in ("US", "USA", "UNITED STATES"):
+                is_usa = True
+
+            if not is_usa:
+                continue
+
+            job_id  = str(raw.get("id", ""))
+            job_url = f"https://{slug}.bamboohr.com/careers/{job_id}"
+
+            job = self._make_job(
+                title=raw.get("jobOpeningName", raw.get("title", "")),
+                location=location or "US",
+                url=job_url,
+                department=raw.get("departmentLabel", raw.get("department")),
+                employment_type=raw.get("employmentType"),
+            )
+            if job:
+                jobs.append(job)
+
+        log.info("[BambooHR] %s — %d US jobs", slug, len(jobs))
+        return jobs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Workable  (per-company public JSON API — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class WorkableScraper(BaseScraper):
+    """
+    Workable public jobs API — https://apply.workable.com/api/v3/accounts/{slug}/jobs
+
+    ``target.company`` must be the Workable account slug (e.g. "typeform").
+    No auth required.  Paginated via cursor token.
+    """
+
+    ATS_NAME = "workable"
+
+    def fetch_jobs(self) -> list[Job]:
+        slug = self.target.company
+        api_url = f"https://apply.workable.com/api/v3/accounts/{slug}/jobs"
+        log.info("[Workable] %s — fetching job list", slug)
+
+        jobs:  list[Job] = []
+        token: str | None = None
+
+        while True:
+            body: dict[str, Any] = {
+                "query": "",
+                "location": [],
+                "department": [],
+                "worktype": [],
+                "remote": [],
+            }
+            if token:
+                body["token"] = token
+
+            try:
+                resp = self.client._client.post(
+                    api_url,
+                    json=body,
+                    headers={**DEFAULT_HEADERS, "Content-Type": "application/json"},
+                    timeout=REQUEST_TIMEOUT,
+                )
+                resp.raise_for_status()
+                data = _safe_json(resp)
+            except Exception as exc:
+                log.error("[Workable] %s — %s", slug, exc)
+                break
+
+            for raw in data.get("results", []):
+                city     = raw.get("city",    "") or ""
+                state    = raw.get("state",   "") or ""
+                country  = (raw.get("country", "") or "").upper()
+                workplace = raw.get("workplace", "") or ""
+                remote   = workplace.lower() == "remote" or bool(raw.get("remote"))
+
+                parts = [p for p in [city, state, country] if p]
+                location = ", ".join(parts) if parts else ("Remote" if remote else "")
+
+                is_usa, is_remote = _classify_location(location)
+                if remote:
+                    is_remote = True
+                    if not is_usa:
+                        is_usa = True
+                if not is_usa and country in ("US", "USA", "UNITED STATES"):
+                    is_usa = True
+
+                if not is_usa:
+                    continue
+
+                shortcode = raw.get("shortcode", "")
+                job_url   = f"https://apply.workable.com/{slug}/j/{shortcode}"
+
+                job = self._make_job(
+                    title=raw.get("title", ""),
+                    location=location or "US",
+                    url=job_url,
+                    department=raw.get("department"),
+                    employment_type=raw.get("employment_type"),
+                )
+                if job:
+                    jobs.append(job)
+
+            token = data.get("token")
+            if not token or len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+
+        log.info("[Workable] %s — %d US jobs", slug, len(jobs))
+        return jobs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
 SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
+    # ── ATS platforms (per-company) ────────────────────────────────────────
     "greenhouse":      GreenhouseScraper,
     "lever":           LeverScraper,
     "workday":         WorkdayScraper,
     "smartrecruiters": SmartRecruitersScraper,
     "ashby":           AshbyScraper,
+    "bamboohr":        BambooHRScraper,
+    "workable":        WorkableScraper,
+    # ── Aggregator APIs (single entry fetches many companies) ──────────────
     "themuse":         TheMuseScraper,
     "remotive":        RemotiveScraper,
+    "remoteok":        RemoteOKScraper,
+    "weworkremotely":  WeWorkRemotelyScraper,
     "usajobs":         USAJobsScraper,
+    # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
 }
@@ -1486,8 +1826,25 @@ class JobScrapeOrchestrator:
         self._client = client      or PoliteClient()
         self._dedup  = deduplicator or JobDeduplicator()
 
-    def run(self, targets: list[ScraperTarget]) -> list[dict[str, Any]]:
+    def run(
+        self,
+        targets:    list[ScraperTarget],
+        since_hours: int | None = None,
+    ) -> list[dict[str, Any]]:
+        """
+        Scrape all targets and return normalised job dicts.
+
+        Args:
+            targets:     List of scrape targets to run.
+            since_hours: When set, exclude jobs whose ``posted_at`` is older
+                         than this many hours.  Jobs with no ``posted_at`` date
+                         are always included (most ATS APIs omit posting dates).
+        """
         all_jobs: list[Job] = []
+        cutoff: datetime | None = None
+        if since_hours is not None:
+            cutoff = datetime.now(timezone.utc) - timedelta(hours=since_hours)
+            log.info("Date filter: keeping jobs posted since %s", cutoff.isoformat())
 
         for target in targets:
             scraper_cls = SCRAPER_REGISTRY.get(target.ats.lower())
@@ -1505,6 +1862,24 @@ class JobScrapeOrchestrator:
                 log.error("Scraper failed (%s / %s): %s", target.ats, target.company, exc)
 
         unique = self._dedup.filter(all_jobs)
+
+        # Optional date filter — only applied when since_hours is set
+        if cutoff is not None:
+            before = len(unique)
+            def _is_recent(j: Job) -> bool:
+                if not j.posted_at:
+                    return True   # no date → include
+                try:
+                    dt = datetime.fromisoformat(j.posted_at)
+                    if dt.tzinfo is None:
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    return dt >= cutoff  # type: ignore[operator]
+                except Exception:
+                    return True   # unparseable date → include
+            unique = [j for j in unique if _is_recent(j)]
+            log.info("Date filter: %d → %d jobs (removed %d older than %dh)",
+                     before, len(unique), before - len(unique), since_hours)
+
         log.info(
             "Scraping complete — %d unique US jobs (from %d total, %d duplicates removed)",
             len(unique), len(all_jobs), len(all_jobs) - len(unique),
@@ -1532,33 +1907,83 @@ class JobScrapeOrchestrator:
 #   Workday requires a browser session (Cloudflare + CSRF) — use PlaywrightScraper
 _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # ── Greenhouse (boards-api.greenhouse.io/v1/boards/{slug}/jobs) ──────────
-    {"ats": "greenhouse", "company": "stripe",     "company_name": "Stripe"},
-    {"ats": "greenhouse", "company": "airbnb",     "company_name": "Airbnb"},
-    {"ats": "greenhouse", "company": "reddit",     "company_name": "Reddit"},
-    {"ats": "greenhouse", "company": "coinbase",   "company_name": "Coinbase"},
-    {"ats": "greenhouse", "company": "hubspot",    "company_name": "HubSpot"},
-    {"ats": "greenhouse", "company": "brex",       "company_name": "Brex"},
-    {"ats": "greenhouse", "company": "gitlab",     "company_name": "GitLab"},
-    {"ats": "greenhouse", "company": "databricks", "company_name": "Databricks"},
-    {"ats": "greenhouse", "company": "anthropic",  "company_name": "Anthropic"},
-    {"ats": "greenhouse", "company": "figma",      "company_name": "Figma"},
-    {"ats": "greenhouse", "company": "discord",    "company_name": "Discord"},
-    {"ats": "greenhouse", "company": "asana",      "company_name": "Asana"},
-    {"ats": "greenhouse", "company": "pinterest",  "company_name": "Pinterest"},
+    # All slugs verified 2026-02
+    # Fintech
+    {"ats": "greenhouse", "company": "stripe",       "company_name": "Stripe"},
+    {"ats": "greenhouse", "company": "coinbase",     "company_name": "Coinbase"},
+    {"ats": "greenhouse", "company": "brex",         "company_name": "Brex"},
+    {"ats": "greenhouse", "company": "chime",        "company_name": "Chime"},
+    {"ats": "greenhouse", "company": "carta",        "company_name": "Carta"},
+    {"ats": "greenhouse", "company": "robinhood",    "company_name": "Robinhood"},
+    # Cloud / infra / dev tools
+    {"ats": "greenhouse", "company": "gitlab",       "company_name": "GitLab"},
+    {"ats": "greenhouse", "company": "databricks",   "company_name": "Databricks"},
+    {"ats": "greenhouse", "company": "anthropic",    "company_name": "Anthropic"},
+    {"ats": "greenhouse", "company": "postman",      "company_name": "Postman"},
+    {"ats": "greenhouse", "company": "launchdarkly", "company_name": "LaunchDarkly"},
+    {"ats": "greenhouse", "company": "temporal",     "company_name": "Temporal"},
+    {"ats": "greenhouse", "company": "checkr",       "company_name": "Checkr"},
+    {"ats": "greenhouse", "company": "verkada",      "company_name": "Verkada"},
+    {"ats": "greenhouse", "company": "samsara",      "company_name": "Samsara"},
+    # SaaS / productivity
+    {"ats": "greenhouse", "company": "hubspot",      "company_name": "HubSpot"},
+    {"ats": "greenhouse", "company": "asana",        "company_name": "Asana"},
+    {"ats": "greenhouse", "company": "figma",        "company_name": "Figma"},
+    {"ats": "greenhouse", "company": "discord",      "company_name": "Discord"},
+    {"ats": "greenhouse", "company": "pinterest",    "company_name": "Pinterest"},
+    {"ats": "greenhouse", "company": "duolingo",     "company_name": "Duolingo"},
+    {"ats": "greenhouse", "company": "squarespace",  "company_name": "Squarespace"},
+    {"ats": "greenhouse", "company": "mixpanel",     "company_name": "Mixpanel"},
+    {"ats": "greenhouse", "company": "amplitude",    "company_name": "Amplitude"},
+    {"ats": "greenhouse", "company": "lattice",      "company_name": "Lattice"},
+    {"ats": "greenhouse", "company": "gusto",        "company_name": "Gusto"},
+    # Consumer / marketplace
+    {"ats": "greenhouse", "company": "airbnb",       "company_name": "Airbnb"},
+    {"ats": "greenhouse", "company": "reddit",       "company_name": "Reddit"},
+    {"ats": "greenhouse", "company": "lyft",         "company_name": "Lyft"},
+    {"ats": "greenhouse", "company": "flexport",     "company_name": "Flexport"},
+
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
-    {"ats": "lever", "company": "plaid",    "company_name": "Plaid"},
-    {"ats": "lever", "company": "highspot", "company_name": "Highspot"},
+    {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
+    {"ats": "lever", "company": "highspot",     "company_name": "Highspot"},
+
     # ── Ashby (api.ashbyhq.com/posting-api/job-board/{slug}) ─────────────────
-    {"ats": "ashby", "company": "linear",  "company_name": "Linear"},
-    {"ats": "ashby", "company": "clerk",   "company_name": "Clerk"},
-    {"ats": "ashby", "company": "loom",    "company_name": "Loom"},
-    {"ats": "ashby", "company": "retool",  "company_name": "Retool"},
-    # ── The Muse (themuse.com/api/public/jobs — free, no auth) ───────────────
-    # Single entry fetches tech/data/product roles across all companies on platform
-    {"ats": "themuse", "company": "themuse-aggregator", "company_name": "The Muse"},
-    # ── Remotive (remotive.com/api/remote-jobs — free, no auth) ─────────────
-    # Single entry fetches all remote tech jobs; US-hinted locations are kept
-    {"ats": "remotive", "company": "remotive-aggregator", "company_name": "Remotive"},
+    # All slugs verified 2026-02
+    {"ats": "ashby", "company": "linear",       "company_name": "Linear"},
+    {"ats": "ashby", "company": "clerk",        "company_name": "Clerk"},
+    {"ats": "ashby", "company": "loom",         "company_name": "Loom"},
+    {"ats": "ashby", "company": "retool",       "company_name": "Retool"},
+    {"ats": "ashby", "company": "vercel",       "company_name": "Vercel"},
+    {"ats": "ashby", "company": "supabase",     "company_name": "Supabase"},
+    {"ats": "ashby", "company": "resend",       "company_name": "Resend"},
+    {"ats": "ashby", "company": "neon",         "company_name": "Neon"},
+    {"ats": "ashby", "company": "posthog",      "company_name": "PostHog"},
+    {"ats": "ashby", "company": "watershed",    "company_name": "Watershed"},
+    # AI / data companies on Ashby
+    {"ats": "ashby", "company": "openai",       "company_name": "OpenAI"},
+    {"ats": "ashby", "company": "cohere",       "company_name": "Cohere"},
+    {"ats": "ashby", "company": "snyk",         "company_name": "Snyk"},
+    {"ats": "ashby", "company": "sentry",       "company_name": "Sentry"},
+    {"ats": "ashby", "company": "benchling",    "company_name": "Benchling"},
+    {"ats": "ashby", "company": "zapier",       "company_name": "Zapier"},
+    {"ats": "ashby", "company": "ramp",         "company_name": "Ramp"},
+    {"ats": "ashby", "company": "deel",         "company_name": "Deel"},
+    {"ats": "ashby", "company": "replit",       "company_name": "Replit"},
+
+    # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
+    {"ats": "workable", "company": "typeform",      "company_name": "Typeform"},
+    {"ats": "workable", "company": "hotjar",        "company_name": "Hotjar"},
+
+    # ── Aggregator APIs (single entry = many companies) ───────────────────────
+    # The Muse — tech/data/product/design roles, all US companies
+    {"ats": "themuse",        "company": "themuse-aggregator",        "company_name": "The Muse"},
+    # Remotive — remote tech jobs; US-hinted locations kept
+    {"ats": "remotive",       "company": "remotive-aggregator",       "company_name": "Remotive"},
+    # RemoteOK — remote tech jobs; worldwide/US-hinted kept
+    {"ats": "remoteok",       "company": "remoteok-aggregator",       "company_name": "RemoteOK"},
+    # WeWorkRemotely — RSS feeds for programming/devops/product/design/data
+    {"ats": "weworkremotely", "company": "weworkremotely-aggregator", "company_name": "WeWorkRemotely"},
+
     # ── USAJobs (data.usajobs.gov — free, requires API key + email) ──────────
     # Uncomment and fill in your credentials to enable government job listings:
     # {"ats": "usajobs", "company": "usajobs", "company_name": "USAJobs",
@@ -1582,8 +2007,9 @@ def main() -> None:
         epilog=(
             "Example targets file (JSON array of objects):\n"
             '  [{"ats":"greenhouse","company":"stripe","company_name":"Stripe"}]\n\n'
-            "Supported ATS values: greenhouse, lever, workday, smartrecruiters, ashby, "
-            "themuse, remotive, usajobs, html, playwright"
+            "Supported ATS values: greenhouse, lever, workday, smartrecruiters, ashby,\n"
+            "  bamboohr, workable, themuse, remotive, remoteok, weworkremotely,\n"
+            "  usajobs, html, playwright"
         ),
     )
     parser.add_argument(
@@ -1599,6 +2025,17 @@ def main() -> None:
         default=None,
     )
     parser.add_argument(
+        "--since-hours",
+        metavar="N",
+        type=int,
+        default=None,
+        help=(
+            "Only include jobs posted within the last N hours.  "
+            "Jobs with no posted_at date are always included.  "
+            "Example: --since-hours 24"
+        ),
+    )
+    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Enable DEBUG-level logging",
@@ -1612,7 +2049,7 @@ def main() -> None:
     log.info("Loaded %d scrape target(s)", len(targets))
 
     with JobScrapeOrchestrator() as orc:
-        jobs = orc.run(targets)
+        jobs = orc.run(targets, since_hours=args.since_hours)
 
     output_json = json.dumps(jobs, indent=2, ensure_ascii=False)
 

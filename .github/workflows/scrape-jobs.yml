@@ -11,6 +11,10 @@ on:
         description: 'Enable verbose logging'
         required: false
         default: 'false'
+      since_hours:
+        description: 'Only keep jobs posted within last N hours (leave blank for all jobs)'
+        required: false
+        default: ''
 
 permissions:
   contents: write   # needed to push updated jobs.json
@@ -50,9 +54,13 @@ jobs:
           if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
             VERBOSE_FLAG="--verbose"
           fi
+          SINCE_FLAG=""
+          if [ -n "${{ github.event.inputs.since_hours }}" ]; then
+            SINCE_FLAG="--since-hours ${{ github.event.inputs.since_hours }}"
+          fi
           python backend/job_scraper.py \
             --output backend/jobs.json \
-            $VERBOSE_FLAG
+            $VERBOSE_FLAG $SINCE_FLAG
           echo "=== jobs.json stats ==="
           wc -c backend/jobs.json
           python -c "

@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ambore Jobs — Tech & IT Jobs Across the USA</title>
-<meta name="description" content="Browse thousands of fresh Tech and IT jobs across all 50 US states. Updated daily from USAJobs, Adzuna, The Muse, and Remotive."/>
+<meta name="description" content="Browse 2,400+ fresh US tech jobs from Greenhouse, Ashby, Lever, WeWorkRemotely, RemoteOK, Remotive, and The Muse. Updated daily."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -320,9 +320,11 @@ a{text-decoration:none;color:inherit}
       <select class="filter-select" id="filter-source" onchange="applyFilters()">
         <option value="">All sources</option>
         <option value="greenhouse">Greenhouse</option>
-        <option value="lever">Lever</option>
         <option value="ashby">Ashby</option>
-        <option value="remotive">Remotive (Remote)</option>
+        <option value="weworkremotely">WeWorkRemotely</option>
+        <option value="remoteok">RemoteOK</option>
+        <option value="lever">Lever</option>
+        <option value="remotive">Remotive</option>
         <option value="themuse">The Muse</option>
       </select>
     </div>
@@ -598,7 +600,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', usajobs: 'USAJobs', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
