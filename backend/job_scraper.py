@@ -79,6 +79,14 @@ from urllib.parse import urljoin, urlparse
 import httpx
 from bs4 import BeautifulSoup, Tag
 
+def _safe_json(resp: httpx.Response) -> Any:
+    """
+    Parse JSON from an httpx response robustly.
+    Uses raw bytes so Python's json module handles BOM/encoding detection
+    itself, avoiding httpx charset-detection edge-cases under HTTP/2.
+    """
+    return json.loads(resp.content)
+
 # Optional — only required for JS-heavy pages
 try:
     from playwright.sync_api import TimeoutError as PlaywrightTimeout
@@ -557,7 +565,7 @@ class GreenhouseScraper(BaseScraper):
 
         try:
             resp = self.client.get(url, params={"content": "true"})
-            data = resp.json()
+            data = _safe_json(resp)
         except Exception as exc:
             log.error("[Greenhouse] %s — %s", company, exc)
             return []
@@ -615,7 +623,7 @@ class LeverScraper(BaseScraper):
 
         try:
             resp = self.client.get(url, params={"mode": "json", "limit": 500})
-            data = resp.json()
+            data = _safe_json(resp)
         except Exception as exc:
             log.error("[Lever] %s — %s", company, exc)
             return []
@@ -698,7 +706,7 @@ class SmartRecruitersScraper(BaseScraper):
         while len(jobs) < MAX_JOBS_PER_SRC:
             try:
                 resp = self.client.get(url, params={"limit": limit, "offset": offset})
-                data = resp.json()
+                data = _safe_json(resp)
             except Exception as exc:
                 log.error("[SmartRecruiters] %s — %s", company, exc)
                 break
@@ -775,7 +783,7 @@ class AshbyScraper(BaseScraper):
 
         try:
             resp = self.client.get(url, params={"includeCompensation": "1"})
-            data = resp.json()
+            data = _safe_json(resp)
         except Exception as exc:
             log.error("[Ashby] %s — %s", company, exc)
             return []
@@ -889,7 +897,7 @@ class WorkdayScraper(BaseScraper):
                     json=payload,
                     headers={"Content-Type": "application/json"},
                 )
-                data = resp.json()
+                data = _safe_json(resp)
             except Exception as exc:
                 log.error("[Workday] %s — %s", tenant, exc)
                 break
@@ -1228,43 +1236,34 @@ class JobScrapeOrchestrator:
 # CLI
 # ─────────────────────────────────────────────────────────────────────────────
 
-# Built-in sample targets used when no --config file is provided
+# Built-in sample targets — all slugs verified live as of 2026-02
+# Notes:
+#   Greenhouse + Lever + Ashby use open public JSON APIs (no auth needed)
+#   SmartRecruiters now requires a bearer token — excluded from defaults
+#   Workday requires a browser session (Cloudflare + CSRF) — use PlaywrightScraper
 _SAMPLE_TARGETS: list[dict[str, Any]] = [
-    # ── Greenhouse ──────────────────────────────────────────────────────────
-    {"ats": "greenhouse", "company": "stripe",   "company_name": "Stripe"},
-    {"ats": "greenhouse", "company": "airbnb",   "company_name": "Airbnb"},
-    {"ats": "greenhouse", "company": "reddit",   "company_name": "Reddit"},
-    {"ats": "greenhouse", "company": "coinbase", "company_name": "Coinbase"},
-    {"ats": "greenhouse", "company": "notion",   "company_name": "Notion"},
-    # ── Lever ────────────────────────────────────────────────────────────────
-    {"ats": "lever",      "company": "netflix",  "company_name": "Netflix"},
-    {"ats": "lever",      "company": "figma",    "company_name": "Figma"},
-    {"ats": "lever",      "company": "scale-ai", "company_name": "Scale AI"},
-    # ── SmartRecruiters ──────────────────────────────────────────────────────
-    {"ats": "smartrecruiters", "company": "Walmart",  "company_name": "Walmart"},
-    {"ats": "smartrecruiters", "company": "BOSCH",    "company_name": "Bosch"},
-    # ── Ashby ────────────────────────────────────────────────────────────────
-    {"ats": "ashby", "company": "linear",   "company_name": "Linear"},
-    {"ats": "ashby", "company": "vercel",   "company_name": "Vercel"},
-    {"ats": "ashby", "company": "clerk",    "company_name": "Clerk"},
-    {"ats": "ashby", "company": "retool",   "company_name": "Retool"},
-    # ── Workday ──────────────────────────────────────────────────────────────
-    {
-        "ats":          "workday",
-        "company":      "Microsoft",
-        "company_name": "Microsoft",
-        "wd_tenant":    "microsoftcorporation",
-        "wd_site":      "External_Microsoft_Careers_Portal",
-        "wd_instance":  "wd1",
-    },
-    {
-        "ats":          "workday",
-        "company":      "Amazon",
-        "company_name": "Amazon",
-        "wd_tenant":    "amazon",
-        "wd_site":      "External_Career_Site",
-        "wd_instance":  "wd1",
-    },
+    # ── Greenhouse (boards-api.greenhouse.io/v1/boards/{slug}/jobs) ──────────
+    {"ats": "greenhouse", "company": "stripe",     "company_name": "Stripe"},
+    {"ats": "greenhouse", "company": "airbnb",     "company_name": "Airbnb"},
+    {"ats": "greenhouse", "company": "reddit",     "company_name": "Reddit"},
+    {"ats": "greenhouse", "company": "coinbase",   "company_name": "Coinbase"},
+    {"ats": "greenhouse", "company": "hubspot",    "company_name": "HubSpot"},
+    {"ats": "greenhouse", "company": "brex",       "company_name": "Brex"},
+    {"ats": "greenhouse", "company": "gitlab",     "company_name": "GitLab"},
+    {"ats": "greenhouse", "company": "databricks", "company_name": "Databricks"},
+    {"ats": "greenhouse", "company": "anthropic",  "company_name": "Anthropic"},
+    {"ats": "greenhouse", "company": "figma",      "company_name": "Figma"},
+    {"ats": "greenhouse", "company": "discord",    "company_name": "Discord"},
+    {"ats": "greenhouse", "company": "asana",      "company_name": "Asana"},
+    {"ats": "greenhouse", "company": "pinterest",  "company_name": "Pinterest"},
+    # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
+    {"ats": "lever", "company": "plaid",    "company_name": "Plaid"},
+    {"ats": "lever", "company": "highspot", "company_name": "Highspot"},
+    # ── Ashby (api.ashbyhq.com/posting-api/job-board/{slug}) ─────────────────
+    {"ats": "ashby", "company": "linear",  "company_name": "Linear"},
+    {"ats": "ashby", "company": "clerk",   "company_name": "Clerk"},
+    {"ats": "ashby", "company": "loom",    "company_name": "Loom"},
+    {"ats": "ashby", "company": "retool",  "company_name": "Retool"},
 ]
 
 
