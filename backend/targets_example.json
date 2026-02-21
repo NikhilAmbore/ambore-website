@@ -1,0 +1,62 @@
+[
+  { "ats": "greenhouse", "company": "stripe",    "company_name": "Stripe"    },
+  { "ats": "greenhouse", "company": "airbnb",    "company_name": "Airbnb"    },
+  { "ats": "greenhouse", "company": "reddit",    "company_name": "Reddit"    },
+  { "ats": "greenhouse", "company": "coinbase",  "company_name": "Coinbase"  },
+  { "ats": "greenhouse", "company": "notion",    "company_name": "Notion"    },
+  { "ats": "greenhouse", "company": "hubspot",   "company_name": "HubSpot"   },
+  { "ats": "greenhouse", "company": "brex",      "company_name": "Brex"      },
+
+  { "ats": "lever", "company": "netflix",   "company_name": "Netflix"   },
+  { "ats": "lever", "company": "figma",     "company_name": "Figma"     },
+  { "ats": "lever", "company": "scale-ai",  "company_name": "Scale AI"  },
+  { "ats": "lever", "company": "anduril",   "company_name": "Anduril"   },
+
+  { "ats": "smartrecruiters", "company": "Walmart", "company_name": "Walmart" },
+  { "ats": "smartrecruiters", "company": "BOSCH",   "company_name": "Bosch"   },
+
+  { "ats": "ashby", "company": "linear",   "company_name": "Linear"   },
+  { "ats": "ashby", "company": "vercel",   "company_name": "Vercel"   },
+  { "ats": "ashby", "company": "clerk",    "company_name": "Clerk"    },
+  { "ats": "ashby", "company": "retool",   "company_name": "Retool"   },
+  { "ats": "ashby", "company": "descript", "company_name": "Descript" },
+
+  {
+    "ats":          "workday",
+    "company":      "Microsoft",
+    "company_name": "Microsoft",
+    "wd_tenant":    "microsoftcorporation",
+    "wd_site":      "External_Microsoft_Careers_Portal",
+    "wd_instance":  "wd1"
+  },
+  {
+    "ats":          "workday",
+    "company":      "Amazon",
+    "company_name": "Amazon",
+    "wd_tenant":    "amazon",
+    "wd_site":      "External_Career_Site",
+    "wd_instance":  "wd1"
+  },
+  {
+    "ats":          "workday",
+    "company":      "Google",
+    "company_name": "Google",
+    "wd_tenant":    "google",
+    "wd_site":      "Google_Career_Site",
+    "wd_instance":  "wd3"
+  },
+
+  {
+    "ats":          "html",
+    "company":      "example-startup",
+    "company_name": "Example Startup",
+    "careers_url":  "https://example.com/careers"
+  },
+
+  {
+    "ats":          "playwright",
+    "company":      "js-heavy-co",
+    "company_name": "JS-Heavy Co",
+    "careers_url":  "https://js-heavy-co.example.com/jobs"
+  }
+]

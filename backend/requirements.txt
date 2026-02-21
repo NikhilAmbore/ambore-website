@@ -1,0 +1,10 @@
+# Core HTTP client  (modern, supports HTTP/2 and async)
+httpx[http2]>=0.27.0
+
+# HTML parsing
+beautifulsoup4>=4.12.0
+lxml>=5.0.0          # faster BS4 parser (optional but recommended)
+
+# Optional: only needed for JS-rendered career pages
+# playwright>=1.44.0
+# After install run: playwright install chromium
