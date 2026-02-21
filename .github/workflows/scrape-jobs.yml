@@ -28,7 +28,7 @@ jobs:
   scrape:
     name: Scrape & Publish Jobs
     runs-on: ubuntu-latest
-    timeout-minutes: 45   # Apify actors can take a few minutes each
+    timeout-minutes: 20   # Hourly run skips Apify actors (handled by daily workflow)
 
     steps:
       - name: Checkout repository
@@ -48,26 +48,13 @@ jobs:
           pip install --upgrade pip
           pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
 
-      - name: Run scraper
+      - name: Run scraper (free sources only — Apify handled by daily workflow)
         env:
-          # ── USAJobs (free — https://developer.usajobs.gov/) ───────────────
-          # Add USAJOBS_API_KEY and USAJOBS_EMAIL as GitHub repository secrets
           USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
           USAJOBS_EMAIL:   ${{ secrets.USAJOBS_EMAIL }}
-
-          # ── Adzuna (free — https://developer.adzuna.com/) ────────────────
-          # Add ADZUNA_APP_ID and ADZUNA_APP_KEY as repository secrets
           ADZUNA_APP_ID:   ${{ secrets.ADZUNA_APP_ID }}
           ADZUNA_APP_KEY:  ${{ secrets.ADZUNA_APP_KEY }}
-
-          # ── SerpAPI / Google Jobs (https://serpapi.com/) ─────────────────
-          # 100 free searches/month. Add SERPAPI_KEY as a repository secret
           SERPAPI_KEY:     ${{ secrets.SERPAPI_KEY }}
-
-          # ── Apify (https://apify.com/ — $5 free credits/month) ───────────
-          # Add APIFY_TOKEN as a repository secret
-          # Then uncomment the Apify actor entries in _SAMPLE_TARGETS
-          APIFY_TOKEN:     ${{ secrets.APIFY_TOKEN }}
 
         run: |
           VERBOSE_FLAG=""
@@ -81,6 +68,7 @@ jobs:
 
           python backend/job_scraper.py \
             --output backend/jobs.json \
+            --skip-ats apify \
             $VERBOSE_FLAG $SINCE_FLAG
 
           echo "=== jobs.json stats ==="

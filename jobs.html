@@ -607,7 +607,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn/Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn / Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';

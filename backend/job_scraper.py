@@ -2792,12 +2792,23 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     #   Set SERPAPI_KEY                       →  https://serpapi.com/
     {"ats": "serpapi",  "company": "serpapi",  "company_name": "Google Jobs"},
     #
-    # Apify cloud actors — $5 free credits / month
-    #   Set APIFY_TOKEN and uncomment the actor(s) you want:
-    #   {"ats": "apify", "company": "bebity/linkedin-jobs-scraper",
-    #    "company_name": "LinkedIn (via Apify)"},
-    #   {"ats": "apify", "company": "misceres/indeed-scraper",
-    #    "company_name": "Indeed (via Apify)"},
+    # ── Apify cloud actors ────────────────────────────────────────────────────
+    # Free tier: $5 platform credits / month  →  https://apify.com/
+    # Add APIFY_TOKEN as a GitHub repository secret to enable these.
+    # If APIFY_TOKEN is missing the scraper logs a warning and skips gracefully.
+    #
+    # These are run by the DAILY Apify workflow (scrape-jobs-apify.yml), NOT
+    # the hourly workflow, to avoid burning credits on every run.
+    #
+    # LinkedIn Jobs — worldunboxer/rapid-linkedin-scraper (TRULY FREE, compute-only)
+    {"ats": "apify", "company": "worldunboxer/rapid-linkedin-scraper",
+     "company_name": "LinkedIn (via Apify)",
+     "api_secret": '{"keywords": "software engineer OR data scientist OR product manager OR machine learning engineer OR software developer OR devops engineer OR backend engineer OR frontend engineer", "location": "United States", "maxItems": 200}'},
+    #
+    # Indeed Jobs — valig/indeed-jobs-scraper (~$0.02/run at 200 results)
+    {"ats": "apify", "company": "valig/indeed-jobs-scraper",
+     "company_name": "Indeed (via Apify)",
+     "api_secret": '{"keyword": "software engineer OR data scientist OR product manager OR machine learning engineer OR devops engineer OR backend developer OR frontend developer", "location": "United States", "maxItems": 200}'},
 ]
 
 
@@ -2846,6 +2857,24 @@ def main() -> None:
         ),
     )
     parser.add_argument(
+        "--only-ats",
+        metavar="ATS[,ATS,...]",
+        default=None,
+        help=(
+            "Comma-separated list of ATS names to run (all others skipped).  "
+            "Example: --only-ats apify  or  --only-ats greenhouse,lever,ashby"
+        ),
+    )
+    parser.add_argument(
+        "--skip-ats",
+        metavar="ATS[,ATS,...]",
+        default=None,
+        help=(
+            "Comma-separated list of ATS names to skip.  "
+            "Example: --skip-ats apify"
+        ),
+    )
+    parser.add_argument(
         "--verbose", "-v",
         action="store_true",
         help="Enable DEBUG-level logging",
@@ -2856,6 +2885,15 @@ def main() -> None:
         logging.getLogger("job_scraper").setLevel(logging.DEBUG)
 
     targets = _load_targets(args.config)
+
+    if args.only_ats:
+        allowed = {s.strip().lower() for s in args.only_ats.split(",")}
+        targets = [t for t in targets if t.ats.lower() in allowed]
+        log.info("--only-ats filter: keeping %d target(s) (%s)", len(targets), args.only_ats)
+    elif args.skip_ats:
+        skipped = {s.strip().lower() for s in args.skip_ats.split(",")}
+        targets = [t for t in targets if t.ats.lower() not in skipped]
+        log.info("--skip-ats filter: kept %d target(s) (skipped %s)", len(targets), args.skip_ats)
     log.info("Loaded %d scrape target(s)", len(targets))
 
     with JobScrapeOrchestrator() as orc:

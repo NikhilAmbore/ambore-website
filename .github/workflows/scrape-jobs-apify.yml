@@ -1,0 +1,102 @@
+name: Daily Apify Scraper (LinkedIn & Indeed)
+
+on:
+  schedule:
+    # Runs once a day at 07:00 UTC — avoids burning Apify credits on every hourly run
+    - cron: '0 7 * * *'
+
+  workflow_dispatch:
+    inputs:
+      verbose:
+        description: 'Enable verbose logging'
+        required: false
+        default: 'false'
+
+permissions:
+  contents: write   # needed to push updated jobs.json
+
+jobs:
+  scrape-apify:
+    name: Scrape LinkedIn & Indeed via Apify
+    runs-on: ubuntu-latest
+    timeout-minutes: 30   # Apify actors can take several minutes each
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+          cache-dependency-path: backend/requirements.txt
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
+
+      - name: Run Apify scrapers (LinkedIn + Indeed)
+        env:
+          # ── Apify (https://apify.com/ — $5 free credits/month) ───────────
+          # Go to https://apify.com/ → sign up → Settings → Integrations → API tokens
+          # Add your token as APIFY_TOKEN in GitHub Secrets (Settings → Secrets → Actions)
+          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+
+        run: |
+          VERBOSE_FLAG=""
+          if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
+            VERBOSE_FLAG="--verbose"
+          fi
+
+          # Pull existing jobs so Apify results are merged, not overwritten
+          python backend/job_scraper.py \
+            --only-ats apify \
+            --output /tmp/apify_jobs.json \
+            $VERBOSE_FLAG
+
+          echo "=== Apify results ==="
+          python -c "
+          import json
+          jobs = json.load(open('/tmp/apify_jobs.json'))
+          sources = {}
+          for j in jobs:
+              sources[j['ats']] = sources.get(j['ats'], 0) + 1
+          print(f'Apify jobs: {len(jobs)}')
+          for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
+              print(f'  {ats}: {cnt}')
+          "
+
+          # Merge Apify jobs into existing jobs.json (deduplicate by id)
+          python - <<'PYEOF'
+          import json, pathlib
+
+          existing_path = pathlib.Path('backend/jobs.json')
+          apify_path    = pathlib.Path('/tmp/apify_jobs.json')
+
+          existing = json.loads(existing_path.read_text(encoding='utf-8')) if existing_path.exists() else []
+          apify    = json.loads(apify_path.read_text(encoding='utf-8'))
+
+          # Remove stale Apify entries from existing, then prepend fresh ones
+          non_apify = [j for j in existing if j.get('ats') != 'apify']
+          merged    = apify + non_apify
+
+          existing_path.write_text(json.dumps(merged, indent=2, ensure_ascii=False), encoding='utf-8')
+          print(f'Merged: {len(apify)} Apify + {len(non_apify)} other = {len(merged)} total jobs')
+          PYEOF
+
+      - name: Commit & push updated jobs.json
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add backend/jobs.json
+          if git diff --staged --quiet; then
+            echo "No changes to jobs.json — skipping commit"
+          else
+            TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
+            git commit -m "chore: refresh Apify jobs (LinkedIn+Indeed) — ${TOTAL} total ($(date -u '+%Y-%m-%d'))"
+            git push
+          fi
