@@ -2,17 +2,21 @@ name: Daily Job Scraper
 
 on:
   schedule:
-    # Runs every day at 06:00 UTC (1 AM EST / 10 PM PST)
+    # Runs every day at 06:00 UTC  (1 AM EST / 10 PM PST)
+    # Change cron expression to run more frequently if needed:
+    #   Every 12h: '0 6,18 * * *'
+    #   Every 8h:  '0 6,14,22 * * *'
     - cron: '0 6 * * *'
+
   workflow_dispatch:
-    # Allow manual trigger from GitHub Actions UI
+    # Manual trigger — available from GitHub Actions UI
     inputs:
       verbose:
         description: 'Enable verbose logging'
         required: false
         default: 'false'
       since_hours:
-        description: 'Only keep jobs posted within last N hours (leave blank for all jobs)'
+        description: 'Only keep jobs posted within last N hours (blank = all jobs)'
         required: false
         default: ''
 
@@ -23,7 +27,7 @@ jobs:
   scrape:
     name: Scrape & Publish Jobs
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45   # Apify actors can take a few minutes each
 
     steps:
       - name: Checkout repository
@@ -45,10 +49,25 @@ jobs:
 
       - name: Run scraper
         env:
-          # Optional: add your USAJobs API key as a repository secret
-          # to enable government job listings
+          # ── USAJobs (free — https://developer.usajobs.gov/) ───────────────
+          # Add USAJOBS_API_KEY and USAJOBS_EMAIL as GitHub repository secrets
           USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
           USAJOBS_EMAIL:   ${{ secrets.USAJOBS_EMAIL }}
+
+          # ── Adzuna (free — https://developer.adzuna.com/) ────────────────
+          # Add ADZUNA_APP_ID and ADZUNA_APP_KEY as repository secrets
+          ADZUNA_APP_ID:   ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY:  ${{ secrets.ADZUNA_APP_KEY }}
+
+          # ── SerpAPI / Google Jobs (https://serpapi.com/) ─────────────────
+          # 100 free searches/month. Add SERPAPI_KEY as a repository secret
+          SERPAPI_KEY:     ${{ secrets.SERPAPI_KEY }}
+
+          # ── Apify (https://apify.com/ — $5 free credits/month) ───────────
+          # Add APIFY_TOKEN as a repository secret
+          # Then uncomment the Apify actor entries in _SAMPLE_TARGETS
+          APIFY_TOKEN:     ${{ secrets.APIFY_TOKEN }}
+
         run: |
           VERBOSE_FLAG=""
           if [ "${{ github.event.inputs.verbose }}" = "true" ]; then
@@ -58,9 +77,11 @@ jobs:
           if [ -n "${{ github.event.inputs.since_hours }}" ]; then
             SINCE_FLAG="--since-hours ${{ github.event.inputs.since_hours }}"
           fi
+
           python backend/job_scraper.py \
             --output backend/jobs.json \
             $VERBOSE_FLAG $SINCE_FLAG
+
           echo "=== jobs.json stats ==="
           wc -c backend/jobs.json
           python -c "
@@ -80,7 +101,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add backend/jobs.json
-          # Only commit if the file actually changed
+          # Only commit when the file actually changed
           if git diff --staged --quiet; then
             echo "No changes to jobs.json — skipping commit"
           else

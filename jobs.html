@@ -326,6 +326,10 @@ a{text-decoration:none;color:inherit}
         <option value="lever">Lever</option>
         <option value="remotive">Remotive</option>
         <option value="themuse">The Muse</option>
+        <option value="adzuna">Adzuna</option>
+        <option value="serpapi">Google Jobs</option>
+        <option value="usajobs">USAJobs (Gov)</option>
+        <option value="apify">Apify (LinkedIn/Indeed)</option>
       </select>
     </div>
 
@@ -600,7 +604,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn/Indeed', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';

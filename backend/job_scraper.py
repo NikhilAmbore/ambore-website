@@ -67,6 +67,7 @@ import argparse
 import hashlib
 import json
 import logging
+import os
 import re
 import time
 import urllib.robotparser
@@ -461,8 +462,12 @@ class ScraperTarget:
     wd_instance:      str  = "wd5"
     # HTML / Playwright
     careers_url:      str  = ""
-    # API credentials (USAJobs, future paid APIs)
+    # API credentials
+    # api_key    → primary key / app_id / token
+    # api_secret → secondary key / app_key (Adzuna, Apify input JSON)
+    # user_email → required by USAJobs as the User-Agent / account email
     api_key:          str  = ""
+    api_secret:       str  = ""
     user_email:       str  = ""
     # Behaviour
     assume_us_remote: bool = True
@@ -1324,10 +1329,12 @@ class USAJobsScraper(BaseScraper):
     ]
 
     def fetch_jobs(self) -> list[Job]:
-        api_key = self.target.api_key
-        email   = self.target.user_email
+        # Fall back to environment variables so GitHub Actions secrets work
+        api_key = self.target.api_key or os.environ.get("USAJOBS_API_KEY", "")
+        email   = self.target.user_email or os.environ.get("USAJOBS_EMAIL", "")
         if not api_key or not email:
-            log.warning("[USAJobs] api_key and user_email are required — skipping")
+            log.warning("[USAJobs] api_key / USAJOBS_API_KEY and user_email / USAJOBS_EMAIL "
+                        "are required — skipping.  Register free at https://developer.usajobs.gov/")
             return []
 
         log.info("[USAJobs] Fetching government tech jobs")
@@ -1745,6 +1752,387 @@ class WorkableScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Adzuna  (free developer API — register at https://developer.adzuna.com/)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class AdzunaScraper(BaseScraper):
+    """
+    Adzuna US Jobs API — https://api.adzuna.com/v1/api/jobs/us/search/{page}
+
+    Free developer plan: up to 250 req/min.
+    Register at https://developer.adzuna.com/ to get app_id + app_key.
+
+    Credentials resolution order (first non-empty wins):
+      1. target.api_key  + target.api_secret
+      2. ADZUNA_APP_ID   + ADZUNA_APP_KEY  (environment variables)
+
+    Aggregator — a single target entry scrapes many keyword categories.
+    """
+
+    ATS_NAME = "adzuna"
+    _BASE    = "https://api.adzuna.com/v1/api/jobs/us/search"
+
+    # Broad keyword sweep — Adzuna returns US-filtered results for all
+    _KEYWORDS = [
+        "software engineer", "backend engineer", "frontend engineer",
+        "full stack engineer", "data engineer", "data scientist",
+        "machine learning engineer", "devops engineer", "cloud engineer",
+        "site reliability engineer", "platform engineer", "security engineer",
+        "mobile engineer", "ios developer", "android developer",
+        "product manager", "ux designer", "it specialist",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        app_id  = self.target.api_key    or os.environ.get("ADZUNA_APP_ID",  "")
+        app_key = self.target.api_secret or os.environ.get("ADZUNA_APP_KEY", "")
+        if not app_id or not app_key:
+            log.warning("[Adzuna] ADZUNA_APP_ID and ADZUNA_APP_KEY required "
+                        "— register free at https://developer.adzuna.com/")
+            return []
+
+        log.info("[Adzuna] Fetching US tech jobs")
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            page = 1
+            while len(jobs) < MAX_JOBS_PER_SRC:
+                try:
+                    resp = self.client.get(
+                        f"{self._BASE}/{page}",
+                        params={
+                            "app_id":           app_id,
+                            "app_key":          app_key,
+                            "results_per_page": 50,
+                            "what":             keyword,
+                            "where":            "united states",
+                            "content-type":     "application/json",
+                        },
+                    )
+                    data = _safe_json(resp)
+                except Exception as exc:
+                    log.error("[Adzuna] %s p%d — %s", keyword, page, exc)
+                    break
+
+                results = data.get("results", [])
+                if not results:
+                    break
+
+                for raw in results:
+                    job_id = raw.get("id", "")
+                    if job_id in seen:
+                        continue
+                    seen.add(job_id)
+
+                    title    = raw.get("title", "")
+                    company  = (raw.get("company") or {}).get("display_name", "")
+                    location = (raw.get("location") or {}).get("display_name", "")
+                    url      = raw.get("redirect_url", "")
+                    desc_raw = raw.get("description", "")
+                    sal_min  = raw.get("salary_min") or None
+                    sal_max  = raw.get("salary_max") or None
+                    created  = raw.get("created")    or None
+
+                    is_usa, is_remote = _classify_location(location)
+                    if not is_usa:
+                        # Adzuna already filters by US but double-check
+                        area = (raw.get("location") or {}).get("area", [])
+                        if "US" in area or "United States" in area:
+                            is_usa = True
+                    if not is_usa:
+                        continue
+
+                    # Adzuna salary is in USD annual
+                    salary_text = ""
+                    if sal_min or sal_max:
+                        salary_text = f"{int(sal_min or 0)}-{int(sal_max or 0)}"
+
+                    job = self._make_job(
+                        title=title,
+                        location=location or "US",
+                        url=url,
+                        description=_strip_html(desc_raw),
+                        department=keyword.title(),
+                        employment_type=raw.get("contract_type"),
+                        salary_text=salary_text,
+                        posted_at=created,
+                        company_override=company,
+                    )
+                    if job:
+                        if sal_min:
+                            job.salary_min = float(sal_min)
+                        if sal_max:
+                            job.salary_max = float(sal_max)
+                        jobs.append(job)
+
+                total   = data.get("count", 0)
+                fetched = page * 50
+                if fetched >= total or fetched >= 200:   # cap 4 pages per keyword
+                    break
+                page += 1
+
+            log.info("[Adzuna] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[Adzuna] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SerpAPI — Google Jobs  (https://serpapi.com, free tier: 100 searches/month)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class SerpAPIGoogleJobsScraper(BaseScraper):
+    """
+    Google Jobs via SerpAPI — https://serpapi.com/google-jobs-api
+
+    Free plan: 100 searches / month.  Paid plans start at $50/mo.
+    Register at https://serpapi.com/ and get your API key.
+
+    Credentials resolution order:
+      1. target.api_key
+      2. SERPAPI_KEY  (environment variable)
+
+    Searches multiple tech keywords across the US.
+    """
+
+    ATS_NAME = "serpapi"
+    _BASE    = "https://serpapi.com/search.json"
+    _KEYWORDS = [
+        "software engineer", "data scientist", "machine learning engineer",
+        "devops engineer", "cloud architect", "frontend developer",
+        "backend developer", "full stack developer", "data engineer",
+        "cybersecurity analyst", "product manager", "mobile developer",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        api_key = self.target.api_key or os.environ.get("SERPAPI_KEY", "")
+        if not api_key:
+            log.warning("[SerpAPI] SERPAPI_KEY required — "
+                        "register free at https://serpapi.com/")
+            return []
+
+        log.info("[SerpAPI] Fetching Google Jobs")
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            start = 0
+            while len(jobs) < MAX_JOBS_PER_SRC:
+                try:
+                    resp = self.client.get(
+                        self._BASE,
+                        params={
+                            "engine":   "google_jobs",
+                            "q":        keyword,
+                            "location": "United States",
+                            "hl":       "en",
+                            "gl":       "us",
+                            "start":    start,
+                            "api_key":  api_key,
+                        },
+                    )
+                    data = _safe_json(resp)
+                except Exception as exc:
+                    log.error("[SerpAPI] %s start=%d — %s", keyword, start, exc)
+                    break
+
+                # SerpAPI returns error object when quota exhausted
+                if "error" in data:
+                    log.warning("[SerpAPI] API error: %s", data["error"])
+                    break
+
+                results = data.get("jobs_results", [])
+                if not results:
+                    break
+
+                for raw in results:
+                    uid = raw.get("job_id", raw.get("title", "") + raw.get("company_name", ""))
+                    if uid in seen:
+                        continue
+                    seen.add(uid)
+
+                    title    = raw.get("title", "")
+                    company  = raw.get("company_name", "")
+                    location = raw.get("location", "")
+                    url      = (raw.get("related_links") or [{}])[0].get("link", "")
+                    desc_raw = raw.get("description", "")
+                    posted   = (raw.get("detected_extensions") or {}).get("posted_at")
+
+                    is_usa, is_remote = _classify_location(location)
+                    if not is_usa:
+                        # Google Jobs US results are always US; trust the query
+                        is_usa = True
+
+                    # Salary from highlights
+                    sal_text = ""
+                    for section in (raw.get("job_highlights") or []):
+                        if "alary" in section.get("title", ""):
+                            items = section.get("items", [])
+                            if items:
+                                sal_text = items[0]
+                            break
+
+                    job = self._make_job(
+                        title=title,
+                        location=location or "US",
+                        url=url,
+                        description=_strip_html(desc_raw),
+                        department=keyword.title(),
+                        salary_text=sal_text,
+                        posted_at=posted,
+                        company_override=company,
+                    )
+                    if job:
+                        jobs.append(job)
+
+                # SerpAPI paginates in steps of 10
+                if len(results) < 10 or start >= 30:   # cap 4 pages
+                    break
+                start += 10
+
+            log.info("[SerpAPI/Google] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[SerpAPI/Google] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Apify  (https://apify.com — free tier: $5 platform credits / month)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class ApifyJobsScraper(BaseScraper):
+    """
+    Apify cloud scraping platform — runs pre-built actors to extract jobs
+    from sources that require JS rendering (Indeed, LinkedIn, Glassdoor, etc.)
+
+    Free tier: $5/month in platform credits.
+    Register at https://apify.com/ and get your API token.
+
+    Credentials resolution order:
+      1. target.api_key
+      2. APIFY_TOKEN  (environment variable)
+
+    ``target.company`` is used as the Apify Actor ID.
+    ``target.api_secret`` (or APIFY_ACTOR_INPUT env var) is a JSON string of
+    actor input — if omitted a sensible default for US tech jobs is used.
+
+    Common actor IDs for US job scraping:
+      bebity/linkedin-jobs-scraper      — LinkedIn (fast, popular)
+      misceres/indeed-scraper           — Indeed
+      curious_coder/glassdoor-scraper   — Glassdoor
+      compass/google-jobs-scraper       — Google Jobs (alternative to SerpAPI)
+    """
+
+    ATS_NAME  = "apify"
+    _BASE_URL = "https://api.apify.com/v2/acts"
+
+    # Default actor input for generic job actors
+    _DEFAULT_INPUT: dict[str, Any] = {
+        "location":         "United States",
+        "country":          "US",
+        "maxItems":         200,
+        "proxy":            {"useApifyProxy": True},
+    }
+
+    def fetch_jobs(self) -> list[Job]:
+        token    = self.target.api_key or os.environ.get("APIFY_TOKEN", "")
+        actor_id = self.target.company   # e.g. "bebity/linkedin-jobs-scraper"
+
+        if not token:
+            log.warning("[Apify] APIFY_TOKEN required — register at https://apify.com/")
+            return []
+        if not actor_id or actor_id == "apify-aggregator":
+            log.warning("[Apify] target.company must be an Apify actor ID "
+                        "(e.g. 'bebity/linkedin-jobs-scraper')")
+            return []
+
+        # Actor input — target.api_secret may override as JSON string
+        actor_input: dict[str, Any] = dict(self._DEFAULT_INPUT)
+        raw_input = self.target.api_secret or os.environ.get("APIFY_ACTOR_INPUT", "")
+        if raw_input:
+            try:
+                actor_input.update(json.loads(raw_input))
+            except json.JSONDecodeError:
+                log.warning("[Apify] Invalid APIFY_ACTOR_INPUT JSON — using defaults")
+
+        run_url = f"{self._BASE_URL}/{actor_id}/run-sync-get-dataset-items"
+        log.info("[Apify] Running actor %s", actor_id)
+
+        try:
+            # run-sync-get-dataset-items: POSTs input, waits for run, returns items
+            resp = self.client._client.post(
+                run_url,
+                params={"token": token, "format": "json", "clean": "true"},
+                json=actor_input,
+                headers={**DEFAULT_HEADERS, "Content-Type": "application/json"},
+                timeout=300,   # actor runs can take several minutes
+            )
+            resp.raise_for_status()
+            items = _safe_json(resp)
+        except Exception as exc:
+            log.error("[Apify] Actor %s failed: %s", actor_id, exc)
+            return []
+
+        if not isinstance(items, list):
+            items = items.get("items", []) if isinstance(items, dict) else []
+
+        log.info("[Apify] Actor returned %d raw items", len(items))
+        jobs: list[Job] = []
+
+        for raw in items:
+            if not isinstance(raw, dict):
+                continue
+
+            # Normalise across different actor schemas
+            title   = (raw.get("title")   or raw.get("positionName")  or
+                       raw.get("jobTitle") or raw.get("name", ""))
+            company = (raw.get("company") or raw.get("companyName")    or
+                       raw.get("employer") or "")
+            location= (raw.get("location") or raw.get("place")         or
+                       raw.get("jobLocation") or "")
+            url     = (raw.get("url")      or raw.get("jobUrl")        or
+                       raw.get("applyUrl")  or raw.get("link", ""))
+            desc    = (raw.get("description") or raw.get("jobDescription") or "")
+            dept    = (raw.get("department")  or raw.get("category")       or "")
+            emp_type= (raw.get("employmentType") or raw.get("jobType")     or "")
+            posted  = (raw.get("postedAt")   or raw.get("publishedAt")     or
+                       raw.get("datePosted") or None)
+            sal_raw = (raw.get("salary")     or raw.get("salaryRange")     or "")
+
+            if not title or not url:
+                continue
+
+            is_usa, is_remote = _classify_location(str(location))
+            if not is_usa:
+                # Apify actors are configured for US; trust if no country detected
+                if not location or str(location).strip().upper() in ("US", "USA", "REMOTE"):
+                    is_usa = True
+            if not is_usa:
+                continue
+
+            job = self._make_job(
+                title=str(title),
+                location=str(location) or "US",
+                url=str(url),
+                description=_strip_html(str(desc)),
+                department=str(dept) or None,
+                employment_type=str(emp_type) or None,
+                salary_text=str(sal_raw),
+                posted_at=str(posted) if posted else None,
+                company_override=str(company) or None,
+            )
+            if job:
+                jobs.append(job)
+
+        log.info("[Apify] %s — %d US jobs", actor_id, len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -1762,7 +2150,10 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "remotive":        RemotiveScraper,
     "remoteok":        RemoteOKScraper,
     "weworkremotely":  WeWorkRemotelyScraper,
-    "usajobs":         USAJobsScraper,
+    "usajobs":         USAJobsScraper,      # free API key required
+    "adzuna":          AdzunaScraper,       # free API key required
+    "serpapi":         SerpAPIGoogleJobsScraper,  # Google Jobs; free key required
+    "apify":           ApifyJobsScraper,    # cloud actors; free tier available
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -1984,10 +2375,27 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # WeWorkRemotely — RSS feeds for programming/devops/product/design/data
     {"ats": "weworkremotely", "company": "weworkremotely-aggregator", "company_name": "WeWorkRemotely"},
 
-    # ── USAJobs (data.usajobs.gov — free, requires API key + email) ──────────
-    # Uncomment and fill in your credentials to enable government job listings:
-    # {"ats": "usajobs", "company": "usajobs", "company_name": "USAJobs",
-    #  "api_key": "YOUR_USAJOBS_API_KEY", "user_email": "your@email.com"},
+    # ── API-key sources — auto-enabled when env vars are set ─────────────────
+    # Each scraper checks env vars first; no key = graceful skip (no crash).
+    #
+    # USAJobs (data.usajobs.gov — free registration)
+    #   Set USAJOBS_API_KEY + USAJOBS_EMAIL  →  https://developer.usajobs.gov/
+    {"ats": "usajobs",  "company": "usajobs",  "company_name": "USAJobs"},
+    #
+    # Adzuna (api.adzuna.com — free developer plan, generous limits)
+    #   Set ADZUNA_APP_ID + ADZUNA_APP_KEY    →  https://developer.adzuna.com/
+    {"ats": "adzuna",   "company": "adzuna",   "company_name": "Adzuna"},
+    #
+    # Google Jobs via SerpAPI (serpapi.com — 100 free searches / month)
+    #   Set SERPAPI_KEY                       →  https://serpapi.com/
+    {"ats": "serpapi",  "company": "serpapi",  "company_name": "Google Jobs"},
+    #
+    # Apify cloud actors — $5 free credits / month
+    #   Set APIFY_TOKEN and uncomment the actor(s) you want:
+    #   {"ats": "apify", "company": "bebity/linkedin-jobs-scraper",
+    #    "company_name": "LinkedIn (via Apify)"},
+    #   {"ats": "apify", "company": "misceres/indeed-scraper",
+    #    "company_name": "Indeed (via Apify)"},
 ]
 
 
