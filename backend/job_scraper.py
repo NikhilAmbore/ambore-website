@@ -1846,16 +1846,10 @@ class AdzunaScraper(BaseScraper):
                     sal_max  = raw.get("salary_max") or None
                     created  = raw.get("created")    or None
 
-                    is_usa, is_remote = _classify_location(location)
-                    if not is_usa:
-                        # Adzuna already filters by US but double-check
-                        area = (raw.get("location") or {}).get("area", [])
-                        if "US" in area or "United States" in area:
-                            is_usa = True
-                    if not is_usa:
-                        continue
-
-                    # Adzuna salary is in USD annual
+                    # Adzuna is queried with where=united+states so all results
+                    # are US jobs — use force_usa to bypass _classify_location()
+                    # which rejects location strings without a 2-letter state code
+                    # (e.g. "West, McLennan County", "New York City")
                     salary_text = ""
                     if sal_min or sal_max:
                         salary_text = f"{int(sal_min or 0)}-{int(sal_max or 0)}"
@@ -1870,6 +1864,7 @@ class AdzunaScraper(BaseScraper):
                         salary_text=salary_text,
                         posted_at=created,
                         company_override=company,
+                        force_usa=True,
                     )
                     if job:
                         if sal_min:
