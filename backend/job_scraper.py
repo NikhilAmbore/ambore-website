@@ -511,12 +511,15 @@ class BaseScraper(ABC):
         salary_text:      str | None = None,
         posted_at:        str | None = None,
         company_override: str | None = None,   # aggregators pass real company name
+        force_usa:        bool       = False,   # bypass location filter (e.g. USAJobs)
     ) -> Job | None:
         """
         Normalise raw fields and return a ``Job``, or ``None`` if the listing
         is not in the USA (after applying the ``assume_us_remote`` heuristic).
         ``company_override`` lets aggregator scrapers (The Muse, Remotive, USAJobs)
         pass the real hiring-company name without changing ``target.company_name``.
+        ``force_usa`` skips location filtering — use for sources that are
+        inherently US-only (e.g. USAJobs.gov).
         """
         title    = (title or "").strip()
         location = (location or "").strip()
@@ -529,6 +532,9 @@ class BaseScraper(ABC):
 
         # Heuristic: bare "Remote" with no country → treat as US Remote
         if not is_usa and is_remote and self.target.assume_us_remote:
+            is_usa = True
+
+        if not is_usa and force_usa:
             is_usa = True
 
         if not is_usa:
@@ -1382,18 +1388,22 @@ class USAJobsScraper(BaseScraper):
                     seen_ids.add(job_id)
 
                     locs = mv.get("PositionLocation", [])
-                    location = "; ".join(
-                        f"{l.get('CityName', '')}, {l.get('CountrySubDivisionCode', '')}".strip(", ")
-                        for l in locs
-                    ) or "United States"
+                    # Build "City, ST" pairs; fall back to "Nationwide, US"
+                    loc_parts = []
+                    for l in locs:
+                        city  = l.get("CityName", "").strip()
+                        state = l.get("CountrySubDivisionCode", "").strip()
+                        pair  = ", ".join(p for p in [city, state] if p)
+                        if pair:
+                            loc_parts.append(pair)
+                    location = "; ".join(loc_parts) or "Nationwide, US"
 
                     pay = mv.get("PositionRemuneration", [{}])[0]
                     sal_min = float(pay.get("MinimumRange", 0) or 0) or None
                     sal_max = float(pay.get("MaximumRange", 0) or 0) or None
-                    sal_txt = f"{sal_min}-{sal_max}" if sal_min else ""
+                    sal_txt = f"{int(sal_min)}-{int(sal_max)}" if sal_min else ""
 
                     start_date = mv.get("PublicationStartDate", "")
-                    end_date   = mv.get("ApplicationCloseDate", "")
 
                     job = self._make_job(
                         title=mv.get("PositionTitle", ""),
@@ -1405,6 +1415,7 @@ class USAJobsScraper(BaseScraper):
                         salary_text=sal_txt,
                         posted_at=start_date or None,
                         company_override=mv.get("DepartmentName", "US Government"),
+                        force_usa=True,   # USAJobs is 100% US — skip location filter
                     )
                     if job:
                         jobs.append(job)
