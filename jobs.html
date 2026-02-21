@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ambore Jobs — Tech & IT Jobs Across the USA</title>
-<meta name="description" content="Browse 2,400+ fresh US tech jobs from Greenhouse, Ashby, Lever, WeWorkRemotely, RemoteOK, Remotive, and The Muse. Updated daily."/>
+<meta name="description" content="Browse 4,000+ fresh US tech jobs from Greenhouse, Ashby, Workday, Lever, WeWorkRemotely, Adzuna, USAJobs, and more. Updated daily."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -321,6 +321,7 @@ a{text-decoration:none;color:inherit}
         <option value="">All sources</option>
         <option value="greenhouse">Greenhouse</option>
         <option value="ashby">Ashby</option>
+        <option value="workday">Workday</option>
         <option value="weworkremotely">WeWorkRemotely</option>
         <option value="remoteok">RemoteOK</option>
         <option value="lever">Lever</option>
@@ -329,6 +330,8 @@ a{text-decoration:none;color:inherit}
         <option value="adzuna">Adzuna</option>
         <option value="serpapi">Google Jobs</option>
         <option value="usajobs">USAJobs (Gov)</option>
+        <option value="taleo">Taleo</option>
+        <option value="icims">iCIMS</option>
         <option value="apify">Apify (LinkedIn/Indeed)</option>
       </select>
     </div>
@@ -604,7 +607,7 @@ function renderJobCard(job) {
     : '';
 
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn/Indeed', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', apify: 'LinkedIn/Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';

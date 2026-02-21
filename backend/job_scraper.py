@@ -868,13 +868,15 @@ class WorkdayScraper(BaseScraper):
     Requires ``target.wd_tenant``, ``target.wd_site``, and optionally
     ``target.wd_instance`` (default "wd5").
 
-    Example — Microsoft:
-        wd_tenant="microsoftcorporation"
-        wd_site="External_Microsoft_Careers_Portal"
-        wd_instance="wd1"
-    → https://microsoftcorporation.wd1.myworkdayjobs.com/wday/cxs/
-          microsoftcorporation/External_Microsoft_Careers_Portal/jobs
+    Example — Salesforce:
+        wd_tenant="salesforce"
+        wd_site="External_Career_Site"
+        wd_instance="wd12"
+    → https://salesforce.wd12.myworkdayjobs.com/wday/cxs/
+          salesforce/External_Career_Site/jobs
 
+    The scraper first GETs the careers page to establish a session cookie and
+    extract a CSRF token, then POSTs to the JSON search API.
     The API paginates in pages of 20.  Location is filtered post-fetch because
     Workday does not expose a query-time country filter on the public endpoint.
     """
@@ -885,6 +887,60 @@ class WorkdayScraper(BaseScraper):
         "/wday/cxs/{tenant}/{site}/jobs"
     )
     _JOB_TPL = "https://{tenant}.{instance}.myworkdayjobs.com{path}"
+
+    def _warm_session(self, tenant: str, instance: str, site: str) -> dict[str, str]:
+        """
+        GET the careers page to establish session cookies, then extract any
+        CSRF token from cookies or inline JavaScript.  Returns extra headers
+        to include in the subsequent POST request.
+
+        Workday uses cookie ``CALYPSO_CSRF_TOKEN`` (confirmed 2026-02).
+        The same cookie value must be sent as an ``X-Csrf-Token`` header.
+        httpx's Client automatically forwards all cookies on subsequent
+        requests to the same domain, so no manual cookie injection is needed.
+        """
+        page_url = (
+            f"https://{tenant}.{instance}.myworkdayjobs.com/{site}/jobs"
+        )
+        extra: dict[str, str] = {}
+        try:
+            resp = self.client.get(
+                page_url,
+                headers={**DEFAULT_HEADERS,
+                         "Accept": "text/html,application/xhtml+xml,*/*;q=0.8"},
+            )
+            # Workday CSRF cookie names (in priority order, most-specific first)
+            for cname in (
+                "CALYPSO_CSRF_TOKEN",   # confirmed Workday standard (2026)
+                "csrfToken", "CSRF-TOKEN", "csrf_token", "_csrf", "csrf",
+            ):
+                tok = (resp.cookies.get(cname)
+                       or self.client._client.cookies.get(cname))
+                if tok:
+                    extra["X-Csrf-Token"] = str(tok)
+                    log.debug("[Workday] CSRF from cookie '%s' for %s/%s",
+                              cname, tenant, site)
+                    break
+
+            # Fallback: scan inline <script> blocks
+            if not extra:
+                soup = BeautifulSoup(resp.text, "html.parser")
+                for script in soup.find_all("script"):
+                    text = script.get_text()
+                    m = re.search(
+                        r'''(?:csrfToken|CSRF)["\s]*[:=]\s*["']([^"']{10,})["']''',
+                        text, re.IGNORECASE,
+                    )
+                    if m:
+                        extra["X-Csrf-Token"] = m.group(1)
+                        log.debug("[Workday] CSRF from inline script for %s/%s",
+                                  tenant, site)
+                        break
+
+        except Exception as exc:
+            log.debug("[Workday] session warmup skipped (%s/%s): %s",
+                      tenant, site, exc)
+        return extra
 
     def fetch_jobs(self) -> list[Job]:
         t = self.target
@@ -897,7 +953,10 @@ class WorkdayScraper(BaseScraper):
         instance = t.wd_instance or "wd5"
         api_url  = self._API_TPL.format(tenant=tenant, site=site, instance=instance)
 
-        log.info("[Workday] %s — fetching job list", tenant)
+        log.info("[Workday] %s — warming session then fetching job list", tenant)
+
+        # Establish session cookies + grab CSRF token before first POST
+        extra_headers = self._warm_session(tenant, instance, site)
 
         jobs:   list[Job] = []
         offset  = 0
@@ -914,7 +973,7 @@ class WorkdayScraper(BaseScraper):
                 resp = self.client.post(
                     api_url,
                     json=payload,
-                    headers={"Content-Type": "application/json"},
+                    headers={"Content-Type": "application/json", **extra_headers},
                 )
                 data = _safe_json(resp)
             except Exception as exc:
@@ -944,13 +1003,16 @@ class WorkdayScraper(BaseScraper):
                     url=job_url,
                     employment_type=time_type,
                     posted_at=posted_on,
+                    force_usa=True,   # Workday targets are US-focused companies
                 )
                 if job:
                     jobs.append(job)
 
-            total   = data.get("total", 0)
             offset += limit
-            if offset >= total:
+            # Workday API: the 'total' field is unreliable after page 1 (may
+            # return 0 even when more jobs exist).  Stop only when a page
+            # returns fewer results than the page size — that is the true end.
+            if len(postings) < limit:
                 break
 
         log.info("[Workday] %s — %d US jobs", tenant, len(jobs))
@@ -1613,65 +1675,90 @@ class WeWorkRemotelyScraper(BaseScraper):
 
 class BambooHRScraper(BaseScraper):
     """
-    BambooHR public careers JSON API — https://{slug}.bamboohr.com/careers/list
+    BambooHR public careers page scraper — https://{slug}.bamboohr.com/careers
 
     ``target.company`` must be the BambooHR subdomain slug (e.g. "procore").
-    No auth required.
+    No auth required.  Parses the HTML careers page because the JSON endpoint
+    (/careers/list) redirects to the BambooHR homepage.
+
+    BambooHR careers page HTML structure:
+      .BambooHR-ATS-Department-Item   — section per department
+        .BambooHR-ATS-Department-Header  — department name (h4)
+        .BambooHR-ATS-Jobs-Item          — individual job row (li)
+          a[href]                         — job title + link
+          .BambooHR-ATS-Location          — location text
     """
 
     ATS_NAME = "bamboohr"
 
     def fetch_jobs(self) -> list[Job]:
         slug = self.target.company
-        url  = f"https://{slug}.bamboohr.com/careers/list"
-        log.info("[BambooHR] %s — fetching job list", slug)
+        url  = f"https://{slug}.bamboohr.com/careers"
+        log.info("[BambooHR] %s — fetching careers HTML page", slug)
 
         try:
-            resp = self.client.get(url, headers={"Accept": "application/json"})
-            data = _safe_json(resp)
+            resp = self.client.get(url, headers={"Accept": "text/html,*/*"})
+            html = resp.text
         except Exception as exc:
             log.error("[BambooHR] %s — %s", slug, exc)
             return []
 
-        result = data.get("result", []) if isinstance(data, dict) else []
+        soup = BeautifulSoup(html, "html.parser")
         jobs: list[Job] = []
 
-        for raw in result:
-            loc_obj  = raw.get("location") or {}
-            city     = loc_obj.get("city",  "") or ""
-            state    = loc_obj.get("state", "") or ""
-            country  = (loc_obj.get("country", "") or "").upper()
-            remote   = bool(raw.get("isRemote") or raw.get("remote"))
-
-            parts = [p for p in [city, state] if p]
-            location = ", ".join(parts) if parts else ("Remote, US" if remote else "")
-
-            is_usa, is_remote = _classify_location(location)
-            if remote:
-                is_remote = True
-                if not is_usa:
-                    is_usa = True   # assume US remote
-            if not is_usa and country in ("US", "USA", "UNITED STATES"):
-                is_usa = True
-
-            if not is_usa:
-                continue
-
-            job_id  = str(raw.get("id", ""))
-            job_url = f"https://{slug}.bamboohr.com/careers/{job_id}"
-
-            job = self._make_job(
-                title=raw.get("jobOpeningName", raw.get("title", "")),
-                location=location or "US",
-                url=job_url,
-                department=raw.get("departmentLabel", raw.get("department")),
-                employment_type=raw.get("employmentType"),
-            )
-            if job:
-                jobs.append(job)
+        # Primary path: department sections containing job items
+        dept_sections = soup.select(
+            ".BambooHR-ATS-Department-Item, [class*='BambooHR-ATS-Department']"
+        )
+        if dept_sections:
+            for section in dept_sections:
+                dept_el    = section.select_one(
+                    ".BambooHR-ATS-Department-Header, h4, h3"
+                )
+                department = dept_el.get_text(strip=True) if dept_el else None
+                for item in section.select(
+                    ".BambooHR-ATS-Jobs-Item, li"
+                ):
+                    self._parse_bamboo_item(item, slug, department, jobs)
+        else:
+            # Flat-list fallback — sometimes BambooHR renders a simple <ul>
+            for item in soup.select(
+                ".BambooHR-ATS-Jobs-Item, li[class*='job'], li[class*='opening']"
+            ):
+                self._parse_bamboo_item(item, slug, None, jobs)
 
         log.info("[BambooHR] %s — %d US jobs", slug, len(jobs))
-        return jobs
+        return jobs[:MAX_JOBS_PER_SRC]
+
+    def _parse_bamboo_item(
+        self,
+        item: "Tag",
+        slug: str,
+        department: str | None,
+        jobs: list[Job],
+    ) -> None:
+        link = item.find("a", href=True)
+        if not link:
+            return
+        title = link.get_text(strip=True)
+        if not title:
+            return
+
+        job_url = urljoin(f"https://{slug}.bamboohr.com", str(link["href"]))
+
+        loc_el   = item.select_one(
+            ".BambooHR-ATS-Location, [class*='location'], [class*='Location']"
+        )
+        location = loc_el.get_text(strip=True) if loc_el else "US"
+
+        job = self._make_job(
+            title=title,
+            location=location or "US",
+            url=job_url,
+            department=department,
+        )
+        if job:
+            jobs.append(job)
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -2139,6 +2226,246 @@ class ApifyJobsScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# iCIMS  (public HTML — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class ICIMSScraper(BaseScraper):
+    """
+    iCIMS career page HTML scraper.
+
+    iCIMS renders a consistent HTML structure for its job listing pages.
+    Set ``target.careers_url`` to the company's public iCIMS job search URL.
+
+    Common URL patterns
+    -------------------
+    Per-company numeric portal:
+      https://{id}.icims.com/jobs/search?ss=1&searchRelation=keyword_all
+    Custom company career domain:
+      https://careers.{company}.com/search-jobs  (behind iCIMS)
+
+    iCIMS HTML job row selectors (tried in order):
+      .iCIMS_Expandable_Container  — most common widget layout
+      .iCIMS_JobsTable_Cell        — table-based layout
+      .job-listing-item            — some custom themes
+    """
+
+    ATS_NAME = "icims"
+
+    # iCIMS-specific selectors tried in priority order
+    _CONTAINER_SELECTORS = [
+        ".iCIMS_Expandable_Container",
+        ".iCIMS_JobsTable_Cell",
+        "tr.iCIMS_JobsTable_Row",
+        ".job-listing-item",
+        "[data-field='jobtitle']",
+    ]
+    _LOC_SELECTORS = [
+        ".iCIMS_Location",
+        "[class*='iCIMS_Location']",
+        "[class*='location']",
+        "td:nth-child(2)",
+    ]
+    _TYPE_SELECTORS = [
+        ".iCIMS_Type",
+        "[class*='iCIMS_Type']",
+        "[class*='employment']",
+        "[class*='type']",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        url = self.target.careers_url
+        if not url:
+            log.error("[iCIMS] careers_url is required for %s", self.target.company)
+            return []
+
+        log.info("[iCIMS] %s — fetching %s", self.target.company_name, url)
+        try:
+            resp = self.client.get(url)
+            html = resp.text
+        except Exception as exc:
+            log.error("[iCIMS] %s — %s", url, exc)
+            return []
+
+        soup     = BeautifulSoup(html, "html.parser")
+        parsed   = urlparse(url)
+        base_url = f"{parsed.scheme}://{parsed.netloc}"
+        jobs: list[Job] = []
+
+        # Try iCIMS-specific containers first
+        containers: list["Tag"] = []
+        for sel in self._CONTAINER_SELECTORS:
+            found = soup.select(sel)
+            if found:
+                containers = found
+                log.debug("[iCIMS] matched selector: %s (%d items)", sel, len(found))
+                break
+
+        if containers:
+            for container in containers[:MAX_JOBS_PER_SRC]:
+                link = container.find("a", href=True)
+                if not link:
+                    continue
+                title = link.get_text(strip=True)
+                if not title:
+                    continue
+
+                job_url = urljoin(base_url, str(link["href"]))
+
+                loc_el   = self._first_el(container, self._LOC_SELECTORS)
+                location = loc_el.get_text(strip=True) if loc_el else "US"
+
+                type_el  = self._first_el(container, self._TYPE_SELECTORS)
+                emp_type = type_el.get_text(strip=True) if type_el else None
+
+                job = self._make_job(
+                    title=title,
+                    location=location or "US",
+                    url=job_url,
+                    employment_type=emp_type,
+                )
+                if job:
+                    jobs.append(job)
+        else:
+            # Generic HTML fallback — same heuristics as GenericHTMLScraper
+            log.debug("[iCIMS] no iCIMS selectors matched — using generic HTML fallback")
+            delegate = GenericHTMLScraper(self.client, self.target)
+            items    = delegate._find_job_elements(soup)
+            for item in items[:MAX_JOBS_PER_SRC]:
+                title    = delegate._first_text(item, GenericHTMLScraper._TITLE_SELECTORS)
+                location = delegate._first_text(item, GenericHTMLScraper._LOCATION_SELECTORS)
+                link_tag = item.find("a", href=True) if item.name != "a" else item
+                job_url  = urljoin(base_url, str(link_tag["href"])) if link_tag else url
+                if not title:
+                    continue
+                job = self._make_job(
+                    title=title, location=location or "US", url=job_url,
+                )
+                if job:
+                    jobs.append(job)
+
+        log.info("[iCIMS] %s — %d US jobs", self.target.company_name, len(jobs))
+        return jobs
+
+    @staticmethod
+    def _first_el(container: "Tag", selectors: list[str]) -> "Tag | None":
+        for sel in selectors:
+            el = container.select_one(sel)
+            if el:
+                return el
+        return None
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Oracle Taleo  (public HTML — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class TaleoScraper(BaseScraper):
+    """
+    Oracle Taleo career page HTML scraper.
+
+    Taleo generates fairly consistent HTML for its job search pages.
+    Set ``target.careers_url`` to the Taleo job search page URL.
+
+    Common URL pattern:
+      https://{tenant}.taleo.net/careersection/{section}/jobsearch.ftl
+
+    Note: many companies have migrated from Taleo to Oracle HCM Cloud.
+    If the careers_url returns an error, the company may have changed ATS.
+
+    Taleo HTML selectors:
+      tr[class*='listSectionContentTD']  — job rows in table view
+      tr.even / tr.odd                   — alternating row classes
+      .jobListItem                       — modern widget view
+    """
+
+    ATS_NAME = "taleo"
+
+    _ROW_SELECTORS = [
+        "tr.listSectionContentTD",
+        "tr.even, tr.odd",
+        ".jobListItem",
+        ".job-list-item",
+        "[class*='jobListItem']",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        url = self.target.careers_url
+        if not url:
+            log.error("[Taleo] careers_url is required for %s", self.target.company)
+            return []
+
+        log.info("[Taleo] %s — fetching %s", self.target.company_name, url)
+        try:
+            resp = self.client.get(url)
+            html = resp.text
+        except Exception as exc:
+            log.error("[Taleo] %s — %s", url, exc)
+            return []
+
+        soup     = BeautifulSoup(html, "html.parser")
+        parsed   = urlparse(url)
+        base_url = f"{parsed.scheme}://{parsed.netloc}"
+        jobs: list[Job] = []
+
+        rows: list["Tag"] = []
+        for sel in self._ROW_SELECTORS:
+            found = soup.select(sel)
+            if found:
+                rows = found
+                log.debug("[Taleo] matched selector: %s (%d rows)", sel, len(found))
+                break
+
+        if rows:
+            for row in rows[:MAX_JOBS_PER_SRC]:
+                link = row.find("a", href=True)
+                if not link:
+                    continue
+                title = link.get_text(strip=True)
+                if not title:
+                    continue
+
+                job_url = urljoin(base_url, str(link["href"]))
+
+                # Taleo location is usually the 3rd <td> or a cell with "location" class
+                loc_el = (
+                    row.select_one(
+                        "td[class*='location'], td[class*='Location'], "
+                        "[class*='location']"
+                    )
+                    or (row.select("td")[2] if len(row.select("td")) > 2 else None)
+                )
+                location = loc_el.get_text(strip=True) if loc_el else "US"
+
+                job = self._make_job(
+                    title=title,
+                    location=location or "US",
+                    url=job_url,
+                )
+                if job:
+                    jobs.append(job)
+        else:
+            # Generic HTML fallback
+            log.debug("[Taleo] no Taleo-specific rows found — using generic HTML fallback")
+            delegate = GenericHTMLScraper(self.client, self.target)
+            items    = delegate._find_job_elements(soup)
+            for item in items[:MAX_JOBS_PER_SRC]:
+                title    = delegate._first_text(item, GenericHTMLScraper._TITLE_SELECTORS)
+                location = delegate._first_text(item, GenericHTMLScraper._LOCATION_SELECTORS)
+                link_tag = item.find("a", href=True) if item.name != "a" else item
+                job_url  = urljoin(base_url, str(link_tag["href"])) if link_tag else url
+                if not title:
+                    continue
+                job = self._make_job(
+                    title=title, location=location or "US", url=job_url,
+                )
+                if job:
+                    jobs.append(job)
+
+        log.info("[Taleo] %s — %d US jobs", self.target.company_name, len(jobs))
+        return jobs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -2151,6 +2478,8 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "ashby":           AshbyScraper,
     "bamboohr":        BambooHRScraper,
     "workable":        WorkableScraper,
+    "icims":           ICIMSScraper,
+    "taleo":           TaleoScraper,
     # ── Aggregator APIs (single entry fetches many companies) ──────────────
     "themuse":         TheMuseScraper,
     "remotive":        RemotiveScraper,
@@ -2300,8 +2629,10 @@ class JobScrapeOrchestrator:
 # Built-in sample targets — all slugs verified live as of 2026-02
 # Notes:
 #   Greenhouse + Lever + Ashby use open public JSON APIs (no auth needed)
-#   SmartRecruiters now requires a bearer token — excluded from defaults
-#   Workday requires a browser session (Cloudflare + CSRF) — use PlaywrightScraper
+#   Workday: CSRF is auto-handled via session warmup GET before each POST
+#   SmartRecruiters: public API locked; requires company smart_token (commented out)
+#   BambooHR: careers pages are JS-rendered (React SPA) — needs Playwright
+#   iCIMS / Taleo: HTML scrapers; effectiveness depends on page structure
 _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # ── Greenhouse (boards-api.greenhouse.io/v1/boards/{slug}/jobs) ──────────
     # All slugs verified 2026-02
@@ -2370,6 +2701,71 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
     {"ats": "workable", "company": "typeform",      "company_name": "Typeform"},
     {"ats": "workable", "company": "hotjar",        "company_name": "Hotjar"},
+
+    # ── Workday (POST /wday/cxs/{tenant}/{site}/jobs — CSRF via session warmup)
+    # The scraper GETs the careers page first to capture the CALYPSO_CSRF_TOKEN
+    # cookie, which is then sent as the X-Csrf-Token header on every POST.
+    # All slugs below verified 2026-02.
+    {
+        "ats": "workday", "company": "salesforce",
+        "company_name": "Salesforce",
+        "wd_tenant": "salesforce", "wd_site": "External_Career_Site", "wd_instance": "wd12",
+    },
+    {
+        "ats": "workday", "company": "adobe",
+        "company_name": "Adobe",
+        "wd_tenant": "adobe", "wd_site": "external_experienced", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "walmart",
+        "company_name": "Walmart",
+        "wd_tenant": "walmart", "wd_site": "WalmartExternal", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "paypal",
+        "company_name": "PayPal",
+        "wd_tenant": "paypal", "wd_site": "jobs", "wd_instance": "wd1",
+    },
+    # Cloudflare-protected (return HTTP 500 to non-browser clients):
+    # microsoft (wd1/External_Microsoft_Careers_Portal), oracle (wd1/External),
+    # cisco (wd5/*), apple (wd5/*), nike (wd1/*), target (wd12/External_Careers)
+
+    # ── SmartRecruiters (api.smartrecruiters.com/v1/companies/{slug}/postings)
+    # NOTE: SmartRecruiters now requires a company-specific smart_token for all
+    # public API access — the public listings endpoint returns totalFound=0 for
+    # every tested company.  Targets commented out until a workaround is found.
+    # {"ats": "smartrecruiters", "company": "IKEA",       "company_name": "IKEA"},
+    # {"ats": "smartrecruiters", "company": "HelloFresh",  "company_name": "HelloFresh"},
+
+    # ── BambooHR (HTML careers page — {slug}.bamboohr.com/careers)
+    # Note: BambooHR's careers pages are now JS-rendered (React SPA).
+    # Only slugs where Playwright is available will successfully scrape content.
+    # Listed here as targets for environments with Playwright installed.
+    # {"ats": "bamboohr", "company": "udemy",       "company_name": "Udemy"},
+    # {"ats": "bamboohr", "company": "procore",     "company_name": "Procore"},
+    # {"ats": "bamboohr", "company": "headspace",   "company_name": "Headspace"},
+
+    # ── iCIMS (HTML careers page — set careers_url to the search page)
+    # iCIMS enterprise customers typically host careers on custom domains.
+    # The {company}.icims.com/jobs/search URL pattern returns 404 for most
+    # companies that have migrated to newer iCIMS hosting.
+    # Add your own iCIMS targets here with the correct careers_url.
+    # Example:
+    # {"ats": "icims", "company": "mycompany", "company_name": "My Company",
+    #  "careers_url": "https://careers.mycompany.com/jobs/search"},
+
+    # ── Taleo (HTML careers page — set careers_url to the job search page)
+    # Verified 2026-02: AT&T still on Taleo (12 US jobs).
+    {
+        "ats": "taleo", "company": "att",
+        "company_name": "AT&T",
+        "careers_url": "https://att.jobs/search-jobs",
+    },
+    {
+        "ats": "taleo", "company": "baxter",
+        "company_name": "Baxter International",
+        "careers_url": "https://jobs.baxter.com/search-jobs",
+    },
 
     # ── Aggregator APIs (single entry = many companies) ───────────────────────
     # The Muse — tech/data/product/design roles, all US companies
