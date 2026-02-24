@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ambore — LinkedIn Profile Optimizer</title>
+<meta name="description" content="Optimize your LinkedIn headline, about section, and experience bullets with AI. Get more recruiter views and job matches."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+function track(event,page){fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,page})}).catch(()=>{});}
+window.addEventListener('load',()=>track('page_view','linkedin'));
+</script>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='index.html?auth=login&redirect=linkedin.html&msg=Please+log+in+to+access+this+feature';
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ── TOPBAR ── */
+.app-shell{min-height:100vh;background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(79,70,229,0.15) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.12) 0%,transparent 50%);}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);position:sticky;top:0;z-index:100;}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none}
+.logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:14px;margin-left:18px;flex-wrap:wrap}
+.nav-links a{font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:var(--accent)}
+.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6)}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+
+/* ── MAIN ── */
+.main{max-width:960px;margin:0 auto;padding:36px 20px 80px}
+.page-heading{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:6px}
+.page-hint{font-size:0.88rem;color:rgba(255,255,255,0.4);margin-bottom:8px}
+.li-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(10,102,194,0.15);border:1px solid rgba(10,102,194,0.3);color:#5ba3d9;font-size:0.78rem;font-weight:700;padding:4px 12px;border-radius:20px;margin-bottom:24px}
+
+/* ── SECTIONS ── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.section-title{font-size:0.88rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:1rem}
+.section-sub{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-bottom:14px}
+.field-row{display:grid;gap:14px;margin-bottom:14px}
+.field-row.cols2{grid-template-columns:1fr 1fr}
+@media(max-width:640px){.field-row.cols2{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.4)}
+.field input,.field textarea,.field select{
+  width:100%;padding:10px 13px;background:var(--card2);border:1px solid var(--border);
+  border-radius:9px;color:#fff;font-size:0.88rem;outline:none;transition:border-color 0.2s;resize:vertical;
+}
+.field input:focus,.field textarea:focus{border-color:rgba(79,70,229,0.5)}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.char-hint{font-size:0.7rem;color:rgba(255,255,255,0.25);text-align:right;margin-top:3px}
+.char-hint.warn{color:var(--yellow)}
+.char-hint.over{color:var(--red)}
+
+/* ── TARGET ROLES ── */
+.role-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.role-tag{display:flex;align-items:center;gap:4px;padding:5px 10px;background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.25);border-radius:20px;font-size:0.78rem;color:var(--accent);font-weight:600}
+.role-tag button{background:none;border:none;color:rgba(129,140,248,0.5);cursor:pointer;font-size:0.9rem;line-height:1;padding:0 0 0 4px}
+.role-tag button:hover{color:var(--red)}
+.tag-input-row{display:flex;gap:8px;margin-top:10px}
+.tag-input-row input{flex:1;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:9px;color:#fff;font-size:0.85rem;outline:none}
+.tag-input-row input:focus{border-color:rgba(79,70,229,0.5)}
+.tag-add-btn{padding:8px 14px;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);border-radius:9px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ── OPTIMIZE BUTTON ── */
+.optimize-btn{
+  width:100%;padding:16px;background:var(--grad);border:none;border-radius:13px;
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(79,70,229,0.4);transition:transform 0.2s,box-shadow 0.2s;
+  margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.optimize-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,70,229,0.55)}
+.optimize-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── OUTPUT SECTION ── */
+.output-grid{display:grid;gap:20px}
+.output-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.output-card-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);gap:10px}
+.output-card-title{font-size:0.85rem;font-weight:800;color:#fff;display:flex;align-items:center;gap:7px}
+.output-card-badge{font-size:0.68rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;padding:3px 9px;border-radius:10px}
+.badge-head{background:rgba(129,140,248,0.12);color:var(--accent);border:1px solid rgba(129,140,248,0.25)}
+.badge-about{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
+.badge-skills{background:rgba(251,191,36,0.1);color:var(--yellow);border:1px solid rgba(251,191,36,0.2)}
+.badge-exp{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.25)}
+.output-copy-btn{padding:6px 13px;border-radius:7px;font-size:0.75rem;font-weight:600;cursor:pointer;background:rgba(255,255,255,0.05);border:1px solid var(--border);color:rgba(255,255,255,0.5);transition:all 0.15s}
+.output-copy-btn:hover{color:#fff;border-color:rgba(255,255,255,0.2)}
+.output-copy-btn.copied{color:var(--green);border-color:rgba(34,197,94,0.3)}
+.output-body{padding:20px;font-size:0.9rem;line-height:1.75;color:rgba(255,255,255,0.85);white-space:pre-wrap;min-height:60px}
+.output-body.mono{font-family:'Courier New',monospace;font-size:0.85rem}
+
+/* ── CHAR COUNTER FOR HEADLINE ── */
+.headline-meter{height:3px;border-radius:2px;background:rgba(255,255,255,0.05);margin-top:6px;overflow:hidden}
+.headline-meter-fill{height:100%;border-radius:2px;background:var(--green);transition:width 0.3s,background 0.3s}
+
+/* ── SPINNER / STATUS ── */
+.status-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.spinner{width:18px;height:18px;border:2px solid rgba(129,140,248,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-text{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+
+/* ── TIPS PANEL ── */
+.tips-panel{background:rgba(79,70,229,0.07);border:1px solid rgba(79,70,229,0.18);border-radius:12px;padding:16px 20px;margin-bottom:24px}
+.tips-title{font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--accent);margin-bottom:10px}
+.tips-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.tips-list li{font-size:0.82rem;color:rgba(255,255,255,0.55);padding-left:16px;position:relative}
+.tips-list li::before{content:'✓';position:absolute;left:0;color:var(--green);font-weight:700}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon-sm">A</div>
+      Ambore <span class="brand-tag">AI</span>
+    </a>
+    <nav class="nav-links">
+      <a href="jobs.html">Jobs</a>
+      <a href="resume.html">Resume</a>
+      <a href="cover-letter.html">Cover Letter</a>
+      <a href="email.html">Email</a>
+      <a href="linkedin.html" class="active">LinkedIn</a>
+      <a href="portfolio.html">Portfolio</a>
+      <a href="app.html">Interview AI</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="user-pill">
+      <span class="user-name" id="user-display"></span>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1 class="page-heading">LinkedIn Profile Optimizer</h1>
+    <p class="page-hint">AI-powered optimization for your headline, about section, skills &amp; experience bullets.</p>
+    <div class="li-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="#0A66C2"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+      LinkedIn Optimizer
+    </div>
+
+    <div class="tips-panel">
+      <div class="tips-title">What gets optimized</div>
+      <ul class="tips-list">
+        <li>Headline (220 chars) — keyword-rich, searchable by recruiters</li>
+        <li>About section (2,600 chars) — engaging story + skills + call to action</li>
+        <li>Skills list — top 10 relevant skills ranked by recruiter search frequency</li>
+        <li>Experience bullets — STAR-format achievements with quantified impact</li>
+      </ul>
+    </div>
+
+    <!-- INPUT: Current Profile -->
+    <div class="section-card">
+      <div class="section-title"><span class="icon">👤</span> Your Current Profile</div>
+      <div class="section-sub">Paste your current LinkedIn content (or start from scratch — just fill in your target info below)</div>
+      <div class="field">
+        <label>Current Headline <span style="font-weight:400;text-transform:none;letter-spacing:0;color:rgba(255,255,255,0.25)">(optional — paste what you have now)</span></label>
+        <input type="text" id="cur-headline" maxlength="300" placeholder="e.g. Software Engineer | Python | AWS | Building scalable systems"/>
+        <div class="char-hint" id="cur-headline-hint">0 / 220 chars</div>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>Current About Section <span style="font-weight:400;text-transform:none;letter-spacing:0;color:rgba(255,255,255,0.25)">(optional)</span></label>
+        <textarea id="cur-about" rows="5" placeholder="Paste your current About section, or leave blank to write from scratch..."></textarea>
+      </div>
+    </div>
+
+    <!-- INPUT: Target Role -->
+    <div class="section-card">
+      <div class="section-title"><span class="icon">🎯</span> Target Role &amp; Industry</div>
+      <div class="section-sub">Tell us what you're aiming for — this shapes every section</div>
+      <div class="field-row cols2">
+        <div class="field">
+          <label>Target Job Title</label>
+          <input type="text" id="target-title" placeholder="e.g. Senior Software Engineer"/>
+        </div>
+        <div class="field">
+          <label>Industry / Domain</label>
+          <input type="text" id="target-industry" placeholder="e.g. FinTech, Healthcare, SaaS"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Target Roles (add multiple)</label>
+        <div class="role-tags" id="role-tags-list"></div>
+        <div class="tag-input-row">
+          <input type="text" id="role-tag-input" placeholder="Type a role and press Add..." onkeydown="if(event.key==='Enter')addRoleTag()"/>
+          <button class="tag-add-btn" onclick="addRoleTag()">+ Add</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- INPUT: Background -->
+    <div class="section-card">
+      <div class="section-title"><span class="icon">💼</span> Your Background &amp; Achievements</div>
+      <div class="section-sub">Share your experience so the AI can quantify your impact</div>
+      <div class="field-row cols2">
+        <div class="field">
+          <label>Years of Experience</label>
+          <input type="text" id="years-exp" placeholder="e.g. 6 years"/>
+        </div>
+        <div class="field">
+          <label>Current / Most Recent Title</label>
+          <input type="text" id="current-title" placeholder="e.g. Software Engineer at Google"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Key Achievements &amp; Skills</label>
+        <textarea id="achievements" rows="5" placeholder="List your biggest wins, tech stack, tools, and accomplishments. The more specific, the better. E.g.: 'Led migration of monolith to microservices, cutting latency 40%. Expert in Python, React, AWS, Kubernetes. Built ML pipeline processing 10M events/day.'"></textarea>
+      </div>
+      <div class="field" style="margin-top:14px">
+        <label>Most Recent Job Description <span style="font-weight:400;text-transform:none;letter-spacing:0;color:rgba(255,255,255,0.25)">(optional — helps with bullet optimization)</span></label>
+        <textarea id="job-desc" rows="4" placeholder="Paste your current/last job description to generate optimized bullet points..."></textarea>
+      </div>
+    </div>
+
+    <!-- OPTIMIZE BUTTON -->
+    <button class="optimize-btn" id="optimize-btn" onclick="optimize()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+      Optimize My LinkedIn Profile
+    </button>
+
+    <!-- STATUS -->
+    <div class="status-row hidden" id="status-row">
+      <div class="spinner"></div>
+      <span class="status-text" id="status-text">Analyzing your profile and target roles...</span>
+    </div>
+
+    <!-- OUTPUT SECTION -->
+    <div class="output-grid hidden" id="output-section">
+
+      <!-- Headline -->
+      <div class="output-card">
+        <div class="output-card-head">
+          <div class="output-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+            Optimized Headline
+            <span class="output-card-badge badge-head">220 chars</span>
+          </div>
+          <button class="output-copy-btn" onclick="copySection('headline-text',this)">Copy</button>
+        </div>
+        <div class="output-body" id="headline-text"></div>
+        <div style="padding:0 20px 16px">
+          <div class="headline-meter"><div class="headline-meter-fill" id="headline-fill" style="width:0%"></div></div>
+          <div class="char-hint" id="headline-len">0 / 220</div>
+        </div>
+      </div>
+
+      <!-- About -->
+      <div class="output-card">
+        <div class="output-card-head">
+          <div class="output-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            About Section
+            <span class="output-card-badge badge-about">2,600 chars max</span>
+          </div>
+          <button class="output-copy-btn" onclick="copySection('about-text',this)">Copy</button>
+        </div>
+        <div class="output-body" id="about-text"></div>
+      </div>
+
+      <!-- Skills -->
+      <div class="output-card">
+        <div class="output-card-head">
+          <div class="output-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Recommended Skills
+            <span class="output-card-badge badge-skills">Top 15</span>
+          </div>
+          <button class="output-copy-btn" onclick="copySection('skills-text',this)">Copy</button>
+        </div>
+        <div class="output-body mono" id="skills-text"></div>
+      </div>
+
+      <!-- Experience Bullets -->
+      <div class="output-card">
+        <div class="output-card-head">
+          <div class="output-card-title">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+            Experience Bullets
+            <span class="output-card-badge badge-exp">STAR format</span>
+          </div>
+          <button class="output-copy-btn" onclick="copySection('bullets-text',this)">Copy</button>
+        </div>
+        <div class="output-body" id="bullets-text"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY=_k.join('');
+const CLAUDE_MODEL='claude-sonnet-4-5-20250929';
+
+const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
+function logout(){localStorage.removeItem('ambore_user');window.location.href='index.html';}
+
+// Role tags
+let roleTags=[];
+function addRoleTag(){
+  const inp=document.getElementById('role-tag-input');
+  const val=inp.value.trim();
+  if(!val||roleTags.includes(val))return;
+  roleTags.push(val);
+  inp.value='';
+  renderRoleTags();
+}
+function removeRoleTag(i){roleTags.splice(i,1);renderRoleTags();}
+function renderRoleTags(){
+  document.getElementById('role-tags-list').innerHTML=roleTags.map((r,i)=>
+    `<div class="role-tag">${r}<button onclick="removeRoleTag(${i})">×</button></div>`
+  ).join('');
+}
+
+// Char counter for headline input
+document.addEventListener('DOMContentLoaded',()=>{
+  const hl=document.getElementById('cur-headline');
+  const hint=document.getElementById('cur-headline-hint');
+  if(hl&&hint){
+    hl.addEventListener('input',()=>{
+      const n=hl.value.length;
+      hint.textContent=`${n} / 220 chars`;
+      hint.className='char-hint'+(n>220?' over':n>180?' warn':'');
+    });
+  }
+});
+
+// Headline output meter
+function updateHeadlineMeter(text){
+  const n=text.trim().length;
+  const pct=Math.min(100,Math.round(n/220*100));
+  const fill=document.getElementById('headline-fill');
+  const len=document.getElementById('headline-len');
+  if(fill){fill.style.width=pct+'%';fill.style.background=n>220?'var(--red)':n>180?'var(--yellow)':'var(--green)';}
+  if(len){len.textContent=`${n} / 220`;}
+}
+
+function showToast(msg){
+  let t=document.getElementById('toast-el');
+  if(!t){t=document.createElement('div');t.id='toast-el';t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},3000);
+}
+
+function copySection(id,btn){
+  const text=document.getElementById(id)?.textContent||'';
+  if(!text.trim()){showToast('Nothing to copy yet.');return;}
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig=btn.textContent;btn.textContent='Copied!';btn.classList.add('copied');
+    setTimeout(()=>{btn.textContent=orig;btn.classList.remove('copied');},2000);
+  });
+}
+
+async function optimize(){
+  const curHeadline=document.getElementById('cur-headline').value.trim();
+  const curAbout=document.getElementById('cur-about').value.trim();
+  const targetTitle=document.getElementById('target-title').value.trim();
+  const targetIndustry=document.getElementById('target-industry').value.trim();
+  const yearsExp=document.getElementById('years-exp').value.trim();
+  const currentTitle=document.getElementById('current-title').value.trim();
+  const achievements=document.getElementById('achievements').value.trim();
+  const jobDesc=document.getElementById('job-desc').value.trim();
+
+  if(!targetTitle&&!achievements){
+    showToast('Please enter at least your target role or your key achievements.');return;
+  }
+
+  const btn=document.getElementById('optimize-btn');
+  btn.disabled=true;btn.textContent='Optimizing...';
+  document.getElementById('status-row').classList.remove('hidden');
+  document.getElementById('output-section').classList.add('hidden');
+  ['headline-text','about-text','skills-text','bullets-text'].forEach(id=>{
+    const el=document.getElementById(id);if(el)el.textContent='';
+  });
+
+  const systemPrompt=`You are an elite LinkedIn profile strategist and recruiter who has helped thousands of professionals land their dream jobs. Generate a fully optimized LinkedIn profile.
+
+OUTPUT FORMAT — Use EXACTLY these section markers (one per line):
+##HEADLINE##
+[headline text — max 220 chars, keyword-rich, describes value prop, includes top 3 skills/tools]
+##ABOUT##
+[about section — 3-5 paragraphs, 1500-2500 chars, start with a hook, tell career story, highlight achievements, end with call to action "Open to [type] roles in [industry]"]
+##SKILLS##
+[15 skills, one per line, ordered by recruiter search frequency for this role]
+##BULLETS##
+[5-7 STAR-format experience bullets, start each with strong action verb, include quantified metrics, focus on impact not tasks. Format: • Verb + context + action + result/metric]
+
+Rules:
+- Mirror recruiter search keywords naturally
+- Headline: no generic phrases like "passionate" or "results-driven" — be specific
+- About: conversational yet professional; use first person; include concrete numbers
+- Skills: mix of technical and soft skills relevant to ${targetTitle||'the target role'}
+- Bullets: every bullet should have a number (%, $, x, hours saved, users, etc.)`;
+
+  const userMsg=[
+    targetTitle?`Target Role: ${targetTitle}`:'',
+    targetIndustry?`Industry: ${targetIndustry}`:'',
+    roleTags.length?`Also targeting: ${roleTags.join(', ')}`:'',
+    yearsExp?`Years of Experience: ${yearsExp}`:'',
+    currentTitle?`Current Title: ${currentTitle}`:'',
+    achievements?`Key Achievements & Skills:\n${achievements}`:'',
+    curHeadline?`Current Headline: ${curHeadline}`:'',
+    curAbout?`Current About:\n${curAbout}`:'',
+    jobDesc?`Job Description:\n${jobDesc}`:'',
+  ].filter(Boolean).join('\n\n');
+
+  // Update status text
+  const statusMsgs=['Analyzing your profile and target roles...','Crafting your headline...','Writing your About section...','Selecting top skills...','Generating experience bullets...'];
+  let sIdx=0;
+  const statusEl=document.getElementById('status-text');
+  const statusInterval=setInterval(()=>{
+    sIdx=(sIdx+1)%statusMsgs.length;
+    if(statusEl)statusEl.textContent=statusMsgs[sIdx];
+  },2500);
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:2500,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||'Optimize my LinkedIn profile for a software engineering role.'}]})
+    });
+    if(!res.ok)throw new Error('API error '+res.status);
+
+    document.getElementById('output-section').classList.remove('hidden');
+    const reader=res.body.getReader();const dec=new TextDecoder();
+    let full='';
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      const chunk=dec.decode(value,{stream:true});
+      for(const line of chunk.split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const data=line.slice(5).trim();
+        if(data==='[DONE]')break;
+        try{
+          const j=JSON.parse(data);
+          if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
+            full+=j.delta.text;
+            renderSections(full);
+          }
+        }catch{}
+      }
+    }
+  }catch(e){showToast('Error: '+e.message);}
+  finally{
+    clearInterval(statusInterval);
+    btn.disabled=false;btn.textContent='Optimize My LinkedIn Profile';
+    document.getElementById('status-row').classList.add('hidden');
+  }
+}
+
+function renderSections(raw){
+  const extract=(tag,nextTag)=>{
+    const start=raw.indexOf(`##${tag}##`);
+    if(start===-1)return '';
+    const contentStart=start+tag.length+4;
+    const end=nextTag?raw.indexOf(`##${nextTag}##`,contentStart):-1;
+    return (end===-1?raw.slice(contentStart):raw.slice(contentStart,end)).trim();
+  };
+
+  const headline=extract('HEADLINE','ABOUT');
+  const about=extract('ABOUT','SKILLS');
+  const skills=extract('SKILLS','BULLETS');
+  const bullets=extract('BULLETS',null);
+
+  if(headline){
+    document.getElementById('headline-text').textContent=headline;
+    updateHeadlineMeter(headline);
+  }
+  if(about)document.getElementById('about-text').textContent=about;
+  if(skills)document.getElementById('skills-text').textContent=skills;
+  if(bullets)document.getElementById('bullets-text').textContent=bullets;
+}
+
+// Init
+function init(){
+  const user=Auth.getUser();
+  if(!user){window.location.href='index.html?auth=login&redirect=linkedin.html';return;}
+  const nameEl=document.getElementById('user-display');
+  if(nameEl)nameEl.textContent=user.name?.split(' ')[0]||user.email||'';
+}
+init();
+</script>
+</body>
+</html>

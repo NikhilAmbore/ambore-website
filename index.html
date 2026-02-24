@@ -4,7 +4,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ambore — AI Career Platform</title>
-<meta name="description" content="Ambore: Your all-in-one AI career platform. Real-time interview co-pilot, AI resume tailoring, and 1,000+ tech job listings updated daily across the USA."/>
+<meta name="description" content="Ambore: Your all-in-one AI career platform. Interview AI, Resume Builder, Job Portal, Cover Letter Generator, Email Generator, LinkedIn Optimizer, and Portfolio Builder — all free."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
@@ -236,6 +236,24 @@ section{position:relative;padding:120px 0;overflow:hidden}
   margin-top:72px;
 }
 @media(max-width:960px){.products-row{grid-template-columns:1fr}}
+/* ── SECONDARY TOOLS GRID ── */
+.tools-section-label{font-size:0.72rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;color:rgba(255,255,255,0.25);margin:40px 0 16px}
+.tools-row{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+@media(max-width:960px){.tools-row{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:500px){.tools-row{grid-template-columns:1fr}}
+.tool-card{
+  padding:24px 22px;background:#050508;border:1px solid var(--border);border-radius:16px;
+  display:flex;flex-direction:column;transition:all 0.3s;position:relative;overflow:hidden;
+}
+.tool-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 30% 0%,var(--accent-bg),transparent 60%);opacity:0;transition:opacity 0.3s}
+.tool-card:hover{border-color:var(--accent-border);transform:translateY(-3px)}
+.tool-card:hover::before{opacity:1}
+.tool-icon{font-size:1.6rem;margin-bottom:12px;position:relative;z-index:1}
+.tool-badge{display:inline-block;font-size:0.65rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);padding:3px 10px;background:var(--accent-bg);border:1px solid var(--accent-border);border-radius:100px;margin-bottom:10px;width:fit-content;position:relative;z-index:1}
+.tool-title{font-family:'Syne',sans-serif;font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-0.01em;position:relative;z-index:1}
+.tool-desc{font-size:0.82rem;color:var(--off);line-height:1.6;margin-bottom:14px;position:relative;z-index:1;flex:1}
+.tool-btn{display:block;text-align:center;padding:9px 16px;border-radius:8px;font-size:0.82rem;font-weight:700;color:#fff;transition:opacity 0.2s;position:relative;z-index:1}
+.tool-btn:hover{opacity:0.85}
 .product-card{
   padding:36px 32px;
   background:#050508;border:1px solid var(--border);border-radius:20px;
@@ -480,13 +498,14 @@ footer{
         Ambore
       </a>
       <div class="nav-links">
-        <a href="#features">Products</a>
+        <a href="#features">Tools</a>
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
-        <a href="javascript:void(0)" onclick="goToFeature('dashboard.html')" style="color:var(--accent,#818CF8);font-weight:600" id="nav-dashboard">Dashboard</a>
         <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
         <a href="javascript:void(0)" onclick="goToFeature('resume.html')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
+        <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')" style="color:rgba(129,140,248,0.9);font-weight:600">Cover Letter</a>
         <a href="javascript:void(0)" onclick="goToFeature('app.html')" style="color:var(--violet);font-weight:600">Interview</a>
+        <a href="javascript:void(0)" onclick="goToFeature('dashboard.html')" style="color:rgba(255,255,255,0.5);font-weight:600" id="nav-dashboard">Dashboard</a>
       </div>
       <div class="nav-actions" id="nav-cta">
         <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
@@ -501,11 +520,15 @@ footer{
 
 <!-- ══ MOBILE MENU ══ -->
 <div class="mobile-menu" id="mobile-menu">
-  <a href="#features" onclick="toggleMenu()">Products</a>
+  <a href="#features" onclick="toggleMenu()">All Tools</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
   <a href="javascript:void(0)" onclick="goToFeature('jobs.html');toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
   <a href="javascript:void(0)" onclick="goToFeature('resume.html');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
+  <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html');toggleMenu()" style="color:rgba(129,140,248,0.9)">Cover Letter</a>
+  <a href="javascript:void(0)" onclick="goToFeature('email.html');toggleMenu()" style="color:rgba(251,191,36,0.9)">Email Generator</a>
+  <a href="javascript:void(0)" onclick="goToFeature('linkedin.html');toggleMenu()" style="color:rgba(88,166,255,0.9)">LinkedIn Optimizer</a>
+  <a href="javascript:void(0)" onclick="goToFeature('portfolio.html');toggleMenu()" style="color:rgba(34,197,94,0.9)">Portfolio Builder</a>
   <a href="javascript:void(0)" onclick="goToFeature('app.html');toggleMenu()" style="color:var(--violet)">Interview AI</a>
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
 </div>
@@ -517,14 +540,14 @@ footer{
   <div class="orb hero-orb-3"></div>
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-badge reveal"><span></span>AI-Powered Career Platform</div>
+      <div class="hero-badge reveal"><span></span>7 AI Career Tools — All Free</div>
       <h1 class="hero-title reveal reveal-d1">
-        <span class="line">Interview. Resume.</span>
-        <span class="line word-glow">Jobs.</span>
-        <span class="line">All AI-Powered.</span>
+        <span class="line">Land Your Dream Job</span>
+        <span class="line word-glow">With AI.</span>
+        <span class="line">Start to Finish.</span>
       </h1>
       <p class="hero-sub reveal reveal-d2">
-        Ace interviews with real-time AI answers, tailor your resume to any job in seconds, and browse 1,000+ tech jobs updated daily. One platform for your entire career.
+        Interview AI, Resume Builder, Job Portal, Cover Letter Generator, Email Generator, LinkedIn Optimizer, and Portfolio Builder — everything you need, all in one place, completely free.
       </p>
       <div class="hero-actions reveal reveal-d3">
         <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Get Started Free →</button>
@@ -543,25 +566,29 @@ footer{
   <div class="marquee-track">
     <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
     <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>1,000+ Tech Jobs</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Daily Job Scraping</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>4,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cover Letter Generator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Email Generator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn Optimizer</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Portfolio Builder</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Hourly Job Updates</div>
     <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Remote &amp; Onsite Jobs</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>8 Interview Rounds</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>5 Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>10+ Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn + Indeed Jobs</div>
     <!-- duplicate for seamless loop -->
     <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
     <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>1,000+ Tech Jobs</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Daily Job Scraping</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>4,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Cover Letter Generator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Email Generator</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn Optimizer</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Portfolio Builder</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>Hourly Job Updates</div>
     <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Screen Analysis</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>Remote &amp; Onsite Jobs</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>8 Interview Rounds</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>5 Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>10+ Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn + Indeed Jobs</div>
   </div>
 </div>
 
@@ -569,9 +596,9 @@ footer{
 <section id="features">
   <div class="container">
     <div class="reveal">
-      <div class="section-label">Three Products, One Platform</div>
+      <div class="section-label">Seven Tools, One Platform</div>
       <h2 class="section-title">Everything you need<br>to land the job</h2>
-      <p class="section-sub">From finding the right job to tailoring your resume to acing the interview — Ambore covers your entire job search.</p>
+      <p class="section-sub">From finding jobs to writing cover letters to acing interviews — Ambore covers every step of your job search, completely free.</p>
     </div>
 
     <!-- ── PRODUCT CARDS ── -->
@@ -607,15 +634,48 @@ footer{
       <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
         <div class="product-icon">💼</div>
         <div class="product-badge">Job Portal</div>
-        <h3 class="product-title">1,000+ Tech Jobs, Updated Daily</h3>
-        <p class="product-desc">Browse aggregated tech & IT jobs from USAJobs, Adzuna, The Muse, Remotive, and Google Jobs — all in one place.</p>
+        <h3 class="product-title">4,000+ Jobs, Updated Hourly</h3>
+        <p class="product-desc">Browse aggregated tech jobs from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more — updated every hour.</p>
         <ul class="product-features">
-          <li>Auto-scraped from 5 sources every 24 hours</li>
-          <li>Search, filter by state, category, work type</li>
-          <li>Remote, hybrid, and onsite listings</li>
-          <li>Salary data & direct apply links</li>
+          <li>10+ sources including LinkedIn & Indeed</li>
+          <li>Scraped fresh every hour automatically</li>
+          <li>Filter by state, category, salary, work type</li>
+          <li>One-click "Tailor Resume" for any listing</li>
         </ul>
         <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
+      </div>
+    </div>
+
+    <!-- ── SECONDARY TOOLS ── -->
+    <div class="tools-section-label reveal">Career Writing Tools</div>
+    <div class="tools-row">
+      <div class="tool-card reveal" style="--accent:#818CF8;--accent-bg:rgba(129,140,248,0.1);--accent-border:rgba(129,140,248,0.25)">
+        <div class="tool-icon">📝</div>
+        <div class="tool-badge">Cover Letter</div>
+        <h3 class="tool-title">AI Cover Letter Generator</h3>
+        <p class="tool-desc">Upload your resume + paste any job description → get a tailored, professional cover letter in seconds.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter →</a>
+      </div>
+      <div class="tool-card reveal reveal-d1" style="--accent:#fbbf24;--accent-bg:rgba(251,191,36,0.08);--accent-border:rgba(251,191,36,0.2)">
+        <div class="tool-icon">✉️</div>
+        <div class="tool-badge">Email</div>
+        <h3 class="tool-title">Job Email Generator</h3>
+        <p class="tool-desc">Generate job application emails, cold outreach, follow-ups, thank you notes, and networking emails.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('email.html')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email →</a>
+      </div>
+      <div class="tool-card reveal reveal-d2" style="--accent:#58a6ff;--accent-bg:rgba(10,102,194,0.1);--accent-border:rgba(10,102,194,0.3)">
+        <div class="tool-icon">💼</div>
+        <div class="tool-badge">LinkedIn</div>
+        <h3 class="tool-title">LinkedIn Profile Optimizer</h3>
+        <p class="tool-desc">AI-generated headline, about section, skills list, and STAR-format experience bullets that attract recruiters.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('linkedin.html')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn →</a>
+      </div>
+      <div class="tool-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.08);--accent-border:rgba(34,197,94,0.2)">
+        <div class="tool-icon">🌐</div>
+        <div class="tool-badge">Portfolio</div>
+        <h3 class="tool-title">AI Portfolio Builder</h3>
+        <p class="tool-desc">Fill in your details and projects → download a complete, beautiful portfolio website as a single HTML file.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('portfolio.html')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio →</a>
       </div>
     </div>
   </div>
@@ -626,20 +686,20 @@ footer{
   <div class="container">
     <div class="stats-row">
       <div class="stat-cell reveal">
-        <span class="stat-val">1,000+</span>
+        <span class="stat-val">4,000+</span>
         <div class="stat-label">Active Tech Jobs</div>
       </div>
       <div class="stat-cell reveal reveal-d1">
-        <span class="stat-val">5</span>
-        <div class="stat-label">Job Sources Scraped Daily</div>
+        <span class="stat-val">10+</span>
+        <div class="stat-label">Job Sources (Hourly Updates)</div>
       </div>
       <div class="stat-cell reveal reveal-d2">
-        <span class="stat-val">&lt;2s</span>
-        <div class="stat-label">AI Answer Time</div>
+        <span class="stat-val">7</span>
+        <div class="stat-label">AI Career Tools</div>
       </div>
       <div class="stat-cell reveal reveal-d3">
-        <span class="stat-val">8</span>
-        <div class="stat-label">Interview Rounds Covered</div>
+        <span class="stat-val">&lt;2s</span>
+        <div class="stat-label">AI Generation Time</div>
       </div>
     </div>
   </div>
@@ -652,35 +712,42 @@ footer{
       <div class="reveal" style="position:sticky;top:120px">
         <div class="section-label">How It Works</div>
         <h2 class="section-title">Your complete career toolkit</h2>
-        <p class="section-sub">Sign up once, access everything. Find jobs, tailor your resume, and ace your interview — all from one platform.</p>
+        <p class="section-sub">Sign up once, access all 7 tools. Find jobs, build your application materials, boost your online presence, and ace the interview.</p>
       </div>
       <div class="steps">
         <div class="step reveal">
           <div class="step-num">01</div>
           <div class="step-body">
             <h3>Create your free account</h3>
-            <p>Sign up in seconds. Your account unlocks all three tools — Interview AI, Resume Builder, and the Job Portal.</p>
+            <p>Sign up in seconds. Your account unlocks all 7 tools — Interview AI, Resume Builder, Job Portal, Cover Letter, Email Generator, LinkedIn Optimizer, and Portfolio Builder.</p>
           </div>
         </div>
         <div class="step reveal reveal-d1">
           <div class="step-num">02</div>
           <div class="step-body">
             <h3>Find the right job</h3>
-            <p>Browse 1,000+ tech jobs aggregated daily from USAJobs, Adzuna, The Muse, Remotive, and Google Jobs. Filter by state, category, salary, and work type.</p>
+            <p>Browse 4,000+ tech jobs scraped hourly from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more. Filter, save, and click "Tailor Resume" on any listing.</p>
           </div>
         </div>
         <div class="step reveal reveal-d2">
           <div class="step-num">03</div>
           <div class="step-body">
-            <h3>Tailor your resume</h3>
-            <p>Paste the job description into our AI Resume tool. It rewrites your resume to match the role — optimized for ATS systems and hiring managers.</p>
+            <h3>Build your application materials</h3>
+            <p>Use the Resume Builder, Cover Letter Generator, and Email Generator to create a complete, tailored application package — all powered by AI, all in minutes.</p>
           </div>
         </div>
         <div class="step reveal reveal-d3">
           <div class="step-num">04</div>
           <div class="step-body">
+            <h3>Boost your online presence</h3>
+            <p>Optimize your LinkedIn profile for recruiter searches, and build a portfolio website from your projects and resume — no coding needed.</p>
+          </div>
+        </div>
+        <div class="step reveal">
+          <div class="step-num">05</div>
+          <div class="step-body">
             <h3>Ace the interview</h3>
-            <p>Use the AI Interview Co-Pilot during your call. It listens in real time and gives you STAR-format answers in under 2 seconds — based on your resume.</p>
+            <p>Use the AI Interview Co-Pilot during your call. It listens in real time and delivers STAR-format answers in under 2 seconds — covering 8 round types.</p>
           </div>
         </div>
       </div>
@@ -699,13 +766,13 @@ footer{
     <div class="rounds-grid">
       <div class="round-card reveal">
         <div class="round-num" style="font-size:1.4rem">🔍</div>
-        <div class="round-name">5 Job Sources</div>
-        <p class="round-desc">USAJobs, Adzuna, The Muse, Remotive, and Google Jobs — aggregated automatically</p>
+        <div class="round-name">10+ Job Sources</div>
+        <p class="round-desc">LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more — aggregated automatically</p>
       </div>
       <div class="round-card reveal reveal-d1">
         <div class="round-num" style="font-size:1.4rem">⏰</div>
-        <div class="round-name">Updated Daily</div>
-        <p class="round-desc">Jobs scraped every 24 hours at 2 AM EST so you always see fresh listings</p>
+        <div class="round-name">Hourly Updates</div>
+        <p class="round-desc">Jobs scraped every hour so you always see the freshest listings before others apply</p>
       </div>
       <div class="round-card reveal reveal-d2">
         <div class="round-num" style="font-size:1.4rem">🎯</div>
@@ -754,14 +821,14 @@ footer{
           What is Ambore?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Ambore is a free, all-in-one AI career platform with three tools: a Job Portal with 1,000+ daily-updated tech jobs, an AI Resume Builder that tailors your resume to any job description, and an AI Interview Co-Pilot that gives you real-time answers during interviews.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Ambore is a free, all-in-one AI career platform with 7 tools: a Job Portal (4,000+ hourly-updated jobs), AI Resume Builder, AI Cover Letter Generator, Job Email Generator, LinkedIn Profile Optimizer, Portfolio Builder, and an AI Interview Co-Pilot for real-time answers during interviews.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
           Where do the job listings come from?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Jobs are automatically scraped from 5 sources: USAJobs.gov (government tech jobs), Adzuna (aggregates Indeed, Monster, etc.), The Muse (top tech companies), Remotive (remote jobs), and Google Jobs. New listings are added every 24 hours.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Jobs are automatically scraped from 10+ sources: LinkedIn (via public API), Indeed (via Apify), USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour, so you always see the freshest jobs before they fill up.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -793,7 +860,7 @@ footer{
   <div class="container" style="text-align:center">
     <div class="section-label reveal">Get Started</div>
     <h2 class="section-title reveal reveal-d1">Your dream job<br>starts here.</h2>
-    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, and ace your interview — all free, all AI-powered. No credit card required.</p>
+    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, write cover letters, optimize your LinkedIn, build a portfolio, and ace your interview — all free, all AI-powered.</p>
     <div class="reveal reveal-d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
       <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free →</button>
       <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="btn-hero-ghost">Browse Jobs</a>
@@ -814,9 +881,13 @@ footer{
       </div>
       <div class="footer-links">
         <div class="footer-col">
-          <h5>Products</h5>
+          <h5>Tools</h5>
           <a href="javascript:void(0)" onclick="goToFeature('jobs.html')">Job Portal</a>
           <a href="javascript:void(0)" onclick="goToFeature('resume.html')">AI Resume</a>
+          <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')">Cover Letter</a>
+          <a href="javascript:void(0)" onclick="goToFeature('email.html')">Email Generator</a>
+          <a href="javascript:void(0)" onclick="goToFeature('linkedin.html')">LinkedIn Optimizer</a>
+          <a href="javascript:void(0)" onclick="goToFeature('portfolio.html')">Portfolio Builder</a>
           <a href="javascript:void(0)" onclick="goToFeature('app.html')">Interview AI</a>
         </div>
         <div class="footer-col" id="footer-account">

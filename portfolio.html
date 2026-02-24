@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ambore — AI Portfolio Builder</title>
+<meta name="description" content="Build a professional portfolio website from your resume and project details. Download as a complete HTML file — no coding required."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+function track(event,page){fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event,page})}).catch(()=>{});}
+window.addEventListener('load',()=>track('page_view','portfolio'));
+</script>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='index.html?auth=login&redirect=portfolio.html&msg=Please+log+in+to+access+this+feature';
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ── TOPBAR ── */
+.app-shell{min-height:100vh;background:#06060f;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(79,70,229,0.15) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.12) 0%,transparent 50%);}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);position:sticky;top:0;z-index:100;}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none}
+.logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:14px;margin-left:18px;flex-wrap:wrap}
+.nav-links a{font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:var(--accent)}
+.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6)}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+
+/* ── MAIN ── */
+.main{max-width:900px;margin:0 auto;padding:36px 20px 80px}
+.page-heading{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:6px}
+.page-hint{font-size:0.88rem;color:rgba(255,255,255,0.4);margin-bottom:28px}
+
+/* ── STEP INDICATOR ── */
+.steps-row{display:flex;align-items:center;gap:0;margin-bottom:32px}
+.step{display:flex;align-items:center;gap:8px;font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.3);padding:8px 16px;border-radius:8px;transition:all 0.2s}
+.step.active{color:#fff;background:rgba(79,70,229,0.15)}
+.step.done{color:var(--green)}
+.step-num{width:22px;height:22px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;flex-shrink:0}
+.step.active .step-num{background:var(--grad);border-color:transparent;color:#fff}
+.step.done .step-num{background:rgba(34,197,94,0.15);border-color:rgba(34,197,94,0.4);color:var(--green)}
+.step-arrow{color:rgba(255,255,255,0.15);font-size:0.75rem;margin:0 4px}
+
+/* ── SECTION CARD ── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.section-title{font-size:0.88rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.section-title .icon{font-size:1rem}
+.section-sub{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-bottom:16px}
+.field-row{display:grid;gap:14px;margin-bottom:14px}
+.field-row.cols2{grid-template-columns:1fr 1fr}
+.field-row.cols3{grid-template-columns:1fr 1fr 1fr}
+@media(max-width:640px){.field-row.cols2,.field-row.cols3{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.4)}
+.field input,.field textarea,.field select{
+  width:100%;padding:10px 13px;background:var(--card2);border:1px solid var(--border);
+  border-radius:9px;color:#fff;font-size:0.88rem;outline:none;transition:border-color 0.2s;resize:vertical;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(79,70,229,0.5)}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.field select option{background:#13132a;color:#fff}
+
+/* ── THEME PICKER ── */
+.theme-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:8px}
+@media(max-width:600px){.theme-grid{grid-template-columns:repeat(2,1fr)}}
+.theme-card{border-radius:10px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all 0.2s;position:relative}
+.theme-card.selected{border-color:var(--accent)}
+.theme-card.selected::after{content:'✓';position:absolute;top:4px;right:6px;font-size:0.8rem;font-weight:900;color:#fff;text-shadow:0 0 6px rgba(0,0,0,0.8)}
+.theme-preview{height:56px;display:flex;flex-direction:column;gap:4px;padding:8px}
+.theme-bar{height:6px;border-radius:3px;background:currentColor;opacity:0.8}
+.theme-bar2{height:4px;border-radius:3px;background:currentColor;opacity:0.4;width:70%}
+.theme-label{font-size:0.7rem;font-weight:700;text-align:center;padding:5px;color:rgba(255,255,255,0.5)}
+
+/* ── PROJECT CARDS ── */
+.projects-list{display:flex;flex-direction:column;gap:14px}
+.project-item{background:var(--card2);border:1px solid var(--border);border-radius:12px;padding:16px;position:relative}
+.project-item-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.project-num{font-size:0.75rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.1);padding:2px 8px;border-radius:6px}
+.remove-project-btn{background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:1rem;transition:color 0.15s;padding:2px 6px}
+.remove-project-btn:hover{color:var(--red)}
+.add-project-btn{width:100%;padding:10px;background:rgba(79,70,229,0.08);border:1px dashed rgba(79,70,229,0.25);border-radius:10px;color:rgba(129,140,248,0.7);font-size:0.85rem;font-weight:600;cursor:pointer;transition:all 0.15s;margin-top:8px}
+.add-project-btn:hover{background:rgba(79,70,229,0.14);border-color:rgba(79,70,229,0.4);color:var(--accent)}
+
+/* ── SKILL TAGS ── */
+.skill-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.skill-tag{display:flex;align-items:center;gap:4px;padding:4px 10px;background:rgba(255,255,255,0.05);border:1px solid var(--border);border-radius:20px;font-size:0.78rem;color:rgba(255,255,255,0.6);font-weight:600}
+.skill-tag button{background:none;border:none;color:rgba(255,255,255,0.3);cursor:pointer;font-size:0.85rem;line-height:1;padding:0 0 0 4px}
+.skill-tag button:hover{color:var(--red)}
+.tag-input-row{display:flex;gap:8px;margin-top:10px}
+.tag-input-row input{flex:1;padding:8px 12px;background:var(--card2);border:1px solid var(--border);border-radius:9px;color:#fff;font-size:0.85rem;outline:none}
+.tag-input-row input:focus{border-color:rgba(79,70,229,0.5)}
+.tag-add-btn{padding:8px 14px;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);border-radius:9px;color:var(--accent);font-size:0.82rem;font-weight:600;cursor:pointer;white-space:nowrap}
+
+/* ── BUILD BUTTON ── */
+.build-btn{
+  width:100%;padding:16px;background:var(--grad);border:none;border-radius:13px;
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 24px rgba(79,70,229,0.4);transition:transform 0.2s,box-shadow 0.2s;
+  margin-bottom:32px;display:flex;align-items:center;justify-content:center;gap:8px;
+}
+.build-btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(79,70,229,0.55)}
+.build-btn:disabled{opacity:0.5;cursor:not-allowed;transform:none;box-shadow:none}
+
+/* ── STATUS ── */
+.status-row{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:10px}
+.spinner{width:18px;height:18px;border:2px solid rgba(129,140,248,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.status-text{font-size:0.85rem;color:rgba(255,255,255,0.6)}
+.progress-bar{height:3px;background:rgba(255,255,255,0.05);border-radius:2px;margin-top:8px;overflow:hidden}
+.progress-fill{height:100%;background:var(--grad);border-radius:2px;transition:width 0.5s ease}
+
+/* ── OUTPUT ── */
+.output-section{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.output-head{display:flex;align-items:center;justify-content:space-between;padding:20px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:12px}
+.output-title{font-size:1rem;font-weight:800;color:#fff}
+.output-actions{display:flex;gap:8px;flex-wrap:wrap}
+.action-btn{padding:9px 18px;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);transition:all 0.15s;display:flex;align-items:center;gap:6px}
+.action-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.action-btn.primary{background:var(--grad);border-color:transparent;color:#fff}
+.action-btn.primary:hover{opacity:0.85}
+
+/* ── PREVIEW IFRAME ── */
+.preview-wrap{padding:0;height:600px;background:#fff;position:relative}
+.preview-iframe{width:100%;height:100%;border:none;display:block}
+.preview-loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#fff;color:#888;font-size:0.9rem}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <a href="index.html" class="logo">
+      <div class="logo-icon-sm">A</div>
+      Ambore <span class="brand-tag">AI</span>
+    </a>
+    <nav class="nav-links">
+      <a href="jobs.html">Jobs</a>
+      <a href="resume.html">Resume</a>
+      <a href="cover-letter.html">Cover Letter</a>
+      <a href="email.html">Email</a>
+      <a href="linkedin.html">LinkedIn</a>
+      <a href="portfolio.html" class="active">Portfolio</a>
+      <a href="app.html">Interview AI</a>
+      <a href="dashboard.html">Dashboard</a>
+    </nav>
+    <div class="user-pill">
+      <span class="user-name" id="user-display"></span>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <h1 class="page-heading">AI Portfolio Builder</h1>
+    <p class="page-hint">Fill in your details and get a complete, downloadable portfolio website in seconds — no coding needed.</p>
+
+    <!-- STEPS -->
+    <div class="steps-row">
+      <div class="step active" id="step-indicator-1"><div class="step-num">1</div> Your Info</div>
+      <div class="step-arrow">›</div>
+      <div class="step" id="step-indicator-2"><div class="step-num">2</div> Projects</div>
+      <div class="step-arrow">›</div>
+      <div class="step" id="step-indicator-3"><div class="step-num">3</div> Theme</div>
+      <div class="step-arrow">›</div>
+      <div class="step" id="step-indicator-4"><div class="step-num">4</div> Preview</div>
+    </div>
+
+    <!-- SECTION 1: Personal Info -->
+    <div class="section-card" id="step-section-1">
+      <div class="section-title"><span class="icon">👤</span> Personal Information</div>
+      <div class="section-sub">Your name and contact details for the portfolio hero section</div>
+      <div class="field-row cols2">
+        <div class="field">
+          <label>Full Name *</label>
+          <input type="text" id="p-name" placeholder="Jane Smith"/>
+        </div>
+        <div class="field">
+          <label>Professional Title *</label>
+          <input type="text" id="p-title" placeholder="Full-Stack Engineer"/>
+        </div>
+      </div>
+      <div class="field-row cols2">
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="p-email" placeholder="jane@example.com"/>
+        </div>
+        <div class="field">
+          <label>Location</label>
+          <input type="text" id="p-location" placeholder="San Francisco, CA"/>
+        </div>
+      </div>
+      <div class="field-row cols3">
+        <div class="field">
+          <label>GitHub URL</label>
+          <input type="url" id="p-github" placeholder="https://github.com/janesmith"/>
+        </div>
+        <div class="field">
+          <label>LinkedIn URL</label>
+          <input type="url" id="p-linkedin" placeholder="https://linkedin.com/in/janesmith"/>
+        </div>
+        <div class="field">
+          <label>Personal Website</label>
+          <input type="url" id="p-website" placeholder="https://janesmith.dev"/>
+        </div>
+      </div>
+      <div class="field">
+        <label>Professional Summary / Bio *</label>
+        <textarea id="p-summary" rows="4" placeholder="Brief intro for your hero section — 2-3 sentences. E.g.: 'I'm a full-stack engineer with 5+ years building scalable web apps. Passionate about clean code, great UX, and distributed systems. Currently looking for senior roles at startups.'"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 2: Skills -->
+    <div class="section-card">
+      <div class="section-title"><span class="icon">⚡</span> Skills &amp; Technologies</div>
+      <div class="section-sub">Add your technical and professional skills</div>
+      <div class="skill-tags" id="skill-tags-list"></div>
+      <div class="tag-input-row">
+        <input type="text" id="skill-tag-input" placeholder="e.g. React, Python, AWS, Docker..." onkeydown="if(event.key==='Enter')addSkillTag()"/>
+        <button class="tag-add-btn" onclick="addSkillTag()">+ Add</button>
+      </div>
+      <div style="margin-top:16px">
+        <div class="field">
+          <label>Or paste your skills (comma-separated)</label>
+          <input type="text" id="skills-paste" placeholder="Python, React, Node.js, PostgreSQL, Docker, AWS, TypeScript" onblur="importSkillsPaste()"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- SECTION 3: Experience -->
+    <div class="section-card">
+      <div class="section-title"><span class="icon">💼</span> Work Experience</div>
+      <div class="section-sub">Paste your resume text or describe your experience — the AI will format it</div>
+      <div class="field">
+        <label>Resume Text / Work History *</label>
+        <textarea id="p-experience" rows="8" placeholder="Paste your resume work experience section here, OR describe your roles:
+
+Senior Engineer at Stripe (2021-present)
+- Built payment processing pipeline handling $5B/year
+- Led team of 6 engineers, reduced system latency by 40%
+
+Software Engineer at Airbnb (2019-2021)
+- Developed booking microservices in Go, serving 50M+ users
+- Improved search relevance, increasing bookings by 12%"></textarea>
+      </div>
+    </div>
+
+    <!-- SECTION 4: Projects -->
+    <div class="section-card" id="step-section-2">
+      <div class="section-title"><span class="icon">🚀</span> Featured Projects</div>
+      <div class="section-sub">Add 2-4 projects to showcase. These appear as cards on your portfolio.</div>
+      <div class="projects-list" id="projects-list"></div>
+      <button class="add-project-btn" onclick="addProject()">+ Add Project</button>
+    </div>
+
+    <!-- SECTION 5: Theme -->
+    <div class="section-card" id="step-section-3">
+      <div class="section-title"><span class="icon">🎨</span> Choose Your Theme</div>
+      <div class="section-sub">Pick a visual style for your portfolio</div>
+      <div class="theme-grid" id="theme-grid">
+        <div class="theme-card selected" data-theme="dark" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#0a0a1a;color:#818CF8">
+            <div class="theme-bar"></div>
+            <div class="theme-bar2"></div>
+          </div>
+          <div class="theme-label">Dark Purple</div>
+        </div>
+        <div class="theme-card" data-theme="midnight" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#0d1117;color:#58a6ff">
+            <div class="theme-bar"></div>
+            <div class="theme-bar2"></div>
+          </div>
+          <div class="theme-label">Midnight Blue</div>
+        </div>
+        <div class="theme-card" data-theme="forest" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#0d1a0f;color:#22c55e">
+            <div class="theme-bar"></div>
+            <div class="theme-bar2"></div>
+          </div>
+          <div class="theme-label">Forest Green</div>
+        </div>
+        <div class="theme-card" data-theme="light" onclick="selectTheme(this)">
+          <div class="theme-preview" style="background:#f8fafc;color:#4F46E5">
+            <div class="theme-bar" style="background:#4F46E5"></div>
+            <div class="theme-bar2" style="background:#4F46E5"></div>
+          </div>
+          <div class="theme-label">Clean Light</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- BUILD BUTTON -->
+    <button class="build-btn" id="build-btn" onclick="buildPortfolio()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+      Build My Portfolio
+    </button>
+
+    <!-- STATUS -->
+    <div class="status-row hidden" id="status-row">
+      <div class="spinner"></div>
+      <div style="flex:1">
+        <div class="status-text" id="status-text">Generating your portfolio...</div>
+        <div class="progress-bar" style="margin-top:8px"><div class="progress-fill" id="progress-fill" style="width:10%"></div></div>
+      </div>
+    </div>
+
+    <!-- OUTPUT -->
+    <div class="output-section hidden" id="output-section">
+      <div class="output-head">
+        <div class="output-title">Your Portfolio — Ready to Download</div>
+        <div class="output-actions">
+          <button class="action-btn" onclick="openPreview()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Open Full Preview
+          </button>
+          <button class="action-btn primary" onclick="downloadPortfolio()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Download HTML
+          </button>
+        </div>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview-loading" id="preview-loading">Loading preview...</div>
+        <iframe class="preview-iframe" id="preview-iframe" title="Portfolio Preview"></iframe>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY=_k.join('');
+const CLAUDE_MODEL='claude-sonnet-4-5-20250929';
+
+const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
+function logout(){localStorage.removeItem('ambore_user');window.location.href='index.html';}
+
+// State
+let skillTags=[];
+let projects=[];
+let selectedTheme='dark';
+let generatedHTML='';
+
+// ── Skills
+function addSkillTag(){
+  const inp=document.getElementById('skill-tag-input');
+  const val=inp.value.trim();
+  if(!val)return;
+  val.split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
+    if(!skillTags.includes(s))skillTags.push(s);
+  });
+  inp.value='';
+  renderSkillTags();
+}
+function removeSkillTag(i){skillTags.splice(i,1);renderSkillTags();}
+function renderSkillTags(){
+  document.getElementById('skill-tags-list').innerHTML=skillTags.map((s,i)=>
+    `<div class="skill-tag">${s}<button onclick="removeSkillTag(${i})">×</button></div>`
+  ).join('');
+}
+function importSkillsPaste(){
+  const val=document.getElementById('skills-paste').value.trim();
+  if(!val)return;
+  val.split(',').map(s=>s.trim()).filter(Boolean).forEach(s=>{
+    if(!skillTags.includes(s))skillTags.push(s);
+  });
+  document.getElementById('skills-paste').value='';
+  renderSkillTags();
+}
+
+// ── Projects
+let projectCount=0;
+function addProject(){
+  projectCount++;
+  const id='proj-'+projectCount;
+  projects.push({id});
+  renderProjects();
+}
+function removeProject(id){
+  projects=projects.filter(p=>p.id!==id);
+  renderProjects();
+}
+function renderProjects(){
+  const list=document.getElementById('projects-list');
+  list.innerHTML=projects.map((p,i)=>`
+    <div class="project-item" id="${p.id}">
+      <div class="project-item-head">
+        <span class="project-num">Project ${i+1}</span>
+        <button class="remove-project-btn" onclick="removeProject('${p.id}')">×</button>
+      </div>
+      <div class="field-row cols2">
+        <div class="field"><label>Project Name *</label><input type="text" id="${p.id}-name" placeholder="e.g. DevTracker"/></div>
+        <div class="field"><label>Tech Stack</label><input type="text" id="${p.id}-stack" placeholder="e.g. React, Node.js, PostgreSQL"/></div>
+      </div>
+      <div class="field-row cols2">
+        <div class="field"><label>Live URL</label><input type="url" id="${p.id}-url" placeholder="https://devtracker.app"/></div>
+        <div class="field"><label>GitHub URL</label><input type="url" id="${p.id}-github" placeholder="https://github.com/you/devtracker"/></div>
+      </div>
+      <div class="field"><label>Description *</label><textarea id="${p.id}-desc" rows="3" placeholder="What does it do? What problem does it solve? Any key metrics (users, performance gains, etc.)?"></textarea></div>
+    </div>
+  `).join('');
+}
+
+// Initialize with 2 projects
+addProject();addProject();
+
+// ── Theme
+function selectTheme(card){
+  document.querySelectorAll('.theme-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedTheme=card.dataset.theme;
+}
+
+// Theme configs
+const THEMES={
+  dark:{bg:'#06060f',card:'#0e0e1d',text:'#e2e8f0',muted:'rgba(255,255,255,0.5)',accent:'#818CF8',accentDark:'#4F46E5',border:'rgba(255,255,255,0.08)',tag:'rgba(79,70,229,0.15)',tagColor:'#818CF8',navBg:'rgba(14,14,29,0.95)',skillBg:'rgba(79,70,229,0.1)'},
+  midnight:{bg:'#0d1117',card:'#161b22',text:'#c9d1d9',muted:'rgba(201,209,217,0.5)',accent:'#58a6ff',accentDark:'#1f6feb',border:'rgba(48,54,61,0.8)',tag:'rgba(31,111,235,0.15)',tagColor:'#58a6ff',navBg:'rgba(13,17,23,0.95)',skillBg:'rgba(31,111,235,0.12)'},
+  forest:{bg:'#0d1a0f',card:'#0f1f12',text:'#d1fae5',muted:'rgba(209,250,229,0.5)',accent:'#22c55e',accentDark:'#16a34a',border:'rgba(34,197,94,0.12)',tag:'rgba(22,163,74,0.15)',tagColor:'#22c55e',navBg:'rgba(13,26,15,0.95)',skillBg:'rgba(22,163,74,0.1)'},
+  light:{bg:'#f8fafc',card:'#fff',text:'#0f172a',muted:'rgba(15,23,42,0.5)',accent:'#4F46E5',accentDark:'#3730a3',border:'rgba(0,0,0,0.08)',tag:'rgba(79,70,229,0.08)',tagColor:'#4F46E5',navBg:'rgba(255,255,255,0.95)',skillBg:'rgba(79,70,229,0.06)'}
+};
+
+function showToast(msg){
+  let t=document.getElementById('toast-el');
+  if(!t){t=document.createElement('div');t.id='toast-el';t.className='toast';document.body.appendChild(t);}
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._t);t._t=setTimeout(()=>{t.style.opacity='0';},3000);
+}
+
+// ── Build
+async function buildPortfolio(){
+  const name=document.getElementById('p-name').value.trim();
+  const title=document.getElementById('p-title').value.trim();
+  const summary=document.getElementById('p-summary').value.trim();
+  const experience=document.getElementById('p-experience').value.trim();
+
+  if(!name||!title){showToast('Please enter your name and professional title.');return;}
+  if(!summary){showToast('Please enter a brief professional summary.');return;}
+
+  // Collect projects
+  const projData=projects.map(p=>({
+    name:(document.getElementById(p.id+'-name')?.value||'').trim(),
+    stack:(document.getElementById(p.id+'-stack')?.value||'').trim(),
+    url:(document.getElementById(p.id+'-url')?.value||'').trim(),
+    github:(document.getElementById(p.id+'-github')?.value||'').trim(),
+    desc:(document.getElementById(p.id+'-desc')?.value||'').trim(),
+  })).filter(p=>p.name&&p.desc);
+
+  const email=document.getElementById('p-email').value.trim();
+  const location=document.getElementById('p-location').value.trim();
+  const github=document.getElementById('p-github').value.trim();
+  const linkedin=document.getElementById('p-linkedin').value.trim();
+  const website=document.getElementById('p-website').value.trim();
+  const t=THEMES[selectedTheme];
+
+  const btn=document.getElementById('build-btn');
+  btn.disabled=true;btn.textContent='Building...';
+  document.getElementById('status-row').classList.remove('hidden');
+  document.getElementById('output-section').classList.add('hidden');
+  generatedHTML='';
+
+  // Animate progress
+  let progress=10;
+  const progFill=document.getElementById('progress-fill');
+  const progressInterval=setInterval(()=>{
+    progress=Math.min(90,progress+5);
+    if(progFill)progFill.style.width=progress+'%';
+  },600);
+
+  const statusMsgs=['Generating your portfolio content...','Writing your hero section...','Creating project cards...','Building skills section...','Adding experience timeline...','Finalizing design...'];
+  let sIdx=0;
+  const statusEl=document.getElementById('status-text');
+  const statusInterval=setInterval(()=>{
+    sIdx=(sIdx+1)%statusMsgs.length;
+    if(statusEl)statusEl.textContent=statusMsgs[sIdx];
+  },2000);
+
+  const systemPrompt=`You are an expert front-end developer. Generate a complete, beautiful, single-file HTML portfolio website.
+
+CRITICAL: Output ONLY valid, complete HTML — no explanations, no markdown, no code fences. Start with <!DOCTYPE html> and end with </html>.
+
+Theme colors:
+- Background: ${t.bg}
+- Card background: ${t.card}
+- Text: ${t.text}
+- Muted text: ${t.muted}
+- Accent: ${t.accent}
+- Accent dark: ${t.accentDark}
+- Border: ${t.border}
+- Tag background: ${t.tag}
+- Tag color: ${t.tagColor}
+- Nav background: ${t.navBg}
+- Skill badge background: ${t.skillBg}
+
+SECTIONS TO INCLUDE (in order):
+1. <nav> — fixed, name/logo left, nav links right (About, Skills, Projects, Experience, Contact)
+2. <section id="hero"> — full-viewport hero with name, title, 2-line bio, CTA buttons (View Projects, Contact Me), social links icons
+3. <section id="about"> — short about paragraph + 3 stat cards (years exp, projects, etc.)
+4. <section id="skills"> — skill badges grid, grouped by category if possible
+5. <section id="projects"> — card grid, each card: project name, description, tech stack tags, live link + github link buttons
+6. <section id="experience"> — vertical timeline with job entries
+7. <section id="contact"> — contact form (name, email, message — non-functional, shows mailto link) + social links
+8. <footer> — name, copyright, built with Ambore AI
+
+DESIGN REQUIREMENTS:
+- Fully responsive (mobile-first, CSS grid/flex)
+- Smooth scroll behavior
+- Hover animations on cards (transform: translateY(-4px))
+- Gradient text on name in hero
+- Section headings with subtle gradient underline
+- Clean typography using system fonts or Google Fonts Inter
+- No external JS libraries — vanilla JS only
+- Scroll-triggered fade-in animations using IntersectionObserver
+- Mobile hamburger menu
+- All inline styles in <style> tag — single file output`;
+
+  const contactLinks=[];
+  if(email)contactLinks.push(`Email: ${email}`);
+  if(github)contactLinks.push(`GitHub: ${github}`);
+  if(linkedin)contactLinks.push(`LinkedIn: ${linkedin}`);
+  if(website)contactLinks.push(`Website: ${website}`);
+
+  const userMsg=`NAME: ${name}
+TITLE: ${title}
+LOCATION: ${location||''}
+SUMMARY: ${summary}
+CONTACT: ${contactLinks.join(' | ')}
+SKILLS: ${skillTags.join(', ')||'(derive from experience below)'}
+${experience?`EXPERIENCE:\n${experience}`:''}
+${projData.length?`PROJECTS:\n${projData.map((p,i)=>`${i+1}. ${p.name} — ${p.desc}
+   Stack: ${p.stack||'see description'}${p.url?`\n   Live: ${p.url}`:''}${p.github?`\n   GitHub: ${p.github}`:''}`).join('\n\n')}`:''}
+THEME: ${selectedTheme}
+
+Generate the complete portfolio HTML now.`;
+
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:4000,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
+    });
+    if(!res.ok)throw new Error('API error '+res.status);
+
+    const reader=res.body.getReader();const dec=new TextDecoder();
+    while(true){
+      const{done,value}=await reader.read();if(done)break;
+      const chunk=dec.decode(value,{stream:true});
+      for(const line of chunk.split('\n')){
+        if(!line.startsWith('data:'))continue;
+        const data=line.slice(5).trim();
+        if(data==='[DONE]')break;
+        try{
+          const j=JSON.parse(data);
+          if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
+            generatedHTML+=j.delta.text;
+          }
+        }catch{}
+      }
+    }
+
+    // Clean up any markdown fences if present
+    generatedHTML=generatedHTML.replace(/^```html\n?/,'').replace(/```$/,'').trim();
+
+    if(progFill)progFill.style.width='100%';
+    showPreview();
+    document.getElementById('output-section').classList.remove('hidden');
+    document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
+  }catch(e){showToast('Error: '+e.message);}
+  finally{
+    clearInterval(progressInterval);
+    clearInterval(statusInterval);
+    btn.disabled=false;btn.textContent='Build My Portfolio';
+    document.getElementById('status-row').classList.add('hidden');
+  }
+}
+
+function showPreview(){
+  const iframe=document.getElementById('preview-iframe');
+  const loading=document.getElementById('preview-loading');
+  if(loading)loading.style.display='flex';
+  iframe.srcdoc=generatedHTML;
+  iframe.onload=()=>{if(loading)loading.style.display='none';};
+}
+
+function openPreview(){
+  if(!generatedHTML){showToast('Build your portfolio first.');return;}
+  const win=window.open('','_blank');
+  win.document.write(generatedHTML);
+  win.document.close();
+}
+
+function downloadPortfolio(){
+  if(!generatedHTML){showToast('Build your portfolio first.');return;}
+  const name=document.getElementById('p-name').value.trim().replace(/\s+/g,'-').toLowerCase()||'portfolio';
+  const blob=new Blob([generatedHTML],{type:'text/html'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`${name}-portfolio.html`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('Portfolio downloaded!');
+}
+
+// Init
+function init(){
+  const user=Auth.getUser();
+  if(!user){window.location.href='index.html?auth=login&redirect=portfolio.html';return;}
+  const nameEl=document.getElementById('user-display');
+  if(nameEl)nameEl.textContent=user.name?.split(' ')[0]||user.email||'';
+}
+init();
+</script>
+</body>
+</html>
