@@ -161,7 +161,31 @@ nav.scrolled{
 .trust-item{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:rgba(255,255,255,0.45);white-space:nowrap}
 .trust-item svg{flex-shrink:0;opacity:0.6}
 .trust-sep{width:1px;height:14px;background:rgba(255,255,255,0.12)}
-.hero-scroll{margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.35}
+
+/* ── HERO FLOATING AI CARD ── */
+.hero-ai-card{
+  display:inline-flex;flex-direction:column;align-items:flex-start;
+  background:rgba(10,10,20,0.85);
+  border:1px solid rgba(109,92,255,0.3);
+  border-radius:14px;padding:14px 18px;
+  margin-top:32px;
+  backdrop-filter:blur(16px);
+  box-shadow:0 0 32px rgba(109,92,255,0.18),0 4px 24px rgba(0,0,0,0.4);
+  animation:heroFloat 4s ease-in-out infinite;
+  max-width:340px;
+  text-align:left;
+}
+.hero-ai-card-header{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.hero-ai-dot{width:7px;height:7px;border-radius:50%;background:#22c55e;box-shadow:0 0 8px rgba(34,197,94,0.7);flex-shrink:0;animation:pulse-dot 2s infinite}
+.hero-ai-label{font-size:0.75rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:rgba(255,255,255,0.7)}
+.hero-ai-preview{font-size:0.8rem;color:rgba(255,255,255,0.4);line-height:1.55;max-width:280px}
+.hero-ai-preview strong{color:rgba(109,92,255,0.9);font-weight:600}
+@keyframes heroFloat{
+  0%,100%{transform:translateY(0px)}
+  50%{transform:translateY(-8px)}
+}
+
+.hero-scroll{margin-top:48px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.35}
 .hero-scroll span{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#fff}
 .hero-scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent)}
 
@@ -311,6 +335,40 @@ section{position:relative;padding:120px 0;overflow:hidden}
 }
 .product-btn:hover{opacity:0.85}
 
+/* ── TOP COMPANIES SECTION ── */
+.companies-section{
+  padding:80px 0;
+  border-bottom:1px solid var(--border);
+}
+.companies-header{text-align:center;margin-bottom:40px}
+.companies-title{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(1.3rem,2.5vw,1.8rem);
+  font-weight:700;letter-spacing:-0.02em;
+  color:rgba(255,255,255,0.85);
+  margin-bottom:8px;
+}
+.companies-sub{font-size:0.88rem;color:rgba(255,255,255,0.3);font-weight:400}
+.companies-pills{
+  display:flex;flex-wrap:wrap;justify-content:center;gap:10px;
+}
+.company-pill{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:8px 16px;
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.1);
+  border-radius:100px;
+  font-size:0.82rem;font-weight:600;
+  color:rgba(255,255,255,0.65);
+  transition:all 0.2s;
+  cursor:default;
+}
+.company-pill:hover{
+  background:rgba(109,92,255,0.1);
+  border-color:rgba(109,92,255,0.3);
+  color:rgba(255,255,255,0.9);
+}
+
 /* ── HOW IT WORKS ── */
 .how-bg{background:rgba(255,255,255,0.015)}
 .steps{display:flex;flex-direction:column;gap:0;margin-top:72px}
@@ -350,6 +408,100 @@ section{position:relative;padding:120px 0;overflow:hidden}
   display:block;margin-bottom:8px;
 }
 .stat-label{font-size:0.85rem;color:var(--off);font-weight:500}
+
+/* ── DEMO SECTION ── */
+.demo-section{
+  padding:120px 0;
+  background:rgba(255,255,255,0.01);
+  border-top:1px solid var(--border);
+}
+.demo-header{text-align:center;margin-bottom:64px}
+.demo-panels{
+  display:grid;grid-template-columns:1fr 1fr;gap:28px;
+  align-items:stretch;
+}
+@media(max-width:768px){.demo-panels{grid-template-columns:1fr}}
+
+.demo-card{
+  background:rgba(8,8,18,0.9);
+  border:1px solid rgba(255,255,255,0.09);
+  border-radius:20px;
+  padding:32px;
+  position:relative;
+  overflow:hidden;
+  backdrop-filter:blur(12px);
+}
+.demo-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 20% 0%,rgba(109,92,255,0.1),transparent 60%);
+  pointer-events:none;
+}
+.demo-card-label{
+  font-size:0.7rem;font-weight:700;letter-spacing:0.14em;text-transform:uppercase;
+  color:rgba(255,255,255,0.3);margin-bottom:20px;
+  display:flex;align-items:center;gap:8px;
+}
+.demo-card-label::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--violet);display:inline-block}
+
+.demo-interviewer-heading{
+  font-family:'Syne',sans-serif;font-size:0.9rem;font-weight:700;
+  color:rgba(255,255,255,0.7);margin-bottom:16px;
+  display:flex;align-items:center;gap:8px;
+}
+.demo-speech-bubble{
+  background:rgba(109,92,255,0.1);
+  border:1px solid rgba(109,92,255,0.2);
+  border-radius:12px;border-top-left-radius:4px;
+  padding:16px 18px;
+  font-size:0.9rem;color:rgba(255,255,255,0.8);
+  line-height:1.65;
+  margin-bottom:24px;
+  position:relative;z-index:1;
+}
+.demo-ai-generating{
+  display:flex;align-items:center;gap:10px;
+  padding:12px 16px;
+  background:rgba(109,92,255,0.07);
+  border:1px solid rgba(109,92,255,0.18);
+  border-radius:10px;
+  position:relative;z-index:1;
+}
+.demo-generating-text{
+  font-size:0.82rem;font-weight:600;
+  color:rgba(109,92,255,0.85);
+}
+.demo-generating-dots{display:flex;gap:4px;align-items:center}
+.demo-generating-dots span{
+  width:5px;height:5px;border-radius:50%;
+  background:var(--violet);opacity:0.5;
+  animation:genPulse 1.2s ease-in-out infinite;
+}
+.demo-generating-dots span:nth-child(2){animation-delay:0.2s}
+.demo-generating-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes genPulse{0%,100%{opacity:0.25;transform:scale(0.8)}50%{opacity:1;transform:scale(1.1)}}
+
+/* Right demo card */
+.demo-answer-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  padding:5px 12px;border-radius:100px;
+  background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.25);
+  font-size:0.72rem;font-weight:700;color:#22c55e;
+  margin-bottom:20px;letter-spacing:0.04em;
+}
+.demo-answer-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#22c55e;box-shadow:0 0 6px rgba(34,197,94,0.7)}
+.demo-star-row{margin-bottom:14px;position:relative;z-index:1}
+.demo-star-label{
+  font-size:0.68rem;font-weight:800;letter-spacing:0.12em;text-transform:uppercase;
+  color:var(--violet);margin-bottom:5px;
+}
+.demo-star-text{font-size:0.84rem;color:rgba(255,255,255,0.7);line-height:1.6}
+.demo-cursor{
+  display:inline-block;width:2px;height:13px;
+  background:rgba(109,92,255,0.9);
+  margin-left:2px;vertical-align:text-bottom;
+  animation:blinkCursor 1s step-end infinite;
+}
+@keyframes blinkCursor{0%,100%{opacity:1}50%{opacity:0}}
 
 /* ── ROUNDS ── */
 .rounds-grid{
@@ -488,12 +640,13 @@ footer{
   section{padding:80px 0}
   #how .container > div{grid-template-columns:1fr!important;gap:40px!important}
   #how .container > div > div:first-child{position:static!important}
+  .demo-panels{grid-template-columns:1fr}
 }
 </style>
 </head>
 <body>
 
-<!-- ══ NAV ══ -->
+<!-- NAV -->
 <nav id="navbar">
   <div class="container">
     <div class="nav-inner">
@@ -522,7 +675,7 @@ footer{
   </div>
 </nav>
 
-<!-- ══ MOBILE MENU ══ -->
+<!-- MOBILE MENU -->
 <div class="mobile-menu" id="mobile-menu">
   <a href="#features" onclick="toggleMenu()">All Tools</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
@@ -537,7 +690,7 @@ footer{
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
 </div>
 
-<!-- ══ HERO ══ -->
+<!-- HERO -->
 <section class="hero">
   <div class="orb hero-orb-1"></div>
   <div class="orb hero-orb-2"></div>
@@ -554,7 +707,7 @@ footer{
         Interview AI, Resume Builder, Job Portal, Cover Letter Generator, Email Generator, LinkedIn Optimizer, and Portfolio Builder — everything you need, all in one place, completely free.
       </p>
       <div class="hero-actions reveal reveal-d3">
-        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Get Started Free →</button>
+        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Get Started Free &rarr;</button>
         <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
       </div>
       <div class="trust-bar reveal reveal-d4">
@@ -564,6 +717,18 @@ footer{
         <span class="trust-sep"></span>
         <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>Your data stays in your browser</span>
       </div>
+
+      <!-- Floating AI card -->
+      <div class="hero-ai-card reveal reveal-d4">
+        <div class="hero-ai-card-header">
+          <div class="hero-ai-dot"></div>
+          <span class="hero-ai-label">&#10022; AI Interview Co-Pilot &bull; Active</span>
+        </div>
+        <div class="hero-ai-preview">
+          <strong>Answer generating&hellip;</strong> "In my previous role, I led a cross-functional team through a critical product migration&hellip;"
+        </div>
+      </div>
+
       <div class="hero-scroll reveal reveal-d5">
         <span>Scroll</span>
         <div class="hero-scroll-line"></div>
@@ -572,38 +737,40 @@ footer{
   </div>
 </section>
 
-<!-- ══ MARQUEE ══ -->
+<!-- MARQUEE -->
 <div class="marquee-strip">
   <div class="marquee-track">
     <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
     <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>4,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>7,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>97 Top Companies</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Cover Letter Generator</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Email Generator</div>
     <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn Optimizer</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Portfolio Builder</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Hourly Job Updates</div>
     <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>10+ Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>10 Job Sources</div>
     <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
     <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn + Indeed Jobs</div>
     <!-- duplicate for seamless loop -->
     <div class="marquee-item"><span class="marquee-dot"></span>Real-Time Interview AI</div>
     <div class="marquee-item"><span class="marquee-dot"></span>AI Resume Tailoring</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>4,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>7,000+ Tech Jobs</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>97 Top Companies</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Cover Letter Generator</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Email Generator</div>
     <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn Optimizer</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Portfolio Builder</div>
     <div class="marquee-item"><span class="marquee-dot"></span>Hourly Job Updates</div>
     <div class="marquee-item"><span class="marquee-dot"></span>ATS-Optimized Resumes</div>
-    <div class="marquee-item"><span class="marquee-dot"></span>10+ Job Sources</div>
+    <div class="marquee-item"><span class="marquee-dot"></span>10 Job Sources</div>
     <div class="marquee-item"><span class="marquee-dot"></span>STAR Method Answers</div>
     <div class="marquee-item"><span class="marquee-dot"></span>LinkedIn + Indeed Jobs</div>
   </div>
 </div>
 
-<!-- ══ FEATURES ══ -->
+<!-- FEATURES -->
 <section id="features">
   <div class="container">
     <div class="reveal">
@@ -612,111 +779,191 @@ footer{
       <p class="section-sub">From finding jobs to writing cover letters to acing interviews — Ambore covers every step of your job search, completely free.</p>
     </div>
 
-    <!-- ── PRODUCT CARDS ── -->
+    <!-- PRODUCT CARDS -->
     <div class="products-row">
       <div class="product-card reveal reveal-d1" style="--accent:#6d5cff;--accent-bg:rgba(109,92,255,0.1);--accent-border:rgba(109,92,255,0.25)">
-        <div class="product-icon">🎙</div>
+        <div class="product-icon">&#127897;</div>
         <div class="product-badge">AI Interview</div>
         <h3 class="product-title">Real-Time Interview Co-Pilot</h3>
         <p class="product-desc">Ambore listens to your interviewer, understands the question, and delivers a polished STAR-format answer in under 2 seconds.</p>
         <ul class="product-features">
-          <li>Live voice detection & instant AI answers</li>
+          <li>Live voice detection &amp; instant AI answers</li>
           <li>STAR method format for behavioral rounds</li>
           <li>Screen analysis for coding problems</li>
           <li>8 interview round types supported</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('/interview')" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/interview')" class="product-btn" style="background:var(--grad)">Open Interview App &rarr;</a>
       </div>
 
       <div class="product-card reveal reveal-d2" style="--accent:#9c5fff;--accent-bg:rgba(124,58,237,0.1);--accent-border:rgba(124,58,237,0.25)">
-        <div class="product-icon">📄</div>
+        <div class="product-icon">&#128196;</div>
         <div class="product-badge">AI Resume</div>
         <h3 class="product-title">Smart Resume Tailoring Engine</h3>
         <p class="product-desc">Paste any job description and get an ATS-optimized, tailored resume in seconds — built from your real experience.</p>
         <ul class="product-features">
           <li>One-click resume tailoring to any JD</li>
-          <li>ATS keyword optimization & scoring</li>
+          <li>ATS keyword optimization &amp; scoring</li>
           <li>Multiple export formats (PDF, DOCX)</li>
-          <li>Skills gap analysis & suggestions</li>
+          <li>Skills gap analysis &amp; suggestions</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('/resume')" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/resume')" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder &rarr;</a>
       </div>
 
       <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
-        <div class="product-icon">💼</div>
+        <div class="product-icon">&#128188;</div>
         <div class="product-badge">Job Portal</div>
-        <h3 class="product-title">4,000+ Jobs, Updated Hourly</h3>
+        <h3 class="product-title">7,000+ Jobs, Updated Hourly</h3>
         <p class="product-desc">Browse aggregated tech jobs from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more — updated every hour.</p>
         <ul class="product-features">
-          <li>10+ sources including LinkedIn & Indeed</li>
+          <li>10 sources including LinkedIn &amp; Indeed</li>
           <li>Scraped fresh every hour automatically</li>
           <li>Filter by state, category, salary, work type</li>
           <li>One-click "Tailor Resume" for any listing</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs &rarr;</a>
       </div>
     </div>
 
-    <!-- ── SECONDARY TOOLS ── -->
+    <!-- SECONDARY TOOLS -->
     <div class="tools-section-label reveal">Career Writing Tools</div>
     <div class="tools-row">
       <div class="tool-card reveal" style="--accent:#818CF8;--accent-bg:rgba(129,140,248,0.1);--accent-border:rgba(129,140,248,0.25)">
-        <div class="tool-icon">📝</div>
+        <div class="tool-icon">&#128221;</div>
         <div class="tool-badge">Cover Letter</div>
         <h3 class="tool-title">AI Cover Letter Generator</h3>
-        <p class="tool-desc">Upload your resume + paste any job description → get a tailored, professional cover letter in seconds.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter →</a>
+        <p class="tool-desc">Upload your resume + paste any job description &rarr; get a tailored, professional cover letter in seconds.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter &rarr;</a>
       </div>
       <div class="tool-card reveal reveal-d1" style="--accent:#fbbf24;--accent-bg:rgba(251,191,36,0.08);--accent-border:rgba(251,191,36,0.2)">
-        <div class="tool-icon">✉️</div>
+        <div class="tool-icon">&#9993;&#65039;</div>
         <div class="tool-badge">Email</div>
         <h3 class="tool-title">Job Email Generator</h3>
         <p class="tool-desc">Generate job application emails, cold outreach, follow-ups, thank you notes, and networking emails.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/email')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/email')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email &rarr;</a>
       </div>
       <div class="tool-card reveal reveal-d2" style="--accent:#58a6ff;--accent-bg:rgba(10,102,194,0.1);--accent-border:rgba(10,102,194,0.3)">
-        <div class="tool-icon">💼</div>
+        <div class="tool-icon">&#128188;</div>
         <div class="tool-badge">LinkedIn</div>
         <h3 class="tool-title">LinkedIn Profile Optimizer</h3>
         <p class="tool-desc">AI-generated headline, about section, skills list, and STAR-format experience bullets that attract recruiters.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/linkedin')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/linkedin')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn &rarr;</a>
       </div>
       <div class="tool-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.08);--accent-border:rgba(34,197,94,0.2)">
-        <div class="tool-icon">🌐</div>
+        <div class="tool-icon">&#127758;</div>
         <div class="tool-badge">Portfolio</div>
         <h3 class="tool-title">AI Portfolio Builder</h3>
-        <p class="tool-desc">Fill in your details and projects → download a complete, beautiful portfolio website as a single HTML file.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/portfolio')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio →</a>
+        <p class="tool-desc">Fill in your details and projects &rarr; download a complete, beautiful portfolio website as a single HTML file.</p>
+        <a href="javascript:void(0)" onclick="goToFeature('/portfolio')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio &rarr;</a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ STATS ══ -->
-<section style="padding:0">
+<!-- TOP COMPANIES -->
+<div class="companies-section">
   <div class="container">
-    <div class="stats-row">
+    <div class="companies-header reveal">
+      <h3 class="companies-title">Jobs from 97 companies including</h3>
+      <p class="companies-sub">Roles updated hourly across engineering, design, product, and more</p>
+    </div>
+    <div class="companies-pills reveal reveal-d1">
+      <span class="company-pill">Stripe</span>
+      <span class="company-pill">OpenAI</span>
+      <span class="company-pill">Cloudflare</span>
+      <span class="company-pill">Databricks</span>
+      <span class="company-pill">Notion</span>
+      <span class="company-pill">Airbnb</span>
+      <span class="company-pill">Discord</span>
+      <span class="company-pill">Datadog</span>
+      <span class="company-pill">MongoDB</span>
+      <span class="company-pill">Okta</span>
+      <span class="company-pill">Twilio</span>
+      <span class="company-pill">Anthropic</span>
+      <span class="company-pill">Harvey</span>
+      <span class="company-pill">Perplexity AI</span>
+      <span class="company-pill">Lyft</span>
+      <span class="company-pill">Toast</span>
+      <span class="company-pill">Instacart</span>
+      <span class="company-pill">Figma</span>
+      <span class="company-pill">Reddit</span>
+      <span class="company-pill">Twitch</span>
+    </div>
+  </div>
+</div>
+
+<!-- STATS -->
+<section style="padding:80px 0 0">
+  <div class="container">
+    <div class="stats-row" id="stats-row">
       <div class="stat-cell reveal">
-        <span class="stat-val">4,000+</span>
+        <span class="stat-val" data-target="7000" data-suffix="+">7,000+</span>
         <div class="stat-label">Active Tech Jobs</div>
       </div>
       <div class="stat-cell reveal reveal-d1">
-        <span class="stat-val">10+</span>
-        <div class="stat-label">Job Sources (Hourly Updates)</div>
+        <span class="stat-val" data-target="97" data-suffix="">97</span>
+        <div class="stat-label">Top Companies Hiring</div>
       </div>
       <div class="stat-cell reveal reveal-d2">
-        <span class="stat-val">7</span>
-        <div class="stat-label">AI Career Tools</div>
+        <span class="stat-val" data-target="10" data-suffix="">10</span>
+        <div class="stat-label">Job Sources (Hourly Updates)</div>
       </div>
       <div class="stat-cell reveal reveal-d3">
-        <span class="stat-val">&lt;2s</span>
-        <div class="stat-label">AI Generation Time</div>
+        <span class="stat-val" data-target="7" data-suffix="">7</span>
+        <div class="stat-label">AI Career Tools</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ══ HOW IT WORKS ══ -->
+<!-- DEMO SECTION -->
+<section class="demo-section" id="demo">
+  <div class="container">
+    <div class="demo-header reveal">
+      <div class="section-label">Product Demo</div>
+      <h2 class="section-title">Real-Time AI. Zero Lag.</h2>
+      <p class="section-sub" style="margin:0 auto;text-align:center">Watch the Interview Co-Pilot generate a complete STAR answer in under 2 seconds — live during your call.</p>
+    </div>
+    <div class="demo-panels">
+      <!-- Left: interviewer + AI generating -->
+      <div class="demo-card reveal reveal-d1">
+        <div class="demo-card-label">Live Interview Feed</div>
+        <div class="demo-interviewer-heading">&#127897; Interviewer asks:</div>
+        <div class="demo-speech-bubble">
+          "Tell me about a time you led a cross-functional team through a difficult challenge."
+        </div>
+        <div class="demo-ai-generating">
+          <div class="demo-generating-dots">
+            <span></span><span></span><span></span>
+          </div>
+          <span class="demo-generating-text">&#10022; Ambore AI generating&hellip;</span>
+        </div>
+      </div>
+      <!-- Right: STAR answer output -->
+      <div class="demo-card reveal reveal-d2">
+        <div class="demo-card-label">AI Answer Output</div>
+        <div class="demo-answer-badge">Answer ready in 1.8s</div>
+        <div class="demo-star-row">
+          <div class="demo-star-label">Situation</div>
+          <div class="demo-star-text">At my last company, we faced an urgent deadline to migrate our core payment service to a new infrastructure provider with only 6 weeks to deliver.</div>
+        </div>
+        <div class="demo-star-row">
+          <div class="demo-star-label">Task</div>
+          <div class="demo-star-text">As the lead engineer, I was responsible for coordinating across backend, frontend, QA, and DevOps — four teams with competing priorities.</div>
+        </div>
+        <div class="demo-star-row">
+          <div class="demo-star-label">Action</div>
+          <div class="demo-star-text">I ran daily standups, created a shared risk tracker, and negotiated scope cuts with product to keep the critical path clear. I unblocked two engineers personally by pair-programming through the toughest integration issues.</div>
+        </div>
+        <div class="demo-star-row">
+          <div class="demo-star-label">Result</div>
+          <div class="demo-star-text">We shipped on time with zero production incidents. Latency dropped 40% and the migration became the template for two subsequent platform upgrades<span class="demo-cursor"></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
 <section id="how" class="how-bg">
   <div class="container">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start">
@@ -737,7 +984,7 @@ footer{
           <div class="step-num">02</div>
           <div class="step-body">
             <h3>Find the right job</h3>
-            <p>Browse 4,000+ tech jobs scraped hourly from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more. Filter, save, and click "Tailor Resume" on any listing.</p>
+            <p>Browse 7,000+ tech jobs scraped hourly from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more. Filter, save, and click "Tailor Resume" on any listing.</p>
           </div>
         </div>
         <div class="step reveal reveal-d2">
@@ -766,7 +1013,7 @@ footer{
   </div>
 </section>
 
-<!-- ══ WHY AMBORE ══ -->
+<!-- WHY AMBORE -->
 <section id="rounds">
   <div class="container">
     <div class="reveal" style="text-align:center;max-width:600px;margin:0 auto">
@@ -776,42 +1023,42 @@ footer{
     </div>
     <div class="rounds-grid">
       <div class="round-card reveal">
-        <div class="round-num" style="font-size:1.4rem">🔍</div>
-        <div class="round-name">10+ Job Sources</div>
+        <div class="round-num" style="font-size:1.4rem">&#128269;</div>
+        <div class="round-name">10 Job Sources</div>
         <p class="round-desc">LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more — aggregated automatically</p>
       </div>
       <div class="round-card reveal reveal-d1">
-        <div class="round-num" style="font-size:1.4rem">⏰</div>
+        <div class="round-num" style="font-size:1.4rem">&#9200;</div>
         <div class="round-name">Hourly Updates</div>
         <p class="round-desc">Jobs scraped every hour so you always see the freshest listings before others apply</p>
       </div>
       <div class="round-card reveal reveal-d2">
-        <div class="round-num" style="font-size:1.4rem">🎯</div>
+        <div class="round-num" style="font-size:1.4rem">&#127919;</div>
         <div class="round-name">ATS-Optimized</div>
         <p class="round-desc">AI resume tailoring matches keywords and formatting that ATS systems look for</p>
       </div>
       <div class="round-card reveal reveal-d3">
-        <div class="round-num" style="font-size:1.4rem">⚡</div>
+        <div class="round-num" style="font-size:1.4rem">&#9889;</div>
         <div class="round-name">Sub-2s Answers</div>
         <p class="round-desc">Interview AI delivers STAR-format answers in under 2 seconds — real time</p>
       </div>
       <div class="round-card reveal">
-        <div class="round-num" style="font-size:1.4rem">🎙</div>
+        <div class="round-num" style="font-size:1.4rem">&#127897;</div>
         <div class="round-name">8 Round Types</div>
         <p class="round-desc">HR screen to executive round — the AI adapts its answers for each stage</p>
       </div>
       <div class="round-card reveal reveal-d1">
-        <div class="round-num" style="font-size:1.4rem">📸</div>
+        <div class="round-num" style="font-size:1.4rem">&#128248;</div>
         <div class="round-name">Screen Analysis</div>
         <p class="round-desc">Stuck on a coding problem? Capture your screen and get instant solutions</p>
       </div>
       <div class="round-card reveal reveal-d2">
-        <div class="round-num" style="font-size:1.4rem">🔒</div>
+        <div class="round-num" style="font-size:1.4rem">&#128274;</div>
         <div class="round-name">100% Private</div>
         <p class="round-desc">All data stays in your browser — no server storage, no tracking, fully local</p>
       </div>
       <div class="round-card reveal reveal-d3">
-        <div class="round-num" style="font-size:1.4rem">💰</div>
+        <div class="round-num" style="font-size:1.4rem">&#128176;</div>
         <div class="round-name">Completely Free</div>
         <p class="round-desc">No credit card, no trial limits — all features available at zero cost</p>
       </div>
@@ -819,7 +1066,7 @@ footer{
   </div>
 </section>
 
-<!-- ══ FAQ ══ -->
+<!-- FAQ -->
 <section id="faq" class="how-bg">
   <div class="container" style="max-width:800px">
     <div class="reveal" style="text-align:center;margin-bottom:0">
@@ -832,14 +1079,14 @@ footer{
           What is Ambore?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Ambore is a free, all-in-one AI career platform with 7 tools: a Job Portal (4,000+ hourly-updated jobs), AI Resume Builder, AI Cover Letter Generator, Job Email Generator, LinkedIn Profile Optimizer, Portfolio Builder, and an AI Interview Co-Pilot for real-time answers during interviews.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Ambore is a free, all-in-one AI career platform with 7 tools: a Job Portal (7,000+ hourly-updated jobs from 97 companies), AI Resume Builder, AI Cover Letter Generator, Job Email Generator, LinkedIn Profile Optimizer, Portfolio Builder, and an AI Interview Co-Pilot for real-time answers during interviews.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
           Where do the job listings come from?
           <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
         </button>
-        <div class="faq-a"><div class="faq-a-inner">Jobs are automatically scraped from 10+ sources: LinkedIn (via public API), Indeed (via Apify), USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour, so you always see the freshest jobs before they fill up.</div></div>
+        <div class="faq-a"><div class="faq-a-inner">Jobs are automatically scraped from 10 sources: LinkedIn (via public API), Indeed (via Apify), USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour across 97 top companies, so you always see the freshest jobs before they fill up.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">
@@ -866,20 +1113,20 @@ footer{
   </div>
 </section>
 
-<!-- ══ CTA ══ -->
+<!-- CTA -->
 <section class="cta-section">
   <div class="container" style="text-align:center">
     <div class="section-label reveal">Get Started</div>
     <h2 class="section-title reveal reveal-d1">Your dream job<br>starts here.</h2>
-    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, write cover letters, optimize your LinkedIn, build a portfolio, and ace your interview — all free, all AI-powered.</p>
+    <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs at 97 top companies, tailor your resume, write cover letters, optimize your LinkedIn, build a portfolio, and ace your interview — all free, all AI-powered.</p>
     <div class="reveal reveal-d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
-      <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free →</button>
-      <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="btn-hero-ghost">Browse Jobs</a>
+      <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free &rarr;</button>
+      <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="btn-hero-ghost">Browse 7,000+ Jobs</a>
     </div>
   </div>
 </section>
 
-<!-- ══ FOOTER ══ -->
+<!-- FOOTER -->
 <footer>
   <div class="container">
     <div class="footer-inner">
@@ -915,7 +1162,7 @@ footer{
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 Ambore. All rights reserved.</p>
+      <p>&copy; 2026 Ambore. All rights reserved.</p>
       <div class="footer-bottom-links">
         <a href="#">Privacy</a>
         <a href="#">Terms</a>
@@ -924,7 +1171,7 @@ footer{
   </div>
 </footer>
 
-<!-- ══ AUTH MODAL ══ -->
+<!-- AUTH MODAL -->
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-modal">
     <div class="auth-modal-head">
@@ -932,7 +1179,7 @@ footer{
         <div class="auth-logo-icon">A</div>
         Ambore
       </div>
-      <button class="auth-close" onclick="closeAuthModal()">×</button>
+      <button class="auth-close" onclick="closeAuthModal()">&times;</button>
     </div>
     <div class="auth-tabs">
       <div class="auth-tab active" data-tab="login" onclick="switchTab('login')">Log In</div>
@@ -943,7 +1190,7 @@ footer{
       <div class="auth-err" id="auth-err-login"></div>
       <div class="auth-field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
       <div class="auth-field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
-      <button class="auth-submit" onclick="handleLogin(event)">Log In →</button>
+      <button class="auth-submit" onclick="handleLogin(event)">Log In &rarr;</button>
       <div class="auth-switch"><a onclick="switchTab('forgot')" style="color:rgba(255,255,255,0.4);font-weight:400;cursor:pointer">Forgot password?</a></div>
       <div class="auth-switch">No account? <a onclick="switchTab('signup')">Sign up free</a></div>
     </div>
@@ -954,7 +1201,7 @@ footer{
       <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
       <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
       <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
-      <button class="auth-submit" onclick="handleSignup(event)">Create Account →</button>
+      <button class="auth-submit" onclick="handleSignup(event)">Create Account &rarr;</button>
       <div class="auth-switch">Already have account? <a onclick="switchTab('login')">Log in</a></div>
     </div>
     <!-- Forgot Password -->
@@ -964,18 +1211,18 @@ footer{
       <div class="auth-field"><label>Email</label><input type="email" id="fp-email" placeholder="you@example.com"/></div>
       <div class="auth-field"><label>New Password</label><input type="password" id="fp-pass" placeholder="Min 6 characters"/></div>
       <div class="auth-field"><label>Confirm New Password</label><input type="password" id="fp-pass2" placeholder="Repeat new password"/></div>
-      <button class="auth-submit" onclick="handleForgotPassword(event)">Reset Password →</button>
+      <button class="auth-submit" onclick="handleForgotPassword(event)">Reset Password &rarr;</button>
       <div class="auth-switch">Remember your password? <a onclick="switchTab('login')">Log in</a></div>
     </div>
   </div>
 </div>
 
 <script>
-/* ── NAVBAR ── */
+/* NAVBAR */
 const navbar=document.getElementById('navbar');
 window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.scrollY>60));
 
-/* ── MOBILE MENU ── */
+/* MOBILE MENU */
 function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open')}
 document.addEventListener('click',e=>{
   const m=document.getElementById('mobile-menu');
@@ -983,13 +1230,50 @@ document.addEventListener('click',e=>{
   if(m.classList.contains('open')&&!m.contains(e.target)&&!h.contains(e.target))m.classList.remove('open');
 });
 
-/* ── SCROLL REVEAL ── */
+/* SCROLL REVEAL */
 const revealObs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible')});
 },{threshold:0.07});
 document.querySelectorAll('.reveal').forEach(el=>revealObs.observe(el));
 
-/* ── FAQ ── */
+/* ANIMATED STAT COUNTERS */
+function animateCounter(el,target,suffix,duration){
+  const start=performance.now();
+  function tick(now){
+    const elapsed=now-start;
+    const progress=Math.min(elapsed/duration,1);
+    // ease out cubic
+    const eased=1-Math.pow(1-progress,3);
+    const current=Math.round(eased*target);
+    if(target>=1000){
+      el.textContent=current.toLocaleString()+suffix;
+    } else {
+      el.textContent=current+suffix;
+    }
+    if(progress<1)requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+const statObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target;
+      const target=parseInt(el.dataset.target,10);
+      const suffix=el.dataset.suffix||'';
+      animateCounter(el,target,suffix,1600);
+      statObs.unobserve(el);
+    }
+  });
+},{threshold:0.3});
+document.querySelectorAll('.stat-val[data-target]').forEach(el=>{
+  // Set initial text to 0 so it counts up from 0
+  const suffix=el.dataset.suffix||'';
+  el.textContent='0'+suffix;
+  statObs.observe(el);
+});
+
+/* FAQ */
 function toggleFaq(btn){
   const item=btn.parentElement;
   const isOpen=item.classList.contains('open');
@@ -997,7 +1281,7 @@ function toggleFaq(btn){
   if(!isOpen)item.classList.add('open');
 }
 
-/* ── AUTH MODAL ── */
+/* AUTH MODAL */
 function goToFeature(page){
   if(getSession()){window.location.href=page;return;}
   _pendingRedirect=page;
@@ -1028,7 +1312,6 @@ let _pendingRedirect = null;
         err.classList.add('show');
       }
     },300);
-    // Clean URL
     window.history.replaceState({},'',window.location.pathname);
   }
 })();
@@ -1041,13 +1324,11 @@ document.addEventListener('DOMContentLoaded',()=>{
 function switchTab(tab){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.auth-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
-  // Hide tabs row for forgot password, show for login/signup
   const tabsRow=document.querySelector('.auth-tabs');
   if(tabsRow)tabsRow.style.display=(tab==='forgot')?'none':'flex';
 }
 
-/* ── AUTH LOGIC ── */
-/* Uses same ambore_db key as app.html so accounts work across both pages */
+/* AUTH LOGIC */
 function getDB(){return JSON.parse(localStorage.getItem('ambore_db')||'{"users":[],"sessions":[]}')}
 function saveDB(db){localStorage.setItem('ambore_db',JSON.stringify(db))}
 function getUsers(){return getDB().users}
@@ -1055,7 +1336,6 @@ function saveUsers(users){const db=getDB();db.users=users;saveDB(db)}
 function getSession(){
   const s=JSON.parse(localStorage.getItem('ambore_user')||'null');
   if(!s)return null;
-  // Check token expiry
   if(s.expiresAt&&Date.now()>s.expiresAt){localStorage.removeItem('ambore_user');return null}
   return s;
 }
@@ -1096,10 +1376,8 @@ function handleSignup(e){
   if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}
   const users=getUsers();
   if(users.find(u=>u.email===email)){err.textContent='User already registered.';err.classList.add('show');return}
-  // Create account — do NOT auto-login
   const newUser={id:'u'+Date.now(),name,email,password:pass,createdAt:new Date().toISOString()};
   users.push(newUser);saveUsers(users);
-  // Show success, then switch to login tab
   err.textContent='Account created successfully! Please log in.';
   err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
   err.classList.add('show');
@@ -1107,7 +1385,6 @@ function handleSignup(e){
   document.getElementById('su-email').value='';
   document.getElementById('su-pass').value='';
   document.getElementById('su-pass2').value='';
-  // Pre-fill email on login tab for convenience
   setTimeout(()=>{
     switchTab('login');
     document.getElementById('li-email').value=email;
@@ -1155,10 +1432,9 @@ function updateNavState(){
     cta.innerHTML=`
       <div class="nav-user">
         <span class="nav-user-name">${session.name.split(' ')[0]}</span>
-        <a href="jobs.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(34,197,94,0.85);">Jobs</a>
-
-        <a href="app.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;">Interview</a>
-        <a href="resume.html" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(124,58,237,0.9);">Resume</a>
+        <a href="/jobs" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(34,197,94,0.85);">Jobs</a>
+        <a href="/interview" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;">Interview</a>
+        <a href="/resume" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(124,58,237,0.9);">Resume</a>
         <button class="nav-logout" onclick="handleLogout()">Log Out</button>
       </div>`;
   } else {
@@ -1174,23 +1450,18 @@ function updatePageForAuthState(){
   const heroLogin=document.getElementById('hero-cta-login');
   const bottomCta=document.getElementById('bottom-cta');
   if(session){
-    // Logged in — hero buttons go to products
-    if(heroPrimary){heroPrimary.textContent='Browse Jobs →';heroPrimary.onclick=()=>{window.location.href='jobs.html'}}
-    if(heroLogin){heroLogin.textContent='Interview AI';heroLogin.onclick=()=>{window.location.href='app.html'}}
-    if(bottomCta){bottomCta.textContent='Browse Jobs →';bottomCta.onclick=()=>{window.location.href='jobs.html'}}
-    // Close auth modal if somehow open
+    if(heroPrimary){heroPrimary.textContent='Browse Jobs \u2192';heroPrimary.onclick=()=>{window.location.href='/jobs'}}
+    if(heroLogin){heroLogin.textContent='Interview AI';heroLogin.onclick=()=>{window.location.href='/interview'}}
+    if(bottomCta){bottomCta.textContent='Browse Jobs \u2192';bottomCta.onclick=()=>{window.location.href='/jobs'}}
     closeAuthModal();
   } else {
-    // Not logged in — restore default auth modal triggers
-    if(heroPrimary){heroPrimary.textContent='Get Started Free →';heroPrimary.onclick=()=>{openAuthModal('signup')}}
+    if(heroPrimary){heroPrimary.textContent='Get Started Free \u2192';heroPrimary.onclick=()=>{openAuthModal('signup')}}
     if(heroLogin){heroLogin.textContent='Log In';heroLogin.onclick=()=>{openAuthModal('login')}}
-    if(bottomCta){bottomCta.textContent='Get Started Free →';bottomCta.onclick=()=>{openAuthModal('signup')}}
+    if(bottomCta){bottomCta.textContent='Get Started Free \u2192';bottomCta.onclick=()=>{openAuthModal('signup')}}
   }
 }
 updateNavState();
 updatePageForAuthState();
-
-/* ── HERO BADGE ANIMATION ALREADY IN CSS ── */
 </script>
 </body>
 </html>
