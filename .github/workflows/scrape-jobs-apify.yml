@@ -98,5 +98,7 @@ jobs:
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
             git commit -m "chore: refresh Apify jobs (LinkedIn+Indeed) — ${TOTAL} total ($(date -u '+%Y-%m-%d'))"
+            # Rebase onto latest remote before pushing (handles concurrent pushes)
+            git pull --rebase origin main
             git push
           fi
