@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# No need to index raw JSON data
+Disallow: /backend/
+
+# Sitemap
+Sitemap: https://ambore.ai/sitemap.xml

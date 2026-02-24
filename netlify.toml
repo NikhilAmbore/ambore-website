@@ -1,0 +1,36 @@
+[build]
+  publish = "."
+
+# ── Security & Trust Headers (applied to all pages) ──────────────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options         = "SAMEORIGIN"
+    X-Content-Type-Options  = "nosniff"
+    X-XSS-Protection        = "1; mode=block"
+    Referrer-Policy         = "strict-origin-when-cross-origin"
+    # Allow microphone for Interview AI; deny camera and geolocation
+    Permissions-Policy      = "camera=(), microphone=(self), geolocation=()"
+
+# ── HTML pages: 1-hour cache + stale-while-revalidate ────────────────────────
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+
+# ── Jobs data: 5-minute cache (updates hourly via GitHub Actions) ─────────────
+[[headers]]
+  for = "/backend/jobs.json"
+  [headers.values]
+    Cache-Control = "public, max-age=300, stale-while-revalidate=600"
+
+# ── Static assets: 30-day cache ───────────────────────────────────────────────
+[[headers]]
+  for = "*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
+
+[[headers]]
+  for = "*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"

@@ -157,6 +157,10 @@ nav.scrolled{
   border:1px solid var(--border);cursor:pointer;transition:all 0.25s;
 }
 .btn-hero-ghost:hover{background:rgba(255,255,255,0.1);color:#fff;border-color:rgba(255,255,255,0.2)}
+.trust-bar{display:flex;align-items:center;justify-content:center;gap:20px;margin-top:28px;flex-wrap:wrap}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:0.8rem;color:rgba(255,255,255,0.45);white-space:nowrap}
+.trust-item svg{flex-shrink:0;opacity:0.6}
+.trust-sep{width:1px;height:14px;background:rgba(255,255,255,0.12)}
 .hero-scroll{margin-top:64px;display:flex;flex-direction:column;align-items:center;gap:8px;opacity:0.35}
 .hero-scroll span{font-size:0.75rem;letter-spacing:0.15em;text-transform:uppercase;color:#fff}
 .hero-scroll-line{width:1px;height:48px;background:linear-gradient(to bottom,rgba(255,255,255,0.5),transparent)}
@@ -501,11 +505,11 @@ footer{
         <a href="#features">Tools</a>
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
-        <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
-        <a href="javascript:void(0)" onclick="goToFeature('resume.html')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
-        <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')" style="color:rgba(129,140,248,0.9);font-weight:600">Cover Letter</a>
-        <a href="javascript:void(0)" onclick="goToFeature('app.html')" style="color:var(--violet);font-weight:600">Interview</a>
-        <a href="javascript:void(0)" onclick="goToFeature('dashboard.html')" style="color:rgba(255,255,255,0.5);font-weight:600" id="nav-dashboard">Dashboard</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/jobs')" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/resume')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" style="color:rgba(129,140,248,0.9);font-weight:600">Cover Letter</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/interview')" style="color:var(--violet);font-weight:600">Interview</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/dashboard')" style="color:rgba(255,255,255,0.5);font-weight:600" id="nav-dashboard">Dashboard</a>
       </div>
       <div class="nav-actions" id="nav-cta">
         <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
@@ -523,13 +527,13 @@ footer{
   <a href="#features" onclick="toggleMenu()">All Tools</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <a href="javascript:void(0)" onclick="goToFeature('jobs.html');toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
-  <a href="javascript:void(0)" onclick="goToFeature('resume.html');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
-  <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html');toggleMenu()" style="color:rgba(129,140,248,0.9)">Cover Letter</a>
-  <a href="javascript:void(0)" onclick="goToFeature('email.html');toggleMenu()" style="color:rgba(251,191,36,0.9)">Email Generator</a>
-  <a href="javascript:void(0)" onclick="goToFeature('linkedin.html');toggleMenu()" style="color:rgba(88,166,255,0.9)">LinkedIn Optimizer</a>
-  <a href="javascript:void(0)" onclick="goToFeature('portfolio.html');toggleMenu()" style="color:rgba(34,197,94,0.9)">Portfolio Builder</a>
-  <a href="javascript:void(0)" onclick="goToFeature('app.html');toggleMenu()" style="color:var(--violet)">Interview AI</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/jobs');toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/resume');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/cover-letter');toggleMenu()" style="color:rgba(129,140,248,0.9)">Cover Letter</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/email');toggleMenu()" style="color:rgba(251,191,36,0.9)">Email Generator</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/linkedin');toggleMenu()" style="color:rgba(88,166,255,0.9)">LinkedIn Optimizer</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/portfolio');toggleMenu()" style="color:rgba(34,197,94,0.9)">Portfolio Builder</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()" style="color:var(--violet)">Interview AI</a>
   <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
 </div>
 
@@ -553,7 +557,14 @@ footer{
         <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Get Started Free →</button>
         <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
       </div>
-      <div class="hero-scroll reveal reveal-d4">
+      <div class="trust-bar reveal reveal-d4">
+        <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>100% Free</span>
+        <span class="trust-sep"></span>
+        <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/></svg>No credit card required</span>
+        <span class="trust-sep"></span>
+        <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>Your data stays in your browser</span>
+      </div>
+      <div class="hero-scroll reveal reveal-d5">
         <span>Scroll</span>
         <div class="hero-scroll-line"></div>
       </div>
@@ -614,7 +625,7 @@ footer{
           <li>Screen analysis for coding problems</li>
           <li>8 interview round types supported</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('app.html')" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/interview')" class="product-btn" style="background:var(--grad)">Open Interview App →</a>
       </div>
 
       <div class="product-card reveal reveal-d2" style="--accent:#9c5fff;--accent-bg:rgba(124,58,237,0.1);--accent-border:rgba(124,58,237,0.25)">
@@ -628,7 +639,7 @@ footer{
           <li>Multiple export formats (PDF, DOCX)</li>
           <li>Skills gap analysis & suggestions</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('resume.html')" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/resume')" class="product-btn" style="background:rgba(124,58,237,0.9)">Open Resume Builder →</a>
       </div>
 
       <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
@@ -642,7 +653,7 @@ footer{
           <li>Filter by state, category, salary, work type</li>
           <li>One-click "Tailor Resume" for any listing</li>
         </ul>
-        <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs →</a>
       </div>
     </div>
 
@@ -654,28 +665,28 @@ footer{
         <div class="tool-badge">Cover Letter</div>
         <h3 class="tool-title">AI Cover Letter Generator</h3>
         <p class="tool-desc">Upload your resume + paste any job description → get a tailored, professional cover letter in seconds.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter →</a>
       </div>
       <div class="tool-card reveal reveal-d1" style="--accent:#fbbf24;--accent-bg:rgba(251,191,36,0.08);--accent-border:rgba(251,191,36,0.2)">
         <div class="tool-icon">✉️</div>
         <div class="tool-badge">Email</div>
         <h3 class="tool-title">Job Email Generator</h3>
         <p class="tool-desc">Generate job application emails, cold outreach, follow-ups, thank you notes, and networking emails.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('email.html')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/email')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email →</a>
       </div>
       <div class="tool-card reveal reveal-d2" style="--accent:#58a6ff;--accent-bg:rgba(10,102,194,0.1);--accent-border:rgba(10,102,194,0.3)">
         <div class="tool-icon">💼</div>
         <div class="tool-badge">LinkedIn</div>
         <h3 class="tool-title">LinkedIn Profile Optimizer</h3>
         <p class="tool-desc">AI-generated headline, about section, skills list, and STAR-format experience bullets that attract recruiters.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('linkedin.html')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/linkedin')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn →</a>
       </div>
       <div class="tool-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.08);--accent-border:rgba(34,197,94,0.2)">
         <div class="tool-icon">🌐</div>
         <div class="tool-badge">Portfolio</div>
         <h3 class="tool-title">AI Portfolio Builder</h3>
         <p class="tool-desc">Fill in your details and projects → download a complete, beautiful portfolio website as a single HTML file.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('portfolio.html')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio →</a>
+        <a href="javascript:void(0)" onclick="goToFeature('/portfolio')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio →</a>
       </div>
     </div>
   </div>
@@ -863,7 +874,7 @@ footer{
     <p class="section-sub reveal reveal-d2" style="margin:0 auto 48px">Find jobs, tailor your resume, write cover letters, optimize your LinkedIn, build a portfolio, and ace your interview — all free, all AI-powered.</p>
     <div class="reveal reveal-d3" style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
       <button class="btn-hero" id="bottom-cta" onclick="openAuthModal('signup')">Get Started Free →</button>
-      <a href="javascript:void(0)" onclick="goToFeature('jobs.html')" class="btn-hero-ghost">Browse Jobs</a>
+      <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="btn-hero-ghost">Browse Jobs</a>
     </div>
   </div>
 </section>
@@ -882,13 +893,13 @@ footer{
       <div class="footer-links">
         <div class="footer-col">
           <h5>Tools</h5>
-          <a href="javascript:void(0)" onclick="goToFeature('jobs.html')">Job Portal</a>
-          <a href="javascript:void(0)" onclick="goToFeature('resume.html')">AI Resume</a>
-          <a href="javascript:void(0)" onclick="goToFeature('cover-letter.html')">Cover Letter</a>
-          <a href="javascript:void(0)" onclick="goToFeature('email.html')">Email Generator</a>
-          <a href="javascript:void(0)" onclick="goToFeature('linkedin.html')">LinkedIn Optimizer</a>
-          <a href="javascript:void(0)" onclick="goToFeature('portfolio.html')">Portfolio Builder</a>
-          <a href="javascript:void(0)" onclick="goToFeature('app.html')">Interview AI</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/jobs')">Job Portal</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/resume')">AI Resume</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')">Cover Letter</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/email')">Email Generator</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/portfolio')">Portfolio Builder</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/interview')">Interview AI</a>
         </div>
         <div class="footer-col" id="footer-account">
           <h5>Account</h5>
