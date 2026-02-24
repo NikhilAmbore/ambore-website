@@ -182,6 +182,46 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview hr{border:none;border-top:1px solid var(--border);margin:8px 0}
 .resume-preview a{color:var(--accent);text-decoration:underline;font-size:10pt}
 
+/* ── TEMPLATE PICKER ── */
+.template-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+.template-label{font-size:0.75rem;font-weight:700;color:rgba(255,255,255,0.35);text-transform:uppercase;letter-spacing:0.08em;white-space:nowrap}
+.template-pills{display:flex;gap:6px;flex-wrap:wrap}
+.tpl-pill{display:flex;align-items:center;gap:7px;padding:7px 14px;border-radius:20px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.45);transition:all 0.15s;white-space:nowrap}
+.tpl-pill:hover{border-color:rgba(255,255,255,0.2);color:#fff;background:rgba(255,255,255,0.06)}
+.tpl-pill.active{border-color:rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:#fff}
+.tpl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+
+/* ── TEMPLATE DARK PREVIEW VARIANTS ── */
+/* Classic — default (grey accent) */
+.resume-preview.tpl-classic h1{color:#e2e8f0}
+.resume-preview.tpl-classic h2{color:#9ca3af;border-bottom-color:rgba(156,163,175,0.25)}
+.resume-preview.tpl-classic h3{color:#e2e8f0}
+/* Modern — blue accent */
+.resume-preview.tpl-modern{font-family:Inter,-apple-system,sans-serif!important}
+.resume-preview.tpl-modern *{font-family:Inter,-apple-system,sans-serif!important}
+.resume-preview.tpl-modern h1{color:#93C5FD;letter-spacing:-0.2px}
+.resume-preview.tpl-modern h2{color:#64748b;border-bottom:none;font-size:9pt;letter-spacing:1.2px;margin-top:10px}
+.resume-preview.tpl-modern h3{color:#e2e8f0}
+.resume-preview.tpl-modern .resume-header{border-bottom:1px solid rgba(255,255,255,0.1);padding-bottom:8px;margin-bottom:8px}
+/* Professional Blue */
+.resume-preview.tpl-professional h1{color:#60A5FA;text-align:left!important}
+.resume-preview.tpl-professional .resume-header{text-align:left!important}
+.resume-preview.tpl-professional .resume-header *{text-align:left!important}
+.resume-preview.tpl-professional h1+p,.resume-preview.tpl-professional h1+p+p{text-align:left!important}
+.resume-preview.tpl-professional h2{color:#3B82F6;border-bottom:none;border-left:3px solid #3B82F6;padding-left:8px;margin-left:-8px}
+.resume-preview.tpl-professional h3{color:#e2e8f0}
+/* Executive — gold accent */
+.resume-preview.tpl-executive .resume-header{background:rgba(30,41,59,0.8);border-radius:10px;padding:16px;margin-bottom:10px}
+.resume-preview.tpl-executive h1{color:#FCD34D}
+.resume-preview.tpl-executive h2{color:#F59E0B;border-bottom:2px solid rgba(245,158,11,0.35);letter-spacing:1.2px}
+.resume-preview.tpl-executive h3{color:#e2e8f0}
+/* Creative — purple accent */
+.resume-preview.tpl-creative h1{color:#C084FC;letter-spacing:-0.3px}
+.resume-preview.tpl-creative h2{color:#A855F7;border-bottom-color:rgba(168,85,247,0.3)}
+.resume-preview.tpl-creative h3{color:#e2e8f0}
+.resume-preview.tpl-creative .resume-header{border-bottom:3px solid rgba(168,85,247,0.5);padding-bottom:8px;margin-bottom:8px}
+.resume-preview.tpl-creative em{color:#C084FC}
+
 /* Streaming cursor */
 .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
@@ -516,6 +556,28 @@ button,input,textarea,select{font-family:inherit}
         <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(129,140,248,0.4);color:#818CF8">💾 Save to Dashboard</button>
       </div>
     </div>
+    <!-- TEMPLATE PICKER -->
+    <div class="template-row" id="template-row">
+      <div class="template-label">Template</div>
+      <div class="template-pills">
+        <button class="tpl-pill active" onclick="setTemplate('classic')" data-tpl="classic">
+          <span class="tpl-dot" style="background:#9ca3af"></span>Classic
+        </button>
+        <button class="tpl-pill" onclick="setTemplate('modern')" data-tpl="modern">
+          <span class="tpl-dot" style="background:#60A5FA"></span>Modern
+        </button>
+        <button class="tpl-pill" onclick="setTemplate('professional')" data-tpl="professional">
+          <span class="tpl-dot" style="background:#3B82F6"></span>Professional
+        </button>
+        <button class="tpl-pill" onclick="setTemplate('executive')" data-tpl="executive">
+          <span class="tpl-dot" style="background:#F59E0B"></span>Executive
+        </button>
+        <button class="tpl-pill" onclick="setTemplate('creative')" data-tpl="creative">
+          <span class="tpl-dot" style="background:#A855F7"></span>Creative
+        </button>
+      </div>
+    </div>
+
     <!-- ATS Score Comparison -->
     <div id="ats-panel" class="ats-panel hidden">
       <div class="ats-panel-title">&#9670; ATS Score Comparison</div>
@@ -553,7 +615,7 @@ button,input,textarea,select{font-family:inherit}
       </div>
     </div>
 
-    <div class="resume-preview" id="resume-output"></div>
+    <div class="resume-preview tpl-classic" id="resume-output"></div>
   </div>
 </div>
 
@@ -760,6 +822,24 @@ const CLAUDE_MODEL = 'claude-sonnet-4-5-20250929';
 
 let generatedMarkdown = '';
 let isGenerating = false;
+let activeTemplate = 'classic';
+
+/* ── TEMPLATES ── */
+const TEMPLATE_PRINT_CSS = {
+  classic: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.3;color:#111;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:6px}h1{font-size:14pt;font-weight:900;text-align:center;margin:0 0 2px 0;color:#000}h2{font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:8px 0 3px 0;border-bottom:1.5px solid #000;padding-bottom:1px;color:#000}h3{font-size:10.5pt;font-weight:700;margin:4px 0 1px 0;color:#000}p{margin:0 0 2px 0;font-size:10pt;color:#111}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#111}strong{font-weight:700}em{font-style:italic;color:#444}hr{border:none;border-top:1px solid #aaa;margin:6px 0}a{color:#1155CC}`,
+  modern: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1a1a2e;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}h1{font-size:18pt;font-weight:700;text-align:center;margin:0 0 2px 0;color:#0f172a;letter-spacing:-0.3px}h2{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;margin:10px 0 4px 0;color:#64748b;border-bottom:none;padding-bottom:0}h3{font-size:10.5pt;font-weight:600;margin:4px 0 1px 0;color:#0f172a}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:600;color:#0f172a}em{font-style:normal;color:#6b7280}hr{border:none;border-top:1px solid #e2e8f0;margin:6px 0}a{color:#2563EB;text-decoration:none}`,
+  professional: `body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;line-height:1.3;color:#1e293b;margin:0;padding:0}.resume-header{margin-bottom:8px;text-align:left}h1{font-size:20pt;font-weight:700;text-align:left;margin:0 0 2px 0;color:#1E40AF}h1+p,h1+p+p,h1+p+p+p{text-align:left;color:#1E40AF;font-weight:600}h2{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin:8px 0 3px 0;color:#1E40AF;border-left:3px solid #1E40AF;padding:0 0 0 7px;border-bottom:none}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#334155}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#334155}strong{font-weight:700;color:#1e293b}em{font-style:italic;color:#64748b}hr{border:none;border-top:1px solid #bfdbfe;margin:5px 0}a{color:#1E40AF}`,
+  executive: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.3;color:#1c1c1c;margin:0;padding:0}.resume-header{background:#1e293b;color:#fff;text-align:center;padding:16px 24px;margin-bottom:10px}.resume-header h1{color:#FCD34D!important;font-size:18pt;font-weight:900;margin:0 0 2px 0}.resume-header p,.resume-header a{color:rgba(255,255,255,0.85)!important;margin:0}h1{font-size:18pt;font-weight:900;margin:0 0 2px 0;color:#FCD34D;text-align:center}h2{font-size:10.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin:10px 0 3px 0;color:#1e293b;border-bottom:2.5px solid #F59E0B;padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:4px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#374151}strong{font-weight:700}em{font-style:italic;color:#6b7280}hr{border:none;border-top:1px solid #d1d5db;margin:6px 0}a{color:#B45309}`,
+  creative: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1e1b4b;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #7C3AED}h1{font-size:20pt;font-weight:800;text-align:center;margin:0 0 2px 0;color:#6D28D9;letter-spacing:-0.5px}h2{font-size:9.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px 0;color:#6D28D9;border-bottom:1px solid rgba(109,40,217,0.3);padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e1b4b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:700;color:#1e1b4b}em{font-style:italic;color:#7C3AED}hr{border:none;border-top:1px solid rgba(109,40,217,0.2);margin:5px 0}a{color:#6D28D9;text-decoration:none}`
+};
+
+function setTemplate(id) {
+  activeTemplate = id;
+  document.querySelectorAll('.tpl-pill').forEach(p => p.classList.toggle('active', p.dataset.tpl === id));
+  const out = document.getElementById('resume-output');
+  out.className = 'resume-preview tpl-' + id;
+  showToast('Template: ' + id.charAt(0).toUpperCase() + id.slice(1));
+}
 
 function buildResumeSystemPrompt(links) {
   const linkLine = [
@@ -1275,26 +1355,12 @@ function copyResume() {
 
 function printResume() {
   if (!generatedMarkdown) { showToast('No resume to print.'); return; }
-  // Open a clean window for printing — no browser headers/footers/URL/date
   const html = renderMarkdown(generatedMarkdown);
+  const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const printWin = window.open('', '_blank');
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
-<style>
-  @page { size: letter; margin: 0.5in 0.6in; }
-  body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.3; color: #000; margin: 0; padding: 0; }
-  .resume-header { text-align: center; margin-bottom: 6px; }
-  h1 { font-size: 14pt; font-weight: 900; text-align: center; margin: 0 0 1px 0; }
-  h2 { font-size: 11pt; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin: 8px 0 3px 0; border-bottom: 1px solid #000; padding-bottom: 1px; }
-  h3 { font-size: 10pt; font-weight: 700; margin: 4px 0 1px 0; }
-  p { margin: 0 0 2px 0; font-size: 10pt; }
-  ul { padding-left: 16px; margin: 0 0 3px 0; }
-  li { margin-bottom: 1px; font-size: 10pt; }
-  strong { font-weight: 700; }
-  em { font-style: italic; }
-  hr { border: none; border-top: 1px solid #999; margin: 4px 0; }
-  a { color: #1155CC; text-decoration: underline; }
-</style>
+<style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
 </head><body>${html}</body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -1303,47 +1369,21 @@ function printResume() {
 
 async function downloadDocx() {
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
-
-  // Build a simple DOCX using plain text content with proper structure
-  const plain = document.getElementById('resume-output').innerText;
-  const lines = plain.split('\n').filter(l => l.trim());
-
-  // Create a minimal DOCX file using a Blob
-  // We'll use HTML-to-DOCX approach via mhtml format that Word can open
-  const htmlContent = `
-    <html xmlns:o="urn:schemas-microsoft-com:office:office"
-          xmlns:w="urn:schemas-microsoft-com:office:word"
-          xmlns="http://www.w3.org/TR/REC-html40">
-    <head>
-      <meta charset="utf-8"/>
-      <style>
-        body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.25; color: #000; margin: 0.5in 0.6in; }
-        .resume-header { text-align: center; margin-bottom: 4px; }
-        h1 { font-size: 14pt; font-weight: 900; color: #000; margin: 0 0 1px 0; text-align: center; }
-        h2 { font-size: 11pt; font-weight: 700; color: #000; text-transform: uppercase; letter-spacing: 0.5px; margin: 6px 0 2px 0; border-bottom: 1px solid #000; padding-bottom: 1px; }
-        h3 { font-size: 10pt; font-weight: 700; color: #000; margin: 3px 0 1px 0; }
-        p { margin: 0 0 1px 0; font-size: 10pt; }
-        ul { padding-left: 16px; margin: 1px 0; }
-        li { margin-bottom: 1px; font-size: 10pt; }
-        strong { font-weight: 700; }
-        em { font-style: italic; color: #333; }
-        hr { border: none; border-top: 1px solid #000; margin: 8px 0; }
-        a { color: #1155CC; text-decoration: underline; }
-      </style>
-    </head>
-    <body>${renderMarkdown(generatedMarkdown)}</body>
-    </html>`;
-
+  const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
+  const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
+  const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
+<body>${renderMarkdown(generatedMarkdown)}</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
-  a.download = 'Tailored_Resume.doc';
+  a.download = `Resume_${tplName}.doc`;
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  showToast('Resume downloaded! Open with Word to save as DOCX.');
+  showToast(`Resume downloaded (${tplName} template)! Open with Word to save as DOCX.`);
 }
 
 /* ═══════════════════════════════════════════

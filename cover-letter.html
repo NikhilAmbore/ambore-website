@@ -129,6 +129,8 @@ button,input,textarea,select{font-family:inherit}
 .btn-copy.copied{color:var(--green);border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.08)}
 .btn-download{background:rgba(255,255,255,0.05);border:1px solid var(--border);color:rgba(255,255,255,0.6)}
 .btn-download:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.btn-pdf{background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);color:rgba(239,100,100,0.9)}
+.btn-pdf:hover{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.5);color:#fff}
 .letter-text{padding:28px 32px;font-size:0.92rem;line-height:1.85;color:rgba(255,255,255,0.85);white-space:pre-wrap;font-family:inherit;min-height:100px}
 @media(max-width:700px){.letter-text{padding:20px}}
 
@@ -277,7 +279,8 @@ button,input,textarea,select{font-family:inherit}
         </div>
         <div class="output-actions">
           <button class="btn-action btn-copy" id="copy-btn" onclick="copyLetter(this)">Copy</button>
-          <button class="btn-action btn-download" onclick="downloadLetter()">Download TXT</button>
+          <button class="btn-action btn-download" onclick="downloadLetter()">⬇ TXT</button>
+          <button class="btn-action btn-pdf" onclick="downloadLetterPDF()">⬇ PDF</button>
         </div>
       </div>
       <div class="letter-text" id="letter-text"></div>
@@ -456,6 +459,52 @@ function downloadLetter(){
   a.download=`cover-letter-${company}.txt`;
   a.click();
   URL.revokeObjectURL(a.href);
+}
+
+function downloadLetterPDF(){
+  const text=document.getElementById('letter-text').textContent;
+  if(!text.trim()){showToast('Nothing to download yet.');return;}
+  const company=document.getElementById('company-name').value.trim()||'';
+  const recipient=document.getElementById('recipient-name').value.trim()||'Hiring Manager';
+  // Format: preserve paragraphs
+  const paragraphs=text.split(/\n\n+/).map(p=>p.trim()).filter(Boolean);
+  const bodyHtml=paragraphs.map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+  const today=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+  const printWin=window.open('','_blank','width=900,height=700');
+  printWin.document.write(`<!DOCTYPE html>
+<html><head><title>Cover Letter${company?' – '+company:''}</title>
+<style>
+  @page{size:letter;margin:1in 1.1in}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Times New Roman',Times,serif;font-size:11.5pt;line-height:1.65;color:#111;background:#fff}
+  .page{max-width:6.5in;margin:0 auto}
+  .date{margin-bottom:22px;color:#333}
+  .salutation{margin-bottom:18px;font-weight:600}
+  p{margin-bottom:14px;text-align:justify;hyphens:auto}
+  .signature{margin-top:28px}
+  .signature-name{font-weight:700;font-size:12pt;margin-top:10px}
+  @media print{
+    html,body{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    button{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="date">${today}</div>
+  ${company?`<div style="margin-bottom:22px"><strong>Re: Application – ${company}</strong></div>`:''}
+  <div class="salutation">Dear ${recipient},</div>
+  ${bodyHtml}
+  <div class="signature">
+    Sincerely,<br>
+    <div class="signature-name">${Auth.getUser()?.name||''}</div>
+  </div>
+</div>
+</body></html>`);
+  printWin.document.close();
+  printWin.focus();
+  setTimeout(()=>{printWin.print();},400);
+  showToast('Print dialog opened — choose "Save as PDF"');
 }
 
 // Init — check for prefill from jobs page
