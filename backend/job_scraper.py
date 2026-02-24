@@ -144,6 +144,44 @@ US_STATE_ABBREVS: frozenset[str] = frozenset({
     "DC", "PR", "GU", "VI", "AS", "MP",
 })
 
+# Full US state names — used to classify "City, StateName" format (e.g. Ashby)
+US_STATE_NAMES: frozenset[str] = frozenset({
+    "Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado",
+    "Connecticut", "Delaware", "Florida", "Georgia", "Hawaii", "Idaho",
+    "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky", "Louisiana",
+    "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota",
+    "Mississippi", "Missouri", "Montana", "Nebraska", "Nevada",
+    "New Hampshire", "New Jersey", "New Mexico", "New York",
+    "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon",
+    "Pennsylvania", "Rhode Island", "South Carolina", "South Dakota",
+    "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+    "West Virginia", "Wisconsin", "Wyoming", "District of Columbia",
+})
+
+# Regex: ", StateName" at end — catches "San Francisco, California" style
+_RE_US_STATE_FULL = re.compile(
+    r",\s*(" + "|".join(re.escape(s) for s in sorted(US_STATE_NAMES, key=len, reverse=True)) + r")\s*$",
+    re.IGNORECASE,
+)
+
+# Well-known US tech-hub cities that appear bare (without state) in ATS listings.
+_US_TECH_CITIES: tuple[str, ...] = (
+    "San Francisco", "New York City", "Los Angeles", "Mountain View",
+    "Palo Alto", "Menlo Park", "Redwood City", "San Jose", "Santa Clara",
+    "Sunnyvale", "Cupertino", "San Mateo", "Burlingame", "Foster City",
+    "Seattle", "Bellevue", "Kirkland", "Redmond",
+    "Austin", "Dallas", "Houston", "Denver", "Boulder", "Chicago",
+    "Boston", "Cambridge", "New Haven", "Washington DC",
+    "Atlanta", "Miami", "Nashville", "Minneapolis", "Portland",
+    "Philadelphia", "Pittsburgh", "Phoenix", "Salt Lake City",
+    "San Diego", "Sacramento", "Raleigh", "Durham", "Charlotte",
+    "Las Vegas", "Tampa", "Orlando", "Columbus", "Indianapolis",
+)
+_RE_US_TECH_CITY = re.compile(
+    r"^(" + "|".join(re.escape(c) for c in _US_TECH_CITIES) + r")\s*$",
+    re.IGNORECASE,
+)
+
 # Matches explicit US location strings
 _RE_US_LOCATION = re.compile(
     r"\b(united\s+states|u\.s\.a?|usa|u\.s\b|america)\b"
@@ -246,6 +284,14 @@ def _classify_location(location: str) -> tuple[bool, bool]:
         state = m.group(2)
         if state and state.upper() not in US_STATE_ABBREVS:
             return False, is_remote
+        return True, is_remote
+
+    # Check for "City, StateName" format (e.g. "San Francisco, California")
+    if _RE_US_STATE_FULL.search(location):
+        return True, is_remote
+
+    # Check for bare well-known US tech city names (e.g. "San Francisco")
+    if _RE_US_TECH_CITY.match(location):
         return True, is_remote
 
     return False, is_remote
@@ -2824,6 +2870,8 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "chime",        "company_name": "Chime"},
     {"ats": "greenhouse", "company": "carta",        "company_name": "Carta"},
     {"ats": "greenhouse", "company": "robinhood",    "company_name": "Robinhood"},
+    {"ats": "greenhouse", "company": "affirm",       "company_name": "Affirm"},
+    {"ats": "greenhouse", "company": "marqeta",      "company_name": "Marqeta"},
     # Cloud / infra / dev tools
     {"ats": "greenhouse", "company": "gitlab",       "company_name": "GitLab"},
     {"ats": "greenhouse", "company": "databricks",   "company_name": "Databricks"},
@@ -2834,6 +2882,14 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "checkr",       "company_name": "Checkr"},
     {"ats": "greenhouse", "company": "verkada",      "company_name": "Verkada"},
     {"ats": "greenhouse", "company": "samsara",      "company_name": "Samsara"},
+    {"ats": "greenhouse", "company": "cloudflare",   "company_name": "Cloudflare"},
+    {"ats": "greenhouse", "company": "datadog",      "company_name": "Datadog"},
+    {"ats": "greenhouse", "company": "mongodb",      "company_name": "MongoDB"},
+    {"ats": "greenhouse", "company": "elastic",      "company_name": "Elastic"},
+    {"ats": "greenhouse", "company": "okta",         "company_name": "Okta"},
+    {"ats": "greenhouse", "company": "newrelic",     "company_name": "New Relic"},
+    {"ats": "greenhouse", "company": "pagerduty",    "company_name": "PagerDuty"},
+    {"ats": "greenhouse", "company": "twilio",       "company_name": "Twilio"},
     # SaaS / productivity
     {"ats": "greenhouse", "company": "hubspot",      "company_name": "HubSpot"},
     {"ats": "greenhouse", "company": "asana",        "company_name": "Asana"},
@@ -2846,11 +2902,24 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "amplitude",    "company_name": "Amplitude"},
     {"ats": "greenhouse", "company": "lattice",      "company_name": "Lattice"},
     {"ats": "greenhouse", "company": "gusto",        "company_name": "Gusto"},
-    # Consumer / marketplace
+    {"ats": "greenhouse", "company": "intercom",     "company_name": "Intercom"},
+    {"ats": "greenhouse", "company": "contentful",   "company_name": "Contentful"},
+    {"ats": "greenhouse", "company": "qualtrics",    "company_name": "Qualtrics"},
+    {"ats": "greenhouse", "company": "dropbox",      "company_name": "Dropbox"},
+    {"ats": "greenhouse", "company": "airtable",     "company_name": "Airtable"},
+    {"ats": "greenhouse", "company": "mozilla",      "company_name": "Mozilla"},
+    {"ats": "greenhouse", "company": "pendo",        "company_name": "Pendo"},
+    # Consumer / marketplace / food
     {"ats": "greenhouse", "company": "airbnb",       "company_name": "Airbnb"},
     {"ats": "greenhouse", "company": "reddit",       "company_name": "Reddit"},
     {"ats": "greenhouse", "company": "lyft",         "company_name": "Lyft"},
     {"ats": "greenhouse", "company": "flexport",     "company_name": "Flexport"},
+    {"ats": "greenhouse", "company": "instacart",    "company_name": "Instacart"},
+    {"ats": "greenhouse", "company": "toast",        "company_name": "Toast"},
+    {"ats": "greenhouse", "company": "twitch",       "company_name": "Twitch"},
+    {"ats": "greenhouse", "company": "peloton",      "company_name": "Peloton"},
+    {"ats": "greenhouse", "company": "thumbtack",    "company_name": "Thumbtack"},
+    {"ats": "greenhouse", "company": "collibra",     "company_name": "Collibra"},
 
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
     {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
@@ -2878,10 +2947,20 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "ashby", "company": "ramp",         "company_name": "Ramp"},
     {"ats": "ashby", "company": "deel",         "company_name": "Deel"},
     {"ats": "ashby", "company": "replit",       "company_name": "Replit"},
+    # Additional AI / dev tools on Ashby (verified 2026-02)
+    {"ats": "ashby", "company": "notion",       "company_name": "Notion"},
+    {"ats": "ashby", "company": "harvey",       "company_name": "Harvey"},
+    {"ats": "ashby", "company": "perplexity",   "company_name": "Perplexity AI"},
+    {"ats": "ashby", "company": "cursor",       "company_name": "Cursor"},
+    {"ats": "ashby", "company": "modal",        "company_name": "Modal"},
+    {"ats": "ashby", "company": "anyscale",     "company_name": "Anyscale"},
+    {"ats": "ashby", "company": "poolside",     "company_name": "Poolside"},
+    {"ats": "ashby", "company": "runway",       "company_name": "Runway"},
 
     # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
-    {"ats": "workable", "company": "typeform",      "company_name": "Typeform"},
-    {"ats": "workable", "company": "hotjar",        "company_name": "Hotjar"},
+    # Note: Typeform and Hotjar are EU-based; they return 0 US jobs — disabled.
+    # {"ats": "workable", "company": "typeform",    "company_name": "Typeform"},
+    # {"ats": "workable", "company": "hotjar",      "company_name": "Hotjar"},
 
     # ── Workday (POST /wday/cxs/{tenant}/{site}/jobs — CSRF via session warmup)
     # The scraper GETs the careers page first to capture the CALYPSO_CSRF_TOKEN
@@ -2977,7 +3056,7 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # Uses linkedin.com/jobs-guest/ endpoints — same HTML that non-logged-in
     # visitors see.  No token, no Apify, no cost.
     {"ats": "linkedin", "company": "software engineer", "company_name": "LinkedIn",
-     "api_secret": '["data scientist", "product manager", "machine learning engineer", "devops engineer", "backend engineer", "frontend engineer", "software developer", "full stack developer"]'},
+     "api_secret": '["data scientist", "product manager", "machine learning engineer", "devops engineer", "backend engineer", "frontend engineer", "software developer", "full stack developer", "AI engineer", "platform engineer", "site reliability engineer", "data engineer", "analytics engineer", "mobile engineer", "iOS developer", "Android developer", "security engineer", "solutions engineer"]'},
     #
     # ── Apify cloud actors ────────────────────────────────────────────────────
     # Free tier: $5 platform credits / month  →  https://apify.com/
@@ -2987,7 +3066,7 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # Indeed Jobs — valig/indeed-jobs-scraper (~$0.02/run at 200 results)
     {"ats": "apify", "company": "valig/indeed-jobs-scraper",
      "company_name": "Indeed (via Apify)",
-     "api_secret": '{"keyword": "software engineer OR data scientist OR product manager OR machine learning engineer OR devops engineer OR backend developer OR frontend developer", "location": "United States", "maxItems": 200}'},
+     "api_secret": '{"keyword": "software engineer OR data scientist OR product manager OR machine learning engineer OR devops engineer OR backend developer OR frontend developer OR AI engineer OR platform engineer OR data engineer", "location": "United States", "maxItems": 300}'},
 ]
 
 
