@@ -383,7 +383,7 @@ Software Engineer at Airbnb (2019-2021)
 <script>
 const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
 const CLAUDE_KEY=_k.join('');
-const CLAUDE_MODEL='claude-sonnet-4-5-20250929';
+const CLAUDE_MODEL='claude-sonnet-4-6';
 
 const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
 function logout(){localStorage.removeItem('ambore_user');window.location.href='/';}
@@ -529,44 +529,29 @@ async function buildPortfolio(){
     if(statusEl)statusEl.textContent=statusMsgs[sIdx];
   },2000);
 
-  const systemPrompt=`You are an expert front-end developer. Generate a complete, beautiful, single-file HTML portfolio website.
+  const systemPrompt=`You are an expert front-end developer. Output ONLY a complete, valid, single-file HTML portfolio. No markdown, no code fences, no explanations. Start with <!DOCTYPE html> and MUST end with </html>.
 
-CRITICAL: Output ONLY valid, complete HTML — no explanations, no markdown, no code fences. Start with <!DOCTYPE html> and end with </html>.
+THEME COLORS: bg=${t.bg} | card=${t.card} | text=${t.text} | muted=${t.muted} | accent=${t.accent} | accentDark=${t.accentDark} | border=${t.border} | tagBg=${t.tag} | tagColor=${t.tagColor} | navBg=${t.navBg}
 
-Theme colors:
-- Background: ${t.bg}
-- Card background: ${t.card}
-- Text: ${t.text}
-- Muted text: ${t.muted}
-- Accent: ${t.accent}
-- Accent dark: ${t.accentDark}
-- Border: ${t.border}
-- Tag background: ${t.tag}
-- Tag color: ${t.tagColor}
-- Nav background: ${t.navBg}
-- Skill badge background: ${t.skillBg}
+REQUIRED SECTIONS:
+1. Fixed nav: logo-name left, links right (About, Skills, Projects, Contact)
+2. Hero: name (gradient text), title, 1-line bio, "View Projects" + "Contact" buttons, social icon links
+3. Skills: badge grid using the provided skills list
+4. Projects: card grid — name, description, tech tags, live+github buttons
+5. Contact: email link + social links + simple mailto form
+6. Footer: name, "Built with Ambore AI"
 
-SECTIONS TO INCLUDE (in order):
-1. <nav> — fixed, name/logo left, nav links right (About, Skills, Projects, Experience, Contact)
-2. <section id="hero"> — full-viewport hero with name, title, 2-line bio, CTA buttons (View Projects, Contact Me), social links icons
-3. <section id="about"> — short about paragraph + 3 stat cards (years exp, projects, etc.)
-4. <section id="skills"> — skill badges grid, grouped by category if possible
-5. <section id="projects"> — card grid, each card: project name, description, tech stack tags, live link + github link buttons
-6. <section id="experience"> — vertical timeline with job entries
-7. <section id="contact"> — contact form (name, email, message — non-functional, shows mailto link) + social links
-8. <footer> — name, copyright, built with Ambore AI
+CSS RULES (keep output compact):
+- Use CSS variables for theme colors
+- Responsive with flexbox/grid, mobile breakpoint at 768px
+- Card hover: transform translateY(-3px) with box-shadow transition
+- Smooth scroll on html element
+- All CSS in one <style> block, JS in one <script> block
+- Use system font stack: Inter, -apple-system, sans-serif
+- DO NOT use IntersectionObserver or complex animations — keep JS minimal
+- Hamburger menu: simple toggle with a hidden mobile nav
 
-DESIGN REQUIREMENTS:
-- Fully responsive (mobile-first, CSS grid/flex)
-- Smooth scroll behavior
-- Hover animations on cards (transform: translateY(-4px))
-- Gradient text on name in hero
-- Section headings with subtle gradient underline
-- Clean typography using system fonts or Google Fonts Inter
-- No external JS libraries — vanilla JS only
-- Scroll-triggered fade-in animations using IntersectionObserver
-- Mobile hamburger menu
-- All inline styles in <style> tag — single file output`;
+IMPORTANT: Be concise in CSS/JS. The entire file must be complete and valid HTML. Every opened tag must be closed. End with </body></html>.`;
 
   const contactLinks=[];
   if(email)contactLinks.push(`Email: ${email}`);
@@ -591,7 +576,7 @@ Generate the complete portfolio HTML now.`;
     const res=await fetch('https://api.anthropic.com/v1/messages',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:4000,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
+      body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:8000,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
     });
     if(!res.ok)throw new Error('API error '+res.status);
 
@@ -613,13 +598,23 @@ Generate the complete portfolio HTML now.`;
     }
 
     // Clean up any markdown fences if present
-    generatedHTML=generatedHTML.replace(/^```html\n?/,'').replace(/```$/,'').trim();
+    generatedHTML=generatedHTML.replace(/^```html\n?/i,'').replace(/^```\n?/,'').replace(/\n?```$/,'').trim();
+
+    // Validate the HTML is complete
+    if(!generatedHTML.includes('</html>')){
+      // Try to close if truncated mid-way
+      if(!generatedHTML.includes('</body>'))generatedHTML+='</body>';
+      generatedHTML+='</html>';
+    }
 
     if(progFill)progFill.style.width='100%';
     showPreview();
     document.getElementById('output-section').classList.remove('hidden');
     document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
-  }catch(e){showToast('Error: '+e.message);}
+  }catch(e){
+    showToast('Generation failed: '+e.message+' — try again.');
+    console.error('Portfolio generation error:',e);
+  }
   finally{
     clearInterval(progressInterval);
     clearInterval(statusInterval);
@@ -628,12 +623,19 @@ Generate the complete portfolio HTML now.`;
   }
 }
 
+let _previewBlobUrl='';
 function showPreview(){
   const iframe=document.getElementById('preview-iframe');
   const loading=document.getElementById('preview-loading');
   if(loading)loading.style.display='flex';
-  iframe.srcdoc=generatedHTML;
+  // Revoke previous blob URL to free memory
+  if(_previewBlobUrl){URL.revokeObjectURL(_previewBlobUrl);_previewBlobUrl='';}
+  // Use blob URL — more reliable than srcdoc for large HTML files
+  const blob=new Blob([generatedHTML],{type:'text/html;charset=utf-8'});
+  _previewBlobUrl=URL.createObjectURL(blob);
   iframe.onload=()=>{if(loading)loading.style.display='none';};
+  iframe.onerror=()=>{if(loading)loading.style.display='none';showToast('Preview failed — use "Open Full Preview" instead.');};
+  iframe.src=_previewBlobUrl;
 }
 
 function openPreview(){
