@@ -70,9 +70,15 @@ jobs:
               print(f'  {ats}: {cnt}')
           "
 
-          # Merge Apify jobs into existing jobs.json (deduplicate by id)
+          # Merge Apify jobs into existing jobs.json — preserve first_seen_at, expire >45d
           python - <<'PYEOF'
           import json, pathlib
+          from datetime import datetime, timezone, timedelta
+
+          EXPIRE_DAYS   = 45
+          now_utc       = datetime.now(timezone.utc)
+          expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
+          now_iso       = now_utc.isoformat()
 
           existing_path = pathlib.Path('backend/jobs.json')
           apify_path    = pathlib.Path('/tmp/apify_jobs.json')
@@ -80,12 +86,44 @@ jobs:
           existing = json.loads(existing_path.read_text(encoding='utf-8')) if existing_path.exists() else []
           apify    = json.loads(apify_path.read_text(encoding='utf-8'))
 
-          # Remove stale Apify entries from existing, then prepend fresh ones
-          non_apify = [j for j in existing if j.get('ats') != 'apify']
-          merged    = apify + non_apify
+          # Index existing by id to preserve first_seen_at
+          existing_by_id = {j['id']: j for j in existing}
+
+          # Stamp first_seen_at on fresh Apify jobs
+          for j in apify:
+              prev = existing_by_id.get(j['id'])
+              j['first_seen_at'] = (prev or {}).get('first_seen_at') or j.get('scraped_at') or now_iso
+
+          # Carry over non-Apify jobs (never drop them here)
+          fresh_ids = {j['id'] for j in apify}
+          non_apify = []
+          for ex in existing:
+              if ex.get('ats') != 'apify':
+                  if 'first_seen_at' not in ex:
+                      ex['first_seen_at'] = ex.get('scraped_at') or now_iso
+                  non_apify.append(ex)
+
+          merged = apify + non_apify
+
+          # Expire jobs older than EXPIRE_DAYS
+          def not_expired(j):
+              fsa = j.get('first_seen_at') or j.get('scraped_at')
+              if not fsa:
+                  return True
+              try:
+                  dt = datetime.fromisoformat(fsa)
+                  if dt.tzinfo is None:
+                      dt = dt.replace(tzinfo=timezone.utc)
+                  return dt >= expire_cutoff
+              except Exception:
+                  return True
+
+          before = len(merged)
+          merged = [j for j in merged if not_expired(j)]
+          expired = before - len(merged)
 
           existing_path.write_text(json.dumps(merged, indent=2, ensure_ascii=False), encoding='utf-8')
-          print(f'Merged: {len(apify)} Apify + {len(non_apify)} other = {len(merged)} total jobs')
+          print(f'Merged: {len(apify)} Apify + {len(non_apify)} other = {len(merged)} total  ({expired} expired)')
           PYEOF
 
       - name: Commit & push updated jobs.json

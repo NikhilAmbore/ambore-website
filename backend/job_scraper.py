@@ -3157,6 +3157,59 @@ def main() -> None:
     with JobScrapeOrchestrator() as orc:
         jobs = orc.run(targets, since_hours=args.since_hours)
 
+    # ── Merge with existing jobs.json — never shrink, expire after 45 days ──
+    EXPIRE_DAYS   = 45
+    now_utc       = datetime.now(timezone.utc)
+    expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
+    now_iso       = now_utc.isoformat()
+
+    existing_jobs: list[dict] = []
+    if args.output and os.path.isfile(args.output):
+        try:
+            with open(args.output, encoding="utf-8") as f:
+                existing_jobs = json.load(f)
+            log.info("Loaded %d existing jobs from %s", len(existing_jobs), args.output)
+        except Exception as exc:
+            log.warning("Could not load existing jobs (%s) — starting fresh", exc)
+
+    # Index existing by id
+    existing_by_id: dict[str, dict] = {j["id"]: j for j in existing_jobs}
+
+    # Stamp first_seen_at on fresh jobs; keep original timestamp when re-seen
+    for j in jobs:
+        prev = existing_by_id.get(j["id"])
+        j["first_seen_at"] = (prev or {}).get("first_seen_at") or j.get("scraped_at") or now_iso
+
+    # Carry over existing jobs that were NOT re-scraped this run
+    fresh_ids = {j["id"] for j in jobs}
+    for ex in existing_jobs:
+        if ex["id"] not in fresh_ids:
+            if "first_seen_at" not in ex:
+                ex["first_seen_at"] = ex.get("scraped_at") or now_iso
+            jobs.append(ex)
+
+    # Expire jobs older than EXPIRE_DAYS
+    def _not_expired(j: dict) -> bool:
+        fsa = j.get("first_seen_at") or j.get("scraped_at")
+        if not fsa:
+            return True
+        try:
+            dt = datetime.fromisoformat(fsa)
+            if dt.tzinfo is None:
+                dt = dt.replace(tzinfo=timezone.utc)
+            return dt >= expire_cutoff
+        except Exception:
+            return True
+
+    before_expire = len(jobs)
+    jobs = [j for j in jobs if _not_expired(j)]
+    expired = before_expire - len(jobs)
+    log.info(
+        "Merge complete — %d total jobs (%d fresh, %d carried over, %d expired after %dd)",
+        len(jobs), len(fresh_ids), len(jobs) + expired - len(fresh_ids), expired, EXPIRE_DAYS,
+    )
+    # ────────────────────────────────────────────────────────────────────────
+
     output_json = json.dumps(jobs, indent=2, ensure_ascii=False)
 
     if args.output:

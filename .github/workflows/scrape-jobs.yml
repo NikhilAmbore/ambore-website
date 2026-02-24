@@ -75,12 +75,18 @@ jobs:
           wc -c backend/jobs.json
           python -c "
           import json
-          jobs = json.load(open('backend/jobs.json'))
-          remote  = sum(1 for j in jobs if j['is_remote'])
+          from datetime import datetime, timezone, timedelta
+          jobs   = json.load(open('backend/jobs.json'))
+          remote = sum(1 for j in jobs if j['is_remote'])
+          now    = datetime.now(timezone.utc)
+          fresh  = sum(1 for j in jobs if (fsa := j.get('first_seen_at')) and
+                       (datetime.fromisoformat(fsa).replace(tzinfo=timezone.utc)
+                        if datetime.fromisoformat(fsa).tzinfo is None
+                        else datetime.fromisoformat(fsa)) >= now - timedelta(hours=2))
           sources = {}
           for j in jobs:
               sources[j['ats']] = sources.get(j['ats'], 0) + 1
-          print(f'Total: {len(jobs)} jobs  |  Remote: {remote}')
+          print(f'Total: {len(jobs)} jobs  |  Remote: {remote}  |  Added this run: ~{fresh}')
           for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
           "
