@@ -1361,7 +1361,8 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
-</head><body>${html}</body></html>`);
+</head><body>${html}<script src="/chat-widget.js" defer></script>
+</body></html>`);
   printWin.document.close();
   printWin.focus();
   setTimeout(() => { printWin.print(); printWin.close(); }, 300);
@@ -1373,7 +1374,8 @@ async function downloadDocx() {
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
-<body>${renderMarkdown(generatedMarkdown)}</body></html>`;
+<body>${renderMarkdown(generatedMarkdown)}<script src="/chat-widget.js" defer></script>
+</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -1419,5 +1421,6 @@ if (Auth.getUser()) {
   window.location.href = '/?auth=login&redirect=/resume&msg=Please+log+in+to+access+this+feature';
 }
 </script>
+<script src="/chat-widget.js" defer></script>
 </body>
 </html>

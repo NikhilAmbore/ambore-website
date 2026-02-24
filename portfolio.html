@@ -551,7 +551,8 @@ CSS RULES (keep output compact):
 - DO NOT use IntersectionObserver or complex animations — keep JS minimal
 - Hamburger menu: simple toggle with a hidden mobile nav
 
-IMPORTANT: Be concise in CSS/JS. The entire file must be complete and valid HTML. Every opened tag must be closed. End with </body></html>.`;
+IMPORTANT: Be concise in CSS/JS. The entire file must be complete and valid HTML. Every opened tag must be closed. End with <script src="/chat-widget.js" defer></script>
+</body></html>.`;
 
   const contactLinks=[];
   if(email)contactLinks.push(`Email: ${email}`);
@@ -603,7 +604,8 @@ Generate the complete portfolio HTML now.`;
     // Validate the HTML is complete
     if(!generatedHTML.includes('</html>')){
       // Try to close if truncated mid-way
-      if(!generatedHTML.includes('</body>'))generatedHTML+='</body>';
+      if(!generatedHTML.includes('<script src="/chat-widget.js" defer></script>
+</body>'))generatedHTML+='</body>';
       generatedHTML+='</html>';
     }
 
@@ -668,5 +670,6 @@ function init(){
 }
 init();
 </script>
+<script src="/chat-widget.js" defer></script>
 </body>
 </html>

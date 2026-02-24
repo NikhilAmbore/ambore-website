@@ -500,6 +500,7 @@ function downloadLetterPDF(){
     <div class="signature-name">${Auth.getUser()?.name||''}</div>
   </div>
 </div>
+<script src="/chat-widget.js" defer></script>
 </body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -531,5 +532,6 @@ function init(){
 }
 init();
 </script>
+<script src="/chat-widget.js" defer></script>
 </body>
 </html>
