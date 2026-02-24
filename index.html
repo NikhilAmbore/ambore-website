@@ -62,8 +62,8 @@ nav.scrolled{
 .nav-inner{display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-0.02em}
 .nav-logo-icon{width:32px;height:32px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:36px}
-.nav-links a{font-size:0.9rem;font-weight:500;color:var(--off);transition:color 0.2s}
+.nav-links{display:flex;align-items:center;gap:22px}
+.nav-links a{font-size:0.85rem;font-weight:500;color:var(--off);transition:color 0.2s}
 .nav-links a:hover{color:#fff}
 .nav-actions{display:flex;align-items:center;gap:12px}
 .btn-ghost{padding:9px 20px;border-radius:9px;font-size:0.88rem;font-weight:600;color:var(--off);background:transparent;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
@@ -93,13 +93,11 @@ nav.scrolled{
 @media(max-width:768px){
   .nav-user{gap:6px}
   .nav-user-name{font-size:0.75rem;padding:3px 8px}
-  .nav-user .btn-cta{font-size:0.72rem!important;padding:6px 10px!important}
   .nav-logout{font-size:0.72rem}
 }
 @media(max-width:480px){
   .nav-user{gap:4px}
   .nav-user-name{display:none}
-  .nav-user .btn-cta{font-size:0.7rem!important;padding:5px 8px!important}
   .nav-logout{font-size:0.7rem}
 }
 
@@ -1448,9 +1446,7 @@ function updateNavState(){
     cta.innerHTML=`
       <div class="nav-user">
         <span class="nav-user-name">${session.name.split(' ')[0]}</span>
-        <a href="/jobs" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(34,197,94,0.85);">Jobs</a>
-        <a href="/interview" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;">Interview</a>
-        <a href="/resume" class="btn-cta" style="font-size:0.85rem;padding:8px 14px;background:rgba(124,58,237,0.9);">Resume</a>
+        <a href="/dashboard" class="btn-ghost" style="font-size:0.85rem;padding:7px 16px;">Dashboard</a>
         <button class="nav-logout" onclick="handleLogout()">Log Out</button>
       </div>`;
   } else {
