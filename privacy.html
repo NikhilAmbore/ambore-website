@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Privacy Policy — Ambore</title>
+<meta name="description" content="Ambore Privacy Policy — how we collect, use, and protect your data."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0;line-height:1.7}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--muted:rgba(255,255,255,0.45);
+}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.95);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff;flex-shrink:0}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.topbar-links{display:flex;gap:20px;font-size:0.82rem;font-weight:600;color:var(--muted)}
+.topbar-links a{color:var(--muted);transition:color 0.2s}.topbar-links a:hover{color:#fff;text-decoration:none}
+.topbar-links a.active{color:var(--accent)}
+
+/* LAYOUT */
+.page-wrap{max-width:780px;margin:0 auto;padding:56px 24px 100px}
+
+/* HERO */
+.doc-hero{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.doc-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.3);border-radius:20px;font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px}
+.doc-title{font-size:2.2rem;font-weight:900;color:#fff;margin-bottom:12px;line-height:1.2}
+.doc-meta{font-size:0.83rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:16px}
+.doc-meta span{display:flex;align-items:center;gap:5px}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:40px}
+.toc-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:12px}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.toc-list li a{font-size:0.85rem;color:rgba(255,255,255,0.55);transition:color 0.2s}
+.toc-list li a:hover{color:#fff;text-decoration:none}
+.toc-list li::before{content:'→ ';color:rgba(79,70,229,0.5);font-size:0.75rem}
+
+/* SECTIONS */
+.section{margin-bottom:44px}
+.section-num{display:inline-block;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);background:rgba(79,70,229,0.12);padding:2px 9px;border-radius:6px;margin-bottom:10px}
+.section h2{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section h2::before{content:'';display:inline-block;width:3px;height:20px;background:var(--grad);border-radius:2px;flex-shrink:0}
+.section p{font-size:0.9rem;color:rgba(255,255,255,0.65);margin-bottom:12px}
+.section ul{font-size:0.9rem;color:rgba(255,255,255,0.65);margin:10px 0 14px 20px;display:flex;flex-direction:column;gap:6px}
+.section ul li{padding-left:4px}
+.section strong{color:rgba(255,255,255,0.85);font-weight:600}
+
+/* HIGHLIGHT BOX */
+.info-box{background:rgba(79,70,229,0.07);border:1px solid rgba(79,70,229,0.22);border-radius:10px;padding:16px 18px;margin:16px 0;font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.65}
+.info-box strong{color:var(--accent)}
+
+/* FOOTER */
+.doc-footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;font-size:0.8rem;color:var(--muted)}
+.doc-footer a{color:var(--accent)}
+
+@media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="/" class="logo">
+    <div class="logo-icon">A</div>
+    Ambore<span class="brand-tag">AI</span>
+  </a>
+  <div class="topbar-links">
+    <a href="/">Home</a>
+    <a href="/privacy" class="active">Privacy</a>
+    <a href="/terms">Terms</a>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="doc-hero">
+    <div class="doc-badge">&#128274; Legal Document</div>
+    <h1 class="doc-title">Privacy Policy</h1>
+    <div class="doc-meta">
+      <span>&#128197; Effective: February 1, 2026</span>
+      <span>&#128196; Applies to: ambore.org</span>
+      <span>&#9993; amborenikhil46@gmail.com</span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="info-box">
+    <strong>The short version:</strong> Ambore stores your account info and resume data directly in your own browser — not on our servers. We use an external AI provider to generate content when you use our AI tools. We do not sell your data, run ads, or share your personal information with third parties for marketing. This policy explains everything in plain English.
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol class="toc-list">
+      <li><a href="#s1">Who We Are</a></li>
+      <li><a href="#s2">What Data We Collect</a></li>
+      <li><a href="#s3">How We Use Your Data</a></li>
+      <li><a href="#s4">Data Storage &amp; Security</a></li>
+      <li><a href="#s5">Third-Party Services</a></li>
+      <li><a href="#s6">Cookies &amp; Local Storage</a></li>
+      <li><a href="#s7">Job Listings &amp; External Sources</a></li>
+      <li><a href="#s8">Your Rights (GDPR &amp; CCPA)</a></li>
+      <li><a href="#s9">Data Retention</a></li>
+      <li><a href="#s10">Children's Privacy</a></li>
+      <li><a href="#s11">Changes to This Policy</a></li>
+      <li><a href="#s12">Contact Us</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="s1">
+    <div class="section-num">Section 1</div>
+    <h2>Who We Are</h2>
+    <p>Ambore is a free AI-powered career platform available at <strong>ambore.org</strong>. It is owned and operated by <strong>Nikhil Ambore</strong>. Ambore provides tools to help job seekers find jobs, build resumes, write cover letters, generate professional emails, optimize LinkedIn profiles, create portfolio websites, and prepare for interviews using artificial intelligence.</p>
+    <p>If you have any questions about this Privacy Policy, you can reach us at <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a>.</p>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="s2">
+    <div class="section-num">Section 2</div>
+    <h2>What Data We Collect</h2>
+    <p>We collect minimal data. Here is exactly what we receive or store:</p>
+    <p><strong>Information you provide directly:</strong></p>
+    <ul>
+      <li><strong>Account credentials</strong> — your email address and password when you sign up. These are stored locally in your browser's localStorage, not on our servers.</li>
+      <li><strong>Resume &amp; profile content</strong> — work history, skills, education, and any other information you enter into our tools. This data stays in your browser unless you explicitly use an AI generation feature.</li>
+      <li><strong>Tool inputs</strong> — job descriptions, company names, messages, and prompts you type into any of our tools.</li>
+    </ul>
+    <p><strong>Information collected automatically:</strong></p>
+    <ul>
+      <li><strong>Usage events</strong> — basic events such as "page viewed" or "tool used" are sent to our analytics backend to help us understand which features are being used. No personally identifiable information is attached to these events.</li>
+      <li><strong>Standard server logs</strong> — like any website, our hosting provider (Netlify) may log your IP address, browser type, and pages visited for operational purposes. We do not actively collect or use this data.</li>
+    </ul>
+    <p><strong>Information we do NOT collect:</strong></p>
+    <ul>
+      <li>We do not collect payment information (Ambore is completely free).</li>
+      <li>We do not collect social security numbers, financial information, or government IDs.</li>
+      <li>We do not use advertising trackers or sell data to data brokers.</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="s3">
+    <div class="section-num">Section 3</div>
+    <h2>How We Use Your Data</h2>
+    <p>We use your data only to provide and improve the Ambore platform:</p>
+    <ul>
+      <li><strong>To provide the service</strong> — your account info keeps you logged in; your resume data powers the AI tools.</li>
+      <li><strong>To generate AI content</strong> — when you use an AI feature (Resume Builder, Cover Letter, Interview Co-Pilot, etc.), the text you provide (resume, job description, prompts) is sent to an external AI provider to generate a response. See Section 5 for details.</li>
+      <li><strong>To improve the platform</strong> — anonymous usage events help us understand which tools people find useful so we can make them better.</li>
+      <li><strong>To communicate with you</strong> — if you contact us by email, we use your email address to reply.</li>
+    </ul>
+    <p>We do not use your data for advertising, profiling, or any purpose unrelated to providing you with career tools.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="s4">
+    <div class="section-num">Section 4</div>
+    <h2>Data Storage &amp; Security</h2>
+    <p><strong>Where your data lives:</strong> Your account information, saved resume content, and session data are stored in your browser's <strong>localStorage</strong> — a standard browser feature that keeps data on your device. This means your data never leaves your computer unless you actively use an AI generation feature.</p>
+    <div class="info-box">
+      <strong>Important:</strong> Because your data is stored locally in your browser, clearing your browser data, switching browsers, or using a different device will erase your Ambore account and saved content. We recommend saving important generated content (resumes, cover letters, etc.) to your own files.
+    </div>
+    <p><strong>Security:</strong> We take reasonable steps to protect the platform, including using HTTPS for all connections. However, no internet service is 100% secure. Since your personal data is stored on your device and not our servers, the main security of your account data depends on the security of your own device and browser.</p>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="s5">
+    <div class="section-num">Section 5</div>
+    <h2>Third-Party Services</h2>
+    <p>Ambore uses the following third-party services to operate:</p>
+    <ul>
+      <li><strong>Anthropic (AI Provider)</strong> — When you use any AI generation feature, the text you submit (such as your resume or a job description) is sent to Anthropic's API to generate a response. Anthropic processes this data according to their own <a href="https://www.anthropic.com/privacy" target="_blank" rel="noopener">Privacy Policy</a>. We do not store AI-generated content on our servers after it is returned to your browser.</li>
+      <li><strong>Netlify (Web Hosting)</strong> — Our website is hosted on Netlify, which may collect standard server logs including IP addresses. See <a href="https://www.netlify.com/privacy/" target="_blank" rel="noopener">Netlify's Privacy Policy</a>.</li>
+      <li><strong>Railway (Backend API)</strong> — We use Railway to host our jobs API and anonymous analytics backend. Usage event data (no personal info) is processed here.</li>
+      <li><strong>Google Fonts</strong> — We load fonts from Google's servers, which may log your IP address. See <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Google's Privacy Policy</a>.</li>
+    </ul>
+    <p><strong>We do not sell, rent, or share your personal information with any third party for marketing or advertising purposes.</strong></p>
+  </div>
+
+  <!-- SECTION 6 -->
+  <div class="section" id="s6">
+    <div class="section-num">Section 6</div>
+    <h2>Cookies &amp; Local Storage</h2>
+    <p>Ambore does not use tracking cookies for advertising or analytics. We use the browser's <strong>localStorage</strong> feature (not cookies) to store your account session and saved data. localStorage is different from cookies — it is not sent to our servers with each request and is not accessible by other websites.</p>
+    <p>Our hosting provider (Netlify) may set essential cookies for security and performance purposes. These are not used for advertising or cross-site tracking.</p>
+    <p>You can clear your localStorage at any time through your browser settings under "Clear Site Data" or "Cookies and Site Data." Note that doing so will log you out and erase your locally stored data.</p>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="s7">
+    <div class="section-num">Section 7</div>
+    <h2>Job Listings &amp; External Sources</h2>
+    <p>Job listings displayed on Ambore are aggregated from publicly available sources including LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and others. When you click "Apply" on a job listing, you are directed to the employer's or job board's website. Those sites have their own privacy policies and terms of service that will govern your interaction with them.</p>
+    <p>Ambore does not track which jobs you apply to, and clicking "Apply" does not share your data with us or the employer.</p>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="s8">
+    <div class="section-num">Section 8</div>
+    <h2>Your Rights (GDPR &amp; CCPA)</h2>
+    <p>Depending on where you live, you may have certain rights regarding your personal data:</p>
+    <p><strong>For users in the European Economic Area (GDPR):</strong></p>
+    <ul>
+      <li><strong>Right to access</strong> — you can request a copy of the personal data we hold about you.</li>
+      <li><strong>Right to erasure</strong> — you can request deletion of your personal data.</li>
+      <li><strong>Right to rectification</strong> — you can correct inaccurate data.</li>
+      <li><strong>Right to object</strong> — you can object to certain processing of your data.</li>
+      <li><strong>Right to portability</strong> — you can request your data in a portable format.</li>
+    </ul>
+    <p><strong>For California residents (CCPA):</strong></p>
+    <ul>
+      <li><strong>Right to know</strong> — you can request disclosure of the personal information we collect.</li>
+      <li><strong>Right to delete</strong> — you can request deletion of your personal information.</li>
+      <li><strong>Right to opt out of sale</strong> — we do not sell personal information. There is nothing to opt out of.</li>
+      <li><strong>Right to non-discrimination</strong> — we will not discriminate against you for exercising any of these rights.</li>
+    </ul>
+    <div class="info-box">
+      Because most of your data is stored in your own browser's localStorage, you can exercise many of these rights directly by clearing your browser data. For any other requests, contact us at <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a> and we will respond within 30 days.
+    </div>
+  </div>
+
+  <!-- SECTION 9 -->
+  <div class="section" id="s9">
+    <div class="section-num">Section 9</div>
+    <h2>Data Retention</h2>
+    <p>Since your account and resume data is stored in your browser's localStorage, it persists until you clear it or we close the service. We do not have a copy of it on our servers to delete on your behalf.</p>
+    <p>Anonymous usage event data collected by our analytics backend is retained for internal purposes and does not contain personally identifiable information.</p>
+    <p>If you email us, we may retain that correspondence for reasonable record-keeping purposes.</p>
+  </div>
+
+  <!-- SECTION 10 -->
+  <div class="section" id="s10">
+    <div class="section-num">Section 10</div>
+    <h2>Children's Privacy</h2>
+    <p>Ambore is not intended for use by anyone under the age of 13. We do not knowingly collect personal information from children under 13. If you believe a child under 13 has provided us with personal information, please contact us at <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a> and we will take steps to delete it.</p>
+  </div>
+
+  <!-- SECTION 11 -->
+  <div class="section" id="s11">
+    <div class="section-num">Section 11</div>
+    <h2>Changes to This Policy</h2>
+    <p>We may update this Privacy Policy from time to time. When we do, we will update the effective date at the top of this page. If we make significant changes that affect your rights, we will make reasonable efforts to notify you (such as a notice on the Ambore homepage).</p>
+    <p>Continued use of Ambore after changes are posted means you accept the updated policy.</p>
+  </div>
+
+  <!-- SECTION 12 -->
+  <div class="section" id="s12">
+    <div class="section-num">Section 12</div>
+    <h2>Contact Us</h2>
+    <p>If you have questions, concerns, or requests regarding this Privacy Policy or your personal data, please contact us:</p>
+    <ul>
+      <li><strong>Owner:</strong> Nikhil Ambore</li>
+      <li><strong>Email:</strong> <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a></li>
+      <li><strong>Website:</strong> <a href="https://ambore.org">ambore.org</a></li>
+    </ul>
+    <p>We aim to respond to all inquiries within 30 days.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>&copy; 2026 Ambore &mdash; Nikhil Ambore</span>
+    <span>
+      <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
+      <a href="/terms">Terms of Service</a> &nbsp;&middot;&nbsp;
+      <a href="/">Back to Ambore</a>
+    </span>
+  </div>
+
+</div>
+</body>
+</html>

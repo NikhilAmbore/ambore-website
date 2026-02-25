@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Terms of Service — Ambore</title>
+<meta name="description" content="Ambore Terms of Service — the rules and guidelines for using the Ambore platform."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0;line-height:1.7}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--muted:rgba(255,255,255,0.45);
+  --red:#ef4444;--yellow:#fbbf24;
+}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.95);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none}
+.logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff;flex-shrink:0}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.topbar-links{display:flex;gap:20px;font-size:0.82rem;font-weight:600;color:var(--muted)}
+.topbar-links a{color:var(--muted);transition:color 0.2s}.topbar-links a:hover{color:#fff;text-decoration:none}
+.topbar-links a.active{color:var(--accent)}
+
+/* LAYOUT */
+.page-wrap{max-width:780px;margin:0 auto;padding:56px 24px 100px}
+
+/* HERO */
+.doc-hero{margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.doc-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.3);border-radius:20px;font-size:0.72rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:16px}
+.doc-title{font-size:2.2rem;font-weight:900;color:#fff;margin-bottom:12px;line-height:1.2}
+.doc-meta{font-size:0.83rem;color:var(--muted);display:flex;flex-wrap:wrap;gap:16px}
+.doc-meta span{display:flex;align-items:center;gap:5px}
+
+/* TOC */
+.toc{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 24px;margin-bottom:40px}
+.toc-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:12px}
+.toc-list{list-style:none;display:flex;flex-direction:column;gap:6px}
+.toc-list li a{font-size:0.85rem;color:rgba(255,255,255,0.55);transition:color 0.2s}
+.toc-list li a:hover{color:#fff;text-decoration:none}
+.toc-list li::before{content:'→ ';color:rgba(79,70,229,0.5);font-size:0.75rem}
+
+/* SECTIONS */
+.section{margin-bottom:44px}
+.section-num{display:inline-block;font-size:0.68rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:var(--accent);background:rgba(79,70,229,0.12);padding:2px 9px;border-radius:6px;margin-bottom:10px}
+.section h2{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.section h2::before{content:'';display:inline-block;width:3px;height:20px;background:var(--grad);border-radius:2px;flex-shrink:0}
+.section p{font-size:0.9rem;color:rgba(255,255,255,0.65);margin-bottom:12px}
+.section ul{font-size:0.9rem;color:rgba(255,255,255,0.65);margin:10px 0 14px 20px;display:flex;flex-direction:column;gap:7px}
+.section ul li{padding-left:4px}
+.section strong{color:rgba(255,255,255,0.85);font-weight:600}
+
+/* BOXES */
+.info-box{background:rgba(79,70,229,0.07);border:1px solid rgba(79,70,229,0.22);border-radius:10px;padding:16px 18px;margin:16px 0;font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.65}
+.info-box strong{color:var(--accent)}
+.warn-box{background:rgba(239,68,68,0.06);border:1px solid rgba(239,68,68,0.22);border-radius:10px;padding:16px 18px;margin:16px 0;font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.65}
+.warn-box strong{color:#fca5a5}
+.notice-box{background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:16px 18px;margin:16px 0;font-size:0.86rem;color:rgba(255,255,255,0.6);line-height:1.65}
+.notice-box strong{color:var(--yellow)}
+
+/* FOOTER */
+.doc-footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;font-size:0.8rem;color:var(--muted)}
+.doc-footer a{color:var(--accent)}
+
+@media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="/" class="logo">
+    <div class="logo-icon">A</div>
+    Ambore<span class="brand-tag">AI</span>
+  </a>
+  <div class="topbar-links">
+    <a href="/">Home</a>
+    <a href="/privacy">Privacy</a>
+    <a href="/terms" class="active">Terms</a>
+  </div>
+</div>
+
+<div class="page-wrap">
+
+  <!-- HERO -->
+  <div class="doc-hero">
+    <div class="doc-badge">&#128221; Legal Document</div>
+    <h1 class="doc-title">Terms of Service</h1>
+    <div class="doc-meta">
+      <span>&#128197; Effective: February 1, 2026</span>
+      <span>&#128206; Applies to: ambore.org</span>
+      <span>&#9993; amborenikhil46@gmail.com</span>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div class="info-box">
+    <strong>Please read these terms before using Ambore.</strong> By creating an account or using any feature on ambore.org, you agree to these Terms of Service. If you do not agree, please do not use the platform. These terms are written in plain English — no unnecessary legal jargon.
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc">
+    <div class="toc-title">Contents</div>
+    <ol class="toc-list">
+      <li><a href="#t1">About Ambore &amp; Acceptance of Terms</a></li>
+      <li><a href="#t2">Eligibility</a></li>
+      <li><a href="#t3">Your Account</a></li>
+      <li><a href="#t4">Acceptable Use</a></li>
+      <li><a href="#t5">Prohibited Activities</a></li>
+      <li><a href="#t6">AI Interview Co-Pilot — Special Rules</a></li>
+      <li><a href="#t7">AI-Generated Content</a></li>
+      <li><a href="#t8">Job Listings</a></li>
+      <li><a href="#t9">Intellectual Property</a></li>
+      <li><a href="#t10">Disclaimer of Warranties</a></li>
+      <li><a href="#t11">Limitation of Liability</a></li>
+      <li><a href="#t12">Termination</a></li>
+      <li><a href="#t13">Governing Law</a></li>
+      <li><a href="#t14">Changes to These Terms</a></li>
+      <li><a href="#t15">Contact</a></li>
+    </ol>
+  </div>
+
+  <!-- SECTION 1 -->
+  <div class="section" id="t1">
+    <div class="section-num">Section 1</div>
+    <h2>About Ambore &amp; Acceptance of Terms</h2>
+    <p>Ambore is a free, AI-powered career platform available at <strong>ambore.org</strong>, owned and operated by <strong>Nikhil Ambore</strong>. The platform provides the following tools to job seekers:</p>
+    <ul>
+      <li>Job Portal — aggregated US tech job listings updated daily</li>
+      <li>AI Resume Builder — AI-powered resume tailoring and generation</li>
+      <li>Cover Letter Generator — AI-generated cover letters</li>
+      <li>Job Email Generator — professional job application emails</li>
+      <li>LinkedIn Profile Optimizer — suggestions to improve your LinkedIn profile</li>
+      <li>Portfolio Builder — AI-generated personal portfolio websites</li>
+      <li>AI Interview Co-Pilot — real-time AI assistance during interview preparation</li>
+      <li>Build Your Own Project — AI-generated technical project plans for learning</li>
+    </ul>
+    <p>By accessing or using ambore.org, creating an account, or using any feature of the platform, you agree to be bound by these Terms of Service and our <a href="/privacy">Privacy Policy</a>. If you do not agree, you must stop using the platform immediately.</p>
+  </div>
+
+  <!-- SECTION 2 -->
+  <div class="section" id="t2">
+    <div class="section-num">Section 2</div>
+    <h2>Eligibility</h2>
+    <p>You must be at least <strong>13 years old</strong> to use Ambore. If you are under 18, you confirm that you have permission from a parent or guardian to use the platform.</p>
+    <p>By creating an account, you confirm that all information you provide is accurate, that you are using the platform for lawful purposes, and that you are not prohibited from using online services under applicable law.</p>
+  </div>
+
+  <!-- SECTION 3 -->
+  <div class="section" id="t3">
+    <div class="section-num">Section 3</div>
+    <h2>Your Account</h2>
+    <p>When you sign up for Ambore, you create a local account stored in your browser's localStorage. You are responsible for:</p>
+    <ul>
+      <li>Keeping your password secure and not sharing it with others.</li>
+      <li>All activity that takes place through your account.</li>
+      <li>Notifying us at <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a> if you suspect unauthorized access to your account.</li>
+    </ul>
+    <div class="info-box">
+      <strong>Note:</strong> Because your account is stored in your browser's localStorage, clearing your browser data will delete your account on that device. We are not responsible for data loss caused by clearing browser storage, switching devices, or browser updates.
+    </div>
+    <p>You may not create accounts using false identities, automated scripts, or for the purpose of abusing the platform.</p>
+  </div>
+
+  <!-- SECTION 4 -->
+  <div class="section" id="t4">
+    <div class="section-num">Section 4</div>
+    <h2>Acceptable Use</h2>
+    <p>Ambore is provided for <strong>personal, non-commercial career development use only</strong>. You agree to use the platform in good faith, for legitimate job-seeking and career improvement purposes.</p>
+    <p>You are welcome to:</p>
+    <ul>
+      <li>Use all AI tools to help with your own job search and career development.</li>
+      <li>Generate resumes, cover letters, emails, and portfolio websites for your personal use.</li>
+      <li>Browse job listings and apply to positions that interest you.</li>
+      <li>Use the Build Your Own Project tool to learn and develop real-world skills.</li>
+      <li>Share Ambore with others and recommend it freely.</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 5 -->
+  <div class="section" id="t5">
+    <div class="section-num">Section 5</div>
+    <h2>Prohibited Activities</h2>
+    <p>The following are strictly prohibited on Ambore:</p>
+
+    <p><strong>Scraping &amp; Automated Access</strong></p>
+    <ul>
+      <li>Using bots, scrapers, crawlers, or automated scripts to access, collect, or extract any content from ambore.org, including job listings, AI-generated content, or any part of the platform.</li>
+      <li>Interfering with or placing an unreasonable load on our servers or infrastructure.</li>
+      <li>Attempting to access areas of the platform that are not intended for public access.</li>
+    </ul>
+
+    <p><strong>Misuse of AI Features</strong></p>
+    <ul>
+      <li>Using AI tools to generate content intended to deceive, defraud, or mislead employers (e.g., fabricating work history, credentials, or degrees).</li>
+      <li>Using the platform to generate spam, phishing emails, or other harmful communications.</li>
+      <li>Attempting to reverse-engineer, extract, or copy the AI system prompts or platform code.</li>
+      <li>Reselling, white-labeling, or commercially redistributing content generated by Ambore's AI tools without our written permission.</li>
+    </ul>
+
+    <p><strong>Account Abuse</strong></p>
+    <ul>
+      <li>Creating multiple accounts to circumvent restrictions.</li>
+      <li>Sharing, selling, or transferring your account to another person.</li>
+      <li>Impersonating any person or entity through the platform.</li>
+    </ul>
+
+    <p><strong>Security &amp; Legal Violations</strong></p>
+    <ul>
+      <li>Attempting to hack, probe, or test the security of the platform without our express permission.</li>
+      <li>Uploading or submitting any content that contains malware, viruses, or malicious code.</li>
+      <li>Using the platform in any way that violates applicable local, state, national, or international law.</li>
+      <li>Infringing on the intellectual property, privacy, or other legal rights of any person.</li>
+    </ul>
+
+    <div class="warn-box">
+      <strong>Violation of these rules may result in immediate account termination and, where applicable, legal action.</strong>
+    </div>
+  </div>
+
+  <!-- SECTION 6 — INTERVIEW AI SPECIAL CLAUSE -->
+  <div class="section" id="t6">
+    <div class="section-num">Section 6</div>
+    <h2>AI Interview Co-Pilot — Special Rules</h2>
+    <p>The AI Interview Co-Pilot is designed as a <strong>preparation and practice tool</strong> to help you get ready for interviews. It is intended to help you think through answers, practice responses, and build confidence — not to cheat during live interviews.</p>
+
+    <div class="warn-box">
+      <strong>Important:</strong> You must not use the AI Interview Co-Pilot in any way that violates the terms of service, rules, or policies of any employer, recruiting platform, video interviewing platform (such as HireVue, Spark Hire, Karat, or similar services), or any other hiring process. Many employers and interview platforms explicitly prohibit the use of AI assistance during live interviews. It is your sole responsibility to understand and comply with the rules of any interview or hiring process you participate in.
+    </div>
+
+    <p>Specifically, you agree that you will <strong>not</strong>:</p>
+    <ul>
+      <li>Use the Interview Co-Pilot during a live employer interview (video, phone, or in-person) without the employer's explicit knowledge and permission.</li>
+      <li>Use the tool to violate any employer's or recruiting platform's stated policies on AI assistance during interviews.</li>
+      <li>Use the tool to misrepresent your knowledge, skills, or qualifications to an employer during a hiring process.</li>
+    </ul>
+
+    <p>Ambore provides the Interview Co-Pilot as a <strong>practice and preparation aid only</strong>. We bear no responsibility for any consequences — including disqualification from a hiring process, termination of employment, or legal action — that result from your use of the tool in violation of employer or platform policies.</p>
+  </div>
+
+  <!-- SECTION 7 -->
+  <div class="section" id="t7">
+    <div class="section-num">Section 7</div>
+    <h2>AI-Generated Content</h2>
+    <p>Ambore's tools use artificial intelligence to generate content including resumes, cover letters, emails, project plans, and interview answers. You understand and agree that:</p>
+    <ul>
+      <li><strong>AI content is not guaranteed to be accurate.</strong> AI-generated text can contain errors, inaccuracies, outdated information, or content that does not reflect your actual qualifications. Always review and edit AI-generated content before using it.</li>
+      <li><strong>You are responsible for what you submit to employers.</strong> Ambore is a tool to assist you — the final decision to use any generated content is yours alone. We are not responsible for the outcome of job applications, interviews, or employment decisions.</li>
+      <li><strong>Do not fabricate qualifications.</strong> Using AI to generate false work experience, fake credentials, or misleading information in job applications may constitute fraud and is a violation of these Terms.</li>
+      <li><strong>Content ownership.</strong> Content you generate using Ambore's tools is yours to use for personal career purposes. We do not claim ownership of your generated resumes, cover letters, or other output.</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 8 -->
+  <div class="section" id="t8">
+    <div class="section-num">Section 8</div>
+    <h2>Job Listings</h2>
+    <p>Job listings on Ambore are aggregated from third-party public sources. We make reasonable efforts to keep listings fresh and accurate, but we do not guarantee that any job listing is current, accurate, or still available at the time you view it.</p>
+    <ul>
+      <li>Ambore is not the employer and is not party to any employment relationship.</li>
+      <li>We are not responsible for the content, accuracy, or legality of any external job posting.</li>
+      <li>When you click "Apply," you leave ambore.org and are subject to the destination site's terms and policies.</li>
+      <li>Ambore does not guarantee job placement, interview callbacks, or employment outcomes.</li>
+    </ul>
+  </div>
+
+  <!-- SECTION 9 -->
+  <div class="section" id="t9">
+    <div class="section-num">Section 9</div>
+    <h2>Intellectual Property</h2>
+    <p><strong>Ambore's intellectual property:</strong> The Ambore platform, including its design, code, branding, logos, tool interfaces, system prompts, and overall architecture, is owned by Nikhil Ambore and is protected by applicable intellectual property laws. You may not copy, reproduce, modify, distribute, or create derivative works from any part of the platform without our written permission.</p>
+    <p><strong>Your content:</strong> You retain full ownership of any personal content you enter into Ambore (your resume data, work history, etc.). By using the platform, you grant Ambore a limited, non-exclusive license to process your content solely for the purpose of providing the service to you.</p>
+    <p><strong>Third-party content:</strong> Job listings are the property of their respective employers and job boards. Ambore aggregates this content under fair use for informational purposes. We do not claim ownership of third-party job listings.</p>
+  </div>
+
+  <!-- SECTION 10 -->
+  <div class="section" id="t10">
+    <div class="section-num">Section 10</div>
+    <h2>Disclaimer of Warranties</h2>
+    <div class="notice-box">
+      <strong>Ambore is provided "as is" and "as available" without any warranties of any kind.</strong>
+    </div>
+    <p>To the fullest extent permitted by law, Nikhil Ambore and the Ambore platform expressly disclaim all warranties, whether express, implied, or statutory, including but not limited to:</p>
+    <ul>
+      <li>Implied warranties of merchantability, fitness for a particular purpose, and non-infringement.</li>
+      <li>Any warranty that the platform will be uninterrupted, error-free, or free of viruses or harmful components.</li>
+      <li>Any warranty regarding the accuracy, completeness, or reliability of any content, including AI-generated content or job listings.</li>
+      <li>Any guarantee of employment, job placement, interview success, or career outcomes.</li>
+    </ul>
+    <p>Your use of the platform is entirely at your own risk. You are solely responsible for any decisions you make based on content generated by or found on Ambore.</p>
+  </div>
+
+  <!-- SECTION 11 -->
+  <div class="section" id="t11">
+    <div class="section-num">Section 11</div>
+    <h2>Limitation of Liability</h2>
+    <p>To the maximum extent permitted by applicable law, <strong>Nikhil Ambore and the Ambore platform shall not be liable</strong> for any indirect, incidental, special, consequential, or punitive damages arising out of or related to your use of the platform, including but not limited to:</p>
+    <ul>
+      <li>Loss of data or browser storage (including locally stored accounts and resume data).</li>
+      <li>Failed job applications or negative employment outcomes.</li>
+      <li>Any errors or inaccuracies in AI-generated content that you use in applications or interviews.</li>
+      <li>Consequences of violating an employer's or interview platform's policies while using the Interview Co-Pilot.</li>
+      <li>Interruptions, outages, or downtime of the platform or any third-party service it relies on.</li>
+      <li>Any unauthorized access to your locally stored data.</li>
+    </ul>
+    <p>In no event shall Ambore's total liability to you for any claims arising from your use of the platform exceed <strong>zero dollars ($0)</strong>, reflecting that Ambore is a completely free service with no paid relationship between us.</p>
+  </div>
+
+  <!-- SECTION 12 -->
+  <div class="section" id="t12">
+    <div class="section-num">Section 12</div>
+    <h2>Termination</h2>
+    <p>We reserve the right to suspend or terminate access to Ambore for any user who violates these Terms of Service, at our sole discretion, with or without notice.</p>
+    <p>Grounds for termination include, but are not limited to: scraping the platform, abusing AI features, creating fraudulent content, circumventing security measures, or any other prohibited activity listed in Section 5.</p>
+    <p>You may stop using Ambore at any time. Since your account is stored in your browser's localStorage, you can delete your account data by clearing your browser's site data for ambore.org.</p>
+    <p>Sections 9 (Intellectual Property), 10 (Disclaimer of Warranties), 11 (Limitation of Liability), and 13 (Governing Law) survive any termination of these Terms.</p>
+  </div>
+
+  <!-- SECTION 13 -->
+  <div class="section" id="t13">
+    <div class="section-num">Section 13</div>
+    <h2>Governing Law</h2>
+    <p>These Terms of Service are governed by and construed in accordance with the laws of the <strong>State of California, United States</strong>, without regard to its conflict of law provisions.</p>
+    <p>Any disputes arising from these Terms or your use of Ambore shall first be attempted to be resolved informally by contacting us at <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a>. If informal resolution is not possible, disputes shall be subject to the exclusive jurisdiction of the courts located in California.</p>
+    <p>If any provision of these Terms is found to be unenforceable, the remaining provisions will continue in full force and effect.</p>
+  </div>
+
+  <!-- SECTION 14 -->
+  <div class="section" id="t14">
+    <div class="section-num">Section 14</div>
+    <h2>Changes to These Terms</h2>
+    <p>We may update these Terms of Service at any time. When we do, the effective date at the top of this page will be updated. For significant changes, we will make reasonable efforts to notify users via a notice on the Ambore homepage.</p>
+    <p>Your continued use of Ambore after updated Terms are posted constitutes your acceptance of those changes. If you do not agree with updated Terms, you should stop using the platform.</p>
+  </div>
+
+  <!-- SECTION 15 -->
+  <div class="section" id="t15">
+    <div class="section-num">Section 15</div>
+    <h2>Contact</h2>
+    <p>If you have questions about these Terms of Service or need to report a violation, please contact:</p>
+    <ul>
+      <li><strong>Owner:</strong> Nikhil Ambore</li>
+      <li><strong>Email:</strong> <a href="mailto:amborenikhil46@gmail.com">amborenikhil46@gmail.com</a></li>
+      <li><strong>Website:</strong> <a href="https://ambore.org">ambore.org</a></li>
+    </ul>
+    <p>We aim to respond to all inquiries within 30 days.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="doc-footer">
+    <span>&copy; 2026 Ambore &mdash; Nikhil Ambore</span>
+    <span>
+      <a href="/privacy">Privacy Policy</a> &nbsp;&middot;&nbsp;
+      <a href="/terms">Terms of Service</a> &nbsp;&middot;&nbsp;
+      <a href="/">Back to Ambore</a>
+    </span>
+  </div>
+
+</div>
+</body>
+</html>
