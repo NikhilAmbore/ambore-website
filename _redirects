@@ -9,6 +9,7 @@
 /portfolio       /portfolio.html      200
 /interview       /app.html            200
 /dashboard       /dashboard.html      200
+/project         /project.html        200
 
 # Backward compatibility: old .html URLs → clean paths (permanent redirect)
 /jobs.html           /jobs            301

@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ambore — Build Your Own Project</title>
+<meta name="description" content="Get a complete step-by-step AI project plan tailored to your experience level and target role. Built by Ambore AI."/>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+function track(e,p){fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:e,page:p})}).catch(()=>{});}
+window.addEventListener('load',()=>track('page_view','project'));
+</script>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='/?auth=login&redirect=/project&msg=Please+log+in+to+access+this+feature';
+  }
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+  --violet:#6d5cff;
+}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:3px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ── TOPBAR ── */
+.app-shell{min-height:100vh;background:#06060f;
+  background-image:radial-gradient(ellipse at 15% 20%,rgba(79,70,229,0.14) 0%,transparent 55%),
+                   radial-gradient(ellipse at 85% 80%,rgba(124,58,237,0.10) 0%,transparent 55%);}
+.topbar{display:flex;align-items:center;gap:12px;padding:14px 24px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);}
+.topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none;flex-shrink:0}
+.logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
+.brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
+.nav-links{display:flex;align-items:center;gap:14px;margin-left:18px;flex-wrap:nowrap;overflow-x:auto}
+.nav-links a{font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s;white-space:nowrap}
+.nav-links a:hover{color:#fff}
+.nav-links a.active{color:var(--accent)}
+.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6);flex-shrink:0}
+.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
+.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
+.logout-btn:hover{color:var(--red)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0}
+.hamburger span{width:22px;height:2px;background:rgba(255,255,255,0.6);border-radius:2px;display:block;transition:all 0.2s}
+@media(max-width:860px){.nav-links{display:none!important}.hamburger{display:flex}}
+.mobile-nav{position:fixed;inset:0;background:rgba(6,6,15,0.98);backdrop-filter:blur(20px);z-index:999;overflow-y:auto}
+.mobile-nav.hidden{display:none}
+.mobile-nav-inner{display:flex;flex-direction:column;gap:0;padding:72px 24px 32px;min-height:100%}
+.mobile-nav-inner a{padding:16px 0;font-size:1rem;font-weight:600;color:rgba(255,255,255,0.7);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.15s}
+.mobile-nav-inner a:hover,.mobile-nav-inner a.active{color:#fff}
+.mob-nav-footer{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
+
+/* ── MAIN ── */
+.main{max-width:860px;margin:0 auto;padding:40px 20px 100px}
+
+/* ── PAGE HERO ── */
+.page-hero{margin-bottom:36px}
+.page-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 14px;background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.3);border-radius:20px;font-size:0.75rem;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:14px}
+.page-title{font-size:2rem;font-weight:900;color:#fff;line-height:1.15;margin-bottom:10px}
+.page-title span{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.page-sub{font-size:0.95rem;color:rgba(255,255,255,0.45);max-width:540px;line-height:1.6}
+@media(max-width:600px){.page-title{font-size:1.5rem}}
+
+/* ── SECTION CARD ── */
+.section-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:20px}
+.section-title{font-size:0.82rem;font-weight:800;color:#fff;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.section-sub{font-size:0.78rem;color:rgba(255,255,255,0.35);margin-bottom:18px}
+
+/* ── LEVEL CARDS ── */
+.level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media(max-width:580px){.level-grid{grid-template-columns:1fr}}
+.level-card{border:1.5px solid var(--border);border-radius:12px;padding:18px 16px;cursor:pointer;transition:all 0.2s;background:var(--card2);position:relative}
+.level-card:hover{border-color:rgba(129,140,248,0.35);background:rgba(79,70,229,0.06)}
+.level-card.selected{border-color:var(--accent);background:rgba(79,70,229,0.1)}
+.level-card.selected::after{content:'✓';position:absolute;top:10px;right:12px;font-size:0.85rem;font-weight:900;color:var(--accent)}
+.level-emoji{font-size:1.5rem;margin-bottom:8px}
+.level-name{font-size:0.92rem;font-weight:800;color:#fff;margin-bottom:4px}
+.level-range{font-size:0.72rem;font-weight:600;color:var(--accent);background:rgba(79,70,229,0.12);padding:2px 8px;border-radius:6px;display:inline-block;margin-bottom:8px}
+.level-desc{font-size:0.75rem;color:rgba(255,255,255,0.4);line-height:1.5}
+
+/* ── FIELDS ── */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field label{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.4)}
+.field input,.field textarea,.field select{
+  width:100%;padding:11px 14px;background:var(--card2);border:1.5px solid var(--border);
+  border-radius:10px;color:#fff;font-size:0.9rem;outline:none;transition:border-color 0.2s;resize:none;
+}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:rgba(79,70,229,0.5)}
+.field input::placeholder,.field textarea::placeholder{color:rgba(255,255,255,0.18)}
+.field-hint{font-size:0.72rem;color:rgba(255,255,255,0.25);margin-top:4px}
+
+/* ── QUICK ROLES ── */
+.quick-roles{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.role-chip{padding:5px 12px;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:20px;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,0.45);cursor:pointer;transition:all 0.15s}
+.role-chip:hover{background:rgba(79,70,229,0.12);border-color:rgba(129,140,248,0.35);color:var(--accent)}
+
+/* ── GENERATE BUTTON ── */
+.gen-btn{
+  width:100%;padding:16px;background:var(--grad);border:none;border-radius:13px;
+  color:#fff;font-size:1rem;font-weight:800;cursor:pointer;
+  box-shadow:0 4px 28px rgba(79,70,229,0.4);transition:transform 0.2s,box-shadow 0.2s;
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;
+}
+.gen-btn:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 8px 36px rgba(79,70,229,0.55)}
+.gen-btn:disabled{opacity:0.45;cursor:not-allowed;transform:none;box-shadow:none}
+.gen-btn .spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PROGRESS ── */
+.progress-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;gap:14px}
+.prog-spinner{width:22px;height:22px;border:2.5px solid rgba(129,140,248,0.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;flex-shrink:0}
+.prog-info{flex:1}
+.prog-label{font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.7);margin-bottom:6px}
+.prog-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;background:var(--grad);border-radius:2px;transition:width 0.6s ease;width:0%}
+
+/* ── OUTPUT ── */
+.output-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.output-head{display:flex;align-items:center;justify-content:space-between;padding:18px 24px;border-bottom:1px solid var(--border);flex-wrap:wrap;gap:10px}
+.output-title{font-size:1rem;font-weight:800;color:#fff}
+.output-meta{font-size:0.75rem;color:rgba(255,255,255,0.35);margin-top:2px}
+.output-actions{display:flex;gap:8px}
+.act-btn{padding:8px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.55);transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.act-btn:hover{border-color:rgba(255,255,255,0.2);color:#fff}
+.act-btn.primary{background:var(--grad);border-color:transparent;color:#fff}
+.act-btn.primary:hover{opacity:0.85}
+
+/* ── MARKDOWN OUTPUT ── */
+.md-output{padding:28px 28px 36px;font-size:0.92rem;line-height:1.75;color:rgba(255,255,255,0.82)}
+.md-output h1{font-size:1.5rem;font-weight:900;color:#fff;margin:0 0 16px;padding-bottom:12px;border-bottom:1px solid var(--border)}
+.md-output h2{font-size:1.1rem;font-weight:800;color:#fff;margin:28px 0 12px;display:flex;align-items:center;gap:8px}
+.md-output h2::before{content:'';display:inline-block;width:3px;height:18px;background:var(--grad);border-radius:2px;flex-shrink:0}
+.md-output h3{font-size:0.95rem;font-weight:700;color:rgba(255,255,255,0.85);margin:20px 0 8px}
+.md-output h4{font-size:0.88rem;font-weight:700;color:var(--accent);margin:16px 0 6px;text-transform:uppercase;letter-spacing:0.05em}
+.md-output p{margin-bottom:12px}
+.md-output ul,.md-output ol{margin:8px 0 14px 20px}
+.md-output li{margin-bottom:5px}
+.md-output strong{color:#fff;font-weight:700}
+.md-output em{color:rgba(255,255,255,0.6);font-style:italic}
+.md-output code{background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.25);color:#a5b4fc;padding:2px 7px;border-radius:5px;font-size:0.83rem;font-family:'Courier New',monospace}
+.md-output pre{background:#0a0a18;border:1px solid rgba(79,70,229,0.2);border-radius:10px;padding:18px;overflow-x:auto;margin:14px 0}
+.md-output pre code{background:none;border:none;color:#c4b5fd;padding:0;font-size:0.84rem;line-height:1.6}
+.md-output blockquote{border-left:3px solid var(--accent);padding:10px 16px;background:rgba(79,70,229,0.06);border-radius:0 8px 8px 0;margin:14px 0;color:rgba(255,255,255,0.6);font-style:italic}
+.md-output hr{border:none;border-top:1px solid var(--border);margin:24px 0}
+.md-output table{width:100%;border-collapse:collapse;margin:14px 0;font-size:0.84rem}
+.md-output th{background:rgba(79,70,229,0.15);color:var(--accent);padding:10px 14px;text-align:left;font-weight:700;border:1px solid rgba(79,70,229,0.2)}
+.md-output td{padding:9px 14px;border:1px solid var(--border);color:rgba(255,255,255,0.7)}
+.md-output tr:nth-child(even) td{background:rgba(255,255,255,0.02)}
+
+/* ── CURSOR BLINK ── */
+.cursor{display:inline-block;width:2px;height:16px;background:var(--accent);border-radius:1px;animation:blink 0.9s step-end infinite;vertical-align:middle;margin-left:2px}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
+</style>
+</head>
+<body>
+<div class="app-shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <a href="/" class="logo"><div class="logo-icon-sm">A</div>Ambore<span class="brand-tag">AI</span></a>
+  <nav class="nav-links" id="desktop-nav">
+    <a href="/jobs">Jobs</a>
+    <a href="/resume">Resume</a>
+    <a href="/cover-letter">Cover Letter</a>
+    <a href="/email">Email</a>
+    <a href="/linkedin">LinkedIn</a>
+    <a href="/portfolio">Portfolio</a>
+    <a href="/interview">Interview AI</a>
+    <a href="/project" class="active">Build Project</a>
+    <a href="/dashboard">Dashboard</a>
+  </nav>
+  <div class="user-pill">
+    <span class="user-name" id="user-display"></span>
+    <button class="logout-btn" onclick="logout()">Log Out</button>
+  </div>
+  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</div>
+
+<!-- MOBILE NAV -->
+<div class="mobile-nav hidden" id="mobile-nav">
+  <div class="mobile-nav-inner">
+    <a href="/jobs" onclick="closeMobileNav()">💼 Jobs</a>
+    <a href="/resume" onclick="closeMobileNav()">📄 Resume</a>
+    <a href="/cover-letter" onclick="closeMobileNav()">📝 Cover Letter</a>
+    <a href="/email" onclick="closeMobileNav()">✉️ Email</a>
+    <a href="/linkedin" onclick="closeMobileNav()">💼 LinkedIn</a>
+    <a href="/portfolio" onclick="closeMobileNav()">🌐 Portfolio</a>
+    <a href="/interview" onclick="closeMobileNav()">🎙 Interview AI</a>
+    <a href="/project" onclick="closeMobileNav()">🛠 Build Project</a>
+    <a href="/dashboard" onclick="closeMobileNav()">📊 Dashboard</a>
+    <div class="mob-nav-footer">
+      <span id="mob-user-display" style="font-size:0.85rem;color:rgba(255,255,255,0.5)"></span>
+      <button onclick="logout()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:7px;color:rgba(255,255,255,0.4);font-size:0.8rem;padding:6px 12px;cursor:pointer;">Log Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- PAGE HERO -->
+  <div class="page-hero">
+    <div class="page-badge">&#9881; AI Project Architect</div>
+    <h1 class="page-title">Build Your Own <span>Project</span></h1>
+    <p class="page-sub">Tell us your experience level and target role. Get a complete, real-world project plan — tools, architecture, code, deployment, and interview prep — in seconds.</p>
+  </div>
+
+  <!-- STEP 1: EXPERIENCE LEVEL -->
+  <div class="section-card">
+    <div class="section-title">&#127891; Step 1 &mdash; Your Experience Level</div>
+    <div class="section-sub">Choose the level that best describes you right now</div>
+    <div class="level-grid">
+      <div class="level-card" id="lvl-beginner" onclick="selectLevel('beginner')">
+        <div class="level-emoji">🌱</div>
+        <div class="level-name">Beginner</div>
+        <div class="level-range">0 – 2 years</div>
+        <div class="level-desc">Foundational projects, clear hand-holding, step-by-step guides with lots of examples</div>
+      </div>
+      <div class="level-card" id="lvl-intermediate" onclick="selectLevel('intermediate')">
+        <div class="level-emoji">⚡</div>
+        <div class="level-name">Intermediate</div>
+        <div class="level-range">2 – 5 years</div>
+        <div class="level-desc">Real-world pipelines, CI/CD, cloud services, scaling considerations and trade-offs</div>
+      </div>
+      <div class="level-card" id="lvl-advanced" onclick="selectLevel('advanced')">
+        <div class="level-emoji">🚀</div>
+        <div class="level-name">Advanced</div>
+        <div class="level-range">5+ years</div>
+        <div class="level-desc">Enterprise-grade architecture, microservices, distributed systems, leadership reasoning</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STEP 2: ROLE & TECH -->
+  <div class="section-card">
+    <div class="section-title">&#127919; Step 2 &mdash; Your Target Role & Technology</div>
+    <div class="section-sub">Be specific — the more detail you give, the better the project plan</div>
+
+    <div class="field">
+      <label>Target Role / Technology *</label>
+      <input id="role-input" type="text" placeholder="e.g. AWS Data Engineer, Python Developer, AI/ML Engineer, DevOps, Full-Stack React, Cybersecurity..." maxlength="120"/>
+      <div class="field-hint">Your dream job title or the technology stack you want to master</div>
+    </div>
+
+    <div style="margin-bottom:18px">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:rgba(255,255,255,0.3);margin-bottom:10px">Quick-select a role</div>
+      <div class="quick-roles">
+        <div class="role-chip" onclick="setRole('AWS Data Engineer')">AWS Data Engineer</div>
+        <div class="role-chip" onclick="setRole('Python Backend Developer')">Python Backend Dev</div>
+        <div class="role-chip" onclick="setRole('AI / ML Engineer')">AI / ML Engineer</div>
+        <div class="role-chip" onclick="setRole('DevOps / Cloud Engineer')">DevOps / Cloud</div>
+        <div class="role-chip" onclick="setRole('Full-Stack React Developer')">Full-Stack React</div>
+        <div class="role-chip" onclick="setRole('Cybersecurity Analyst')">Cybersecurity</div>
+        <div class="role-chip" onclick="setRole('Data Analyst')">Data Analyst</div>
+        <div class="role-chip" onclick="setRole('Android Developer')">Android</div>
+        <div class="role-chip" onclick="setRole('iOS Developer')">iOS</div>
+        <div class="role-chip" onclick="setRole('Site Reliability Engineer')">SRE</div>
+        <div class="role-chip" onclick="setRole('Database Engineer')">Database Engineer</div>
+        <div class="role-chip" onclick="setRole('Frontend Developer')">Frontend Dev</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Extra Context (optional)</label>
+      <textarea id="extra-input" rows="3" placeholder="e.g. I want to focus on real-time streaming data, or I want to use Kafka + Spark. I'm interested in NLP projects. I have experience with PostgreSQL..."></textarea>
+      <div class="field-hint">Any tech preferences, areas of interest, or constraints you want the project to address</div>
+    </div>
+
+    <button class="gen-btn" id="gen-btn" onclick="generateProject()">
+      <span id="btn-icon">&#9881;</span>
+      <span id="btn-text">Generate My Project Plan</span>
+    </button>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-card hidden" id="progress-card">
+    <div class="prog-spinner"></div>
+    <div class="prog-info">
+      <div class="prog-label" id="prog-label">Architecting your project plan...</div>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill"></div></div>
+    </div>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="output-card hidden" id="output-card">
+    <div class="output-head">
+      <div>
+        <div class="output-title">Your Project Plan</div>
+        <div class="output-meta" id="output-meta"></div>
+      </div>
+      <div class="output-actions">
+        <button class="act-btn" onclick="copyPlan()">📋 Copy</button>
+        <button class="act-btn" onclick="printPlan()">🖨 Print</button>
+        <button class="act-btn primary" onclick="resetForm()">+ New Project</button>
+      </div>
+    </div>
+    <div class="md-output" id="md-output"></div>
+  </div>
+
+</div><!-- /main -->
+</div><!-- /app-shell -->
+
+<!-- TOAST -->
+<div class="toast hidden" id="toast"></div>
+
+<script>
+const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY=_k.join('');
+const CLAUDE_MODEL='claude-sonnet-4-6';
+
+const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
+function logout(){localStorage.removeItem('ambore_user');window.location.href='/';}
+function toggleMobileNav(){const n=document.getElementById('mobile-nav');n.classList.toggle('hidden');document.body.style.overflow=n.classList.contains('hidden')?'':'hidden';}
+function closeMobileNav(){document.getElementById('mobile-nav').classList.add('hidden');document.body.style.overflow='';}
+
+// ── State
+let selectedLevel = '';
+let generatedPlan = '';
+
+// ── Level selection
+function selectLevel(level) {
+  selectedLevel = level;
+  ['beginner','intermediate','advanced'].forEach(l => {
+    document.getElementById('lvl-'+l).classList.toggle('selected', l === level);
+  });
+}
+
+// ── Quick role chip
+function setRole(role) {
+  document.getElementById('role-input').value = role;
+  document.getElementById('role-input').focus();
+}
+
+// ── Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.remove('hidden');
+  setTimeout(() => t.classList.add('hidden'), 3500);
+}
+
+// ── System prompt
+const SYSTEM_PROMPT = `You are Ambore AI — a Senior Technical Mentor and Project Architect.
+
+Your purpose is to help users build real, ethical, legally safe IT/tech projects based on:
+- Their experience level (0–2 years, 2–5 years, 5+ years)
+- Their target role or technology (e.g., AWS Data Engineer, Python Developer, AI Engineer, DevOps, Full‑Stack, Cybersecurity, etc.)
+
+Your job is to generate a complete, step‑by‑step project plan that teaches the user:
+1. What the project is
+2. Why it matters in the real world
+3. What tools, services, libraries, and technologies are required
+4. What each tool/service/library does and why it is used
+5. How to use each tool in the project
+6. Step‑by‑step instructions to build the project from scratch
+7. Example code, commands, architecture diagrams (text‑based), workflows, and best practices
+8. How to deploy, test, and document the project
+9. How to explain the project in interviews
+
+EXPERIENCE LEVEL RULES:
+
+BEGINNER (0–2 years):
+- Keep the project simple and foundational
+- Use fewer tools but explain them clearly
+- Provide more hand‑holding and examples
+- Focus on learning, clarity, and confidence
+- Avoid enterprise‑level complexity
+
+INTERMEDIATE (2–5 years):
+- Introduce real‑world components (pipelines, CI/CD, cloud services)
+- Add moderate complexity
+- Provide deeper explanations and architecture reasoning
+- Include performance, cost, and scaling considerations
+
+ADVANCED (5+ years):
+- Provide enterprise‑grade architecture
+- Include distributed systems, microservices, orchestration, security, monitoring, and automation
+- Add design decisions, trade‑offs, and alternatives
+- Include interview‑ready explanations and leadership‑level reasoning
+
+RESPONSE FORMAT — always use this exact structure:
+
+# [Project Title]
+
+## 1. Project Summary
+## 2. Real‑World Use Case
+## 3. Tools & Technologies
+(For each tool: What it is | Why it is used | How it is used in this project)
+## 4. Architecture Diagram
+(Text-based ASCII diagram)
+## 5. Step‑by‑Step Build Guide
+## 6. Example Code & Commands
+## 7. Testing & Validation
+## 8. Deployment Guide
+## 9. Optional Enhancements
+## 10. Interview Explanation
+(How to explain it, key metrics, challenges, what you learned)
+## 11. What You Will Learn
+
+RESTRICTIONS:
+- Never generate illegal, harmful, or unethical content
+- Never fabricate real companies or confidential data
+- All examples must be original and safe
+- Be clear, supportive, professional — never condescending`;
+
+// ── Progress animation
+let progInterval = null;
+function startProgress() {
+  const fill = document.getElementById('prog-fill');
+  const labels = [
+    'Analyzing your tech stack...',
+    'Designing the architecture...',
+    'Writing the build guide...',
+    'Adding code examples...',
+    'Preparing interview tips...'
+  ];
+  let pct = 0;
+  let li = 0;
+  document.getElementById('prog-label').textContent = labels[0];
+  fill.style.width = '0%';
+  progInterval = setInterval(() => {
+    pct = Math.min(pct + (Math.random() * 3 + 0.5), 92);
+    fill.style.width = pct + '%';
+    const idx = Math.min(Math.floor(pct / 20), labels.length - 1);
+    if (idx !== li) { li = idx; document.getElementById('prog-label').textContent = labels[li]; }
+  }, 350);
+}
+function stopProgress() {
+  clearInterval(progInterval);
+  const fill = document.getElementById('prog-fill');
+  fill.style.width = '100%';
+  setTimeout(() => { document.getElementById('progress-card').classList.add('hidden'); }, 500);
+}
+
+// ── Generate
+async function generateProject() {
+  const role  = document.getElementById('role-input').value.trim();
+  const extra = document.getElementById('extra-input').value.trim();
+
+  if (!selectedLevel) { showToast('Please select your experience level first'); return; }
+  if (!role)          { showToast('Please enter your target role or technology'); return; }
+
+  const levelMap = { beginner: '0–2 years', intermediate: '2–5 years', advanced: '5+ years' };
+  const levelLabel = selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1);
+
+  // Build user message
+  const userMsg = `Experience Level: ${levelLabel} (${levelMap[selectedLevel]})
+Target Role / Technology: ${role}${extra ? `\nExtra Context: ${extra}` : ''}
+
+Generate the complete project plan now.`;
+
+  // UI: disable + show progress
+  const btn = document.getElementById('gen-btn');
+  btn.disabled = true;
+  document.getElementById('btn-icon').innerHTML = '<div class="spinner"></div>';
+  document.getElementById('btn-text').textContent = 'Generating...';
+  document.getElementById('progress-card').classList.remove('hidden');
+  document.getElementById('output-card').classList.add('hidden');
+  document.getElementById('md-output').innerHTML = '';
+  generatedPlan = '';
+  startProgress();
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 8000,
+        stream: true,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userMsg }]
+      })
+    });
+
+    if (!res.ok) throw new Error('API error ' + res.status);
+
+    // Show output card while streaming
+    stopProgress();
+    document.getElementById('output-card').classList.remove('hidden');
+    document.getElementById('output-meta').textContent = `${levelLabel} · ${role}`;
+    const mdOut = document.getElementById('md-output');
+    mdOut.innerHTML = '<span class="cursor"></span>';
+
+    // Stream
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      const chunk = dec.decode(value, { stream: true });
+      for (const line of chunk.split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        const data = line.slice(5).trim();
+        if (data === '[DONE]') break;
+        try {
+          const j = JSON.parse(data);
+          if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta') {
+            generatedPlan += j.delta.text;
+            mdOut.innerHTML = marked.parse(generatedPlan) + '<span class="cursor"></span>';
+            mdOut.scrollIntoView({ behavior: 'smooth', block: 'end' });
+          }
+        } catch {}
+      }
+    }
+
+    // Final render without cursor
+    document.getElementById('md-output').innerHTML = marked.parse(generatedPlan);
+    document.getElementById('output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    track('project_generated', 'project');
+
+  } catch (e) {
+    stopProgress();
+    showToast('Generation failed: ' + e.message + ' — please try again');
+    console.error(e);
+  } finally {
+    btn.disabled = false;
+    document.getElementById('btn-icon').textContent = '⚙';
+    document.getElementById('btn-text').textContent = 'Generate My Project Plan';
+  }
+}
+
+// ── Copy plan
+function copyPlan() {
+  if (!generatedPlan) return;
+  navigator.clipboard.writeText(generatedPlan).then(() => showToast('Project plan copied to clipboard!')).catch(() => showToast('Copy failed — try selecting text manually'));
+}
+
+// ── Print
+function printPlan() {
+  if (!generatedPlan) return;
+  const win = window.open('', '_blank');
+  const role = document.getElementById('role-input').value.trim();
+  const levelLabel = selectedLevel.charAt(0).toUpperCase() + selectedLevel.slice(1);
+  win.document.write(`<!DOCTYPE html><html><head><title>Project Plan — ${role}</title>
+<style>
+  body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 20px;color:#1a1a2e;line-height:1.7}
+  h1{color:#1a1a2e;border-bottom:2px solid #4F46E5;padding-bottom:10px}
+  h2{color:#4F46E5;margin-top:30px}h3{color:#333}
+  code{background:#f3f4ff;padding:2px 6px;border-radius:4px;font-size:0.88em}
+  pre{background:#f3f4ff;padding:16px;border-radius:8px;overflow-x:auto}
+  pre code{background:none}
+  blockquote{border-left:3px solid #4F46E5;padding-left:16px;color:#555;margin:16px 0}
+  table{border-collapse:collapse;width:100%}th,td{border:1px solid #ddd;padding:8px 12px}
+  th{background:#f3f4ff}
+  .meta{color:#888;font-size:0.85em;margin-bottom:30px}
+  @media print{body{margin:20px}}
+</style></head><body>
+<div class="meta">Generated by Ambore AI — ${levelLabel} Level · ${role}</div>
+${marked.parse(generatedPlan)}
+</body></html>`);
+  win.document.close();
+  win.focus();
+  setTimeout(() => win.print(), 400);
+}
+
+// ── Reset
+function resetForm() {
+  generatedPlan = '';
+  selectedLevel = '';
+  document.getElementById('role-input').value = '';
+  document.getElementById('extra-input').value = '';
+  ['beginner','intermediate','advanced'].forEach(l => document.getElementById('lvl-'+l).classList.remove('selected'));
+  document.getElementById('output-card').classList.add('hidden');
+  document.getElementById('progress-card').classList.add('hidden');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ── Boot
+(function init() {
+  const user = Auth.getUser();
+  if (!user) return;
+  document.getElementById('user-display').textContent = user.name?.split(' ')[0] || user.email || '';
+  const mobUser = document.getElementById('mob-user-display');
+  if (mobUser) mobUser.textContent = user.name?.split(' ')[0] || '';
+  const path = window.location.pathname;
+  document.querySelectorAll('#desktop-nav a, .mobile-nav-inner a').forEach(a => {
+    if (a.getAttribute('href') === path) a.classList.add('active');
+  });
+})();
+</script>
+</body>
+</html>
