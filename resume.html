@@ -511,14 +511,14 @@ button,input,textarea,select{font-family:inherit}
           <div id="file-status"></div>
         </div>
         <div id="resume-paste-area" class="hidden">
-          <textarea id="resume-text" placeholder="Paste your full resume text here..."></textarea>
+          <textarea id="resume-text" maxlength="12000" placeholder="Paste your full resume text here..."></textarea>
         </div>
       </div>
 
       <!-- Job Description -->
       <div class="input-field">
         <label>Job Description</label>
-        <textarea id="jd-text" placeholder="Paste the full job description here...&#10;&#10;Include the role, responsibilities, requirements, and company info."></textarea>
+        <textarea id="jd-text" maxlength="8000" placeholder="Paste the full job description here...&#10;&#10;Include the role, responsibilities, requirements, and company info."></textarea>
       </div>
     </div>
 
@@ -991,8 +991,10 @@ async function generateResume() {
   };
 
   if (!resume) { showToast('Please upload or paste your resume first.'); return; }
+  if (resume.length > 12000) { showToast('Resume text is too long (max 12,000 chars). Please trim it.'); return; }
   track('resume_start', 'resume');
   if (!jd) { showToast('Please paste the job description.'); return; }
+  if (jd.length > 8000) { showToast('Job description is too long (max 8,000 chars). Please trim it.'); return; }
   if (isGenerating) return;
 
   isGenerating = true;
@@ -1012,8 +1014,11 @@ async function generateResume() {
   output.innerHTML = '<span class="cursor"></span>';
   setGenStatus('thinking', 'Analyzing resume & JD...');
 
+  const _ctrl = new AbortController();
+  const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: _ctrl.signal,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1077,6 +1082,7 @@ async function generateResume() {
     setGenStatus('', '');
     showToast('Generation failed: ' + err.message);
   } finally {
+    clearTimeout(_ctrlTimer);
     isGenerating = false;
     btn.disabled = false;
     btnText.textContent = 'Generate Tailored Resume';
@@ -1340,8 +1346,23 @@ function saveToDashboard() {
 /* ═══════════════════════════════════════════
    MARKDOWN RENDERER
 ═══════════════════════════════════════════ */
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 function renderMarkdown(md) {
-  let html = md
+  // Escape raw HTML from AI output first — prevents XSS via injected tags
+  let safe = String(md)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  let html = safe
     // Headers
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')

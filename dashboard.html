@@ -1674,10 +1674,13 @@ Provide a structured analysis with these sections:
 
 Be specific, use the actual company names and resume names from the data. Be encouraging but honest.`;
 
+  const _ctrl = new AbortController();
+  const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
   try {
     statusText.textContent = 'Analyzing your job search…';
 
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: _ctrl.signal,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -1731,6 +1734,7 @@ Be specific, use the actual company names and resume names from the data. Be enc
     statusRow.classList.add('hidden');
     showToast('Analysis failed: ' + err.message);
   } finally {
+    clearTimeout(_ctrlTimer);
     insightsGenerating = false;
     btn.disabled = false;
     btnText.textContent = 'Refresh Analysis';
@@ -1738,7 +1742,13 @@ Be specific, use the actual company names and resume names from the data. Be enc
 }
 
 function renderInsightsMd(md) {
-  return md
+  // Escape raw HTML from AI output first — prevents XSS via injected tags
+  const safe = String(md)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  return safe
     .replace(/^### (.+)$/gm, '<h3>$1</h3>')
     .replace(/^## (.+)$/gm, '<h2>$1</h2>')
     .replace(/^# (.+)$/gm, '<h1>$1</h1>')

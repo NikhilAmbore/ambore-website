@@ -924,7 +924,8 @@ async function streamAnswer(question) {
   if (isGenerating) return;
   isGenerating = true;
   // Safety: always unlock after 45s even if something goes wrong
-  const safetyTimer = setTimeout(() => { isGenerating = false; drainQueue(); }, 90000);
+  const _ctrl = new AbortController();
+  const safetyTimer = setTimeout(() => { _ctrl.abort(); isGenerating = false; drainQueue(); }, 90000);
   cardCount++;
   setStatus('thinking', '⏳ Thinking...');
   document.getElementById('a-empty')?.remove();
@@ -958,6 +959,7 @@ async function streamAnswer(question) {
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: _ctrl.signal,
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -1171,6 +1173,8 @@ async function captureScreen() {
 async function streamCodeAnswer(base64) {
   if (isGenerating) return;
   isGenerating = true;
+  const _ctrl2 = new AbortController();
+  const _ctrlTimer2 = setTimeout(() => { _ctrl2.abort(); isGenerating = false; }, 90000);
   cardCount++;
   setStatus('thinking','🖥 Analyzing screen...');
   document.getElementById('a-empty')?.remove();
@@ -1194,6 +1198,7 @@ async function streamCodeAnswer(base64) {
 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: _ctrl2.signal,
       method:'POST',
       headers:{
         'Content-Type':'application/json',
@@ -1236,9 +1241,11 @@ async function streamCodeAnswer(base64) {
   } catch(err){
     textDiv.innerHTML=`<p style="color:var(--red)">⚠️ ${err.message}</p>`;
     setStatus('','');
+  } finally {
+    clearTimeout(_ctrlTimer2);
+    isGenerating=false;
+    drainQueue();
   }
-  isGenerating=false;
-  drainQueue();
 }
 
 function formatCodeText(text) {

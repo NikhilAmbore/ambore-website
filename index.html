@@ -1233,9 +1233,28 @@ footer{
 </div>
 
 <script>
+/* UTILS */
+function escapeHtml(str){
+  return String(str)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+
 /* NAVBAR */
 const navbar=document.getElementById('navbar');
-window.addEventListener('scroll',()=>navbar.classList.toggle('scrolled',window.scrollY>60));
+let _scrollTicking=false;
+window.addEventListener('scroll',()=>{
+  if(!_scrollTicking){
+    requestAnimationFrame(()=>{
+      navbar.classList.toggle('scrolled',window.scrollY>60);
+      _scrollTicking=false;
+    });
+    _scrollTicking=true;
+  }
+});
 
 /* MOBILE MENU */
 function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open')}
@@ -1344,15 +1363,20 @@ function switchTab(tab){
 }
 
 /* AUTH LOGIC */
-function getDB(){return JSON.parse(localStorage.getItem('ambore_db')||'{"users":[],"sessions":[]}')}
-function saveDB(db){localStorage.setItem('ambore_db',JSON.stringify(db))}
+function getDB(){
+  try{return JSON.parse(localStorage.getItem('ambore_db')||'{"users":[],"sessions":[]}')}
+  catch{return {users:[],sessions:[]}}
+}
+function saveDB(db){try{localStorage.setItem('ambore_db',JSON.stringify(db))}catch{}}
 function getUsers(){return getDB().users}
 function saveUsers(users){const db=getDB();db.users=users;saveDB(db)}
 function getSession(){
-  const s=JSON.parse(localStorage.getItem('ambore_user')||'null');
-  if(!s)return null;
-  if(s.expiresAt&&Date.now()>s.expiresAt){localStorage.removeItem('ambore_user');return null}
-  return s;
+  try{
+    const s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+    if(!s)return null;
+    if(s.expiresAt&&Date.now()>s.expiresAt){localStorage.removeItem('ambore_user');return null}
+    return s;
+  }catch{localStorage.removeItem('ambore_user');return null}
 }
 function saveSession(user){
   const session={
@@ -1446,7 +1470,7 @@ function updateNavState(){
   if(session){
     cta.innerHTML=`
       <div class="nav-user">
-        <span class="nav-user-name">${session.name.split(' ')[0]}</span>
+        <span class="nav-user-name">${escapeHtml(session.name.split(' ')[0])}</span>
         <a href="/dashboard" class="btn-ghost" style="font-size:0.85rem;padding:7px 16px;">Dashboard</a>
         <button class="nav-logout" onclick="handleLogout()">Log Out</button>
       </div>`;

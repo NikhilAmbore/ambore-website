@@ -775,14 +775,15 @@ function escapeHtml(str) {
    SAVE JOB — localStorage (dashboard-compatible schema)
 ═══════════════════════════════════════════ */
 function savedJobsKey() {
-  const s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
-  return s ? 'ambore_saved_jobs_' + s.id : null;
+  try { const s = JSON.parse(localStorage.getItem('ambore_user') || 'null'); return s ? 'ambore_saved_jobs_' + s.id : null; }
+  catch { return null; }
 }
 
 function isSavedJob(jobId) {
   const key = savedJobsKey();
   if (!key) return false;
-  return JSON.parse(localStorage.getItem(key) || '[]').some(j => j.id === jobId);
+  try { return JSON.parse(localStorage.getItem(key) || '[]').some(j => j.id === jobId); }
+  catch { return false; }
 }
 
 function toggleSaveJob(e, jobId) {
@@ -793,7 +794,7 @@ function toggleSaveJob(e, jobId) {
   const job = _jobsMap[jobId];
   if (!job) return;
 
-  let saved  = JSON.parse(localStorage.getItem(key) || '[]');
+  let saved; try { saved = JSON.parse(localStorage.getItem(key) || '[]'); } catch { saved = []; }
   const already = saved.some(j => j.id === jobId);
 
   if (already) {
@@ -901,7 +902,7 @@ window.addEventListener('load', async () => {
   if (p.get('category')) currentCategory = p.get('category');
   if (p.get('state'))    document.getElementById('state-select').value = p.get('state');
 
-  const user = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  let user; try { user = JSON.parse(localStorage.getItem('ambore_user') || 'null'); } catch { user = null; }
   const userDisplay = document.getElementById('user-display');
   if (userDisplay && user) userDisplay.textContent = user.name?.split(' ')[0] || '';
   const path = window.location.pathname;

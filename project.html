@@ -419,6 +419,24 @@ RESTRICTIONS:
 - All examples must be original and safe
 - Be clear, supportive, professional — never condescending`;
 
+// ── Sanitize HTML output from marked.parse — removes script/event-handler XSS vectors
+function sanitizeHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  // Remove dangerous elements
+  tmp.querySelectorAll('script,style,iframe,object,embed,base,form').forEach(el => el.remove());
+  // Remove dangerous attributes from all elements
+  const DANGEROUS_ATTRS = /^(on\w+|srcdoc|xlink:href)$/i;
+  tmp.querySelectorAll('*').forEach(el => {
+    Array.from(el.attributes).forEach(attr => {
+      if (DANGEROUS_ATTRS.test(attr.name)) el.removeAttribute(attr.name);
+      if (attr.name === 'href' && /^javascript:/i.test(attr.value)) el.setAttribute('href', '#');
+      if (attr.name === 'src' && /^(javascript:|data:text\/html)/i.test(attr.value)) el.removeAttribute('src');
+    });
+  });
+  return tmp.innerHTML;
+}
+
 // ── Progress animation
 let progInterval = null;
 function startProgress() {
@@ -476,8 +494,11 @@ Generate the complete project plan now.`;
   generatedPlan = '';
   startProgress();
 
+  const _ctrl = new AbortController();
+  const _ctrlTimer = setTimeout(() => _ctrl.abort(), 120000);
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
+      signal: _ctrl.signal,
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -518,7 +539,7 @@ Generate the complete project plan now.`;
           const j = JSON.parse(data);
           if (j.type === 'content_block_delta' && j.delta?.type === 'text_delta') {
             generatedPlan += j.delta.text;
-            mdOut.innerHTML = marked.parse(generatedPlan) + '<span class="cursor"></span>';
+            mdOut.innerHTML = sanitizeHtml(marked.parse(generatedPlan)) + '<span class="cursor"></span>';
             mdOut.scrollIntoView({ behavior: 'smooth', block: 'end' });
           }
         } catch {}
@@ -526,7 +547,7 @@ Generate the complete project plan now.`;
     }
 
     // Final render without cursor
-    document.getElementById('md-output').innerHTML = marked.parse(generatedPlan);
+    document.getElementById('md-output').innerHTML = sanitizeHtml(marked.parse(generatedPlan));
     document.getElementById('output-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
     track('project_generated', 'project');
 
@@ -535,6 +556,7 @@ Generate the complete project plan now.`;
     showToast('Generation failed: ' + e.message + ' — please try again');
     console.error(e);
   } finally {
+    clearTimeout(_ctrlTimer);
     btn.disabled = false;
     document.getElementById('btn-icon').textContent = '⚙';
     document.getElementById('btn-text').textContent = 'Generate My Project Plan';
