@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* Global error boundary — prevents blank-screen crashes */
+window.addEventListener('unhandledrejection', e => {
+  if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
+  console.error('[Ambore] Unhandled promise rejection:', e.reason);
+  e.preventDefault();
+});
+window.onerror = (msg, src, line, col, err) => {
+  if (err?.name === 'AbortError') return true;
+  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  return true; // prevent default browser error handling
+};
+</script>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ambore — AI Interview Assistant</title>
@@ -757,6 +771,23 @@ const cfg = { jd:'', resume:'', role:'', company:'', round:'' };
 const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
 const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+const RateLimit = {
+  _key: 'ambore_rl', _max: 10, _win: 3600000,
+  check() {
+    try {
+      const now = Date.now();
+      let calls = JSON.parse(localStorage.getItem(this._key) || '[]');
+      calls = calls.filter(t => now - t < this._win);
+      if (calls.length >= this._max) {
+        const wait = Math.ceil((this._win - (now - calls[0])) / 60000);
+        return { ok: false, wait };
+      }
+      calls.push(now);
+      localStorage.setItem(this._key, JSON.stringify(calls));
+      return { ok: true };
+    } catch { return { ok: true }; }
+  }
+};
 let isListening = false, speakerIsIV = true;
 let recognition = null, silenceTimer = null;
 let elapsedSecs = 0;
@@ -918,12 +949,30 @@ Rules:
 }
 
 /* ═══════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════ */
+function escapeHtml(s) {
+  return String(s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+// Escape then apply **bold** markdown — safe for innerHTML
+function safeMd(text) {
+  return escapeHtml(text).replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+}
+
+/* ═══════════════════════════════════════════
    STREAM ANSWER — INTERVIEW QUESTION
 ═══════════════════════════════════════════ */
 async function streamAnswer(question) {
   if (isGenerating) return;
+  const _rl = RateLimit.check();
+  if (!_rl.ok) { showToast(`Too many requests — please wait ${_rl.wait} min.`); return; }
   isGenerating = true;
-  // Safety: always unlock after 45s even if something goes wrong
+  // Safety: always unlock after 90s even if something goes wrong
   const _ctrl = new AbortController();
   const safetyTimer = setTimeout(() => { _ctrl.abort(); isGenerating = false; drainQueue(); }, 90000);
   cardCount++;
@@ -990,8 +1039,8 @@ async function streamAnswer(question) {
           const p = JSON.parse(data);
           if (p.type==='content_block_delta' && p.delta?.text) {
             fullText += p.delta.text;
-            // Show streaming text with cursor (render bold markdown)
-            const streamed = fullText.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>');
+            // Show streaming text with cursor (escape then render bold markdown)
+            const streamed = safeMd(fullText);
             textDiv.innerHTML = streamed.split(/\n\n+/).filter(Boolean).map(para=>`<p>${para.replace(/\n/g,'<br>')}</p>`).join('') + '<span class="cursor"></span>';
             body.scrollTop = body.scrollHeight;
           }
@@ -1038,14 +1087,14 @@ function renderSTAR(container, text) {
       { cls:'r', label:'R', text:R[1].trim() }
     ].forEach(sec => {
       const p = document.createElement('p');
-      const rendered = sec.text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n+/g,' ');
+      const rendered = safeMd(sec.text).replace(/\n+/g,' ');
       p.innerHTML = `<span class="sp-tag ${sec.cls}">${sec.label}</span><span>${rendered}</span>`;
       container.appendChild(p);
     });
   } else {
     // Fallback: plain paragraphs with bold markdown
     container.className = 'streaming-text';
-    container.innerHTML = text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,' ')}</p>`).join('');
+    container.innerHTML = safeMd(text).split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,' ')}</p>`).join('');
   }
 }
 
@@ -1107,21 +1156,19 @@ function renderTechnical(container, text, roundType) {
         const after = sectionText.slice(sectionText.lastIndexOf('```') + 3).trim();
         if (before) {
           const p = document.createElement('p');
-          p.innerHTML = `<span style="margin-left:4px">${before.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')}</span>`;
+          p.innerHTML = `<span style="margin-left:4px">${safeMd(before)}</span>`;
           container.insertBefore(p, pre);
         }
         if (after) {
           const p = document.createElement('p');
           p.style.marginLeft = '4px';
-          p.innerHTML = after.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+          p.innerHTML = safeMd(after).replace(/\n/g,'<br>');
           container.appendChild(p);
         }
       } else {
         // Bullet list or plain paragraph
         const p = document.createElement('p');
-        const rendered = sectionText
-          .replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>')
-          .replace(/^[-•]\s+/gm,'• ');
+        const rendered = safeMd(sectionText).replace(/^[-•]\s+/gm,'• ');
         p.innerHTML = `<span class="sp-tag" style="background:${colors.bg};color:${colors.color}">${matchedLabel}</span><span>${rendered.replace(/\n/g,'<br>')}</span>`;
         container.appendChild(p);
       }
@@ -1130,7 +1177,7 @@ function renderTechnical(container, text, roundType) {
       // Orphan text — render as plain paragraph
       if (parts[i].trim()) {
         const p = document.createElement('p');
-        p.innerHTML = parts[i].trim().replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').replace(/\n/g,'<br>');
+        p.innerHTML = safeMd(parts[i].trim()).replace(/\n/g,'<br>');
         container.appendChild(p);
       }
       i++;
@@ -1140,7 +1187,7 @@ function renderTechnical(container, text, roundType) {
   // Fallback if nothing was parsed
   if (!container.children.length) {
     container.className = 'streaming-text';
-    container.innerHTML = text.replace(/\*\*([^*\n]+)\*\*/g,'<strong>$1</strong>').split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    container.innerHTML = safeMd(text).split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
   }
 }
 
@@ -1150,8 +1197,9 @@ function renderTechnical(container, text, roundType) {
 async function captureScreen() {
   const btn = document.getElementById('btn-screen');
   btn.textContent = '⏳ Capturing...'; btn.disabled = true;
+  let stream = null;
   try {
-    const stream = await navigator.mediaDevices.getDisplayMedia({ video:true, audio:false });
+    stream = await navigator.mediaDevices.getDisplayMedia({ video:true, audio:false });
     const video = document.createElement('video');
     video.srcObject = stream; video.muted = true;
     await new Promise(res => { video.onloadedmetadata = () => { video.play(); res(); }; });
@@ -1161,13 +1209,15 @@ async function captureScreen() {
     canvas.width = video.videoWidth * scale;
     canvas.height = video.videoHeight * scale;
     canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
-    stream.getTracks().forEach(t => t.stop());
     const base64 = canvas.toDataURL('image/jpeg', 0.75).split(',')[1];
     await streamCodeAnswer(base64);
   } catch(e) {
-    showToast('Screen capture cancelled or denied.');
+    if (e.name !== 'AbortError') showToast('Screen capture cancelled or denied.');
+  } finally {
+    // Always stop the stream tracks to release the screen-share indicator
+    if (stream) stream.getTracks().forEach(t => t.stop());
+    btn.textContent = '📸 Analyze Screen'; btn.disabled = false;
   }
-  btn.textContent = '📸 Analyze Screen'; btn.disabled = false;
 }
 
 async function streamCodeAnswer(base64) {
@@ -1249,11 +1299,22 @@ async function streamCodeAnswer(base64) {
 }
 
 function formatCodeText(text) {
-  return text
-    .replace(/```[\w]*\n?([\s\S]*?)```/g, (_,code) => `<div class="code-block">${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`)
-    .replace(/\*\*([^*\n]+)\*\*/g,'<strong style="color:var(--accent)">$1</strong>')
-    .split(/\n\n+/).filter(Boolean)
-    .map(p=>p.startsWith('<div class="code-block">')?p:`<p>${p.replace(/\n/g,'<br>')}</p>`)
+  // 1. Extract code blocks so their content is escaped separately
+  const codeBlocks = [];
+  let safe = String(text).replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) => {
+    const idx = codeBlocks.length;
+    codeBlocks.push(`<div class="code-block">${code.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>`);
+    return `\x01CB${idx}\x01`;
+  });
+  // 2. Escape remaining (non-code) text
+  safe = safe.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  // 3. Apply bold markdown
+  safe = safe.replace(/\*\*([^*\n]+)\*\*/g,'<strong style="color:var(--accent)">$1</strong>');
+  // 4. Restore code blocks
+  safe = safe.replace(/\x01CB(\d+)\x01/g, (_, i) => codeBlocks[+i]);
+  // 5. Wrap paragraphs
+  return safe.split(/\n\n+/).filter(Boolean)
+    .map(p => p.startsWith('<div class="code-block">') ? p : `<p>${p.replace(/\n/g,'<br>')}</p>`)
     .join('');
 }
 

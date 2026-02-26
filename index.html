@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* Global error boundary — prevents blank-screen crashes */
+window.addEventListener('unhandledrejection', e => {
+  if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
+  console.error('[Ambore] Unhandled promise rejection:', e.reason);
+  e.preventDefault();
+});
+window.onerror = (msg, src, line, col, err) => {
+  if (err?.name === 'AbortError') return true;
+  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  return true; // prevent default browser error handling
+};
+</script>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ambore — AI Career Platform</title>
@@ -1212,10 +1226,10 @@ footer{
     <!-- Signup -->
     <div class="auth-panel" id="panel-signup">
       <div class="auth-err" id="auth-err-signup"></div>
-      <div class="auth-field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name"/></div>
-      <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com"/></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters"/></div>
-      <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password"/></div>
+      <div class="auth-field"><label>Full Name</label><input type="text" id="su-name" placeholder="Your name" maxlength="80" autocomplete="name"/></div>
+      <div class="auth-field"><label>Email</label><input type="email" id="su-email" placeholder="you@example.com" maxlength="254" autocomplete="email"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="su-pass" placeholder="Min 6 characters" maxlength="128" autocomplete="new-password"/></div>
+      <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pass2" placeholder="Repeat password" maxlength="128" autocomplete="new-password"/></div>
       <button class="auth-submit" onclick="handleSignup(event)">Create Account &rarr;</button>
       <div class="auth-switch">Already have account? <a onclick="switchTab('login')">Log in</a></div>
     </div>
@@ -1403,13 +1417,16 @@ function handleLogin(e){
 }
 function handleSignup(e){
   e.preventDefault();
-  const name=document.getElementById('su-name').value.trim();
-  const email=document.getElementById('su-email').value.trim().toLowerCase();
+  // Sanitize name: strip any HTML tags and control characters
+  const rawName=document.getElementById('su-name').value.trim();
+  const name=rawName.replace(/<[^>]*>/g,'').replace(/[\x00-\x1F\x7F]/g,'').slice(0,80);
+  const email=document.getElementById('su-email').value.trim().toLowerCase().slice(0,254);
   const pass=document.getElementById('su-pass').value;
   const pass2=document.getElementById('su-pass2').value;
   const err=document.getElementById('auth-err-signup');
   err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
   if(!name){err.textContent='Please enter your name.';err.classList.add('show');return}
+  if(name.length<2){err.textContent='Name must be at least 2 characters.';err.classList.add('show');return}
   if(!email.includes('@')){err.textContent='Enter a valid email.';err.classList.add('show');return}
   if(pass.length<6){err.textContent='Password must be 6+ characters.';err.classList.add('show');return}
   if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}

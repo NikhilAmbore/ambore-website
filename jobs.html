@@ -1,6 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+/* Global error boundary — prevents blank-screen crashes */
+window.addEventListener('unhandledrejection', e => {
+  if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
+  console.error('[Ambore] Unhandled promise rejection:', e.reason);
+  e.preventDefault();
+});
+window.onerror = (msg, src, line, col, err) => {
+  if (err?.name === 'AbortError') return true;
+  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  return true; // prevent default browser error handling
+};
+</script>
+
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Ambore Jobs — Tech & IT Jobs Across the USA</title>
