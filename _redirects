@@ -10,7 +10,7 @@
 /interview       /app.html            200
 /dashboard       /dashboard.html      200
 /project         /project.html        200
-/india-jobs      /india-jobs.html     200
+
 /privacy         /privacy.html        200
 /terms           /terms.html          200
 
@@ -23,5 +23,5 @@
 /portfolio.html      /portfolio       301
 /app.html            /interview       301
 /dashboard.html      /dashboard       301
-/india-jobs.html     /india-jobs      301
+
 /job-detail.html     /               301
