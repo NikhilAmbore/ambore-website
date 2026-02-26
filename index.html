@@ -65,39 +65,80 @@ body::before{
 /* ── NAVBAR ── */
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
-  padding:20px 0;
-  transition:background 0.4s,backdrop-filter 0.4s;
+  padding:16px 0;
+  /* Subtle initial background so buttons are always readable */
+  background:rgba(3,3,5,0.6);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(255,255,255,0.04);
+  transition:background 0.35s,backdrop-filter 0.35s,border-color 0.35s,padding 0.35s;
 }
 nav.scrolled{
-  background:rgba(3,3,5,0.85);
-  backdrop-filter:blur(20px);
+  background:rgba(3,3,5,0.92);
+  backdrop-filter:blur(24px);
   border-bottom:1px solid var(--border);
+  padding:12px 0;
 }
 .nav-inner{display:flex;align-items:center;justify-content:space-between}
 .nav-logo{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.25rem;letter-spacing:-0.02em}
 .nav-logo-icon{width:32px;height:32px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:900;flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:22px}
-.nav-links a{font-size:0.85rem;font-weight:500;color:var(--off);transition:color 0.2s}
+.nav-links{display:flex;align-items:center;gap:28px}
+.nav-links a{font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.55);transition:color 0.2s}
 .nav-links a:hover{color:#fff}
-.nav-actions{display:flex;align-items:center;gap:12px}
-.btn-ghost{padding:9px 20px;border-radius:9px;font-size:0.88rem;font-weight:600;color:var(--off);background:transparent;border:1px solid var(--border);cursor:pointer;transition:all 0.2s}
-.btn-ghost:hover{border-color:rgba(255,255,255,0.25);color:#fff}
-.btn-cta{padding:9px 22px;border-radius:9px;font-size:0.88rem;font-weight:700;color:#fff;background:var(--grad);border:none;cursor:pointer;transition:opacity 0.2s;box-shadow:0 0 24px var(--violet-glow)}
-.btn-cta:hover{opacity:0.85}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
-.hamburger span{width:22px;height:1.5px;background:#fff;border-radius:2px;display:block;transition:all 0.2s}
+.nav-actions{display:flex;align-items:center;gap:10px}
+/* Login button — more visible border */
+.btn-ghost{
+  padding:9px 20px;border-radius:9px;font-size:0.88rem;font-weight:600;
+  color:rgba(255,255,255,0.85);background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.18);cursor:pointer;transition:all 0.2s;
+  white-space:nowrap;
+}
+.btn-ghost:hover{background:rgba(255,255,255,0.12);border-color:rgba(255,255,255,0.35);color:#fff}
+/* Sign Up button — prominent gradient */
+.btn-cta{
+  padding:9px 22px;border-radius:9px;font-size:0.88rem;font-weight:700;
+  color:#fff;background:var(--grad);border:none;cursor:pointer;
+  transition:opacity 0.2s,transform 0.2s;
+  box-shadow:0 0 24px var(--violet-glow);white-space:nowrap;
+}
+.btn-cta:hover{opacity:0.85;transform:translateY(-1px)}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px}
+.hamburger span{width:22px;height:1.5px;background:rgba(255,255,255,0.85);border-radius:2px;display:block;transition:all 0.25s}
+@media(max-width:920px){
+  .nav-links{display:none}
+  .hamburger{display:flex}
+}
 
 /* ── MOBILE MENU ── */
 .mobile-menu{
-  display:none;position:fixed;top:70px;left:0;right:0;
-  background:rgba(5,5,10,0.98);backdrop-filter:blur(24px);
-  border-bottom:1px solid var(--border);
-  padding:24px 28px 32px;flex-direction:column;gap:2px;z-index:99;
+  display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+  background:rgba(3,3,5,0.97);backdrop-filter:blur(28px);
+  padding:80px 28px 40px;flex-direction:column;gap:0;z-index:98;
+  overflow-y:auto;
 }
 .mobile-menu.open{display:flex}
-.mobile-menu a{padding:14px 0;border-bottom:1px solid var(--border);font-size:1rem;font-weight:500;color:rgba(255,255,255,0.7)}
+.mobile-menu a{
+  padding:15px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+  font-size:1.05rem;font-weight:500;color:rgba(255,255,255,0.7);
+  transition:color 0.2s;
+}
+.mobile-menu a:hover{color:#fff}
 .mobile-menu a:last-child{border-bottom:none}
-.mobile-menu .btn-cta{margin-top:12px;text-align:center;display:block;padding:14px}
+/* Auth CTA group at bottom of mobile menu */
+.mob-auth-row{
+  display:flex;gap:10px;margin-top:24px;padding-top:20px;
+  border-top:1px solid rgba(255,255,255,0.08);
+}
+.mob-auth-row .btn-ghost{flex:1;text-align:center;padding:13px 0}
+.mob-auth-row .btn-cta{flex:1;text-align:center;padding:13px 0}
+/* Close button in mobile menu */
+.mob-close{
+  position:absolute;top:18px;right:24px;
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);
+  color:rgba(255,255,255,0.6);font-size:1.3rem;width:36px;height:36px;
+  border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s;
+}
+.mob-close:hover{color:#fff;background:rgba(255,255,255,0.12)}
 
 /* ── NAV USER STATE ── */
 .nav-user{display:flex;align-items:center;gap:10px}
@@ -666,41 +707,42 @@ footer{
         <div class="nav-logo-icon">A</div>
         Ambore
       </a>
+      <!-- Desktop: 3 clean anchors + auth CTAs -->
       <div class="nav-links">
         <a href="#features">Tools</a>
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/jobs')" style="color:rgba(34,197,94,0.9);font-weight:600">Jobs</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/resume')" style="color:rgba(156,95,255,0.9);font-weight:600">Resume</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" style="color:rgba(129,140,248,0.9);font-weight:600">Cover Letter</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/interview')" style="color:var(--violet);font-weight:600">Interview</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/project')" style="color:rgba(129,140,248,0.9);font-weight:600">Build Project</a>
-        <a href="javascript:void(0)" onclick="goToFeature('/dashboard')" style="color:rgba(255,255,255,0.5);font-weight:600" id="nav-dashboard">Dashboard</a>
       </div>
       <div class="nav-actions" id="nav-cta">
         <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login')">Log In</a>
         <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup')">Get Started Free</a>
       </div>
-      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Menu">
+      <button class="hamburger" id="hamburger" onclick="toggleMenu()" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
       </button>
     </div>
   </div>
 </nav>
 
-<!-- MOBILE MENU -->
-<div class="mobile-menu" id="mobile-menu">
+<!-- MOBILE MENU — full-screen overlay -->
+<div class="mobile-menu" id="mobile-menu" role="dialog" aria-label="Navigation menu">
+  <button class="mob-close" onclick="toggleMenu()" aria-label="Close menu">✕</button>
   <a href="#features" onclick="toggleMenu()">All Tools</a>
   <a href="#how" onclick="toggleMenu()">How It Works</a>
   <a href="#faq" onclick="toggleMenu()">FAQ</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/jobs');toggleMenu()" style="color:rgba(34,197,94,0.9)">Job Portal</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/resume');toggleMenu()" style="color:rgba(156,95,255,0.9)">AI Resume</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/cover-letter');toggleMenu()" style="color:rgba(129,140,248,0.9)">Cover Letter</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/email');toggleMenu()" style="color:rgba(251,191,36,0.9)">Email Generator</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/linkedin');toggleMenu()" style="color:rgba(88,166,255,0.9)">LinkedIn Optimizer</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/portfolio');toggleMenu()" style="color:rgba(34,197,94,0.9)">Portfolio Builder</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()" style="color:var(--violet)">Interview AI</a>
-  <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Get Started Free</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/jobs');toggleMenu()">Job Portal</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/resume');toggleMenu()">AI Resume</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/cover-letter');toggleMenu()">Cover Letter</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/email');toggleMenu()">Email Generator</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/linkedin');toggleMenu()">LinkedIn Optimizer</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/portfolio');toggleMenu()">Portfolio Builder</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()">Interview AI</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/project');toggleMenu()">Build Project</a>
+  <!-- Auth CTAs always visible at the bottom of mobile menu -->
+  <div class="mob-auth-row">
+    <a href="javascript:void(0)" class="btn-ghost" onclick="openAuthModal('login');toggleMenu()">Log In</a>
+    <a href="javascript:void(0)" class="btn-cta" onclick="openAuthModal('signup');toggleMenu()">Sign Up Free</a>
+  </div>
 </div>
 
 <!-- HERO -->
@@ -1271,11 +1313,17 @@ window.addEventListener('scroll',()=>{
 });
 
 /* MOBILE MENU */
-function toggleMenu(){document.getElementById('mobile-menu').classList.toggle('open')}
-document.addEventListener('click',e=>{
+function toggleMenu(){
   const m=document.getElementById('mobile-menu');
   const h=document.getElementById('hamburger');
-  if(m.classList.contains('open')&&!m.contains(e.target)&&!h.contains(e.target))m.classList.remove('open');
+  const isOpen=m.classList.toggle('open');
+  h.setAttribute('aria-expanded',isOpen);
+  // Lock body scroll when menu is open
+  document.body.style.overflow=isOpen?'hidden':'';
+}
+// Pressing Escape closes the mobile menu
+document.addEventListener('keydown',e=>{
+  if(e.key==='Escape'&&document.getElementById('mobile-menu').classList.contains('open'))toggleMenu();
 });
 
 /* SCROLL REVEAL */
