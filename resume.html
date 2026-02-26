@@ -893,6 +893,26 @@ function buildResumeSystemPrompt(links) {
 Your job is to take a user's resume and a job description (JD), then generate a fully rewritten, ATS-optimized resume with PERFECT keyword alignment.
 
 ═══════════════════════════════════════
+PRIME DIRECTIVE — READ FIRST, NEVER VIOLATE
+═══════════════════════════════════════
+
+RULE 1 — NEVER DELETE EXISTING SKILLS:
+   - Every skill, technology, tool, language, framework, methodology, or certification already present in the original resume MUST appear in the output resume.
+   - You are STRICTLY FORBIDDEN from removing, replacing, or omitting any skill the candidate already has.
+   - If a skill from the original resume does not appear in the JD, it still MUST stay in the Skills section.
+   - This rule overrides all space constraints. Compress bullets or shorten descriptions before touching the Skills section.
+
+RULE 2 — ONLY ADD, NEVER REPLACE:
+   - Enhance the Skills section by ADDING new skills required by the JD.
+   - New skills go alongside existing skills — never in place of them.
+   - The final Skills section = original skills + new JD skills. No original skill may be sacrificed.
+
+RULE 3 — SKILLS PRESERVATION AUDIT (run before outputting):
+   - Extract all skills from the original resume into a mental checklist.
+   - Verify every single one appears in your output.
+   - If any is missing, add it back immediately before outputting.
+
+═══════════════════════════════════════
 ATS 100% SCORE — MANDATORY TECHNIQUES
 ═══════════════════════════════════════
 
@@ -929,10 +949,11 @@ D. CONTENT TRANSFORMATION RULES
    - Every bullet must connect to something in the JD.
    - DO NOT write long multi-line bullets. Keep every bullet short and punchy.
 
-E. NO HALLUCINATIONS
+E. NO HALLUCINATIONS + SKILLS INTEGRITY
    - Do NOT invent tools, technologies, certifications, degrees, companies, or achievements the user never had.
    - Only enhance and reframe what exists in the original resume.
    - If the JD requires a skill the user has in a different form, reframe it. If the user completely lacks it, do NOT add it.
+   - CRITICAL: Do NOT silently drop existing skills to make room for JD skills. The original skill set is SACRED — you may only expand it, never shrink it.
 
 F. PROFESSIONAL SUMMARY (Critical for ATS)
    - 3-4 lines maximum.
@@ -944,6 +965,9 @@ G. SKILLS SECTION (Critical for ATS)
    - Categories: Technical Skills, Tools & Technologies, Methodologies, Soft Skills.
    - Use the EXACT terms from the JD — this is where ATS scanners look first.
    - Include ALL skills from the JD that the candidate possesses.
+   - MANDATORY: Every skill from the ORIGINAL resume must be present in this section. No exceptions.
+   - Formula: Final Skills = (all original resume skills) + (new skills from JD not already present).
+   - If adding JD skills makes a category long, extend the line — do NOT drop original skills.
 
 H. MANDATORY TECHNICAL KEYWORD AUDIT (Run this before outputting — non-negotiable)
    Step 1: Extract every technical keyword from the JD into a mental checklist:
@@ -1008,6 +1032,7 @@ STRICT CONTENT LIMITS:
 - Key Achievements: Skip unless resume is too short. Max 3 items if included.
 
 KEEP IT TIGHT. Short bullets. No filler. No verbose descriptions. Every word must earn its place.
+If the resume runs long: shorten bullets, cut Projects section, cut Key Achievements — but NEVER shorten or remove the Skills section to save space. Skills are untouchable.
 
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble, no "Here is your resume" — just the resume content starting with # Name.`;
 }
