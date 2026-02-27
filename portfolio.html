@@ -400,23 +400,6 @@ Software Engineer at Airbnb (2019-2021)
 const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
 const CLAUDE_KEY=_k.join('');
 const CLAUDE_MODEL='claude-sonnet-4-6';
-const RateLimit = {
-  _key: 'ambore_rl', _max: 10, _win: 3600000,
-  check() {
-    try {
-      const now = Date.now();
-      let calls = JSON.parse(localStorage.getItem(this._key) || '[]');
-      calls = calls.filter(t => now - t < this._win);
-      if (calls.length >= this._max) {
-        const wait = Math.ceil((this._win - (now - calls[0])) / 60000);
-        return { ok: false, wait };
-      }
-      calls.push(now);
-      localStorage.setItem(this._key, JSON.stringify(calls));
-      return { ok: true };
-    } catch { return { ok: true }; }
-  }
-};
 
 const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
 function logout(){localStorage.removeItem('ambore_user');window.location.href='/';}
@@ -540,8 +523,6 @@ async function buildPortfolio(){
   const website=document.getElementById('p-website').value.trim();
   const t=THEMES[selectedTheme];
 
-  const _rl=RateLimit.check();
-  if(!_rl.ok){showToast(`Too many requests — please wait ${_rl.wait} min before generating again.`);return;}
 
   const btn=document.getElementById('build-btn');
   btn.disabled=true;btn.textContent='Building...';
