@@ -236,12 +236,14 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview.tpl-creative .resume-header{border-bottom:3px solid rgba(168,85,247,0.5);padding-bottom:8px;margin-bottom:8px}
 .resume-preview.tpl-creative em{color:#C084FC}
 
-/* ── PDF STYLE (matches attached reference PDF exactly) ── */
+/* ── PDF STYLE ── */
 .resume-preview.tpl-pdf{font-family:'Times New Roman',Times,serif!important}
 .resume-preview.tpl-pdf *{font-family:'Times New Roman',Times,serif!important}
-.resume-preview.tpl-pdf .resume-header{text-align:left!important;border-bottom:none;padding-bottom:4px;margin-bottom:4px}
-.resume-preview.tpl-pdf h1{color:#fff;text-align:left!important;font-size:18pt;font-weight:900;letter-spacing:0}
-.resume-preview.tpl-pdf h1+p{color:#60A5FA;font-weight:700;font-size:11pt;margin-bottom:2px}
+.resume-preview.tpl-pdf .resume-header{text-align:center!important;border-bottom:none;padding-bottom:4px;margin-bottom:4px}
+.resume-preview.tpl-pdf .resume-header *{text-align:center!important}
+.resume-preview.tpl-pdf h1{color:#fff;text-align:center!important;font-size:18pt;font-weight:900;letter-spacing:0}
+.resume-preview.tpl-pdf h1+p{color:#60A5FA;font-weight:700;font-size:11pt;margin-bottom:2px;text-align:center!important}
+.resume-preview.tpl-pdf .resume-header p{text-align:center!important;color:rgba(255,255,255,0.75)}
 .resume-preview.tpl-pdf h2{color:#3B82F6;border-bottom:1.5px solid #3B82F6;font-size:10.5pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin-top:10px;margin-bottom:4px;padding-bottom:2px}
 .resume-preview.tpl-pdf h3{color:#60A5FA;font-size:10.5pt;font-weight:700;margin-top:6px;margin-bottom:1px}
 .resume-preview.tpl-pdf p{font-size:10pt;color:rgba(255,255,255,0.75);margin-bottom:1px}
@@ -874,7 +876,7 @@ const TEMPLATE_PRINT_CSS = {
   professional: `body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;line-height:1.3;color:#1e293b;margin:0;padding:0}.resume-header{margin-bottom:8px;text-align:left}h1{font-size:20pt;font-weight:700;text-align:left;margin:0 0 2px 0;color:#1E40AF}h1+p,h1+p+p,h1+p+p+p{text-align:left;color:#1E40AF;font-weight:600}h2{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin:8px 0 3px 0;color:#1E40AF;border-left:3px solid #1E40AF;padding:0 0 0 7px;border-bottom:none}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#334155}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#334155}strong{font-weight:700;color:#1e293b}em{font-style:italic;color:#64748b}hr{border:none;border-top:1px solid #bfdbfe;margin:5px 0}a{color:#1E40AF}`,
   executive: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.3;color:#1c1c1c;margin:0;padding:0}.resume-header{background:#1e293b;color:#fff;text-align:center;padding:16px 24px;margin-bottom:10px}.resume-header h1{color:#FCD34D!important;font-size:18pt;font-weight:900;margin:0 0 2px 0}.resume-header p,.resume-header a{color:rgba(255,255,255,0.85)!important;margin:0}h1{font-size:18pt;font-weight:900;margin:0 0 2px 0;color:#FCD34D;text-align:center}h2{font-size:10.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin:10px 0 3px 0;color:#1e293b;border-bottom:2.5px solid #F59E0B;padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:4px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#374151}strong{font-weight:700}em{font-style:italic;color:#6b7280}hr{border:none;border-top:1px solid #d1d5db;margin:6px 0}a{color:#B45309}`,
   creative: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1e1b4b;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #7C3AED}h1{font-size:20pt;font-weight:800;text-align:center;margin:0 0 2px 0;color:#6D28D9;letter-spacing:-0.5px}h2{font-size:9.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px 0;color:#6D28D9;border-bottom:1px solid rgba(109,40,217,0.3);padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e1b4b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:700;color:#1e1b4b}em{font-style:italic;color:#7C3AED}hr{border:none;border-top:1px solid rgba(109,40,217,0.2);margin:5px 0}a{color:#6D28D9;text-decoration:none}`,
-  pdf: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.35;color:#111;margin:0;padding:0}.resume-header{text-align:left;margin-bottom:4px}h1{font-size:18pt;font-weight:900;text-align:left;margin:0 0 1px 0;color:#111}h1+p{color:#1E40AF;font-weight:700;font-size:11.5pt;margin:0 0 3px 0}h2{font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:9px 0 3px 0;border-bottom:1.5px solid #1E40AF;padding-bottom:2px;color:#1E40AF}h3{font-size:10.5pt;font-weight:700;margin:5px 0 1px 0;color:#1E40AF}p{margin:0 0 2px 0;font-size:10pt;color:#111}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#111}strong{font-weight:700;color:#111}em{font-style:italic;color:#444}.cat-label{margin-top:4px;margin-bottom:0}.cat-label+p{margin-top:0}hr{border:none;border-top:1px solid #ccc;margin:5px 0}a{color:#1155CC;text-decoration:none}`
+  pdf: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.35;color:#111;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:4px}.resume-header *{text-align:center}h1{font-size:18pt;font-weight:900;text-align:center;margin:0 0 1px 0;color:#111}h1+p{color:#1E40AF;font-weight:700;font-size:11.5pt;margin:0 0 3px 0;text-align:center}.resume-header p{text-align:center;font-size:10pt;color:#333}h2{font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;margin:9px 0 3px 0;border-bottom:1.5px solid #1E40AF;padding-bottom:2px;color:#1E40AF}h3{font-size:10.5pt;font-weight:700;margin:5px 0 1px 0;color:#1E40AF}p{margin:0 0 2px 0;font-size:10pt;color:#111}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#111}strong{font-weight:700;color:#111}em{font-style:italic;color:#444}.cat-label{margin-top:4px;margin-bottom:0}.cat-label+p{margin-top:0}hr{border:none;border-top:1px solid #ccc;margin:5px 0}a{color:#1155CC;text-decoration:none}`
 };
 
 function setTemplate(id) {
@@ -1010,7 +1012,7 @@ Phone: (xxx) xxx-xxxx
 Email: email@example.com${linkLine ? '\nLinks: ' + linkLine : ''}
 
 Rules:
-- # for the name only — LEFT-ALIGNED (NOT centered)
+- # for the name only — CENTERED in the header
 - The job title/tagline: a **bold** line immediately after the name — NOT a heading
 - Contact info: each field on its own line (Location / Phone / Email / Links)
 - The candidate's links are embedded above — use them EXACTLY as provided. Do NOT alter or fabricate URLs. If not provided, do NOT add one.
