@@ -1410,11 +1410,11 @@ function escapeHtml(str){
 function closeAdModal(){
   document.getElementById('ad-overlay').classList.remove('open');
   document.body.style.overflow='';
-  try{localStorage.setItem('ad_dismissed','1');}catch{}
+  try{sessionStorage.setItem('ad_dismissed','1');}catch{}
 }
 (function(){
   try{
-    const dismissed=localStorage.getItem('ad_dismissed');
+    const dismissed=sessionStorage.getItem('ad_dismissed');
     if(!dismissed){
       setTimeout(()=>{
         document.getElementById('ad-overlay').classList.add('open');
