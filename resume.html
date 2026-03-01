@@ -112,6 +112,12 @@ button,input,textarea,select{font-family:inherit}
 .resume-tabs{display:flex;gap:6px;margin-bottom:8px}
 .rtab{padding:5px 12px;border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.45);transition:all 0.2s}
 .rtab.active{background:rgba(79,70,229,0.15);border-color:rgba(79,70,229,0.4);color:var(--accent)}
+.gen-mode-row{display:flex;gap:8px;justify-content:center;margin-bottom:24px}
+.gen-mode-btn{display:flex;align-items:center;gap:8px;padding:10px 20px;border-radius:12px;border:1.5px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.45);font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:inherit}
+.gen-mode-btn:hover{border-color:rgba(255,255,255,0.2);color:rgba(255,255,255,0.7)}
+.gen-mode-btn.active{background:rgba(79,70,229,0.15);border-color:rgba(79,70,229,0.5);color:#fff}
+.gen-mode-btn .mode-icon{font-size:1rem}
+.gen-mode-btn .mode-badge{font-size:0.65rem;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(79,70,229,0.25);color:#a89fff;letter-spacing:0.04em}
 .dropzone{
   height:220px;border:2px dashed rgba(255,255,255,0.1);border-radius:12px;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -511,10 +517,20 @@ button,input,textarea,select{font-family:inherit}
 
   <!-- INPUT VIEW -->
   <div id="input-view" class="input-section">
-    <h1 class="page-heading">Tailor Your Resume with AI</h1>
-    <p class="page-hint">Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.</p>
+    <!-- MODE SWITCHER -->
+    <div class="gen-mode-row">
+      <button class="gen-mode-btn active" id="mode-tailor" onclick="setGenMode('tailor')">
+        <span class="mode-icon">🎯</span> Tailor to Job <span class="mode-badge">ATS</span>
+      </button>
+      <button class="gen-mode-btn" id="mode-transform" onclick="setGenMode('transform')">
+        <span class="mode-icon">✨</span> Transform Resume <span class="mode-badge">NEW</span>
+      </button>
+    </div>
 
-    <div class="input-grid">
+    <h1 class="page-heading" id="page-heading">Tailor Your Resume with AI</h1>
+    <p class="page-hint" id="page-hint">Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.</p>
+
+    <div class="input-grid" id="input-grid">
       <!-- Resume upload -->
       <div class="input-field">
         <label>Your Resume</label>
@@ -538,9 +554,22 @@ button,input,textarea,select{font-family:inherit}
       </div>
 
       <!-- Job Description -->
-      <div class="input-field">
+      <div class="input-field" id="jd-field">
         <label>Job Description</label>
         <textarea id="jd-text" maxlength="8000" placeholder="Paste the full job description here...&#10;&#10;Include the role, responsibilities, requirements, and company info."></textarea>
+      </div>
+      <!-- Transform hint (shown in transform mode) -->
+      <div class="input-field hidden" id="transform-hint-field" style="display:flex;flex-direction:column;justify-content:center;gap:12px">
+        <div style="background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.25);border-radius:14px;padding:20px 22px">
+          <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.3);margin-bottom:10px">What gets rewritten</div>
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;align-items:flex-start;gap:9px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#818CF8;font-weight:700;flex-shrink:0">✦</span>7-line professional summary — story-driven &amp; quantified</div>
+            <div style="display:flex;align-items:flex-start;gap:9px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#818CF8;font-weight:700;flex-shrink:0">✦</span>Full experience section — challenge → action → impact format</div>
+            <div style="display:flex;align-items:flex-start;gap:9px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#818CF8;font-weight:700;flex-shrink:0">✦</span>Deep technical detail with tools, pipelines &amp; architecture</div>
+            <div style="display:flex;align-items:flex-start;gap:9px;font-size:0.85rem;color:rgba(255,255,255,0.7)"><span style="color:#818CF8;font-weight:700;flex-shrink:0">✦</span>Heavy quantification — %, $, scale, latency, cost savings</div>
+          </div>
+          <div style="margin-top:14px;font-size:0.78rem;color:rgba(255,255,255,0.3)">No job description needed — just upload your resume.</div>
+        </div>
       </div>
     </div>
 
@@ -562,7 +591,7 @@ button,input,textarea,select{font-family:inherit}
     </div>
 
     <button class="generate-btn" id="gen-btn" onclick="generateResume()">
-      <span id="gen-btn-text">Generate Tailored Resume</span>
+      <span id="gen-btn-text">🎯 Generate Tailored Resume</span>
     </button>
   </div>
 
@@ -1028,6 +1057,74 @@ If the resume runs long: shorten bullets, cut Projects section — but NEVER cut
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble, no "Here is your resume" — just the resume content starting with # Name.`;
 }
 
+/* ── TRANSFORM MODE ── */
+let generateMode = 'tailor';
+
+function setGenMode(mode) {
+  generateMode = mode;
+  document.getElementById('mode-tailor').classList.toggle('active', mode === 'tailor');
+  document.getElementById('mode-transform').classList.toggle('active', mode === 'transform');
+  const jdField = document.getElementById('jd-field');
+  const hintField = document.getElementById('transform-hint-field');
+  const heading = document.getElementById('page-heading');
+  const hint = document.getElementById('page-hint');
+  const btnText = document.getElementById('gen-btn-text');
+  if (mode === 'transform') {
+    jdField.classList.add('hidden');
+    hintField.classList.remove('hidden');
+    heading.textContent = 'Transform Your Resume';
+    hint.textContent = 'Upload your resume — AI rewrites your summary & experience in a compelling, senior-level storytelling format.';
+    btnText.textContent = '✨ Transform My Resume';
+  } else {
+    jdField.classList.remove('hidden');
+    hintField.classList.add('hidden');
+    heading.textContent = 'Tailor Your Resume with AI';
+    hint.textContent = 'Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.';
+    btnText.textContent = '🎯 Generate Tailored Resume';
+  }
+}
+
+function buildTransformSystemPrompt(links) {
+  const linksStr = [
+    links.linkedin  ? `[LinkedIn](${links.linkedin})`  : '',
+    links.github    ? `[GitHub](${links.github})`       : '',
+    links.portfolio ? `[Portfolio](${links.portfolio})` : '',
+  ].filter(Boolean).join(' | ');
+
+  return `You are an expert Resume Transformation Engine.
+
+Your task is to take the user's resume and rewrite:
+
+1. A 7-line professional summary:
+   - Single paragraph, no bullets
+   - Story-driven and senior-level
+   - Strong narrative flow
+   - Highly quantified (%, $, scale, latency, throughput)
+   - Focused on Data Engineering, Cloud, Real-Time Systems
+   - ATS-optimized and recruiter-ready
+
+2. The entire professional experience section:
+   - Storytelling format (challenge → action → impact)
+   - Deep technical detail (pipelines, streaming, cloud, architecture)
+   - Strong action verbs and senior vocabulary
+   - Heavy quantification (performance gains, cost savings, reliability)
+   - Clear business outcomes and measurable impact
+   - No fabrication; enhance only what the user already has
+   - Expand bullets into richer, more meaningful content
+
+Style Rules:
+- Keep content factual, impactful, and ATS-friendly.
+- Maintain clarity, precision, and professional tone.
+- Every bullet must show what was done, how it was done, tools used, and the business impact.
+
+Output Format:
+- Preserve the candidate's full name, contact info, education, certifications, skills — output them unchanged.
+${linksStr ? `- Include these professional links in the header: ${linksStr}` : ''}
+- Rewrite ONLY the Professional Summary and Professional Experience sections.
+- Use standard Markdown resume format starting with # Name.
+- Do not include explanations or notes — only the final polished resume.`;
+}
+
 async function generateResume() {
   const resume = resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText;
   const jd = document.getElementById('jd-text').value.trim();
@@ -1040,8 +1137,10 @@ async function generateResume() {
   if (!resume) { showToast('Please upload or paste your resume first.'); return; }
   if (resume.length > 12000) { showToast('Resume text is too long (max 12,000 chars). Please trim it.'); return; }
   track('resume_start', 'resume');
-  if (!jd) { showToast('Please paste the job description.'); return; }
-  if (jd.length > 8000) { showToast('Job description is too long (max 8,000 chars). Please trim it.'); return; }
+  if (generateMode === 'tailor') {
+    if (!jd) { showToast('Please paste the job description.'); return; }
+    if (jd.length > 8000) { showToast('Job description is too long (max 8,000 chars). Please trim it.'); return; }
+  }
   if (isGenerating) return;
 
   isGenerating = true;
@@ -1049,17 +1148,18 @@ async function generateResume() {
   const btn = document.getElementById('gen-btn');
   const btnText = document.getElementById('gen-btn-text');
   btn.disabled = true;
-  btnText.textContent = 'Generating...';
+  btnText.textContent = generateMode === 'transform' ? 'Transforming...' : 'Generating...';
 
-  // Compute BEFORE score from original resume vs JD
-  const beforeResult = computeATSScore(resume, jd);
+  // Compute BEFORE score from original resume vs JD (tailor mode only)
+  const beforeResult = generateMode === 'tailor' ? computeATSScore(resume, jd) : null;
 
   showResultView();
-  showATSPanel(beforeResult);
+  if (beforeResult) showATSPanel(beforeResult);
+  else document.getElementById('ats-panel').style.display = 'none';
 
   const output = document.getElementById('resume-output');
   output.innerHTML = '<span class="cursor"></span>';
-  setGenStatus('thinking', 'Analyzing resume & JD...');
+  setGenStatus('thinking', generateMode === 'transform' ? 'Transforming your resume...' : 'Analyzing resume & JD...');
 
   const _ctrl = new AbortController();
   const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
@@ -1077,10 +1177,12 @@ async function generateResume() {
         model: CLAUDE_MODEL,
         max_tokens: 3200,
         stream: true,
-        system: buildResumeSystemPrompt(links),
+        system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
         messages: [{
           role: 'user',
-          content: `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
+          content: generateMode === 'transform'
+            ? `Please transform my resume:\n\n${resume}`
+            : `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
         }]
       })
     });
@@ -1121,9 +1223,11 @@ async function generateResume() {
     setGenStatus('done', 'Complete');
     setTimeout(() => setGenStatus('', ''), 4000);
 
-    // Compute AFTER score from generated resume vs JD
-    const afterResult = computeATSScore(stripMarkdown(generatedMarkdown), jd);
-    updateATSAfter(afterResult, beforeResult);
+    // Compute AFTER score (tailor mode only)
+    if (generateMode === 'tailor' && beforeResult) {
+      const afterResult = computeATSScore(stripMarkdown(generatedMarkdown), jd);
+      updateATSAfter(afterResult, beforeResult);
+    }
   } catch (err) {
     output.innerHTML = `<p style="color:var(--red);padding:20px">Error: ${err.message}<br><br><small style="opacity:0.6">Check your internet connection and try again.</small></p>`;
     setGenStatus('', '');
