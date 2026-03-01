@@ -179,10 +179,10 @@ button,input,textarea,select{font-family:inherit}
 /* Resume preview card */
 .resume-preview{
   flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;
-  overflow-y:auto;padding:36px 48px;line-height:1.45;
+  overflow-y:auto;padding:32px 40px;line-height:1.3;
   font-family:'Times New Roman',Times,serif;
 }
-@media(max-width:700px){.resume-preview{padding:20px 18px}}
+@media(max-width:700px){.resume-preview{padding:20px 16px}}
 .resume-preview .resume-header{text-align:center;margin-bottom:6px}
 .resume-preview h1{font-size:14pt;font-weight:900;color:#fff;margin-bottom:1px;text-align:center;font-family:'Times New Roman',Times,serif}
 .resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center}
@@ -235,31 +235,6 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview.tpl-creative h3{color:#e2e8f0}
 .resume-preview.tpl-creative .resume-header{border-bottom:3px solid rgba(168,85,247,0.5);padding-bottom:8px;margin-bottom:8px}
 .resume-preview.tpl-creative em{color:#C084FC}
-
-/* ── PDF STYLE ── */
-.resume-preview.tpl-pdf{font-family:'Times New Roman',Times,serif!important;line-height:1.45}
-.resume-preview.tpl-pdf *{font-family:'Times New Roman',Times,serif!important}
-/* Centered header block */
-.resume-preview.tpl-pdf .resume-header{text-align:center!important;border-bottom:2px solid #3B82F6;padding-bottom:8px;margin-bottom:10px}
-.resume-preview.tpl-pdf .resume-header *{text-align:center!important}
-.resume-preview.tpl-pdf h1{color:#fff;text-align:center!important;font-size:20pt;font-weight:900;letter-spacing:0;margin-bottom:2px}
-.resume-preview.tpl-pdf h1+p{color:#60A5FA;font-weight:700;font-size:11pt;margin-bottom:4px;text-align:center!important}
-.resume-preview.tpl-pdf .resume-header p{text-align:center!important;color:rgba(255,255,255,0.65);font-size:10pt;margin-bottom:1px}
-/* Section headers */
-.resume-preview.tpl-pdf h2{color:#2563EB;border-bottom:2px solid #2563EB;font-size:11pt;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-top:14px;margin-bottom:6px;padding-bottom:3px}
-/* Job title headers */
-.resume-preview.tpl-pdf h3{color:#2563EB;font-size:10.5pt;font-weight:700;margin-top:8px;margin-bottom:2px}
-/* Body text */
-.resume-preview.tpl-pdf p{font-size:10pt;color:rgba(255,255,255,0.78);margin-bottom:3px;line-height:1.45}
-.resume-preview.tpl-pdf li{font-size:10pt;color:rgba(255,255,255,0.75);margin-bottom:3px;line-height:1.4}
-.resume-preview.tpl-pdf ul{padding-left:18px;margin:4px 0 6px}
-.resume-preview.tpl-pdf strong{color:#fff;font-weight:700}
-.resume-preview.tpl-pdf em{color:rgba(255,255,255,0.5);font-style:italic}
-.resume-preview.tpl-pdf a{color:#60A5FA}
-/* Skill category label lines */
-.resume-preview.tpl-pdf p.cat-label{margin-top:7px;margin-bottom:1px}
-.resume-preview.tpl-pdf p.cat-label strong{color:#e2e8f0}
-.resume-preview.tpl-pdf p.cat-label+p{margin-top:0;margin-bottom:5px;color:rgba(255,255,255,0.68);padding-left:2px}
 
 /* Streaming cursor */
 .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
@@ -602,10 +577,7 @@ button,input,textarea,select{font-family:inherit}
     <div class="template-row" id="template-row">
       <div class="template-label">Template</div>
       <div class="template-pills">
-        <button class="tpl-pill active" onclick="setTemplate('pdf')" data-tpl="pdf">
-          <span class="tpl-dot" style="background:#1E40AF"></span>PDF Style ✦
-        </button>
-        <button class="tpl-pill" onclick="setTemplate('classic')" data-tpl="classic">
+        <button class="tpl-pill active" onclick="setTemplate('classic')" data-tpl="classic">
           <span class="tpl-dot" style="background:#9ca3af"></span>Classic
         </button>
         <button class="tpl-pill" onclick="setTemplate('modern')" data-tpl="modern">
@@ -665,7 +637,7 @@ button,input,textarea,select{font-family:inherit}
       </div>
     </div>
 
-    <div class="resume-preview tpl-pdf" id="resume-output"></div>
+    <div class="resume-preview tpl-classic" id="resume-output"></div>
   </div>
 </div>
 
@@ -873,7 +845,7 @@ const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 let generatedMarkdown = '';
 let isGenerating = false;
-let activeTemplate = 'pdf';
+let activeTemplate = 'classic';
 
 /* ── TEMPLATES ── */
 const TEMPLATE_PRINT_CSS = {
@@ -881,28 +853,7 @@ const TEMPLATE_PRINT_CSS = {
   modern: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1a1a2e;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;border-bottom:1px solid #e2e8f0;padding-bottom:8px}h1{font-size:18pt;font-weight:700;text-align:center;margin:0 0 2px 0;color:#0f172a;letter-spacing:-0.3px}h2{font-size:8.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1.8px;margin:10px 0 4px 0;color:#64748b;border-bottom:none;padding-bottom:0}h3{font-size:10.5pt;font-weight:600;margin:4px 0 1px 0;color:#0f172a}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:600;color:#0f172a}em{font-style:normal;color:#6b7280}hr{border:none;border-top:1px solid #e2e8f0;margin:6px 0}a{color:#2563EB;text-decoration:none}`,
   professional: `body{font-family:Calibri,Arial,sans-serif;font-size:10.5pt;line-height:1.3;color:#1e293b;margin:0;padding:0}.resume-header{margin-bottom:8px;text-align:left}h1{font-size:20pt;font-weight:700;text-align:left;margin:0 0 2px 0;color:#1E40AF}h1+p,h1+p+p,h1+p+p+p{text-align:left;color:#1E40AF;font-weight:600}h2{font-size:10pt;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;margin:8px 0 3px 0;color:#1E40AF;border-left:3px solid #1E40AF;padding:0 0 0 7px;border-bottom:none}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#334155}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#334155}strong{font-weight:700;color:#1e293b}em{font-style:italic;color:#64748b}hr{border:none;border-top:1px solid #bfdbfe;margin:5px 0}a{color:#1E40AF}`,
   executive: `body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.3;color:#1c1c1c;margin:0;padding:0}.resume-header{background:#1e293b;color:#fff;text-align:center;padding:16px 24px;margin-bottom:10px}.resume-header h1{color:#FCD34D!important;font-size:18pt;font-weight:900;margin:0 0 2px 0}.resume-header p,.resume-header a{color:rgba(255,255,255,0.85)!important;margin:0}h1{font-size:18pt;font-weight:900;margin:0 0 2px 0;color:#FCD34D;text-align:center}h2{font-size:10.5pt;font-weight:800;text-transform:uppercase;letter-spacing:1.5px;margin:10px 0 3px 0;color:#1e293b;border-bottom:2.5px solid #F59E0B;padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:4px 0 1px 0;color:#1e293b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:16px;margin:0 0 3px 0}li{margin-bottom:1px;font-size:10pt;color:#374151}strong{font-weight:700}em{font-style:italic;color:#6b7280}hr{border:none;border-top:1px solid #d1d5db;margin:6px 0}a{color:#B45309}`,
-  creative: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1e1b4b;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #7C3AED}h1{font-size:20pt;font-weight:800;text-align:center;margin:0 0 2px 0;color:#6D28D9;letter-spacing:-0.5px}h2{font-size:9.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px 0;color:#6D28D9;border-bottom:1px solid rgba(109,40,217,0.3);padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e1b4b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:700;color:#1e1b4b}em{font-style:italic;color:#7C3AED}hr{border:none;border-top:1px solid rgba(109,40,217,0.2);margin:5px 0}a{color:#6D28D9;text-decoration:none}`,
-  pdf: `
-    body{font-family:'Times New Roman',Times,serif;font-size:10.5pt;line-height:1.45;color:#111;margin:0;padding:0}
-    .resume-header{text-align:center;margin-bottom:8px;padding-bottom:6px;border-bottom:2px solid #1E40AF}
-    .resume-header *{text-align:center}
-    h1{font-size:20pt;font-weight:900;text-align:center;margin:0 0 2px 0;color:#111}
-    h1+p{color:#1E40AF;font-weight:700;font-size:12pt;margin:0 0 4px 0;text-align:center}
-    .resume-header p{text-align:center;font-size:10pt;color:#333;margin:1px 0}
-    h2{font-size:11pt;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;
-       margin:12px 0 4px 0;border-bottom:2px solid #1E40AF;padding-bottom:3px;color:#1E40AF}
-    h3{font-size:10.5pt;font-weight:700;margin:8px 0 2px 0;color:#1E40AF}
-    p{margin:0 0 3px 0;font-size:10pt;color:#111;line-height:1.45}
-    ul{padding-left:18px;margin:3px 0 5px 0}
-    li{margin-bottom:3px;font-size:10pt;color:#111;line-height:1.4}
-    strong{font-weight:700;color:#111}
-    em{font-style:italic;color:#555}
-    .cat-label{margin-top:6px;margin-bottom:1px}
-    .cat-label strong{font-weight:700;color:#111}
-    .cat-label+p{margin-top:0;margin-bottom:4px;padding-left:2px}
-    hr{border:none;border-top:1px solid #ccc;margin:6px 0}
-    a{color:#1155CC;text-decoration:none}
-  `
+  creative: `body{font-family:Arial,Helvetica,sans-serif;font-size:10pt;line-height:1.45;color:#1e1b4b;margin:0;padding:0}.resume-header{text-align:center;margin-bottom:8px;padding-bottom:8px;border-bottom:3px solid #7C3AED}h1{font-size:20pt;font-weight:800;text-align:center;margin:0 0 2px 0;color:#6D28D9;letter-spacing:-0.5px}h2{font-size:9.5pt;font-weight:700;text-transform:uppercase;letter-spacing:1px;margin:10px 0 4px 0;color:#6D28D9;border-bottom:1px solid rgba(109,40,217,0.3);padding-bottom:2px}h3{font-size:10.5pt;font-weight:700;margin:3px 0 1px 0;color:#1e1b4b}p{margin:0 0 2px 0;font-size:10pt;color:#374151}ul{padding-left:14px;margin:0 0 3px 0}li{margin-bottom:2px;font-size:10pt;color:#374151}strong{font-weight:700;color:#1e1b4b}em{font-style:italic;color:#7C3AED}hr{border:none;border-top:1px solid rgba(109,40,217,0.2);margin:5px 0}a{color:#6D28D9;text-decoration:none}`
 };
 
 function setTemplate(id) {
@@ -1023,115 +974,29 @@ H. MANDATORY TECHNICAL KEYWORD AUDIT (Run this before outputting — non-negotia
    Same rule for AWS, k8s, EC2, S3, W2, CI/CD, etc. ATS scanners match exact tokens.
 
 ═══════════════════════════════════════
-OUTPUT FORMAT — MATCH THIS EXACTLY
+OUTPUT FORMAT
 ═══════════════════════════════════════
 
-Produce Markdown that renders exactly like a professional PDF resume. Follow this structure precisely:
-
-──────────────────────
-HEADER BLOCK (top of resume):
-──────────────────────
-# Candidate Full Name
-**Job Title | Specialization Subtitle**
-Location: City, State, USA
-Phone: (xxx) xxx-xxxx
-Email: email@example.com${linkLine ? '\nLinks: ' + linkLine : ''}
-
-Rules:
-- # for the name only — CENTERED in the header
-- The job title/tagline: a **bold** line immediately after the name — NOT a heading
-- Contact info: each field on its own line (Location / Phone / Email / Links)
-- The candidate's links are embedded above — use them EXACTLY as provided. Do NOT alter or fabricate URLs. If not provided, do NOT add one.
-
-──────────────────────
-SECTION HEADERS:
-──────────────────────
-## PROFESSIONAL SUMMARY
-## TECHNICAL SKILLS
-## PROFESSIONAL EXPERIENCE
-## EDUCATION
-## CERTIFICATIONS
-## KEY ACHIEVEMENTS
-## PROJECTS
-
-Rules:
-- ## for ALL section headers, in ALL CAPS
-- No extra punctuation or icons in headers
-
-──────────────────────
-SKILLS SECTION FORMAT:
-──────────────────────
-Each skill category MUST use this exact two-line pattern — bold label on its own line, content on the next line:
-
-**Programming & Scripting:**
-Python (Pandas, PySpark, NumPy), SQL (PostgreSQL, Redshift, BigQuery), JavaScript
-
-**Big Data & Stream Processing:**
-Apache Spark (PySpark, Structured Streaming), Apache Kafka, Databricks (Delta Lake, Lakehouse)
-
-**Cloud Platforms:**
-AWS (S3, Redshift, EMR, Lambda, CloudWatch), Azure (Databricks, ADLS, Synapse, Monitor)
-
-Rules:
-- Category label: **Bold text ending with colon:** — on its own line
-- Content: plain text on the next line, comma-separated
-- 4–7 categories based on the candidate's background
-- No inline label+content on same line — always two lines per category
-
-──────────────────────
-EXPERIENCE SECTION FORMAT:
-──────────────────────
-Each role:
-
-### Job Title
-**Company Name | City, State | Start Month Year – End Month Year**
-*Project: Project Name – Project Subtitle* (only if the candidate worked on a named project)
-
-- Bullet 1: action verb + achievement + metric
-- Bullet 2: action verb + achievement + metric
-- Bullet 3...
-- Bullet 4...
-- Bullet 5...
-
-**Key Technologies:** Tech1, Tech2, Tech3, Tech4, Tech5
-
-Rules:
-- ### for job title only
-- Company + location + date range: one **bold** line directly below the ### title
-- Project name (if any): italic line *Project: ...*
-- 4–5 bullets for full-time roles, 3 bullets for internships
-- EVERY role MUST end with **Key Technologies:** followed by a comma-separated list
-- Each bullet = one line max (18 words max), action-verb-led, quantified
-
-──────────────────────
-PROJECTS SECTION FORMAT:
-──────────────────────
-### Project Name
-**Tech1, Tech2, Tech3 | Month Year**
-
-Brief one-sentence description.
-
-- Bullet 1
-- Bullet 2
-
-**Key Technologies:** Tech1, Tech2, Tech3
-
-──────────────────────
-GENERAL RULES:
-──────────────────────
-- *Italic* for project names and supplementary date lines
-- **Bold** for category labels, company lines, key metrics, and Key Technologies lines
-- - for all bullet points
-- Dates format: Month Year – Month Year (e.g., February 2025 – Present)
+Use clean Markdown with this exact hierarchy:
+- # for the candidate's full name (centered)
+- If the candidate has a job title/tagline, put it between name and contact info
+- Contact line directly below name: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
+- The candidate's professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
+- If a link was not provided, do NOT invent or add one.
+- ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, KEY ACHIEVEMENTS, PROJECTS)
+- ### for each job entry: Job Title | Company Name | Location
+- Italic line for dates: *Month Year – Month Year*
+- - for bullet points
+- **Bold** for key metrics, numbers, and critical skills within bullets
 
 SECTION ORDER:
-1. Name & Contact Info (header block)
+1. Name & Contact Info
 2. Professional Summary
-3. Technical Skills
+3. Skills
 4. Professional Experience (most recent first)
-5. Education
-6. Certifications (if any)
-7. Key Achievements (if applicable)
+5. Key Achievements (if applicable)
+6. Education
+7. Certifications (if any)
 8. Projects (if relevant)
 
 ═══════════════════════════════════════
@@ -1564,12 +1429,8 @@ function renderMarkdown(md) {
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
 
-  // Mark skill category label paragraphs — <p> containing only a <strong> ending with ':'
-  // e.g. <p><strong>Programming &amp; Scripting:</strong></p> → <p class="cat-label">...
-  html = html.replace(/<p>(<strong>[^<]+:<\/strong>)<\/p>/g, '<p class="cat-label">$1</p>');
-
-  // Wrap everything before the first <h2> in a header div
-  // For PDF template: left-aligned; for others: centered via CSS
+  // Wrap everything before the first <h2> in a centered header div
+  // This centers: name (h1), job title, contact info, links
   const firstH2 = html.indexOf('<h2>');
   if (firstH2 > 0) {
     const headerPart = html.slice(0, firstH2);
