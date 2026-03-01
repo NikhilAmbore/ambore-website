@@ -27,6 +27,7 @@ function track(event,page){fetch('https://web-production-d62ab.up.railway.app/ap
 window.addEventListener('load',()=>track('page_view','index'));
 </script>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
 /* ── RESET ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -677,6 +678,10 @@ footer{
 .auth-submit:hover{opacity:0.85}
 .auth-switch{text-align:center;margin-top:14px;font-size:0.82rem;color:rgba(255,255,255,0.3)}
 .auth-switch a{color:#a89fff;font-weight:600;cursor:pointer}
+.otp-icon{font-size:2.2rem;text-align:center;margin:0 0 6px}
+.otp-hint{text-align:center;font-size:0.86rem;color:rgba(255,255,255,0.4);margin:0 0 20px;line-height:1.55}
+.otp-hint strong{color:rgba(255,255,255,0.8);font-weight:600}
+#otp-input{letter-spacing:0.35em;font-size:1.4rem;text-align:center;font-weight:700}
 
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
@@ -1305,6 +1310,22 @@ footer{
       <button class="auth-submit" onclick="handleSignup(event)">Create Account &rarr;</button>
       <div class="auth-switch">Already have account? <a onclick="switchTab('login')">Log in</a></div>
     </div>
+    <!-- OTP Verify -->
+    <div class="auth-panel" id="panel-otp">
+      <div class="auth-err" id="auth-err-otp"></div>
+      <div class="otp-icon">📧</div>
+      <p class="otp-hint">We sent a 6-digit code to<br><strong id="otp-email-display"></strong></p>
+      <div class="auth-field">
+        <label>Verification Code</label>
+        <input type="text" id="otp-input" placeholder="000000" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code"/>
+      </div>
+      <button class="auth-submit" onclick="verifyOtp(event)">Verify &amp; Create Account &rarr;</button>
+      <div class="auth-switch">
+        <span id="otp-resend-timer">Resend in <span id="otp-countdown">60</span>s</span>
+        <a id="otp-resend-btn" onclick="resendOtp()" style="display:none">Resend code</a>
+      </div>
+      <div class="auth-switch"><a onclick="switchTab('signup')">&larr; Back to sign up</a></div>
+    </div>
     <!-- Forgot Password -->
     <div class="auth-panel" id="panel-forgot">
       <div class="auth-err" id="auth-err-forgot"></div>
@@ -1319,6 +1340,12 @@ footer{
 </div>
 
 <script>
+/* EMAILJS CONFIG — replace these 3 values after setting up emailjs.com */
+const EMAILJS_PUBLIC_KEY   = 'YOUR_PUBLIC_KEY';
+const EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';
+const EMAILJS_TEMPLATE_ID  = 'YOUR_TEMPLATE_ID';
+emailjs.init(EMAILJS_PUBLIC_KEY);
+
 /* UTILS */
 function escapeHtml(str){
   return String(str)
@@ -1451,7 +1478,7 @@ function switchTab(tab){
   document.querySelectorAll('.auth-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.auth-panel').forEach(p=>p.classList.toggle('active',p.id==='panel-'+tab));
   const tabsRow=document.querySelector('.auth-tabs');
-  if(tabsRow)tabsRow.style.display=(tab==='forgot')?'none':'flex';
+  if(tabsRow)tabsRow.style.display=(tab==='forgot'||tab==='otp')?'none':'flex';
 }
 
 /* AUTH LOGIC */
@@ -1493,15 +1520,15 @@ function handleLogin(e){
   updateNavState();
   updatePageForAuthState();
 }
-function handleSignup(e){
+async function handleSignup(e){
   e.preventDefault();
-  // Sanitize name: strip any HTML tags and control characters
   const rawName=document.getElementById('su-name').value.trim();
   const name=rawName.replace(/<[^>]*>/g,'').replace(/[\x00-\x1F\x7F]/g,'').slice(0,80);
   const email=document.getElementById('su-email').value.trim().toLowerCase().slice(0,254);
   const pass=document.getElementById('su-pass').value;
   const pass2=document.getElementById('su-pass2').value;
   const err=document.getElementById('auth-err-signup');
+  const btn=e.currentTarget||e.target;
   err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
   if(!name){err.textContent='Please enter your name.';err.classList.add('show');return}
   if(name.length<2){err.textContent='Name must be at least 2 characters.';err.classList.add('show');return}
@@ -1510,21 +1537,24 @@ function handleSignup(e){
   if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}
   const users=getUsers();
   if(users.find(u=>u.email===email)){err.textContent='User already registered.';err.classList.add('show');return}
-  const newUser={id:'u'+Date.now(),name,email,password:pass,createdAt:new Date().toISOString()};
-  users.push(newUser);saveUsers(users);
-  err.textContent='Account created successfully! Please log in.';
-  err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
-  err.classList.add('show');
-  document.getElementById('su-name').value='';
-  document.getElementById('su-email').value='';
-  document.getElementById('su-pass').value='';
-  document.getElementById('su-pass2').value='';
-  setTimeout(()=>{
-    switchTab('login');
-    document.getElementById('li-email').value=email;
-    document.getElementById('li-pass').focus();
-    err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
-  },1500);
+  // Generate OTP and send email
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  _otpPending={code:otp,email,name,pass,expiresAt:Date.now()+10*60*1000,resendAt:Date.now()+60*1000};
+  btn.disabled=true;btn.textContent='Sending code…';
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:email,user_name:name,otp_code:otp});
+    document.getElementById('otp-email-display').textContent=email;
+    document.getElementById('otp-input').value='';
+    document.getElementById('auth-err-otp').classList.remove('show');
+    switchTab('otp');
+    startResendTimer();
+  }catch(ex){
+    _otpPending=null;
+    err.textContent='Failed to send verification code. Please check your email and try again.';
+    err.classList.add('show');
+  }finally{
+    btn.disabled=false;btn.textContent='Create Account →';
+  }
 }
 function handleForgotPassword(e){
   e.preventDefault();
@@ -1553,6 +1583,61 @@ function handleForgotPassword(e){
     document.getElementById('li-pass').focus();
     err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
   },1500);
+}
+/* OTP VERIFICATION */
+let _otpPending=null;
+let _resendInterval=null;
+function verifyOtp(e){
+  e.preventDefault();
+  const entered=document.getElementById('otp-input').value.trim();
+  const err=document.getElementById('auth-err-otp');
+  err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
+  if(!_otpPending){err.textContent='Session expired. Please sign up again.';err.classList.add('show');switchTab('signup');return}
+  if(Date.now()>_otpPending.expiresAt){err.textContent='Code expired. Please request a new one.';err.classList.add('show');_otpPending=null;return}
+  if(entered!==_otpPending.code){err.textContent='Incorrect code. Please check and try again.';err.classList.add('show');return}
+  // OTP correct — create account
+  const users=getUsers();
+  if(users.find(u=>u.email===_otpPending.email)){err.textContent='Account already exists. Please log in.';err.classList.add('show');return}
+  const newUser={id:'u'+Date.now(),name:_otpPending.name,email:_otpPending.email,password:_otpPending.pass,createdAt:new Date().toISOString()};
+  users.push(newUser);saveUsers(users);
+  clearInterval(_resendInterval);
+  _otpPending=null;
+  saveSession(newUser);
+  closeAuthModal();
+  if(_pendingRedirect){window.location.href=_pendingRedirect;return;}
+  updateNavState();
+  updatePageForAuthState();
+}
+async function resendOtp(){
+  if(!_otpPending){switchTab('signup');return}
+  const otp=String(Math.floor(100000+Math.random()*900000));
+  _otpPending.code=otp;
+  _otpPending.expiresAt=Date.now()+10*60*1000;
+  _otpPending.resendAt=Date.now()+60*1000;
+  startResendTimer();
+  try{
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{to_email:_otpPending.email,user_name:_otpPending.name,otp_code:otp});
+    const err=document.getElementById('auth-err-otp');
+    err.textContent='New code sent!';
+    err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
+    err.classList.add('show');
+    setTimeout(()=>{err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';},3000);
+  }catch{}
+}
+function startResendTimer(){
+  clearInterval(_resendInterval);
+  const countdown=document.getElementById('otp-countdown');
+  const timerEl=document.getElementById('otp-resend-timer');
+  const resendBtn=document.getElementById('otp-resend-btn');
+  if(!countdown)return;
+  let secs=60;
+  countdown.textContent=secs;
+  timerEl.style.display='';resendBtn.style.display='none';
+  _resendInterval=setInterval(()=>{
+    secs--;
+    if(secs<=0){clearInterval(_resendInterval);timerEl.style.display='none';resendBtn.style.display='';}
+    else{countdown.textContent=secs;}
+  },1000);
 }
 function handleLogout(){
   localStorage.removeItem('ambore_user');
