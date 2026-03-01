@@ -927,8 +927,8 @@ D. CONTENT TRANSFORMATION RULES
      • Action-verb-led (Led, Developed, Implemented, Optimized, Spearheaded, Architected, etc.)
      • Quantified with metrics (%, $, time saved, team size, users impacted — use realistic numbers)
      • Directly mapped to a JD requirement or responsibility
-   - FULL-TIME ROLES: Exactly 4-5 bullet points per job. Each bullet must be ONE line only (max 15-18 words).
-   - INTERNSHIPS: Exactly 3 bullet points per internship. Every bullet MUST include strong quantified metrics (e.g., "Reduced API response time by 40%", "Processed 50K+ records daily"). Keep each bullet to ONE line.
+   - FULL-TIME ROLES: Exactly 7 bullet points per job. Each bullet must be ONE line only (max 18 words).
+   - INTERNSHIPS: Exactly 5 bullet points per internship. Every bullet MUST include strong quantified metrics. Keep each bullet to ONE line.
    - Every bullet must connect to something in the JD.
    - DO NOT write long multi-line bullets. Keep every bullet short and punchy.
 
@@ -1006,9 +1006,9 @@ STRICT 2-PAGE LENGTH — HARD LIMIT
 WARNING: The resume MUST NOT exceed 2 pages. Aim for 1.5 to 2 pages. Going over 2 pages is a FAILURE.
 
 STRICT CONTENT LIMITS:
-- Professional Summary: Exactly 3 lines. No more.
-- Skills: 3 categories max, comma-separated, 2 lines per category (6 lines total max).
-- Professional Experience: Max 3-4 roles. Full-time = 4-5 short bullets. Internship = 3 short bullets. Each bullet = 1 line only (max 18 words).
+- Professional Summary: Exactly 5 lines. Cover: job title, years of experience, top skills, key achievements, value proposition.
+- Skills: Exactly 7 categories, comma-separated. Each category on its own line with a bold label. Cover all major skill areas from both the original resume and the JD.
+- Professional Experience: Max 3-4 roles. Full-time = exactly 7 short bullets. Internship = exactly 5 short bullets. Each bullet = 1 line only (max 18 words).
 - Education: 2-3 lines total. Degree, university, year. No coursework unless fresher.
 - Certifications: One-line list, comma-separated.
 - Projects: Max 2 projects, 2 bullets each. Skip entirely if experience section is strong.
@@ -1067,7 +1067,7 @@ async function generateResume() {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 2200,
+        max_tokens: 3200,
         stream: true,
         system: buildResumeSystemPrompt(links),
         messages: [{
