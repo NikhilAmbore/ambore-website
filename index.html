@@ -685,6 +685,29 @@ footer{
 .auth-switch{text-align:center;margin-top:14px;font-size:0.82rem;color:rgba(255,255,255,0.3)}
 .auth-switch a{color:#a89fff;font-weight:600;cursor:pointer}
 
+/* ── PROMO AD MODAL ── */
+.ad-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(10px);z-index:8888;display:none;align-items:center;justify-content:center;padding:16px}
+.ad-overlay.open{display:flex}
+.ad-modal{background:#0b0b18;border:1px solid rgba(255,255,255,0.1);border-radius:20px;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 24px 80px rgba(0,0,0,0.7)}
+.ad-modal-top{background:linear-gradient(135deg,#1a1040,#0d1f3c);padding:24px 24px 20px;border-radius:20px 20px 0 0;position:relative}
+.ad-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);border-radius:20px;padding:4px 12px;font-size:0.72rem;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px}
+.ad-title{font-family:'Syne',sans-serif;font-size:1.25rem;font-weight:800;color:#fff;line-height:1.3;margin:0 0 8px}
+.ad-subtitle{font-size:0.88rem;color:rgba(255,255,255,0.5);margin:0;line-height:1.5}
+.ad-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.4);font-size:1rem;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;transition:all 0.2s}
+.ad-close:hover{background:rgba(255,255,255,0.12);color:#fff}
+.ad-body{padding:20px 24px 24px}
+.ad-section-title{font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.3);margin:0 0 10px}
+.ad-checks{list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:7px}
+.ad-checks li{display:flex;align-items:flex-start;gap:9px;font-size:0.86rem;color:rgba(255,255,255,0.75);line-height:1.4}
+.ad-checks li::before{content:'✓';color:#4ade80;font-weight:800;font-size:0.85rem;flex-shrink:0;margin-top:1px}
+.ad-who{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:12px;padding:14px 16px;margin-bottom:18px}
+.ad-who-items{display:flex;flex-wrap:wrap;gap:7px;margin-top:8px}
+.ad-who-tag{background:rgba(109,92,255,0.12);border:1px solid rgba(109,92,255,0.25);border-radius:20px;padding:4px 12px;font-size:0.78rem;font-weight:600;color:#a89fff}
+.ad-cta-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:14px;background:linear-gradient(135deg,#22c55e,#16a34a);border:none;border-radius:12px;color:#fff;font-size:0.95rem;font-weight:700;cursor:pointer;text-decoration:none;transition:opacity 0.2s;box-shadow:0 4px 20px rgba(34,197,94,0.3);margin-bottom:10px}
+.ad-cta-btn:hover{opacity:0.88}
+.ad-seats{text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.3)}
+.ad-seats span{color:#f59e0b;font-weight:600}
+
 /* ── RESPONSIVE ── */
 @media(max-width:960px){
   .nav-links{display:none}
@@ -1290,6 +1313,43 @@ footer{
 </footer>
 
 <!-- AUTH MODAL -->
+<!-- PROMO AD MODAL — shown to all visitors -->
+<div class="ad-overlay" id="ad-overlay">
+  <div class="ad-modal">
+    <div class="ad-modal-top">
+      <button class="ad-close" onclick="closeAdModal()" aria-label="Close">&times;</button>
+      <div class="ad-badge">&#128640; Free Career Help</div>
+      <h2 class="ad-title">Struggling to get interviews?<br>We'll help you land full-time jobs faster.</h2>
+      <p class="ad-subtitle">100% tailored to your background — resume, LinkedIn, cover letter, interview prep &amp; more.</p>
+    </div>
+    <div class="ad-body">
+      <div class="ad-section-title">What You'll Get</div>
+      <ul class="ad-checks">
+        <li>ATS-optimized resume that passes filters</li>
+        <li>Professional LinkedIn makeover</li>
+        <li>Personalized cover letter</li>
+        <li>Portfolio guidance (tech, business, design, analytics)</li>
+        <li>Interview prep — behavioral &amp; technical</li>
+        <li>Job search strategy for your target roles</li>
+        <li>1:1 guidance to stand out from other applicants</li>
+      </ul>
+      <div class="ad-who">
+        <div class="ad-section-title">Who Should Join?</div>
+        <div class="ad-who-items">
+          <span class="ad-who-tag">Full-time job seekers</span>
+          <span class="ad-who-tag">Better recruiter visibility</span>
+          <span class="ad-who-tag">Personal branding</span>
+          <span class="ad-who-tag">Clear roadmap to get hired</span>
+        </div>
+      </div>
+      <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener" class="ad-cta-btn" onclick="closeAdModal()">
+        &#128394; Fill Out the Form — Get Started Free
+      </a>
+      <p class="ad-seats">&#9203; <span>Seats are limited</span> — first come, first served</p>
+    </div>
+  </div>
+</div>
+
 <div class="auth-overlay" id="auth-overlay">
   <div class="auth-modal">
     <div class="auth-modal-head">
@@ -1345,6 +1405,30 @@ function escapeHtml(str){
     .replace(/"/g,'&quot;')
     .replace(/'/g,'&#39;');
 }
+
+/* PROMO AD MODAL */
+function closeAdModal(){
+  document.getElementById('ad-overlay').classList.remove('open');
+  document.body.style.overflow='';
+  try{localStorage.setItem('ad_dismissed',Date.now());}catch{}
+}
+(function(){
+  try{
+    const dismissed=localStorage.getItem('ad_dismissed');
+    const oneDayMs=24*60*60*1000;
+    if(!dismissed||Date.now()-parseInt(dismissed,10)>oneDayMs){
+      setTimeout(()=>{
+        document.getElementById('ad-overlay').classList.add('open');
+        document.body.style.overflow='hidden';
+      },2500);
+    }
+  }catch{}
+  document.addEventListener('DOMContentLoaded',()=>{
+    document.getElementById('ad-overlay').addEventListener('click',e=>{
+      if(e.target===document.getElementById('ad-overlay'))closeAdModal();
+    });
+  });
+})();
 
 /* WHATSAPP BANNER */
 function dismissWaBanner(){
