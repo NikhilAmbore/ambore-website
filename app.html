@@ -97,12 +97,12 @@ button,input,textarea,select{font-family:inherit}
 .user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
 .logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
 .logout-btn:hover{color:var(--red)}
-.nav-links{display:flex;align-items:center;gap:12px;margin-left:16px;flex-wrap:wrap}
-.nav-links a{font-size:0.8rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
+.nav-links{display:flex;align-items:center;gap:6px;margin-left:10px;flex-shrink:1;min-width:0;overflow:hidden}
+.nav-links a{font-size:0.73rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
 .nav-links a:hover,.nav-links a.active{color:#fff}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0}
 .hamburger span{width:22px;height:2px;background:rgba(255,255,255,0.6);border-radius:2px;display:block;transition:all 0.2s}
-@media(max-width:860px){.nav-links{display:none!important}.hamburger{display:flex}}
+@media(max-width:1100px){.nav-links{display:none!important}.hamburger{display:flex}}
 .mobile-nav{position:fixed;inset:0;background:rgba(6,6,15,0.98);backdrop-filter:blur(20px);z-index:9999;overflow-y:auto}
 .mobile-nav.hidden{display:none}
 .mobile-nav-inner{display:flex;flex-direction:column;gap:0;padding:72px 24px 32px;min-height:100%}
