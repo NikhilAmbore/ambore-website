@@ -960,14 +960,19 @@ C. ATS-SAFE FORMATTING RULES
    - Job entries format: Job Title | Company Name | Location followed by date on next line.
 
 D. CONTENT TRANSFORMATION RULES
-   - Rewrite EVERY bullet to be:
-     • Action-verb-led (Led, Developed, Implemented, Optimized, Spearheaded, Architected, etc.)
-     • Quantified with metrics (%, $, time saved, team size, users impacted — use realistic numbers)
-     • Directly mapped to a JD requirement or responsibility
-   - FULL-TIME ROLES: Exactly 7 bullet points per job. Each bullet must be ONE line only (max 18 words).
-   - INTERNSHIPS: Exactly 5 bullet points per internship. Every bullet MUST include strong quantified metrics. Keep each bullet to ONE line.
-   - Every bullet must connect to something in the JD.
-   - DO NOT write long multi-line bullets. Keep every bullet short and punchy.
+   - Rewrite EVERY bullet using the 2-LINE POWER FORMAT:
+     Line 1: Action verb + WHAT was done + HOW it was done (tools, tech, method used)
+     Line 2: Business impact, outcome, or metric (%, $, scale, latency, cost saved, reliability)
+     Example:
+       • Engineered real-time AML/KYC validation pipelines using Great Expectations and PySpark,
+         integrating automated schema checks across 10+ jurisdictions and 100M+ daily transactions — improving audit accuracy by 35% and eliminating compliance risk.
+   - Each bullet = exactly 2 lines. Not 1, not 3. Always 2.
+   - Line 1 must name the specific tool/technology/method used.
+   - Line 2 MUST contain at least one hard metric (%, $, time, scale, count).
+   - Strong action verbs ONLY: Engineered, Architected, Spearheaded, Designed, Deployed, Automated, Optimized, Migrated, Streamlined, Developed, Built, Reduced, Delivered.
+   - FULL-TIME ROLES: Exactly 7 bullets per job — each 2 lines.
+   - INTERNSHIPS: Exactly 5 bullets per internship — each 2 lines.
+   - Every bullet must connect to at least one JD keyword or requirement.
 
 E. NO HALLUCINATIONS + SKILLS INTEGRITY
    - Do NOT invent tools, technologies, certifications, degrees, companies, or achievements the user never had.
@@ -1051,14 +1056,14 @@ WARNING: The resume MUST NOT exceed 2 pages. Aim for 1.5 to 2 pages. Going over 
 STRICT CONTENT LIMITS:
 - Professional Summary: Exactly 5 lines. Power structure: (1) title + years + domain (2) biggest quantified achievement (3) key tools + second metric (4) cross-functional/reliability impact (5) value-driven closing. NO weak openers. Every sentence must contain a metric, tool, or outcome.
 - Skills: Exactly 7 categories, comma-separated. Each category on its own line with a bold label. Cover all major skill areas from both the original resume and the JD.
-- Professional Experience: Max 3-4 roles. Full-time = exactly 7 short bullets. Internship = exactly 5 short bullets. Each bullet = 1 line only (max 18 words).
+- Professional Experience: Max 3-4 roles. Full-time = exactly 7 bullets. Internship = exactly 5 bullets. Each bullet = exactly 2 lines: Line 1 (what + how + tools), Line 2 (metric/impact/outcome). No 1-line bullets allowed.
 - Education: 2-3 lines total. Degree, university, year. No coursework unless fresher.
 - Certifications: One-line list, comma-separated.
 - Projects: Max 2 projects, 2 bullets each. Skip entirely if experience section is strong.
 - Key Achievements: MANDATORY for every resume. Include exactly 5–7 bullet points grouped into 2–3 sub-categories (e.g., Business Impact, Technical Excellence, Operational Efficiency). Each bullet must have a concrete metric ($, %, time saved, scale). Extract these from the experience bullets — do NOT invent new ones.
 
-KEEP IT TIGHT. Short bullets. No filler. No verbose descriptions. Every word must earn its place.
-If the resume runs long: shorten bullets, cut Projects section — but NEVER cut Key Achievements and NEVER shorten or remove the Skills section. Both are untouchable.
+Every word must earn its place — rich but precise. No filler phrases.
+If the resume runs long: cut the Projects section first — but NEVER shorten experience bullets below 2 lines, NEVER cut Key Achievements, and NEVER remove Skills. All three are untouchable.
 
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble, no "Here is your resume" — just the resume content starting with # Name.`;
 }
@@ -1110,18 +1115,23 @@ Your task is to take the user's resume and rewrite:
    - ATS-optimized and recruiter-ready
 
 2. The entire professional experience section:
-   - Storytelling format (challenge → action → impact)
-   - Deep technical detail (pipelines, streaming, cloud, architecture)
-   - Strong action verbs and senior vocabulary
-   - Heavy quantification (performance gains, cost savings, reliability)
-   - Clear business outcomes and measurable impact
-   - No fabrication; enhance only what the user already has
-   - Expand bullets into richer, more meaningful content
+   - Every bullet point MUST be exactly 2 lines:
+     Line 1: Action verb + WHAT was done + HOW it was done (specific tools, tech, method)
+     Line 2: Business outcome, measurable impact, or metric (%, $, scale, latency, cost saved)
+   - Example:
+     • Architected real-time Kafka and PySpark streaming pipelines processing 5M+ financial transactions/day,
+       integrating AML/KYC validation with Great Expectations — reducing fraud detection latency by 80% (10 min → 2 min).
+   - Storytelling format: challenge → action → impact embedded within the 2-line structure
+   - Deep technical detail (pipelines, streaming, cloud services, architecture decisions)
+   - Strong action verbs: Engineered, Architected, Spearheaded, Designed, Automated, Deployed, Optimized, Built
+   - Heavy quantification on Line 2: %, $, rows/records, events/sec, cost savings, uptime, time saved
+   - No fabrication — enhance only what the user already has
 
 Style Rules:
+- Every bullet = 2 lines. Not 1. Not 3. Exactly 2.
+- Line 1 names the specific technology/tool/method used.
+- Line 2 always contains at least one hard number or business outcome.
 - Keep content factual, impactful, and ATS-friendly.
-- Maintain clarity, precision, and professional tone.
-- Every bullet must show what was done, how it was done, tools used, and the business impact.
 
 Output Format:
 - Preserve the candidate's full name, contact info, education, certifications, skills — output them unchanged.
@@ -1181,7 +1191,7 @@ async function generateResume() {
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL,
-        max_tokens: 3200,
+        max_tokens: 4000,
         stream: true,
         system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
         messages: [{
