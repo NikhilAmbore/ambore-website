@@ -1464,12 +1464,20 @@ function cleanTranscript(text) {
     .trim();
 }
 
+const QUESTION_TRIGGERS = new Set([
+  'what','why','how','tell','walk','describe','explain','can','could','have',
+  'did','do','would','give','share','talk','when','where','who','which',
+  'define','compare','discuss','show','demonstrate','elaborate','mention',
+  'name','list','think','feel','handled','faced','managed','achieved',
+  'experience','background','strength','weakness','challenge','project',
+  'situation','example','time','role','responsibility','approach','strategy'
+]);
+
 function isQuestion(txt){
-  const words = txt.trim().split(/\s+/).filter(Boolean);
-  if (words.length < 4) return false;
-  // Filter out pure noise (all words are noise/filler)
-  const meaningful = words.filter(w => !NOISE_WORDS.has(w.toLowerCase().replace(/[^a-z]/g,'')));
-  return meaningful.length >= 3;
+  const words = txt.toLowerCase().trim().split(/\s+/).filter(Boolean);
+  if (words.length < 1) return false;
+  // Trigger immediately if ANY question keyword is found
+  return words.some(w => QUESTION_TRIGGERS.has(w.replace(/[^a-z]/g,'')));
 }
 
 let speechErrorCount = 0;
@@ -1509,11 +1517,11 @@ function initSpeech(){
     if (finalAdded) {
       speechErrorCount = 0; // reset error streak on successful speech
       clearTimeout(silenceTimer);
-      // 2500ms silence — enough for full interviewer sentences
+      // 800ms silence — trigger fast as soon as question word heard
       silenceTimer = setTimeout(() => {
         const text = cleanTranscript(buf); buf = '';
         if (bar) bar.textContent = '';
-        if (text.length < 6) return; // too short — discard noise
+        if (text.length < 2) return; // discard pure noise
         const isQ = speakerIsIV && isQuestion(text);
         addMsg(text, isQ);
         if (isQ) enqueueQuestion(text); // queue — never drops
