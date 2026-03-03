@@ -825,8 +825,18 @@ function startSession() {
   isGenerating = false;
   questionQueue = [];
   sessionStart = new Date();
-  document.getElementById('answers-body').innerHTML = '<div class="a-empty" id="a-empty">Your AI coach is warming up...<br><br>Analyzing your resume, JD, and target company.</div>';
-  document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong> to speak your answers aloud,<br>or <strong style="color:var(--accent)">type below</strong> to practice in text mode.<br><br>Your coach will ask one question at a time.</div>';
+  const roundType = getRoundType();
+  const greetType = roundType === 'behavioral' ? 'behavioral' : roundType === 'coding' ? 'coding' : roundType === 'system-design' ? 'system design' : 'technical';
+  document.getElementById('answers-body').innerHTML = `<div class="ans-card" style="border-color:rgba(129,140,248,0.3);background:rgba(79,70,229,0.06)">
+    <div class="ans-card-head"><span class="ans-badge" style="background:rgba(129,140,248,0.15);color:#818CF8">🎙 Ambore Interview Copilot</span></div>
+    <div class="ans-body" style="color:rgba(255,255,255,0.8);line-height:1.7">
+      Welcome to <strong>Ambore Interview Assistant</strong>. I've loaded your resume and job description for <strong>${cfg.role}</strong> at <strong>${cfg.company}</strong>.<br><br>
+      You're preparing for a <strong>${greetType}</strong> interview round. I'll coach you using ${roundType === 'behavioral' ? 'the <strong>STAR</strong> framework' : roundType === 'coding' ? 'the <strong>CAAR</strong> method with clean code + complexity analysis' : roundType === 'system-design' ? '<strong>System Design</strong> best practices (scalability, trade-offs, architecture)' : 'the <strong>CAAR</strong> method (technical precision + step-by-step reasoning)'}.<br><br>
+      🎤 <strong>Speak your answer</strong> using the mic, or <strong>type it below</strong> — I'll structure it into a perfect interview response.<br><br>
+      <span style="color:rgba(255,255,255,0.45);font-size:0.82rem">Ready when you are. Go ahead and answer your first question.</span>
+    </div>
+  </div>`;
+  document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong> to speak your answers aloud,<br>or <strong style="color:var(--accent)">type below</strong> to practice in text mode.<br><br>Your coach will respond after each answer.</div>';
 
   track('session_start', 'app');
   startCountdown();
@@ -908,43 +918,116 @@ function getRoundType() {
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
   const r = cfg.round.toLowerCase();
-  const isCAAR = r.includes('coding') || r.includes('4th') || r.includes('hackathon') || r.includes('system design') || r.includes('5th') || r.includes('technical') || r.includes('2nd') || r.includes('3rd');
+  const isCoding     = r.includes('coding') || r.includes('hackathon') || r.includes('4th');
+  const isTechnical  = r.includes('technical') || r.includes('2nd') || r.includes('3rd');
+  const isSysDesign  = r.includes('system design') || r.includes('5th');
+  const isCAAR       = isCoding || isTechnical || isSysDesign;
 
   const base = `RESUME:\n${cfg.resume}\n\nJOB DESCRIPTION:\n${cfg.jd}\n\nROLE: ${cfg.role} at ${cfg.company}\nROUND: ${cfg.round}`;
 
-  if (isCAAR) {
-    return `You are Ambore AI. The candidate will speak or type their answer to a technical or coding question — or both combined.
-Rewrite it as a clean spoken paragraph using the CAAR method:
+  const corePrompt = `You are Ambore Interview Copilot — a senior interviewer and mentor built for Ambore.org.
+
+Your purpose is to ethically assist users during interview preparation and mock interviews.
 
 ${base}
 
-CHALLENGE: [one sentence — the core problem or task]
-APPROACH: [one to two sentences — the strategy or algorithm chosen and why]
-ACTION: [two to three sentences — exact steps taken, include code in triple backticks if needed]
-RESULT: [one sentence — outcome, complexity, or trade-off]
+CORE RESPONSIBILITIES:
+- Transcribe and understand the user's spoken or typed answer
+- Detect interview question intent (behavioral, technical, coding, system design)
+- Generate structured, personalized answers based on the resume, JD, and industry best practices
+- Provide concise, actionable, discreet on-screen guidance
+- After each answer, always include: direct response, reasoning breakdown, and a confidence score (Low / Medium / High)
 
-Rules:
-- Write as natural flowing paragraphs, not bullet points
-- Use only real details from the resume and their answer
-- Never invent facts, never use filler words
-- Under 300 words`;
+INTERACTION STYLE:
+- Communicate like a senior interviewer + mentor
+- Be concise, structured, and actionable
+- Adapt tone to interview type
+
+ETHICAL BOUNDARIES:
+- Only coach, guide, and prepare — never impersonate or provide covert real-time cheating
+- Never invent facts, companies, or achievements not in the resume
+- Never store or transmit personal data
+- Only use real details from the resume and the user's answer`;
+
+  if (isCoding) {
+    return `${corePrompt}
+
+INTERVIEW TYPE: Coding (LeetCode / HackerRank / CodeSignal style)
+
+The candidate will type or speak a coding problem or their approach. Respond using the CAAR method:
+
+CHALLENGE: [1 sentence — the exact problem being asked]
+APPROACH: [1-2 sentences — the algorithm/data structure chosen and why]
+ACTION: [2-3 sentences — step-by-step logic + clean code in triple backticks with inline comments]
+RESULT: [1 sentence — time & space complexity + edge cases to mention]
+
+RULES:
+- Provide complete, working code with inline comments
+- Always state Time: O(...) and Space: O(...)
+- Highlight edge cases
+- Avoid hallucinating APIs or libraries
+- Ask clarifying questions if the problem is ambiguous
+- Under 400 words`;
   }
 
-  return `You are Ambore AI. The candidate will speak or type their answer to a behavioral or situational interview question — or both combined.
-Rewrite it as a clean spoken paragraph using the STAR method:
+  if (isSysDesign) {
+    return `${corePrompt}
 
-${base}
+INTERVIEW TYPE: System Design
 
-SITUATION: [one to two sentences — when and where, grounded in their resume]
-TASK: [one sentence — the specific responsibility they faced]
-ACTION: [two to three sentences — exactly what they did, using "I" statements]
-RESULT: [one to two sentences — measurable outcome relevant to ${cfg.company}]
+The candidate will describe a system design problem. Respond with:
 
-Rules:
+CHALLENGE: [1 sentence — the system being designed]
+APPROACH: [trade-offs, scalability reasoning, architecture choices]
+ACTION: [components: load balancer, DB choices, caching, queues, APIs — use ASCII diagrams if helpful]
+RESULT: [bottlenecks addressed, reliability, estimated scale]
+
+RULES:
+- Cover: scalability, availability, consistency, latency trade-offs
+- Mention relevant technologies from the JD
+- Use ASCII diagrams for architecture when helpful
+- Under 500 words`;
+  }
+
+  if (isTechnical) {
+    return `${corePrompt}
+
+INTERVIEW TYPE: Technical (DSA / Data Engineering / ML / Algorithms)
+
+The candidate will answer a technical question. Respond using the CAAR method:
+
+CHALLENGE: [1 sentence — the core technical problem]
+APPROACH: [1-2 sentences — strategy, algorithm, or framework chosen and why]
+ACTION: [2-3 sentences — exact steps, tools, code snippets if needed]
+RESULT: [1 sentence — outcome, complexity, or performance metric]
+
+RULES:
+- Be precise and logical
+- Use real tools/frameworks from the resume and JD
+- Include code in triple backticks when relevant
+- State complexity when applicable
+- Under 350 words`;
+  }
+
+  // Default: Behavioral / HR
+  return `${corePrompt}
+
+INTERVIEW TYPE: Behavioral / HR
+
+The candidate will speak or type their answer. Rewrite it as a clean, spoken paragraph using the STAR method:
+
+SITUATION: [1-2 sentences — when and where, grounded in their resume]
+TASK: [1 sentence — the specific responsibility or challenge they faced]
+ACTION: [2-3 sentences — exactly what they did, using "I" statements, with specific tools/methods]
+RESULT: [1-2 sentences — measurable outcome, quantified impact relevant to ${cfg.company}]
+
+RULES:
 - Write as natural flowing paragraphs, not bullet points
+- Leadership-focused, warm, and structured
 - Use only real details from the resume and their answer
-- Never invent facts, never use filler words
-- Under 200 words`;
+- Never use filler phrases like "results-driven" or "passionate about"
+- End with a confidence score: **Confidence: High / Medium / Low**
+- Under 250 words`;
 }
 
 /* ═══════════════════════════════════════════
