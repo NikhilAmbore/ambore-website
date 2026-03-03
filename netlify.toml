@@ -5,12 +5,20 @@
 [[headers]]
   for = "/*"
   [headers.values]
+    # Prevent clickjacking
     X-Frame-Options         = "SAMEORIGIN"
+    # Prevent MIME-type sniffing
     X-Content-Type-Options  = "nosniff"
+    # XSS filter (legacy browsers)
     X-XSS-Protection        = "1; mode=block"
+    # Minimal referrer info to external sites
     Referrer-Policy         = "strict-origin-when-cross-origin"
-    # Allow microphone for Interview AI; deny camera and geolocation
-    Permissions-Policy      = "camera=(), microphone=(self), geolocation=()"
+    # Allow mic for Interview AI only; block camera, geolocation, payment
+    Permissions-Policy      = "camera=(), microphone=(self), geolocation=(), payment=()"
+    # Force HTTPS for 1 year
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Content Security Policy — whitelist only trusted domains
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://api.anthropic.com https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.google-analytics.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
 
 # ── HTML pages: 1-hour cache + stale-while-revalidate ────────────────────────
 [[headers]]
