@@ -11,6 +11,7 @@
 /dashboard       /dashboard.html      200
 /project         /project.html        200
 /english         /english.html        200
+/coding          /coding.html         200
 
 /privacy         /privacy.html        200
 /terms           /terms.html          200
@@ -25,5 +26,6 @@
 /app.html            /interview       301
 /dashboard.html      /dashboard       301
 /english.html        /english         301
+/coding.html         /coding          301
 
 /job-detail.html     /               301
