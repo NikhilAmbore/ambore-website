@@ -1,38 +1,63 @@
 [build]
   publish = "."
 
-# ── Security & Trust Headers (applied to all pages) ──────────────────────────
+# ── Auto-minify CSS, JS, HTML ────────────────────────────────────────────────
+[build.processing]
+  skip_processing = false
+[build.processing.css]
+  bundle = true
+  minify = true
+[build.processing.js]
+  bundle = true
+  minify = true
+[build.processing.html]
+  pretty_urls = true
+[build.processing.images]
+  compress = true
+
+# ── Security & Trust Headers (all pages) ─────────────────────────────────────
 [[headers]]
   for = "/*"
   [headers.values]
-    # Prevent clickjacking
-    X-Frame-Options         = "SAMEORIGIN"
-    # Prevent MIME-type sniffing
-    X-Content-Type-Options  = "nosniff"
-    # XSS filter (legacy browsers)
-    X-XSS-Protection        = "1; mode=block"
-    # Minimal referrer info to external sites
-    Referrer-Policy         = "strict-origin-when-cross-origin"
-    # Allow mic for Interview AI only; block camera, geolocation, payment
-    Permissions-Policy      = "camera=(), microphone=(self), geolocation=(), payment=()"
-    # Force HTTPS for 1 year
+    X-Frame-Options           = "SAMEORIGIN"
+    X-Content-Type-Options    = "nosniff"
+    X-XSS-Protection          = "1; mode=block"
+    Referrer-Policy           = "strict-origin-when-cross-origin"
+    Permissions-Policy        = "camera=(), microphone=(self), geolocation=(), payment=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    # Content Security Policy — whitelist only trusted domains
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://api.anthropic.com https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.google-analytics.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://api.anthropic.com https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.google-analytics.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+    Vary                      = "Accept-Encoding"
 
-# ── HTML pages: 1-hour cache + stale-while-revalidate ────────────────────────
+# ── HTML pages: aggressive edge caching ──────────────────────────────────────
 [[headers]]
   for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=3600, stale-while-revalidate=86400"
+    Cache-Control = "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800"
 
-# ── Jobs data: 5-minute cache (updates hourly via GitHub Actions) ─────────────
+# ── Root (index) ──────────────────────────────────────────────────────────────
+[[headers]]
+  for = "/"
+  [headers.values]
+    Cache-Control = "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800"
+
+# ── Jobs JSON: 5-min CDN cache, serve stale up to 10 min ─────────────────────
 [[headers]]
   for = "/backend/jobs.json"
   [headers.values]
-    Cache-Control = "public, max-age=300, stale-while-revalidate=600"
+    Cache-Control = "public, max-age=300, s-maxage=300, stale-while-revalidate=600, stale-if-error=3600"
 
-# ── Static assets: 30-day cache ───────────────────────────────────────────────
+# ── Fonts: cache 1 year (immutable) ──────────────────────────────────────────
+[[headers]]
+  for = "*.woff2"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "*.woff"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# ── CSS & JS: cache 30 days (immutable) ──────────────────────────────────────
 [[headers]]
   for = "*.css"
   [headers.values]
@@ -42,3 +67,24 @@
   for = "*.js"
   [headers.values]
     Cache-Control = "public, max-age=2592000, immutable"
+
+# ── Images: cache 7 days ──────────────────────────────────────────────────────
+[[headers]]
+  for = "*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.jpg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.svg"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
+
+[[headers]]
+  for = "*.ico"
+  [headers.values]
+    Cache-Control = "public, max-age=604800"
