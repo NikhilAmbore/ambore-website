@@ -12,6 +12,7 @@
 /project         /project.html        200
 /english         /english.html        200
 /coding          /coding.html         200
+/help            /help.html           200
 
 /privacy         /privacy.html        200
 /terms           /terms.html          200
@@ -27,5 +28,6 @@
 /dashboard.html      /dashboard       301
 /english.html        /english         301
 /coding.html         /coding          301
+/help.html           /help            301
 
 /job-detail.html     /               301
