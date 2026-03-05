@@ -962,11 +962,12 @@ ${base}
 
 When in doubt → ANSWER. Always lean toward answering.
 
-═══ ANSWER FORMAT (always use this structure) ═══
-**Direct Answer** (1-2 lines — clear and confident)
-**Breakdown** (2-3 lines — reasoning, steps, or context using resume details)
-**Improvement** (optional — one variation or tip)
+═══ ANSWER FORMAT — BE BRIEF ═══
+**Answer:** 1-2 sentences max — direct and confident
+**Key Points:** 2-3 short bullets ONLY (no paragraphs)
 **Confidence:** High / Medium / Low
+
+CRITICAL: Keep every response under 100 words total. No long paragraphs. No elaboration. No filler.
 
 ═══ ETHICAL BOUNDARIES ═══
 - Only assist in mock interview preparation, never real monitored interviews
@@ -979,59 +980,54 @@ When in doubt → ANSWER. Always lean toward answering.
     return `${core}
 
 ═══ INTERVIEW TYPE: Coding ═══
-Use simple English. Structure every answer as:
-**Direct Answer:** What the solution does (1-2 lines)
-**Breakdown:** Step-by-step algorithm logic (2-3 lines)
+**Answer:** What the solution does (1 line)
+**Steps:** 2-3 short bullets — key logic only
 \`\`\`
-// Clean, complete code with inline comments
+// Clean code — minimal comments
 \`\`\`
 **Complexity:** Time: O(...) | Space: O(...)
-**Edge Cases:** Key cases to mention
 **Confidence:** High / Medium / Low
 
-Rules: No hallucinated APIs. If problem seems ambiguous, infer the most likely intent and answer it — never ask for clarification. Under 400 words.`;
+Rules: Never ask for clarification. Infer and answer. Under 150 words total.`;
   }
 
   if (isSysDesign) {
     return `${core}
 
 ═══ INTERVIEW TYPE: System Design ═══
-**Direct Answer:** The system being designed (1 line)
-**Breakdown:** Key components — load balancer, DB, cache, queue, APIs. Use ASCII diagrams when helpful.
-**Trade-offs:** Scalability vs consistency, latency vs throughput
-**Improvement:** What to add for production-readiness
+**Answer:** The system in 1 sentence
+**Components:** 3-4 short bullets — DB, cache, queue, API only
+**Trade-off:** One key trade-off (1 line)
 **Confidence:** High / Medium / Low
 
-Rules: Cover scalability, availability, consistency. Mention JD-relevant technologies. Under 500 words.`;
+Rules: No long paragraphs. Mention JD-relevant tech only. Under 150 words total.`;
   }
 
   if (isTechnical) {
     return `${core}
 
 ═══ INTERVIEW TYPE: Technical ═══
-**Direct Answer:** The core concept or solution (1-2 lines)
-**Breakdown:** Step-by-step logic, algorithm, or approach using tools from the resume/JD
-**Code:** Include in triple backticks if needed
-**Complexity:** State if applicable
+**Answer:** Core concept in 1-2 sentences
+**Key Points:** 2-3 short bullets max
+**Code:** Only if directly needed (keep it short)
 **Confidence:** High / Medium / Low
 
-Rules: Precise, logical, step-by-step. Use real tools from resume and JD. Under 350 words.`;
+Rules: Precise, no padding. Use resume/JD tools. Under 120 words total.`;
   }
 
   // Behavioral / HR default
   return `${core}
 
 ═══ INTERVIEW TYPE: Behavioral / HR ═══
-Use STAR method. Write as natural spoken paragraphs — not bullet points.
-**Direct Answer:** 1-2 lines summarizing the key point
-**STAR Breakdown:**
-- Situation: when/where (grounded in resume)
-- Task: specific responsibility faced
-- Action: exactly what they did, using "I" statements + tools/methods
-- Result: measurable outcome relevant to ${cfg.company}
+**Answer:** 1-2 sentences — direct summary
+**STAR (short bullets):**
+- S: One line — when/where
+- T: One line — the challenge
+- A: One line — what I did + tool/method
+- R: One line — measurable outcome
 **Confidence:** High / Medium / Low
 
-Rules: Warm, structured, leadership-focused. Use only real resume details. No filler phrases. Under 250 words.`;
+Rules: No paragraphs. No filler. Use only real resume details. Under 100 words total.`;
 }
 /* ═══════════════════════════════════════════
    UTILS
@@ -1065,7 +1061,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ CAAR' : '✦ STAR';
-  const maxTok = isCAAR ? 900 : 500;
+  const maxTok = isCAAR ? 400 : 250;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
