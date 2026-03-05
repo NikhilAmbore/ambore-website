@@ -648,7 +648,6 @@ button,input,textarea,select{font-family:inherit}
         <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
         <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
         <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(129,140,248,0.4);color:#818CF8">💾 Save to Dashboard</button>
-        <button class="action-btn" onclick="generateAchievements()" id="ach-btn" style="border-color:rgba(251,191,36,0.4);color:#FBB724">🏆 Key Achievements</button>
       </div>
     </div>
     <!-- TEMPLATE PICKER -->
@@ -1030,6 +1029,7 @@ SECTION ORDER:
 5. Education
 6. Certifications (if any)
 7. Projects (if relevant)
+8. Key Achievements (ALWAYS include — exactly 3 bullets at the very bottom)
 
 -----------------------------------------
 SKILLS INTEGRITY — NEVER VIOLATE
@@ -1040,6 +1040,22 @@ SKILLS INTEGRITY — NEVER VIOLATE
 - Final Skills = (all original resume skills) + (new JD skills not already present).
 - Run a mental skills audit before outputting: extract every skill from the original resume and verify it appears in your output.
 - REMINDER: Each skill category on its OWN line formatted as **Category:** skill1, skill2 — never all categories jammed into one paragraph.
+
+-----------------------------------------
+KEY ACHIEVEMENTS SECTION — ALWAYS INCLUDE
+-----------------------------------------
+
+- Always add ## KEY ACHIEVEMENTS as the very last section.
+- Exactly 3 bullet points — no more, no less.
+- Each bullet: Action verb + specific achievement + measurable metric + business impact.
+- Align each achievement to the JD's top requirements.
+- Use only facts from the original resume — do NOT fabricate.
+- Format: - **[Achievement title]:** description with metric.
+
+Example:
+- **Reduced Pipeline Latency:** Redesigned Spark job processing, cutting data latency from 4h to 20min for 50M+ daily records.
+- **Improved ATS Match Rate:** Integrated 30+ JD keywords into skills and bullets, increasing ATS pass-through by 40%.
+- **Led Cross-Functional Migration:** Spearheaded AWS → Azure migration for 12-member team, delivering 3 weeks ahead of schedule.
 
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble — just the resume content starting with # Name.`;
 }
