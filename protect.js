@@ -42,38 +42,43 @@
     '-ms-user-select:none!important;user-select:none!important}';
   document.head.appendChild(style);
 
-  /* ── 5. DevTools size detection — show warning overlay ── */
-  var _warn = null;
-  var _devOpen = false;
-  var THRESHOLD = 160;
+  /* ── 5. DevTools size detection — desktop only (mobile browsers have large UI chrome) ── */
+  var _isMobile = /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile/i.test(navigator.userAgent)
+               || ('ontouchstart' in window && window.innerWidth < 1024);
 
-  function _showWarn() {
-    if (_warn) return;
-    _warn = document.createElement('div');
-    _warn.style.cssText =
-      'position:fixed;inset:0;background:rgba(6,6,15,0.97);z-index:2147483647;' +
-      'display:flex;align-items:center;justify-content:center;flex-direction:column;' +
-      'gap:14px;backdrop-filter:blur(24px);font-family:Inter,sans-serif';
-    _warn.innerHTML =
-      '<div style="font-size:2.5rem">⛔</div>' +
-      '<h2 style="color:#fff;font-size:1.3rem;margin:0;font-weight:800">Developer Tools Detected</h2>' +
-      '<p style="color:rgba(255,255,255,0.45);font-size:0.88rem;margin:0;text-align:center;line-height:1.6">' +
-      'This content is protected by copyright.<br>Close developer tools to continue.</p>';
-    document.body.appendChild(_warn);
+  if (!_isMobile) {
+    var _warn = null;
+    var _devOpen = false;
+    var THRESHOLD = 160;
+
+    function _showWarn() {
+      if (_warn) return;
+      _warn = document.createElement('div');
+      _warn.style.cssText =
+        'position:fixed;inset:0;background:rgba(6,6,15,0.97);z-index:2147483647;' +
+        'display:flex;align-items:center;justify-content:center;flex-direction:column;' +
+        'gap:14px;backdrop-filter:blur(24px);font-family:Inter,sans-serif';
+      _warn.innerHTML =
+        '<div style="font-size:2.5rem">⛔</div>' +
+        '<h2 style="color:#fff;font-size:1.3rem;margin:0;font-weight:800">Developer Tools Detected</h2>' +
+        '<p style="color:rgba(255,255,255,0.45);font-size:0.88rem;margin:0;text-align:center;line-height:1.6">' +
+        'This content is protected by copyright.<br>Close developer tools to continue.</p>';
+      document.body.appendChild(_warn);
+    }
+
+    function _hideWarn() {
+      if (_warn) { _warn.remove(); _warn = null; }
+    }
+
+    function _checkDevTools() {
+      var docked = (window.outerWidth - window.innerWidth > THRESHOLD) ||
+                   (window.outerHeight - window.innerHeight > THRESHOLD);
+      if (docked && !_devOpen) { _devOpen = true;  _showWarn(); }
+      if (!docked && _devOpen) { _devOpen = false; _hideWarn(); }
+    }
+
+    setInterval(_checkDevTools, 800);
   }
-
-  function _hideWarn() {
-    if (_warn) { _warn.remove(); _warn = null; }
-  }
-
-  function _checkDevTools() {
-    var docked = (window.outerWidth - window.innerWidth > THRESHOLD) ||
-                 (window.outerHeight - window.innerHeight > THRESHOLD);
-    if (docked && !_devOpen) { _devOpen = true;  _showWarn(); }
-    if (!docked && _devOpen) { _devOpen = false; _hideWarn(); }
-  }
-
-  setInterval(_checkDevTools, 800);
 
   /* ── 6. Console warning ── */
   setTimeout(function(){
