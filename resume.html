@@ -645,6 +645,8 @@ button,input,textarea,select{font-family:inherit}
       <div class="result-actions">
         <button class="action-btn" onclick="copyResume()">📋 Copy</button>
         <button class="action-btn" onclick="downloadTxt()" title="Best for ATS scanners — plain text, zero formatting">📄 Download TXT</button>
+        <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
+        <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
         <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(129,140,248,0.4);color:#818CF8">💾 Save to Dashboard</button>
         <button class="action-btn" onclick="generateAchievements()" id="ach-btn" style="border-color:rgba(251,191,36,0.4);color:#FBB724">🏆 Key Achievements</button>
       </div>
@@ -673,7 +675,7 @@ button,input,textarea,select{font-family:inherit}
 
     <!-- ATS tip banner -->
     <div id="ats-tip" class="hidden" style="background:rgba(34,197,94,0.07);border:1px solid rgba(34,197,94,0.2);border-radius:10px;padding:10px 16px;margin-bottom:12px;font-size:0.78rem;color:rgba(255,255,255,0.55);line-height:1.6">
-      <strong style="color:#22c55e">💡 Best ATS score tip:</strong> Use <strong style="color:#fff">Download TXT</strong> when uploading to external scanners like Jobscan or Resume Worded — plain text gives the highest parse accuracy.
+      <strong style="color:#22c55e">💡 Best ATS score tip:</strong> Use <strong style="color:#fff">Download TXT</strong> when uploading to external scanners like Jobscan or Resume Worded — plain text gives the highest parse accuracy. PDF works too. Avoid DOCX for ATS testing.
     </div>
 
     <!-- ATS Score Comparison -->
