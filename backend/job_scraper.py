@@ -239,6 +239,7 @@ class Job:
     salary_currency:  str             = "USD"
     posted_at:        str | None      = None
     ats:              str             = ""
+    level:            str             = "unknown"   # internship|entry|mid|senior|unknown
     scraped_at:       str             = field(
         default_factory=lambda: datetime.now(timezone.utc).isoformat()
     )
@@ -250,6 +251,80 @@ class Job:
 # ─────────────────────────────────────────────────────────────────────────────
 # Pure utility functions
 # ─────────────────────────────────────────────────────────────────────────────
+
+_LEVEL_ORDER = {"internship": 0, "entry": 1, "mid": 2, "senior": 3, "unknown": 4}
+
+# Pre-compiled patterns for fast classification
+_RE_INTERN  = re.compile(
+    r"\bintern(ship)?\b|\bco[\s\-]?op\b|\btrainee\b|\bcampus\b"
+    r"|\bapprentice\b|\brotational program\b",
+    re.IGNORECASE,
+)
+_RE_SENIOR  = re.compile(
+    r"\bsenior\b|\bsr\.?\s|\blead\b|\bprincipal\b|\bstaff\b"
+    r"|\barchitect\b|\bdirector\b|\bvp\b|\bvice president\b"
+    r"|\bhead of\b|\bmanaging\b|\bmanager\b",
+    re.IGNORECASE,
+)
+_RE_ENTRY   = re.compile(
+    r"\bjunior\b|\bjr\.?\s|\bentry[\s\-]?level\b|\bnew[\s\-]?grad\b"
+    r"|\bassociate\b|\bgraduate\b|\bearly career\b",
+    re.IGNORECASE,
+)
+_RE_MID     = re.compile(
+    r"\bmid[\s\-]?level\b|\bintermediate\b|\bprofessional\b",
+    re.IGNORECASE,
+)
+# Matches "X years", "X+ years", "X-Y years", "X to Y years of experience"
+_RE_EXP_YRS = re.compile(
+    r"(\d+)\s*(?:\+|–|-|to)?\s*(?:\d+\s*)?years?\s*(?:of\s+)?(?:experience|exp\b)",
+    re.IGNORECASE,
+)
+
+
+def _classify_job_level(title: str, description: str) -> str:
+    """
+    Classify a job posting into one of:
+      internship | entry | mid | senior | unknown
+
+    Priority order:
+      1. Title intern keywords → internship (never misclassify as entry)
+      2. Years-of-experience extracted from description
+      3. Title seniority keywords
+      4. unknown fallback
+    """
+    t = title or ""
+    d = (description or "")[:1_500]   # scan only the first ~1500 chars for speed
+
+    # 1 — Internship check (highest priority)
+    if _RE_INTERN.search(t):
+        return "internship"
+
+    # 2 — Extract explicit experience requirement from description
+    match = _RE_EXP_YRS.search(d)
+    if match:
+        years = int(match.group(1))
+        if years == 0:
+            return "entry"
+        elif years <= 2:
+            return "entry"
+        elif years <= 6:
+            return "mid"
+        else:
+            return "senior"
+
+    # 3 — Title keywords (senior before entry to avoid "Senior Associate" → entry)
+    if _RE_SENIOR.search(t):
+        return "senior"
+    if _RE_INTERN.search(d[:300]):    # check description intro for intern hints
+        return "internship"
+    if _RE_ENTRY.search(t):
+        return "entry"
+    if _RE_MID.search(t):
+        return "mid"
+
+    return "unknown"
+
 
 def _make_id(title: str, company: str, location: str) -> str:
     """16-char hex fingerprint used as a stable deduplication key."""
@@ -642,6 +717,7 @@ class BaseScraper(ABC):
             return None
 
         sal_min, sal_max, sal_curr = _parse_salary(salary_text or "")
+        clean_desc = _strip_html(description)[:4_000]
 
         return Job(
             id=_make_id(title, company, location),
@@ -651,7 +727,7 @@ class BaseScraper(ABC):
             is_remote=is_remote,
             is_usa=True,
             url=url,
-            description=_strip_html(description)[:4_000],
+            description=clean_desc,
             department=department,
             employment_type=_normalise_employment_type(employment_type),
             salary_min=sal_min,
@@ -659,6 +735,7 @@ class BaseScraper(ABC):
             salary_currency=sal_curr,
             posted_at=posted_at,
             ats=self.ATS_NAME,
+            level=_classify_job_level(title, clean_desc),
         )
 
 
