@@ -102,7 +102,9 @@ jobs:
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
             git commit -m "chore: refresh jobs.json — ${TOTAL} US jobs ($(date -u '+%Y-%m-%d'))"
-            # Rebase onto latest remote before pushing (handles concurrent pushes)
-            git pull --rebase origin main
+            # Fetch latest remote and merge — if jobs.json conflicts, keep OUR
+            # fresh scrape (concurrent runs both updating jobs.json is normal).
+            git fetch origin main
+            git merge -X ours origin/main --no-edit || true
             git push
           fi
