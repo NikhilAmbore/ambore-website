@@ -394,8 +394,29 @@ class PoliteClient:
                 self._robots[domain] = None
         return self._robots[domain]
 
+    # Domains that publish public APIs/feeds designed for programmatic access.
+    # robots.txt on these sites targets web crawlers, not API consumers —
+    # skip the robots check so the API endpoints remain accessible.
+    _PUBLIC_API_DOMAINS: frozenset[str] = frozenset({
+        "www.themuse.com",        # /api/public/jobs  — documented public API
+        "remotive.com",           # /api/remote-jobs  — documented public API
+        "remoteok.com",           # /api              — documented public API
+        "weworkremotely.com",     # /categories/*.rss — public RSS feeds
+        "boards-api.greenhouse.io",
+        "api.lever.co",
+        "api.ashbyhq.com",
+        "api.smartrecruiters.com",
+        "api.adzuna.com",
+        "data.usajobs.gov",
+        "serpapi.com",
+        "apply.workable.com",
+    })
+
     def _robots_allow(self, url: str) -> bool:
         parsed = urlparse(url)
+        # Always allow known public API / feed domains
+        if parsed.netloc in self._PUBLIC_API_DOMAINS:
+            return True
         domain = f"{parsed.scheme}://{parsed.netloc}"
         rp = self._get_robots(domain)
         if rp is None:
