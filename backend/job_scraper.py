@@ -130,7 +130,7 @@ REQUEST_TIMEOUT   = 20      # seconds per request
 MAX_RETRIES       = 3       # attempts before giving up
 RETRY_BACKOFF     = 2.0     # exponential base in seconds  (2^n seconds sleep)
 DOMAIN_DELAY      = 1.5     # minimum seconds between requests to same domain
-MAX_JOBS_PER_SRC  = 500     # safety cap per source
+MAX_JOBS_PER_SRC  = 2000    # safety cap per source
 
 # ─── US geography ─────────────────────────────────────────────────────────────
 
@@ -1918,12 +1918,31 @@ class AdzunaScraper(BaseScraper):
 
     # Broad keyword sweep — Adzuna returns US-filtered results for all
     _KEYWORDS = [
+        # Core engineering
         "software engineer", "backend engineer", "frontend engineer",
-        "full stack engineer", "data engineer", "data scientist",
-        "machine learning engineer", "devops engineer", "cloud engineer",
-        "site reliability engineer", "platform engineer", "security engineer",
+        "full stack engineer", "systems engineer", "infrastructure engineer",
+        # Data & AI
+        "data engineer", "data scientist", "machine learning engineer",
+        "ai engineer", "analytics engineer", "data analyst",
+        "business analyst", "database administrator", "bi developer",
+        # DevOps & Cloud
+        "devops engineer", "cloud engineer", "site reliability engineer",
+        "platform engineer", "cloud architect", "solutions architect",
+        # Security
+        "security engineer", "cybersecurity analyst", "application security",
+        # Mobile & Web
         "mobile engineer", "ios developer", "android developer",
-        "product manager", "ux designer", "it specialist",
+        "react developer", "javascript developer",
+        # Languages
+        "python developer", "java developer", "golang engineer",
+        # Product & Design
+        "product manager", "ux designer", "product designer",
+        "ui designer",
+        # Operations & Management
+        "it specialist", "it manager", "systems administrator",
+        "technical program manager", "engineering manager",
+        # QA
+        "qa engineer", "automation engineer",
     ]
 
     def fetch_jobs(self) -> list[Job]:
@@ -2008,7 +2027,7 @@ class AdzunaScraper(BaseScraper):
 
                 total   = data.get("count", 0)
                 fetched = page * 50
-                if fetched >= total or fetched >= 200:   # cap 4 pages per keyword
+                if fetched >= total or fetched >= 500:   # cap 10 pages per keyword
                     break
                 page += 1
 
@@ -2536,7 +2555,7 @@ class LinkedInGuestScraper(BaseScraper):
     _DETAIL_URL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}"
     _GEO_ID     = "103644278"   # United States
     _PAGE_SIZE  = 25
-    _MAX_PAGES  = 4             # 4 × 25 = up to 100 results per keyword
+    _MAX_PAGES  = 8             # 8 × 25 = up to 200 results per keyword
 
     _HEADERS: dict[str, str] = {
         "User-Agent":         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -2921,9 +2940,164 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "thumbtack",    "company_name": "Thumbtack"},
     {"ats": "greenhouse", "company": "collibra",     "company_name": "Collibra"},
 
+    # ── Additional Greenhouse targets ─────────────────────────────────────────
+    # SaaS / CRM / Sales enablement
+    {"ats": "greenhouse", "company": "braze",            "company_name": "Braze"},
+    {"ats": "greenhouse", "company": "klaviyo",          "company_name": "Klaviyo"},
+    {"ats": "greenhouse", "company": "iterable",         "company_name": "Iterable"},
+    {"ats": "greenhouse", "company": "gong",             "company_name": "Gong"},
+    {"ats": "greenhouse", "company": "outreach",         "company_name": "Outreach"},
+    {"ats": "greenhouse", "company": "salesloft",        "company_name": "Salesloft"},
+    {"ats": "greenhouse", "company": "gainsight",        "company_name": "Gainsight"},
+    {"ats": "greenhouse", "company": "totango",          "company_name": "Totango"},
+    {"ats": "greenhouse", "company": "clari",            "company_name": "Clari"},
+    {"ats": "greenhouse", "company": "seismic",          "company_name": "Seismic"},
+    {"ats": "greenhouse", "company": "mindtickle",       "company_name": "MindTickle"},
+    {"ats": "greenhouse", "company": "zendesk",          "company_name": "Zendesk"},
+    {"ats": "greenhouse", "company": "docusign",         "company_name": "DocuSign"},
+    {"ats": "greenhouse", "company": "sprinklr",         "company_name": "Sprinklr"},
+    {"ats": "greenhouse", "company": "smartsheet",       "company_name": "Smartsheet"},
+    {"ats": "greenhouse", "company": "lucidchart",       "company_name": "Lucidchart"},
+    {"ats": "greenhouse", "company": "miro",             "company_name": "Miro"},
+    {"ats": "greenhouse", "company": "clickup",          "company_name": "ClickUp"},
+    {"ats": "greenhouse", "company": "coda",             "company_name": "Coda"},
+    {"ats": "greenhouse", "company": "webflow",          "company_name": "Webflow"},
+    {"ats": "greenhouse", "company": "algolia",          "company_name": "Algolia"},
+    {"ats": "greenhouse", "company": "clearbit",         "company_name": "Clearbit"},
+    {"ats": "greenhouse", "company": "g2",               "company_name": "G2"},
+    {"ats": "greenhouse", "company": "sproutsocial",     "company_name": "Sprout Social"},
+    {"ats": "greenhouse", "company": "hootsuite",        "company_name": "Hootsuite"},
+    {"ats": "greenhouse", "company": "zoominfo",         "company_name": "ZoomInfo"},
+    {"ats": "greenhouse", "company": "bombora",          "company_name": "Bombora"},
+    # Cloud / Infra / DevOps
+    {"ats": "greenhouse", "company": "snowflake",        "company_name": "Snowflake"},
+    {"ats": "greenhouse", "company": "doordash",         "company_name": "DoorDash"},
+    {"ats": "greenhouse", "company": "roblox",           "company_name": "Roblox"},
+    {"ats": "greenhouse", "company": "hashicorp",        "company_name": "HashiCorp"},
+    {"ats": "greenhouse", "company": "fastly",           "company_name": "Fastly"},
+    {"ats": "greenhouse", "company": "cloudinary",       "company_name": "Cloudinary"},
+    {"ats": "greenhouse", "company": "teleport",         "company_name": "Teleport"},
+    {"ats": "greenhouse", "company": "cockroachdb",      "company_name": "CockroachDB"},
+    {"ats": "greenhouse", "company": "timescale",        "company_name": "Timescale"},
+    {"ats": "greenhouse", "company": "redpanda",         "company_name": "Redpanda"},
+    {"ats": "greenhouse", "company": "sendbird",         "company_name": "SendBird"},
+    {"ats": "greenhouse", "company": "netlify",          "company_name": "Netlify"},
+    # Security
+    {"ats": "greenhouse", "company": "crowdstrike",      "company_name": "CrowdStrike"},
+    {"ats": "greenhouse", "company": "wiz",              "company_name": "Wiz"},
+    {"ats": "greenhouse", "company": "lacework",         "company_name": "Lacework"},
+    {"ats": "greenhouse", "company": "expel",            "company_name": "Expel"},
+    {"ats": "greenhouse", "company": "vanta",            "company_name": "Vanta"},
+    {"ats": "greenhouse", "company": "exabeam",          "company_name": "Exabeam"},
+    {"ats": "greenhouse", "company": "cybereason",       "company_name": "Cybereason"},
+    {"ats": "greenhouse", "company": "orca-security",    "company_name": "Orca Security"},
+    # Data / Analytics
+    {"ats": "greenhouse", "company": "fivetran",         "company_name": "Fivetran"},
+    {"ats": "greenhouse", "company": "airbyte",          "company_name": "Airbyte"},
+    {"ats": "greenhouse", "company": "dbt-labs",         "company_name": "dbt Labs"},
+    {"ats": "greenhouse", "company": "starburst",        "company_name": "Starburst"},
+    {"ats": "greenhouse", "company": "dremio",           "company_name": "Dremio"},
+    {"ats": "greenhouse", "company": "glean",            "company_name": "Glean"},
+    {"ats": "greenhouse", "company": "rudderstack",      "company_name": "RudderStack"},
+    {"ats": "greenhouse", "company": "heap",             "company_name": "Heap"},
+    {"ats": "greenhouse", "company": "fullstory",        "company_name": "FullStory"},
+    {"ats": "greenhouse", "company": "mparticle",        "company_name": "mParticle"},
+    # Fintech / HR Tech
+    {"ats": "greenhouse", "company": "mercury",          "company_name": "Mercury"},
+    {"ats": "greenhouse", "company": "rippling",         "company_name": "Rippling"},
+    {"ats": "greenhouse", "company": "justworks",        "company_name": "Justworks"},
+    {"ats": "greenhouse", "company": "stytch",           "company_name": "Stytch"},
+    {"ats": "greenhouse", "company": "unit",             "company_name": "Unit"},
+    {"ats": "greenhouse", "company": "column",           "company_name": "Column"},
+    {"ats": "greenhouse", "company": "cultureamp",       "company_name": "Culture Amp"},
+    {"ats": "greenhouse", "company": "15five",           "company_name": "15Five"},
+    {"ats": "greenhouse", "company": "betterup",         "company_name": "BetterUp"},
+    # Consumer / Marketplace / E-commerce
+    {"ats": "greenhouse", "company": "gopuff",           "company_name": "GoPuff"},
+    {"ats": "greenhouse", "company": "compass",          "company_name": "Compass"},
+    {"ats": "greenhouse", "company": "opendoor",         "company_name": "Opendoor"},
+    {"ats": "greenhouse", "company": "rover",            "company_name": "Rover"},
+    {"ats": "greenhouse", "company": "bumble",           "company_name": "Bumble"},
+    {"ats": "greenhouse", "company": "poshmark",         "company_name": "Poshmark"},
+    {"ats": "greenhouse", "company": "hopper",           "company_name": "Hopper"},
+    # EdTech
+    {"ats": "greenhouse", "company": "coursera",         "company_name": "Coursera"},
+    {"ats": "greenhouse", "company": "masterclass",      "company_name": "MasterClass"},
+    # HealthTech
+    {"ats": "greenhouse", "company": "hims",             "company_name": "Hims & Hers"},
+    {"ats": "greenhouse", "company": "noom",             "company_name": "Noom"},
+    {"ats": "greenhouse", "company": "doximity",         "company_name": "Doximity"},
+    {"ats": "greenhouse", "company": "komodohealth",     "company_name": "Komodo Health"},
+    {"ats": "greenhouse", "company": "innovaccer",       "company_name": "Innovaccer"},
+    # Logistics
+    {"ats": "greenhouse", "company": "motive",           "company_name": "Motive"},
+    {"ats": "greenhouse", "company": "project44",        "company_name": "project44"},
+    # Gaming / Entertainment
+    {"ats": "greenhouse", "company": "zynga",            "company_name": "Zynga"},
+    {"ats": "greenhouse", "company": "niantic",          "company_name": "Niantic"},
+    {"ats": "greenhouse", "company": "riotgames",        "company_name": "Riot Games"},
+    # Legal Tech
+    {"ats": "greenhouse", "company": "ironclad",         "company_name": "Ironclad"},
+    {"ats": "greenhouse", "company": "clio",             "company_name": "Clio"},
+    # AI / ML
+    {"ats": "greenhouse", "company": "scale-ai",         "company_name": "Scale AI"},
+    {"ats": "greenhouse", "company": "palantir",         "company_name": "Palantir"},
+    {"ats": "greenhouse", "company": "covariant",        "company_name": "Covariant"},
+    # Crypto / Web3
+    {"ats": "greenhouse", "company": "fireblocks",       "company_name": "Fireblocks"},
+    {"ats": "greenhouse", "company": "alchemy",          "company_name": "Alchemy"},
+    {"ats": "greenhouse", "company": "consensys",        "company_name": "ConsenSys"},
+    {"ats": "greenhouse", "company": "opensea",          "company_name": "OpenSea"},
+    # Enterprise SaaS
+    {"ats": "greenhouse", "company": "splunk",           "company_name": "Splunk"},
+    {"ats": "greenhouse", "company": "sumo-logic",       "company_name": "Sumo Logic"},
+    # Media
+    {"ats": "greenhouse", "company": "voxmedia",         "company_name": "Vox Media"},
+
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
     {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
     {"ats": "lever", "company": "highspot",     "company_name": "Highspot"},
+    # AI / ML / Robotics on Lever
+    {"ats": "lever", "company": "huggingface",         "company_name": "Hugging Face"},
+    {"ats": "lever", "company": "coreweave",           "company_name": "CoreWeave"},
+    {"ats": "lever", "company": "lambdalabs",          "company_name": "Lambda Labs"},
+    {"ats": "lever", "company": "wandb",               "company_name": "Weights & Biases"},
+    {"ats": "lever", "company": "hex",                 "company_name": "Hex"},
+    {"ats": "lever", "company": "anduril",             "company_name": "Anduril Industries"},
+    {"ats": "lever", "company": "deepgram",            "company_name": "Deepgram"},
+    {"ats": "lever", "company": "replicate",           "company_name": "Replicate"},
+    {"ats": "lever", "company": "together",            "company_name": "Together AI"},
+    {"ats": "lever", "company": "inflection",          "company_name": "Inflection AI"},
+    {"ats": "lever", "company": "adept",               "company_name": "Adept"},
+    {"ats": "lever", "company": "imbue",               "company_name": "Imbue"},
+    {"ats": "lever", "company": "character",           "company_name": "Character.AI"},
+    {"ats": "lever", "company": "aurora",              "company_name": "Aurora Innovation"},
+    {"ats": "lever", "company": "nuro",                "company_name": "Nuro"},
+    {"ats": "lever", "company": "jobyaviation",        "company_name": "Joby Aviation"},
+    {"ats": "lever", "company": "physicalintelligence","company_name": "Physical Intelligence"},
+    {"ats": "lever", "company": "tenstorrent",         "company_name": "Tenstorrent"},
+    {"ats": "lever", "company": "groq",                "company_name": "Groq"},
+    {"ats": "lever", "company": "cerebras",            "company_name": "Cerebras Systems"},
+    {"ats": "lever", "company": "pika",                "company_name": "Pika Labs"},
+    {"ats": "lever", "company": "stability",           "company_name": "Stability AI"},
+    {"ats": "lever", "company": "xai",                 "company_name": "xAI"},
+    {"ats": "lever", "company": "mistral",             "company_name": "Mistral AI"},
+    # DevTools / Infra on Lever
+    {"ats": "lever", "company": "tailscale",           "company_name": "Tailscale"},
+    {"ats": "lever", "company": "grafana",             "company_name": "Grafana Labs"},
+    {"ats": "lever", "company": "dagger",              "company_name": "Dagger"},
+    {"ats": "lever", "company": "livekit",             "company_name": "LiveKit"},
+    {"ats": "lever", "company": "mux",                 "company_name": "Mux"},
+    {"ats": "lever", "company": "fly",                 "company_name": "Fly.io"},
+    {"ats": "lever", "company": "render",              "company_name": "Render"},
+    {"ats": "lever", "company": "railway",             "company_name": "Railway"},
+    # HealthTech on Lever
+    {"ats": "lever", "company": "devoted",             "company_name": "Devoted Health"},
+    {"ats": "lever", "company": "oscar",               "company_name": "Oscar Health"},
+    {"ats": "lever", "company": "cityblock",           "company_name": "Cityblock Health"},
+    # Other tech on Lever
+    {"ats": "lever", "company": "matterport",          "company_name": "Matterport"},
+    {"ats": "lever", "company": "pipe",                "company_name": "Pipe"},
 
     # ── Ashby (api.ashbyhq.com/posting-api/job-board/{slug}) ─────────────────
     # All slugs verified 2026-02
@@ -2956,6 +3130,29 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "ashby", "company": "anyscale",     "company_name": "Anyscale"},
     {"ats": "ashby", "company": "poolside",     "company_name": "Poolside"},
     {"ats": "ashby", "company": "runway",       "company_name": "Runway"},
+    # Additional Ashby targets (developer-tools / infra startups)
+    {"ats": "ashby", "company": "arc",          "company_name": "Arc (Browser)"},
+    {"ats": "ashby", "company": "descript",     "company_name": "Descript"},
+    {"ats": "ashby", "company": "warp",         "company_name": "Warp"},
+    {"ats": "ashby", "company": "sourcegraph",  "company_name": "Sourcegraph"},
+    {"ats": "ashby", "company": "motherduck",   "company_name": "MotherDuck"},
+    {"ats": "ashby", "company": "tinybird",     "company_name": "Tinybird"},
+    {"ats": "ashby", "company": "clickhouse",   "company_name": "ClickHouse"},
+    {"ats": "ashby", "company": "doppler",      "company_name": "Doppler"},
+    {"ats": "ashby", "company": "infisical",    "company_name": "Infisical"},
+    {"ats": "ashby", "company": "inngest",      "company_name": "Inngest"},
+    {"ats": "ashby", "company": "nango",        "company_name": "Nango"},
+    {"ats": "ashby", "company": "highlight",    "company_name": "Highlight"},
+    {"ats": "ashby", "company": "turso",        "company_name": "Turso"},
+    {"ats": "ashby", "company": "rill",         "company_name": "Rill"},
+    {"ats": "ashby", "company": "evidence",     "company_name": "Evidence"},
+    {"ats": "ashby", "company": "jam",          "company_name": "Jam"},
+    {"ats": "ashby", "company": "xata",         "company_name": "Xata"},
+    {"ats": "ashby", "company": "luma",         "company_name": "Luma AI"},
+    {"ats": "ashby", "company": "midjourney",   "company_name": "Midjourney"},
+    {"ats": "ashby", "company": "eleven-labs",  "company_name": "ElevenLabs"},
+    {"ats": "ashby", "company": "typeform",     "company_name": "Typeform"},
+    {"ats": "ashby", "company": "hex-tech",     "company_name": "Hex (Ashby)"},
 
     # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
     # Note: Typeform and Hotjar are EU-based; they return 0 US jobs — disabled.
@@ -3056,7 +3253,7 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # Uses linkedin.com/jobs-guest/ endpoints — same HTML that non-logged-in
     # visitors see.  No token, no Apify, no cost.
     {"ats": "linkedin", "company": "software engineer", "company_name": "LinkedIn",
-     "api_secret": '["data scientist", "product manager", "machine learning engineer", "devops engineer", "backend engineer", "frontend engineer", "software developer", "full stack developer", "AI engineer", "platform engineer", "site reliability engineer", "data engineer", "analytics engineer", "mobile engineer", "iOS developer", "Android developer", "security engineer", "solutions engineer"]'},
+     "api_secret": '["data scientist", "product manager", "machine learning engineer", "devops engineer", "backend engineer", "frontend engineer", "software developer", "full stack developer", "AI engineer", "platform engineer", "site reliability engineer", "data engineer", "analytics engineer", "mobile engineer", "iOS developer", "Android developer", "security engineer", "solutions engineer", "python developer", "java developer", "javascript developer", "react developer", "cloud architect", "technical program manager", "engineering manager", "qa engineer", "data analyst", "business analyst", "database administrator", "systems engineer", "it manager"]'},
     #
     # ── Apify cloud actors ────────────────────────────────────────────────────
     # Free tier: $5 platform credits / month  →  https://apify.com/

@@ -28,7 +28,7 @@ jobs:
   scrape:
     name: Scrape & Publish Jobs
     runs-on: ubuntu-latest
-    timeout-minutes: 20   # Hourly run skips Apify actors (handled by daily workflow)
+    timeout-minutes: 55   # Hourly run skips Apify actors (handled by daily workflow)
 
     steps:
       - name: Checkout repository
