@@ -411,6 +411,8 @@ class PoliteClient:
         "serpapi.com",
         "apply.workable.com",
         "www.indeed.com",         # /rss — public RSS feed, no key required
+        "jobs.jobvite.com",       # /api/{slug}/jobs — public JSON API
+        "jobicy.com",             # /api/v2/remote-jobs — public JSON API
     })
 
     def _robots_allow(self, url: str) -> bool:
@@ -434,6 +436,8 @@ class PoliteClient:
         "api.ashbyhq.com":          0.3,
         "api.smartrecruiters.com":  0.3,
         "apply.workable.com":       0.3,
+        "jobs.jobvite.com":         0.3,
+        "jobicy.com":               0.5,
         "api.adzuna.com":           0.5,
         "www.themuse.com":          0.5,
         "data.usajobs.gov":         0.5,
@@ -2765,6 +2769,130 @@ class LinkedInGuestScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Jobvite scraper  (public JSON API — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class JobviteScraper(BaseScraper):
+    """
+    Scrapes company job boards hosted on Jobvite via their public JSON API.
+    No authentication or API key required.
+
+    API endpoint: GET https://jobs.jobvite.com/api/{slug}/jobs
+    Response: {"jobs": [...], "count": N}
+
+    Set target.company to the Jobvite company slug (visible in the careers
+    page URL: https://jobs.jobvite.com/{slug}/).
+    """
+
+    ATS_NAME = "jobvite"
+
+    def fetch_jobs(self) -> list[Job]:
+        slug = self.target.company
+        url  = f"https://jobs.jobvite.com/api/{slug}/jobs"
+        log.info("[Jobvite] %s — fetching %s", self.target.company_name, url)
+
+        try:
+            resp = self.client.get(url)
+            data = resp.json()
+        except Exception as exc:
+            log.error("[Jobvite] %s — %s", self.target.company_name, exc)
+            return []
+
+        raw_jobs = data.get("jobs") or data.get("requisitions") or []
+        if not raw_jobs:
+            log.debug("[Jobvite] %s — 0 jobs returned", self.target.company_name)
+            return []
+
+        jobs: list[Job] = []
+        for raw in raw_jobs[:MAX_JOBS_PER_SRC]:
+            title     = (raw.get("title")       or "").strip()
+            location  = (raw.get("location")    or "").strip()
+            job_url   = (raw.get("url")         or raw.get("applyUrl") or "").strip()
+            dept      = raw.get("department")   or raw.get("category")  or None
+            emp_type  = raw.get("type")         or raw.get("jobType")   or None
+            posted_at = raw.get("datePosted")   or raw.get("date")      or None
+            desc      = raw.get("description")  or ""
+
+            job = self._make_job(
+                title=title,
+                location=location,
+                url=job_url,
+                description=desc,
+                department=dept,
+                employment_type=emp_type,
+                posted_at=str(posted_at) if posted_at else None,
+            )
+            if job:
+                jobs.append(job)
+
+        log.info("[Jobvite] %s — %d US jobs", self.target.company_name, len(jobs))
+        return jobs
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Jobicy scraper  (free remote-jobs aggregator API — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class JobicyScraper(BaseScraper):
+    """
+    Scrapes Jobicy.com remote job listings via their free public JSON API.
+    No API key required.
+
+    API endpoint: GET https://jobicy.com/api/v2/remote-jobs?count=50&geo=usa
+    Returns up to 50 US remote jobs per call.
+    """
+
+    ATS_NAME = "jobicy"
+    _URL = "https://jobicy.com/api/v2/remote-jobs"
+
+    def fetch_jobs(self) -> list[Job]:
+        jobs: list[Job] = []
+        page = 1
+        while len(jobs) < MAX_JOBS_PER_SRC:
+            url = f"{self._URL}?count=50&geo=usa&page={page}"
+            try:
+                resp = self.client.get(url)
+                data = resp.json()
+            except Exception as exc:
+                log.warning("[Jobicy] page %d — %s", page, exc)
+                break
+
+            raw_jobs = data.get("jobs") or []
+            if not raw_jobs:
+                break
+
+            for raw in raw_jobs:
+                title    = (raw.get("jobTitle")    or "").strip()
+                company  = (raw.get("companyName") or "").strip()
+                location = (raw.get("jobGeo")      or "Anywhere, US").strip()
+                job_url  = (raw.get("url")         or "").strip()
+                dept     = raw.get("jobIndustry")  or None
+                emp_type = raw.get("jobType")      or None
+                posted   = raw.get("pubDate")      or None
+                desc     = raw.get("jobDescription") or ""
+
+                job = self._make_job(
+                    title=title,
+                    location=location,
+                    url=job_url,
+                    description=desc,
+                    department=str(dept) if dept else None,
+                    employment_type=str(emp_type) if emp_type else None,
+                    posted_at=str(posted) if posted else None,
+                    company_override=company or None,
+                )
+                if job:
+                    jobs.append(job)
+
+            if len(raw_jobs) < 50:
+                break
+            page += 1
+
+        log.info("[Jobicy] Total: %d US remote jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Indeed RSS scraper (no API key — public RSS feeds)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -2931,6 +3059,8 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "apify":           ApifyJobsScraper,    # cloud actors; free tier available
     "linkedin":        LinkedInGuestScraper, # LinkedIn guest API — no key needed
     "indeed":          IndeedRSSScraper,     # Indeed RSS feeds — no key needed
+    "jobvite":         JobviteScraper,       # Jobvite company boards — no key needed
+    "jobicy":          JobicyScraper,        # Jobicy remote aggregator — no key needed
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -3524,6 +3654,26 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # {"ats": "workable", "company": "typeform",    "company_name": "Typeform"},
     # {"ats": "workable", "company": "hotjar",      "company_name": "Hotjar"},
 
+    # ── Jobvite (jobs.jobvite.com/api/{slug}/jobs — public JSON, no key) ─────
+    {"ats": "jobvite", "company": "netflix",         "company_name": "Netflix"},
+    {"ats": "jobvite", "company": "ea",              "company_name": "Electronic Arts"},
+    {"ats": "jobvite", "company": "chewy",           "company_name": "Chewy"},
+    {"ats": "jobvite", "company": "ingram-micro",    "company_name": "Ingram Micro"},
+    {"ats": "jobvite", "company": "ncr",             "company_name": "NCR Corporation"},
+    {"ats": "jobvite", "company": "careerbuilder",   "company_name": "CareerBuilder"},
+    {"ats": "jobvite", "company": "lendingclub",     "company_name": "LendingClub (Jobvite)"},
+    {"ats": "jobvite", "company": "cargurus",        "company_name": "CarGurus"},
+    {"ats": "jobvite", "company": "pagerduty",       "company_name": "PagerDuty (Jobvite)"},
+    {"ats": "jobvite", "company": "finastra",        "company_name": "Finastra"},
+    {"ats": "jobvite", "company": "vonage",          "company_name": "Vonage (Jobvite)"},
+    {"ats": "jobvite", "company": "conduent",        "company_name": "Conduent"},
+    {"ats": "jobvite", "company": "fleetcor",        "company_name": "Fleetcor Technologies"},
+    {"ats": "jobvite", "company": "synnex",          "company_name": "TD Synnex"},
+    {"ats": "jobvite", "company": "brightspring",    "company_name": "BrightSpring (Jobvite)"},
+
+    # ── Jobicy (free remote-jobs aggregator — no API key) ─────────────────
+    {"ats": "jobicy", "company": "jobicy-aggregator", "company_name": "Jobicy"},
+
     # ── Indeed RSS (no API key — public RSS feeds, 38 keywords × 8 pages) ────
     {"ats": "indeed", "company": "indeed-aggregator", "company_name": "Indeed"},
 
@@ -3669,6 +3819,31 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
         "ats": "taleo", "company": "baxter",
         "company_name": "Baxter International",
         "careers_url": "https://jobs.baxter.com/search-jobs",
+    },
+    {
+        "ats": "taleo", "company": "cognizant",
+        "company_name": "Cognizant",
+        "careers_url": "https://cognizant.taleo.net/careersection/External/jobsearch.ftl?lang=en",
+    },
+    {
+        "ats": "taleo", "company": "capgemini",
+        "company_name": "Capgemini",
+        "careers_url": "https://capgemini.taleo.net/careersection/External/jobsearch.ftl?lang=en",
+    },
+    {
+        "ats": "taleo", "company": "hcl",
+        "company_name": "HCL Technologies",
+        "careers_url": "https://hcl.taleo.net/careersection/external/jobsearch.ftl?lang=en",
+    },
+    {
+        "ats": "taleo", "company": "conduent-taleo",
+        "company_name": "Conduent",
+        "careers_url": "https://conduent.taleo.net/careersection/External/jobsearch.ftl?lang=en",
+    },
+    {
+        "ats": "taleo", "company": "mcdonalds",
+        "company_name": "McDonald's",
+        "careers_url": "https://mcdonalds.taleo.net/careersection/External/jobsearch.ftl?lang=en",
     },
 
     # ── Aggregator APIs (single entry = many companies) ───────────────────────
