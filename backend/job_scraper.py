@@ -1270,6 +1270,9 @@ class TheMuseScraper(BaseScraper):
     _TECH_CATEGORIES = [
         "Engineering", "Data Science", "IT", "Product",
         "Design", "Computer Science", "User Experience",
+        "Finance", "Sales", "Business Development", "Marketing",
+        "Operations", "Management", "Analytics", "Project Management",
+        "Account Management",
     ]
 
     def fetch_jobs(self) -> list[Job]:
@@ -1280,7 +1283,7 @@ class TheMuseScraper(BaseScraper):
         for category in self._TECH_CATEGORIES:
             if len(jobs) >= MAX_JOBS_PER_SRC:
                 break
-            for page in range(10):          # max 10 pages × 20 = 200 per category
+            for page in range(50):          # max 50 pages × 20 = 1000 per category
                 if len(jobs) >= MAX_JOBS_PER_SRC:
                     break
                 try:
@@ -3053,6 +3056,121 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "sumo-logic",       "company_name": "Sumo Logic"},
     # Media
     {"ats": "greenhouse", "company": "voxmedia",         "company_name": "Vox Media"},
+    # High-volume employers (100+ US positions each)
+    {"ats": "greenhouse", "company": "shopify",          "company_name": "Shopify"},
+    {"ats": "greenhouse", "company": "box",              "company_name": "Box"},
+    {"ats": "greenhouse", "company": "talkdesk",         "company_name": "Talkdesk"},
+    {"ats": "greenhouse", "company": "dialpad",          "company_name": "Dialpad"},
+    {"ats": "greenhouse", "company": "vonage",           "company_name": "Vonage"},
+    {"ats": "greenhouse", "company": "ringcentral",      "company_name": "RingCentral"},
+    {"ats": "greenhouse", "company": "procore",          "company_name": "Procore"},
+    {"ats": "greenhouse", "company": "veeva",            "company_name": "Veeva Systems"},
+    {"ats": "greenhouse", "company": "medallia",         "company_name": "Medallia"},
+    {"ats": "greenhouse", "company": "zuora",            "company_name": "Zuora"},
+    {"ats": "greenhouse", "company": "instructure",      "company_name": "Instructure"},
+    {"ats": "greenhouse", "company": "powerschool",      "company_name": "PowerSchool"},
+    {"ats": "greenhouse", "company": "tealium",          "company_name": "Tealium"},
+    {"ats": "greenhouse", "company": "sendgrid",         "company_name": "SendGrid"},
+    {"ats": "greenhouse", "company": "formstack",        "company_name": "Formstack"},
+    {"ats": "greenhouse", "company": "lessonly",         "company_name": "Lessonly"},
+    {"ats": "greenhouse", "company": "highq",            "company_name": "HighQ"},
+    {"ats": "greenhouse", "company": "appirio",          "company_name": "Appirio"},
+    {"ats": "greenhouse", "company": "cvent",            "company_name": "Cvent"},
+    {"ats": "greenhouse", "company": "bazaarvoice",      "company_name": "Bazaarvoice"},
+    {"ats": "greenhouse", "company": "spredfast",        "company_name": "Spredfast"},
+    {"ats": "greenhouse", "company": "socialware",       "company_name": "Socialware"},
+    {"ats": "greenhouse", "company": "vericast",         "company_name": "Vericast"},
+    {"ats": "greenhouse", "company": "imanage",          "company_name": "iManage"},
+    {"ats": "greenhouse", "company": "demandware",       "company_name": "Demandware"},
+    {"ats": "greenhouse", "company": "bazilio",          "company_name": "Bazilio"},
+    {"ats": "greenhouse", "company": "limeade",          "company_name": "Limeade"},
+    {"ats": "greenhouse", "company": "apogee",           "company_name": "Apogee"},
+    {"ats": "greenhouse", "company": "mimecast",         "company_name": "Mimecast"},
+    {"ats": "greenhouse", "company": "knowbe4",          "company_name": "KnowBe4"},
+    {"ats": "greenhouse", "company": "proofpoint",       "company_name": "Proofpoint"},
+    {"ats": "greenhouse", "company": "barracuda",        "company_name": "Barracuda Networks"},
+    {"ats": "greenhouse", "company": "qualys",           "company_name": "Qualys"},
+    {"ats": "greenhouse", "company": "tenable",          "company_name": "Tenable"},
+    {"ats": "greenhouse", "company": "rapid7",           "company_name": "Rapid7"},
+    {"ats": "greenhouse", "company": "sailpoint",        "company_name": "SailPoint"},
+    {"ats": "greenhouse", "company": "beyondtrust",      "company_name": "BeyondTrust"},
+    {"ats": "greenhouse", "company": "darktrace",        "company_name": "Darktrace"},
+    {"ats": "greenhouse", "company": "socure",           "company_name": "Socure"},
+    {"ats": "greenhouse", "company": "samsara",          "company_name": "Samsara"},   # might duplicate
+    {"ats": "greenhouse", "company": "axonius",          "company_name": "Axonius"},
+    {"ats": "greenhouse", "company": "cribl",            "company_name": "Cribl"},
+    {"ats": "greenhouse", "company": "devo",             "company_name": "Devo"},
+    {"ats": "greenhouse", "company": "hunters",          "company_name": "Hunters"},
+    {"ats": "greenhouse", "company": "corelight",        "company_name": "Corelight"},
+    {"ats": "greenhouse", "company": "vectra",           "company_name": "Vectra AI"},
+    {"ats": "greenhouse", "company": "snyk",             "company_name": "Snyk"},
+    {"ats": "greenhouse", "company": "armorblox",        "company_name": "Armorblox"},
+    {"ats": "greenhouse", "company": "perimeter81",      "company_name": "Perimeter 81"},
+    {"ats": "greenhouse", "company": "bigid",            "company_name": "BigID"},
+    {"ats": "greenhouse", "company": "cyware",           "company_name": "Cyware"},
+    # More SaaS
+    {"ats": "greenhouse", "company": "momentive",        "company_name": "Momentive"},
+    {"ats": "greenhouse", "company": "surveymonkey",     "company_name": "SurveyMonkey"},
+    {"ats": "greenhouse", "company": "helpshift",        "company_name": "Helpshift"},
+    {"ats": "greenhouse", "company": "kustomer",         "company_name": "Kustomer"},
+    {"ats": "greenhouse", "company": "gladly",           "company_name": "Gladly"},
+    {"ats": "greenhouse", "company": "freshworks",       "company_name": "Freshworks"},
+    {"ats": "greenhouse", "company": "tidio",            "company_name": "Tidio"},
+    {"ats": "greenhouse", "company": "uservoice",        "company_name": "UserVoice"},
+    {"ats": "greenhouse", "company": "appcues",          "company_name": "Appcues"},
+    {"ats": "greenhouse", "company": "productboard",     "company_name": "Productboard"},
+    {"ats": "greenhouse", "company": "pendo",            "company_name": "Pendo"},  # might duplicate
+    {"ats": "greenhouse", "company": "launchdarkly",     "company_name": "LaunchDarkly"},  # might duplicate
+    {"ats": "greenhouse", "company": "optimizely",       "company_name": "Optimizely"},
+    {"ats": "greenhouse", "company": "mixpanel",         "company_name": "Mixpanel"},  # might duplicate
+    {"ats": "greenhouse", "company": "amplitude",        "company_name": "Amplitude"},  # might duplicate
+    # Finance / Fintech
+    {"ats": "greenhouse", "company": "nerdwallet",       "company_name": "NerdWallet"},
+    {"ats": "greenhouse", "company": "sofi",             "company_name": "SoFi"},
+    {"ats": "greenhouse", "company": "upgrade",          "company_name": "Upgrade"},
+    {"ats": "greenhouse", "company": "lendingclub",      "company_name": "LendingClub"},
+    {"ats": "greenhouse", "company": "avant",            "company_name": "Avant"},
+    {"ats": "greenhouse", "company": "plaid",            "company_name": "Plaid"},  # also on Lever
+    {"ats": "greenhouse", "company": "kabbage",          "company_name": "Kabbage"},
+    {"ats": "greenhouse", "company": "payoneer",         "company_name": "Payoneer"},
+    {"ats": "greenhouse", "company": "rapyd",            "company_name": "Rapyd"},
+    {"ats": "greenhouse", "company": "nuvei",            "company_name": "Nuvei"},
+    {"ats": "greenhouse", "company": "checkout",         "company_name": "Checkout.com"},
+    {"ats": "greenhouse", "company": "tipalti",          "company_name": "Tipalti"},
+    {"ats": "greenhouse", "company": "finix",            "company_name": "Finix"},
+    {"ats": "greenhouse", "company": "addepar",          "company_name": "Addepar"},
+    {"ats": "greenhouse", "company": "enfusion",         "company_name": "Enfusion"},
+    # Healthcare / BioTech
+    {"ats": "greenhouse", "company": "flatiron",         "company_name": "Flatiron Health"},
+    {"ats": "greenhouse", "company": "veracyte",         "company_name": "Veracyte"},
+    {"ats": "greenhouse", "company": "tempus",           "company_name": "Tempus"},
+    {"ats": "greenhouse", "company": "recursion",        "company_name": "Recursion Pharma"},
+    {"ats": "greenhouse", "company": "benchsci",         "company_name": "BenchSci"},
+    {"ats": "greenhouse", "company": "indivior",         "company_name": "Indivior"},
+    {"ats": "greenhouse", "company": "transcarent",      "company_name": "Transcarent"},
+    {"ats": "greenhouse", "company": "accolade",         "company_name": "Accolade"},
+    {"ats": "greenhouse", "company": "brightspring",     "company_name": "BrightSpring"},
+    {"ats": "greenhouse", "company": "multiplan",        "company_name": "MultiPlan"},
+    # Real Estate / PropTech
+    {"ats": "greenhouse", "company": "redfin",           "company_name": "Redfin"},
+    {"ats": "greenhouse", "company": "orchard",          "company_name": "Orchard"},
+    {"ats": "greenhouse", "company": "sundae",           "company_name": "Sundae"},
+    {"ats": "greenhouse", "company": "knock",            "company_name": "Knock"},
+    # Logistics / Supply Chain
+    {"ats": "greenhouse", "company": "veho",             "company_name": "Veho"},
+    {"ats": "greenhouse", "company": "shipbob",          "company_name": "ShipBob"},
+    {"ats": "greenhouse", "company": "stord",            "company_name": "Stord"},
+    # Other notable tech
+    {"ats": "greenhouse", "company": "squarespace",      "company_name": "Squarespace"},  # might duplicate
+    {"ats": "greenhouse", "company": "tripadvisor",      "company_name": "Tripadvisor"},
+    {"ats": "greenhouse", "company": "eventbrite",       "company_name": "Eventbrite"},
+    {"ats": "greenhouse", "company": "strava",           "company_name": "Strava"},
+    {"ats": "greenhouse", "company": "alltrails",        "company_name": "AllTrails"},
+    {"ats": "greenhouse", "company": "calm",             "company_name": "Calm"},
+    {"ats": "greenhouse", "company": "headspace",        "company_name": "Headspace"},
+    {"ats": "greenhouse", "company": "grammarly",        "company_name": "Grammarly"},
+    {"ats": "greenhouse", "company": "loom",             "company_name": "Loom"},  # also on Ashby
+    {"ats": "greenhouse", "company": "mural",            "company_name": "Mural"},
 
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
     {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
