@@ -425,10 +425,26 @@ class PoliteClient:
 
     # ── Rate limiting ─────────────────────────────────────────────────────────
 
+    # Pure JSON APIs respond fast and are designed for programmatic access —
+    # use a shorter per-domain delay to keep total runtime under 90 minutes.
+    _API_DOMAIN_DELAYS: dict[str, float] = {
+        "boards-api.greenhouse.io": 0.3,
+        "api.lever.co":             0.3,
+        "api.ashbyhq.com":          0.3,
+        "api.smartrecruiters.com":  0.3,
+        "apply.workable.com":       0.3,
+        "api.adzuna.com":           0.5,
+        "www.themuse.com":          0.5,
+        "data.usajobs.gov":         0.5,
+        "remotive.com":             0.5,
+        "remoteok.com":             0.5,
+    }
+
     def _rate_limit(self, url: str) -> None:
         domain  = urlparse(url).netloc
+        delay   = self._API_DOMAIN_DELAYS.get(domain, self._domain_delay)
         elapsed = time.monotonic() - self._last_req.get(domain, 0.0)
-        wait    = self._domain_delay - elapsed
+        wait    = delay - elapsed
         if wait > 0:
             time.sleep(wait)
         self._last_req[domain] = time.monotonic()
@@ -3172,6 +3188,61 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "grammarly",        "company_name": "Grammarly"},
     {"ats": "greenhouse", "company": "loom",             "company_name": "Loom"},  # also on Ashby
     {"ats": "greenhouse", "company": "mural",            "company_name": "Mural"},
+    # Security / Compliance
+    {"ats": "greenhouse", "company": "abnormalsecurity", "company_name": "Abnormal Security"},
+    {"ats": "greenhouse", "company": "tanium",           "company_name": "Tanium"},
+    {"ats": "greenhouse", "company": "illumio",          "company_name": "Illumio"},
+    {"ats": "greenhouse", "company": "recordedfuture",   "company_name": "Recorded Future"},
+    {"ats": "greenhouse", "company": "dragos",           "company_name": "Dragos"},
+    {"ats": "greenhouse", "company": "deepwatch",        "company_name": "Deepwatch"},
+    {"ats": "greenhouse", "company": "lookout",          "company_name": "Lookout"},
+    {"ats": "greenhouse", "company": "extrahop",         "company_name": "ExtraHop"},
+    {"ats": "greenhouse", "company": "saltsecurity",     "company_name": "Salt Security"},
+    {"ats": "greenhouse", "company": "cycode",           "company_name": "Cycode"},
+    {"ats": "greenhouse", "company": "checkmarx",        "company_name": "Checkmarx"},
+    {"ats": "greenhouse", "company": "drata",            "company_name": "Drata"},
+    # Fintech
+    {"ats": "greenhouse", "company": "moderntreasury",   "company_name": "Modern Treasury"},
+    {"ats": "greenhouse", "company": "lithic",           "company_name": "Lithic"},
+    {"ats": "greenhouse", "company": "navan",            "company_name": "Navan"},
+    {"ats": "greenhouse", "company": "paxos",            "company_name": "Paxos"},
+    {"ats": "greenhouse", "company": "chainalysis",      "company_name": "Chainalysis"},
+    {"ats": "greenhouse", "company": "circle",           "company_name": "Circle"},
+    # Productivity / SaaS
+    {"ats": "greenhouse", "company": "mondaydotcom",     "company_name": "Monday.com"},
+    {"ats": "greenhouse", "company": "wrike",            "company_name": "Wrike"},
+    {"ats": "greenhouse", "company": "showpad",          "company_name": "Showpad"},
+    {"ats": "greenhouse", "company": "frontapp",         "company_name": "Front"},
+    {"ats": "greenhouse", "company": "customerio",       "company_name": "Customer.io"},
+    {"ats": "greenhouse", "company": "workramp",         "company_name": "WorkRamp"},
+    {"ats": "greenhouse", "company": "docebo",           "company_name": "Docebo"},
+    {"ats": "greenhouse", "company": "sisense",          "company_name": "Sisense"},
+    {"ats": "greenhouse", "company": "domo",             "company_name": "Domo"},
+    {"ats": "greenhouse", "company": "honeycombio",      "company_name": "Honeycomb"},
+    {"ats": "greenhouse", "company": "pluralsight",      "company_name": "Pluralsight"},
+    {"ats": "greenhouse", "company": "codecademy",       "company_name": "Codecademy"},
+    {"ats": "greenhouse", "company": "buildkite",        "company_name": "Buildkite"},
+    # Health Tech
+    {"ats": "greenhouse", "company": "lyrahealth",       "company_name": "Lyra Health"},
+    {"ats": "greenhouse", "company": "springhealth",     "company_name": "Spring Health"},
+    {"ats": "greenhouse", "company": "hingehealth",      "company_name": "Hinge Health"},
+    {"ats": "greenhouse", "company": "ro",               "company_name": "Ro"},
+    # Consumer / Marketplace
+    {"ats": "greenhouse", "company": "turo",             "company_name": "Turo"},
+    {"ats": "greenhouse", "company": "offerup",          "company_name": "OfferUp"},
+    {"ats": "greenhouse", "company": "mercari",          "company_name": "Mercari US"},
+    {"ats": "greenhouse", "company": "seatgeek",         "company_name": "SeatGeek"},
+    {"ats": "greenhouse", "company": "wag",              "company_name": "Wag!"},
+    # Media / Content
+    {"ats": "greenhouse", "company": "axios",            "company_name": "Axios"},
+    {"ats": "greenhouse", "company": "theathleticmedia", "company_name": "The Athletic"},
+    # Enterprise / Other
+    {"ats": "greenhouse", "company": "celonis",          "company_name": "Celonis"},
+    {"ats": "greenhouse", "company": "servicetitan",     "company_name": "ServiceTitan"},
+    {"ats": "greenhouse", "company": "lob",              "company_name": "Lob"},
+    {"ats": "greenhouse", "company": "epicgames",        "company_name": "Epic Games"},
+    {"ats": "greenhouse", "company": "bonusly",          "company_name": "Bonusly"},
+    {"ats": "greenhouse", "company": "whoop",            "company_name": "WHOOP"},
 
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
     {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
@@ -3217,6 +3288,15 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # Other tech on Lever
     {"ats": "lever", "company": "matterport",          "company_name": "Matterport"},
     {"ats": "lever", "company": "pipe",                "company_name": "Pipe"},
+    # Additional Lever targets
+    {"ats": "lever", "company": "confluent",           "company_name": "Confluent"},
+    {"ats": "lever", "company": "harness",             "company_name": "Harness"},
+    {"ats": "lever", "company": "labelbox",            "company_name": "Labelbox"},
+    {"ats": "lever", "company": "materialize",         "company_name": "Materialize"},
+    {"ats": "lever", "company": "prefect",             "company_name": "Prefect"},
+    {"ats": "lever", "company": "baseten",             "company_name": "Baseten"},
+    {"ats": "lever", "company": "sambanova",           "company_name": "SambaNova Systems"},
+    {"ats": "lever", "company": "writer",              "company_name": "Writer"},
 
     # ── Ashby (api.ashbyhq.com/posting-api/job-board/{slug}) ─────────────────
     # All slugs verified 2026-02
@@ -3272,6 +3352,16 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "ashby", "company": "eleven-labs",  "company_name": "ElevenLabs"},
     {"ats": "ashby", "company": "typeform",     "company_name": "Typeform"},
     {"ats": "ashby", "company": "hex-tech",     "company_name": "Hex (Ashby)"},
+    # Additional Ashby targets
+    {"ats": "ashby", "company": "langchain",    "company_name": "LangChain"},
+    {"ats": "ashby", "company": "pinecone",     "company_name": "Pinecone"},
+    {"ats": "ashby", "company": "humanloop",    "company_name": "Humanloop"},
+    {"ats": "ashby", "company": "arize",        "company_name": "Arize AI"},
+    {"ats": "ashby", "company": "braintrust",   "company_name": "Braintrust"},
+    {"ats": "ashby", "company": "vectara",      "company_name": "Vectara"},
+    {"ats": "ashby", "company": "glean",        "company_name": "Glean"},
+    {"ats": "ashby", "company": "whylabs",      "company_name": "WhyLabs"},
+    {"ats": "ashby", "company": "predibase",    "company_name": "Predibase"},
 
     # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
     # Note: Typeform and Hotjar are EU-based; they return 0 US jobs — disabled.
