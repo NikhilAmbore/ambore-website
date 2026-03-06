@@ -410,6 +410,7 @@ class PoliteClient:
         "data.usajobs.gov",
         "serpapi.com",
         "apply.workable.com",
+        "www.indeed.com",         # /rss — public RSS feed, no key required
     })
 
     def _robots_allow(self, url: str) -> bool:
@@ -440,9 +441,22 @@ class PoliteClient:
         "remoteok.com":             0.5,
     }
 
+    # Domain suffix → delay (for services where each company has its own subdomain)
+    _API_DOMAIN_SUFFIXES: dict[str, float] = {
+        "myworkdayjobs.com": 0.5,  # Workday per-company subdomains
+        "indeed.com":        0.5,  # Indeed RSS (www.indeed.com covered above too)
+    }
+
     def _rate_limit(self, url: str) -> None:
         domain  = urlparse(url).netloc
-        delay   = self._API_DOMAIN_DELAYS.get(domain, self._domain_delay)
+        delay   = self._API_DOMAIN_DELAYS.get(domain)
+        if delay is None:
+            for suffix, d in self._API_DOMAIN_SUFFIXES.items():
+                if domain.endswith(suffix):
+                    delay = d
+                    break
+        if delay is None:
+            delay = self._domain_delay
         elapsed = time.monotonic() - self._last_req.get(domain, 0.0)
         wait    = delay - elapsed
         if wait > 0:
@@ -2751,6 +2765,147 @@ class LinkedInGuestScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Indeed RSS scraper (no API key — public RSS feeds)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class IndeedRSSScraper(BaseScraper):
+    """
+    Scrapes Indeed job listings via public RSS feeds.
+    No API key or account required.
+
+    RSS endpoint: https://www.indeed.com/rss?q={keyword}&l=United+States
+    Returns up to 25 jobs per request; paginated via &start= offset.
+    """
+
+    ATS_NAME = "indeed"
+
+    _BASE_URL = "https://www.indeed.com/rss"
+    _MAX_PAGES = 8   # 25 jobs × 8 = 200 per keyword
+
+    _KEYWORDS: list[str] = [
+        "software engineer", "data scientist", "product manager",
+        "data engineer", "machine learning engineer", "devops engineer",
+        "backend engineer", "frontend engineer", "full stack developer",
+        "cloud architect", "security engineer", "python developer",
+        "java developer", "solutions architect", "technical program manager",
+        "engineering manager", "qa engineer", "data analyst",
+        "business analyst", "site reliability engineer",
+        "cybersecurity analyst", "network engineer", "systems administrator",
+        "it manager", "cloud engineer", "platform engineer",
+        "mobile engineer", "ios developer", "android developer",
+        "salesforce developer", "database administrator", "web developer",
+        "ux designer", "product designer", "scrum master",
+        "infrastructure engineer", "ai engineer", "automation engineer",
+    ]
+
+    def fetch_jobs(self) -> list[Job]:
+        from xml.etree import ElementTree as ET
+        from email.utils import parsedate_to_datetime
+
+        jobs: list[Job] = []
+
+        for kw in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            for page in range(self._MAX_PAGES):
+                start = page * 25
+                params = urllib.parse.urlencode({
+                    "q":    kw,
+                    "l":    "United States",
+                    "sort": "date",
+                    "limit": "25",
+                    "start": str(start),
+                })
+                url = f"{self._BASE_URL}?{params}"
+                try:
+                    resp = self.client.get(url)
+                    root = ET.fromstring(resp.text)
+                    channel = root.find("channel")
+                    if channel is None:
+                        break
+                    items = channel.findall("item")
+                    if not items:
+                        break
+
+                    for item in items:
+                        raw_title = (item.findtext("title") or "").strip()
+                        link      = (item.findtext("link")  or "").strip()
+                        guid      = (item.findtext("guid")  or "").strip()
+                        pub_str   = (item.findtext("pubDate") or "").strip()
+                        desc      = (item.findtext("description") or "").strip()
+                        src_elem  = item.find("source")
+                        company   = src_elem.text.strip() if src_elem is not None and src_elem.text else ""
+
+                        # Indeed title format is "Job Title - Company - City, State"
+                        # or "Job Title - Company"
+                        title    = raw_title
+                        location = ""
+                        if " - " in raw_title:
+                            parts = raw_title.split(" - ")
+                            title = parts[0].strip()
+                            if not company and len(parts) >= 2:
+                                company = parts[1].strip()
+                            if len(parts) >= 3:
+                                location = parts[2].strip()
+
+                        # Extract Indeed job key from guid/link for stable ID
+                        job_key = ""
+                        for src in (guid, link):
+                            if "jk=" in src:
+                                job_key = src.split("jk=")[-1].split("&")[0].strip()
+                                break
+                        job_id = f"indeed_{job_key}" if job_key else f"indeed_{_make_id(title, company, location)}"
+
+                        apply_url = link or guid
+
+                        # Parse RFC 2822 pubDate
+                        posted_at_str: str | None = None
+                        if pub_str:
+                            try:
+                                posted_at_str = parsedate_to_datetime(pub_str).isoformat()
+                            except Exception:
+                                pass
+
+                        job = self._make_job(
+                            title=title,
+                            location=location or "United States",
+                            url=apply_url,
+                            description=desc,
+                            posted_at=posted_at_str,
+                            company_override=company or None,
+                        )
+                        if job:
+                            job = Job(
+                                id=job_id,
+                                title=job.title,
+                                company=job.company,
+                                location=job.location,
+                                is_remote=job.is_remote,
+                                is_usa=job.is_usa,
+                                url=job.url,
+                                description=job.description,
+                                employment_type=job.employment_type,
+                                salary_min=job.salary_min,
+                                salary_max=job.salary_max,
+                                salary_currency=job.salary_currency,
+                                posted_at=job.posted_at,
+                                ats="indeed",
+                                scraped_at=job.scraped_at,
+                            )
+                            jobs.append(job)
+
+                    if len(items) < 25:
+                        break   # last page
+
+                except Exception as exc:
+                    log.warning("[Indeed] RSS error kw=%r page=%d: %s", kw, page, exc)
+                    break
+
+        log.info("[Indeed] Total: %d US jobs from RSS feeds", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -2775,6 +2930,7 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "serpapi":         SerpAPIGoogleJobsScraper,  # Google Jobs; free key required
     "apify":           ApifyJobsScraper,    # cloud actors; free tier available
     "linkedin":        LinkedInGuestScraper, # LinkedIn guest API — no key needed
+    "indeed":          IndeedRSSScraper,     # Indeed RSS feeds — no key needed
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -3368,6 +3524,9 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # {"ats": "workable", "company": "typeform",    "company_name": "Typeform"},
     # {"ats": "workable", "company": "hotjar",      "company_name": "Hotjar"},
 
+    # ── Indeed RSS (no API key — public RSS feeds, 38 keywords × 8 pages) ────
+    {"ats": "indeed", "company": "indeed-aggregator", "company_name": "Indeed"},
+
     # ── Workday (POST /wday/cxs/{tenant}/{site}/jobs — CSRF via session warmup)
     # The scraper GETs the careers page first to capture the CALYPSO_CSRF_TOKEN
     # cookie, which is then sent as the X-Csrf-Token header on every POST.
@@ -3391,6 +3550,85 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
         "ats": "workday", "company": "paypal",
         "company_name": "PayPal",
         "wd_tenant": "paypal", "wd_site": "jobs", "wd_instance": "wd1",
+    },
+    # Consulting / Professional Services (huge US headcounts)
+    {
+        "ats": "workday", "company": "deloitte",
+        "company_name": "Deloitte",
+        "wd_tenant": "deloitte", "wd_site": "DeloitteUSCareers", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "pwc",
+        "company_name": "PwC",
+        "wd_tenant": "pwc", "wd_site": "Global_Experienced_Careers", "wd_instance": "wd3",
+    },
+    {
+        "ats": "workday", "company": "ey",
+        "company_name": "EY",
+        "wd_tenant": "ey", "wd_site": "EY_US_Employment_Site", "wd_instance": "wd5",
+    },
+    # Defense / Government Contractors (thousands of US openings)
+    {
+        "ats": "workday", "company": "lockheedmartin",
+        "company_name": "Lockheed Martin",
+        "wd_tenant": "lmc", "wd_site": "LMCareers", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "boeing",
+        "company_name": "Boeing",
+        "wd_tenant": "boeing", "wd_site": "EXTERNAL_CAREERS", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "northropgrumman",
+        "company_name": "Northrop Grumman",
+        "wd_tenant": "ngc", "wd_site": "NGC_External_Site", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "rtx",
+        "company_name": "RTX (Raytheon)",
+        "wd_tenant": "rtx", "wd_site": "RTX_External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "boozallen",
+        "company_name": "Booz Allen Hamilton",
+        "wd_tenant": "bah", "wd_site": "BAH_External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "leidos",
+        "company_name": "Leidos",
+        "wd_tenant": "leidos", "wd_site": "External", "wd_instance": "wd5",
+    },
+    # Healthcare (enormous US job counts)
+    {
+        "ats": "workday", "company": "unitedhealthgroup",
+        "company_name": "UnitedHealth Group",
+        "wd_tenant": "uhg", "wd_site": "Candidate_Opportunities", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "cvshealth",
+        "company_name": "CVS Health",
+        "wd_tenant": "cvshealth", "wd_site": "CVS_Health_Careers", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "humana",
+        "company_name": "Humana",
+        "wd_tenant": "humana", "wd_site": "Humana_External_Career_Site", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "jnj",
+        "company_name": "Johnson & Johnson",
+        "wd_tenant": "jnj", "wd_site": "JohnsonJohnsonCareers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "pfizer",
+        "company_name": "Pfizer",
+        "wd_tenant": "pfizer", "wd_site": "PfizerCareers", "wd_instance": "wd1",
+    },
+    # Technology
+    {
+        "ats": "workday", "company": "ibm",
+        "company_name": "IBM",
+        "wd_tenant": "ibm", "wd_site": "IBMExternalSite", "wd_instance": "wd12",
     },
     # Cloudflare-protected (return HTTP 500 to non-browser clients):
     # microsoft (wd1/External_Microsoft_Careers_Portal), oracle (wd1/External),
