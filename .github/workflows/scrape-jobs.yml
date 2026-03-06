@@ -24,6 +24,12 @@ on:
 permissions:
   contents: write   # needed to push updated jobs.json
 
+# Only one run at a time — prevents concurrent runs from fighting over jobs.json.
+# If a new run is triggered while one is in progress, the new one waits in queue.
+concurrency:
+  group: hourly-scrape
+  cancel-in-progress: false
+
 jobs:
   scrape:
     name: Scrape & Publish Jobs
@@ -102,9 +108,13 @@ jobs:
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
             git commit -m "chore: refresh jobs.json — ${TOTAL} US jobs ($(date -u '+%Y-%m-%d'))"
-            # Fetch latest remote and merge — if jobs.json conflicts, keep OUR
-            # fresh scrape (concurrent runs both updating jobs.json is normal).
-            git fetch origin main
-            git merge -X ours origin/main --no-edit || true
-            git push
+            # Sync with remote and push — retry up to 3 times in case of
+            # a last-second concurrent push from another run.
+            for attempt in 1 2 3; do
+              git fetch origin main
+              git merge -X ours origin/main --no-edit
+              git push && break
+              echo "Push attempt $attempt failed — retrying in 5s..."
+              sleep 5
+            done
           fi
