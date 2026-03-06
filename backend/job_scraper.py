@@ -130,7 +130,7 @@ REQUEST_TIMEOUT   = 20      # seconds per request
 MAX_RETRIES       = 3       # attempts before giving up
 RETRY_BACKOFF     = 2.0     # exponential base in seconds  (2^n seconds sleep)
 DOMAIN_DELAY      = 1.5     # minimum seconds between requests to same domain
-MAX_JOBS_PER_SRC  = 2000    # safety cap per source
+MAX_JOBS_PER_SRC  = 10000   # safety cap per source
 
 # ─── US geography ─────────────────────────────────────────────────────────────
 
@@ -2558,7 +2558,7 @@ class LinkedInGuestScraper(BaseScraper):
     _DETAIL_URL = "https://www.linkedin.com/jobs-guest/jobs/api/jobPosting/{id}"
     _GEO_ID     = "103644278"   # United States
     _PAGE_SIZE  = 25
-    _MAX_PAGES  = 8             # 8 × 25 = up to 200 results per keyword
+    _MAX_PAGES  = 4             # 4 × 25 = up to 100 results per keyword (more = timeout risk)
 
     _HEADERS: dict[str, str] = {
         "User-Agent":         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
