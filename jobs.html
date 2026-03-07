@@ -592,10 +592,11 @@ function normalizeQuery(raw) {
 ═══════════════════════════════════════════ */
 function inferLevel(title) {
   const t = (title || '').toLowerCase();
-  if (/\b(director|vp |vice president|head of|chief|cto|ceo|coo|svp|evp)\b/.test(t)) return 'executive';
-  if (/\b(senior|sr\.|staff|principal|lead|architect)\b/.test(t)) return 'senior';
-  if (/\b(junior|jr\.|entry.?level|associate|intern|graduate|new grad)\b/.test(t)) return 'entry';
-  return 'mid';
+  if (/\b(intern(ship)?|co[\s\-]?op|trainee|apprentice)\b/.test(t)) return 'internship';
+  if (/\b(senior|sr\.?\s|lead|principal|staff|architect|director|vp\b|vice president|head of|chief|cto|ceo|coo|svp|evp|managing)\b/.test(t)) return 'senior';
+  if (/\b(junior|jr\.?\s|entry[\s\-]?level|associate|graduate|new grad|early career)\b/.test(t)) return 'entry';
+  if (/\bmid[\s\-]?level\b|\bintermediate\b/.test(t)) return 'mid';
+  return 'unknown';
 }
 
 /* ═══════════════════════════════════════════
@@ -650,8 +651,11 @@ function applyAndRender() {
     if (dateFilter && j.posted_at) {
       if (now - new Date(j.posted_at).getTime() > (DATE_MS[dateFilter] || Infinity)) return false;
     }
-    // ── Experience level
-    if (expLevels.length && !expLevels.includes(j.level || 'unknown')) return false;
+    // ── Experience level (use scraped level if set, fall back to title inference)
+    if (expLevels.length) {
+      const lvl = (j.level && j.level !== 'unknown') ? j.level : inferLevel(j.title);
+      if (!expLevels.includes(lvl)) return false;
+    }
     return true;
   });
 
@@ -730,8 +734,8 @@ function renderJobCard(job) {
     ? `<span class="job-tag">${escapeHtml(job.department)}</span>`
     : '';
 
-  // Level badge
-  const lvl = job.level || 'unknown';
+  // Level badge (use scraped level if set, fall back to title inference)
+  const lvl = (job.level && job.level !== 'unknown') ? job.level : inferLevel(job.title);
   const lvlLabels = { internship: 'Intern', entry: 'Entry', mid: 'Mid', senior: 'Senior' };
   const levelBadge = lvlLabels[lvl] ? `<span class="level-badge ${lvl}">${lvlLabels[lvl]}</span>` : '';
 
