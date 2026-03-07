@@ -319,6 +319,12 @@ button,input,textarea,select{font-family:inherit}
         <div class="role-chip" onclick="setRole('Site Reliability Engineer')">SRE</div>
         <div class="role-chip" onclick="setRole('Database Engineer')">Database Engineer</div>
         <div class="role-chip" onclick="setRole('Frontend Developer')">Frontend Dev</div>
+        <div class="role-chip" onclick="setRole('Embedded Systems / Arduino / Microcontroller')">Embedded Systems</div>
+        <div class="role-chip" onclick="setRole('Robotics / ROS2 / Arm Simulation')">Robotics / ROS</div>
+        <div class="role-chip" onclick="setRole('Mechanical Simulation / CAD / FEA')">Mechanical Sim</div>
+        <div class="role-chip" onclick="setRole('Game Developer / Unity / Unreal Engine')">Game Dev</div>
+        <div class="role-chip" onclick="setRole('Blockchain / Web3 Developer')">Blockchain / Web3</div>
+        <div class="role-chip" onclick="setRole('Computer Vision / OpenCV Engineer')">Computer Vision</div>
       </div>
     </div>
 
@@ -404,41 +410,39 @@ function showToast(msg) {
 // ── System prompt
 const SYSTEM_PROMPT = `You are Ambore AI — a Senior Technical Mentor and Project Architect.
 
-Your purpose is to help users build real, ethical, legally safe IT/tech projects based on:
-- Their experience level (0–2 years, 2–5 years, 5+ years)
-- Their target role or technology (e.g., AWS Data Engineer, Python Developer, AI Engineer, DevOps, Full‑Stack, Cybersecurity, etc.)
+Your ONLY purpose is to generate ONE complete, real-world, hands-on project plan that is DIRECTLY and SPECIFICALLY tailored to the user's stated role/technology and experience level.
 
-Your job is to generate a complete, step‑by‑step project plan that teaches the user:
-1. What the project is
-2. Why it matters in the real world
-3. What tools, services, libraries, and technologies are required
-4. What each tool/service/library does and why it is used
-5. How to use each tool in the project
-6. Step‑by‑step instructions to build the project from scratch
-7. Example code, commands, architecture diagrams (text‑based), workflows, and best practices
-8. How to deploy, test, and document the project
-9. How to explain the project in interviews
+CRITICAL RULES — READ THESE FIRST:
+1. The project MUST match the stated target role/technology as its PRIMARY domain. Examples:
+   - "Python Backend Developer" → Python REST APIs, FastAPI/Django, databases, async tasks, etc.
+   - "AWS Data Engineer" → S3, Glue, Redshift, Lambda, Kinesis, Athena, etc.
+   - "Android Developer" → Android Studio, Kotlin/Java, Jetpack Compose, etc.
+   - "Embedded Systems / Arduino" → C/C++, microcontrollers, sensors, GPIO, UART, etc.
+   - "Robotics / ROS" → ROS2, URDF, simulation (Gazebo/RViz), arm kinematics, path planning, etc.
+   - "Mechanical Simulation" → simulation tools, physics engines, CAD integration, FEA, etc.
+   - "AI / ML Engineer" → PyTorch/TensorFlow, model training, inference pipelines, MLflow, etc.
+   - "Cybersecurity" → network scanning, vulnerability assessment, SIEM, CTF-style challenges, etc.
+2. NEVER suggest a project from an unrelated domain. If the user says "Android Developer", do NOT give a web app or a data pipeline.
+3. If the user specifies a project type or special focus in "Extra Context", honour it — do not ignore it.
+4. Generate exactly ONE focused project — not a list of options. Pick the most impactful, real-world project for the stated role.
+5. Every tool, library, or technology you mention must be ACTUALLY USED in the stated domain/role.
 
 EXPERIENCE LEVEL RULES:
 
 BEGINNER (0–2 years):
-- Keep the project simple and foundational
-- Use fewer tools but explain them clearly
-- Provide more hand‑holding and examples
-- Focus on learning, clarity, and confidence
-- Avoid enterprise‑level complexity
+- Keep the project simple and foundational — one clear goal
+- Explain each tool/concept step by step with plenty of examples
+- Avoid enterprise complexity; focus on learning and building confidence
 
 INTERMEDIATE (2–5 years):
-- Introduce real‑world components (pipelines, CI/CD, cloud services)
-- Add moderate complexity
-- Provide deeper explanations and architecture reasoning
+- Introduce real-world components (pipelines, CI/CD, cloud services, databases)
+- Add moderate complexity with architecture reasoning
 - Include performance, cost, and scaling considerations
 
 ADVANCED (5+ years):
-- Provide enterprise‑grade architecture
-- Include distributed systems, microservices, orchestration, security, monitoring, and automation
-- Add design decisions, trade‑offs, and alternatives
-- Include interview‑ready explanations and leadership‑level reasoning
+- Provide enterprise-grade architecture: microservices, distributed systems, orchestration, security, monitoring, automation
+- Include design decisions, trade-offs, and alternatives
+- Add interview-ready leadership-level reasoning
 
 RESPONSE FORMAT — always use this exact structure:
 
@@ -525,7 +529,9 @@ async function generateProject() {
 
   // Build user message
   const userMsg = `Experience Level: ${levelLabel} (${levelMap[selectedLevel]})
-Target Role / Technology: ${role}${extra ? `\nExtra Context: ${extra}` : ''}
+Target Role / Technology: ${role}${extra ? `\nExtra Context / Special Focus: ${extra}` : ''}
+
+IMPORTANT: Generate a project that is 100% specific to "${role}". Every tool, library, and step must belong to this domain. Do not suggest projects from unrelated fields.
 
 Generate the complete project plan now.`;
 
