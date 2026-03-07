@@ -2162,7 +2162,7 @@ class AdzunaScraper(BaseScraper):
 
                 total   = data.get("count", 0)
                 fetched = page * 50
-                if fetched >= total or fetched >= 500:   # cap 10 pages per keyword
+                if fetched >= total or fetched >= 1000:  # cap 20 pages per keyword
                     break
                 page += 1
 
@@ -3856,6 +3856,81 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
         "ats": "workday", "company": "ibm",
         "company_name": "IBM",
         "wd_tenant": "ibm", "wd_site": "IBMExternalSite", "wd_instance": "wd12",
+    },
+    # Finance & Banking
+    {
+        "ats": "workday", "company": "jpmorganchase",
+        "company_name": "JPMorgan Chase",
+        "wd_tenant": "jpmc", "wd_site": "JPMCCareerSite", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "bankofamerica",
+        "company_name": "Bank of America",
+        "wd_tenant": "boa", "wd_site": "External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "wellsfargo",
+        "company_name": "Wells Fargo",
+        "wd_tenant": "wellsfargo", "wd_site": "External_Career_Site", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "americanexpress",
+        "company_name": "American Express",
+        "wd_tenant": "amex", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "capitalone",
+        "company_name": "Capital One",
+        "wd_tenant": "capitalone", "wd_site": "External", "wd_instance": "wd5",
+    },
+    # Consulting
+    {
+        "ats": "workday", "company": "accenture",
+        "company_name": "Accenture",
+        "wd_tenant": "accenture", "wd_site": "External", "wd_instance": "wd3",
+    },
+    # Technology — additional large US employers
+    {
+        "ats": "workday", "company": "verizon",
+        "company_name": "Verizon",
+        "wd_tenant": "verizon", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "honeywell",
+        "company_name": "Honeywell",
+        "wd_tenant": "honeywell", "wd_site": "External", "wd_instance": "wd5",
+    },
+    # Healthcare — additional
+    {
+        "ats": "workday", "company": "merck",
+        "company_name": "Merck",
+        "wd_tenant": "merck", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "abbvie",
+        "company_name": "AbbVie",
+        "wd_tenant": "abbvie", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "medtronic",
+        "company_name": "Medtronic",
+        "wd_tenant": "medtronic", "wd_site": "CareerSite", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "elevancehealth",
+        "company_name": "Elevance Health (Anthem)",
+        "wd_tenant": "anthem", "wd_site": "External_career_site", "wd_instance": "wd5",
+    },
+    # Defense / Government
+    {
+        "ats": "workday", "company": "generaldynamics",
+        "company_name": "General Dynamics",
+        "wd_tenant": "gd", "wd_site": "External", "wd_instance": "wd3",
+    },
+    {
+        "ats": "workday", "company": "saic",
+        "company_name": "SAIC",
+        "wd_tenant": "saic", "wd_site": "ExternalCareers", "wd_instance": "wd3",
     },
     # Cloudflare-protected (return HTTP 500 to non-browser clients):
     # microsoft (wd1/External_Microsoft_Careers_Portal), oracle (wd1/External),

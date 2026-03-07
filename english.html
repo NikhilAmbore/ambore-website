@@ -220,7 +220,6 @@ a{text-decoration:none;color:inherit}
 /* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:0.84rem;color:#fff;z-index:9999;transition:transform 0.3s,opacity 0.3s;opacity:0;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -286,29 +285,7 @@ a{text-decoration:none;color:inherit}
     <div class="page-title">🇬🇧 <span>English AI</span> — Speaking, Writing &amp; Exam Coach</div>
     <div class="page-sub">Improve English skills, professional communication, and exam scores with AI-powered coaching</div>
   </div>
-    <div class="dos-grid">
-      <div>
-        <div class="dos-col-title green">&#10003; What you CAN do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#9989;</span>Improve grammar, sentence structure, and writing clarity</li>
-        <li><span class="icon">&#9989;</span>Practice professional and business English communication</li>
-        <li><span class="icon">&#9989;</span>Prepare for IELTS, GRE, GMAT, PTE, and Duolingo English Test</li>
-        <li><span class="icon">&#9989;</span>Build vocabulary, learn idioms, and improve pronunciation guidance</li>
-        <li><span class="icon">&#9989;</span>Get instant feedback on speaking, writing, and comprehension</li>
-        </ul>
-      </div>
-      <div>
-        <div class="dos-col-title red">&#10007; What it CANNOT do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#10060;</span>Certify your English level or issue official language certificates</li>
-        <li><span class="icon">&#10060;</span>Replace a formal English course, teacher, or accredited exam prep program</li>
-        <li><span class="icon">&#10060;</span>Guarantee specific exam scores (IELTS band, GRE score, etc.)</li>
-        <li><span class="icon">&#10060;</span>Provide real-time voice-to-voice conversation &mdash; responses are text-based</li>
-        <li><span class="icon">&#10060;</span>Access your past messages after the session &mdash; history is not saved</li>
-        </ul>
-      </div>
-    </div>
-  </div>
+
   <!-- Mode selector -->
   <div class="mode-bar">
     <div class="mode-label">Learning Mode</div>
@@ -358,8 +335,8 @@ a{text-decoration:none;color:inherit}
 /* ═══════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════ */
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY   = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 
 /* ═══════════════════════════════════════════

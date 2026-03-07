@@ -54,7 +54,7 @@ jobs:
           pip install --upgrade pip
           pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
 
-      - name: Run scraper (free sources only — Apify handled by daily workflow)
+      - name: Scrape fresh jobs (output to /tmp — no merge yet)
         env:
           USAJOBS_API_KEY: ${{ secrets.USAJOBS_API_KEY }}
           USAJOBS_EMAIL:   ${{ secrets.USAJOBS_EMAIL }}
@@ -72,49 +72,126 @@ jobs:
             SINCE_FLAG="--since-hours ${{ github.event.inputs.since_hours }}"
           fi
 
+          # Output to /tmp so the scraper doesn't try to merge with the
+          # (now-stale) local jobs.json — we do a proper merge below.
           python backend/job_scraper.py \
-            --output backend/jobs.json \
+            --output /tmp/fresh_jobs.json \
             --skip-ats apify \
             $VERBOSE_FLAG $SINCE_FLAG
 
-          echo "=== jobs.json stats ==="
-          wc -c backend/jobs.json
+          echo "=== Fresh jobs scraped this run ==="
           python -c "
           import json
           from datetime import datetime, timezone, timedelta
-          jobs   = json.load(open('backend/jobs.json'))
-          remote = sum(1 for j in jobs if j['is_remote'])
-          now    = datetime.now(timezone.utc)
-          fresh  = sum(1 for j in jobs if (fsa := j.get('first_seen_at')) and
-                       (datetime.fromisoformat(fsa).replace(tzinfo=timezone.utc)
-                        if datetime.fromisoformat(fsa).tzinfo is None
-                        else datetime.fromisoformat(fsa)) >= now - timedelta(hours=2))
+          jobs = json.load(open('/tmp/fresh_jobs.json'))
           sources = {}
           for j in jobs:
               sources[j['ats']] = sources.get(j['ats'], 0) + 1
-          print(f'Total: {len(jobs)} jobs  |  Remote: {remote}  |  Added this run: ~{fresh}')
+          print(f'Fresh this run: {len(jobs)} jobs')
           for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
           "
+
+      - name: Merge fresh jobs with latest remote jobs.json
+        # Fixes race-condition data loss: the scrape step takes ~55 min while
+        # other runs commit new data.  We fetch the *current* remote HEAD here
+        # (not the stale checkout from the start of the run) and do the merge
+        # at the Python level, so we never overwrite concurrent additions.
+        run: |
+          git fetch origin main
+
+          python3 - <<'PYEOF'
+          import json, subprocess, sys
+          from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+          from collections import Counter
+
+          EXPIRE_DAYS   = 45
+          now_utc       = datetime.now(timezone.utc)
+          expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
+          now_iso       = now_utc.isoformat()
+
+          # Fresh jobs from this run (no existing-merge bias)
+          fresh = json.loads(Path('/tmp/fresh_jobs.json').read_text(encoding='utf-8'))
+
+          # Latest remote jobs.json — NOT the stale checkout
+          r = subprocess.run(
+              ['git', 'show', 'origin/main:backend/jobs.json'],
+              capture_output=True, text=True
+          )
+          existing = (
+              json.loads(r.stdout)
+              if r.returncode == 0 and r.stdout.strip().startswith('[')
+              else []
+          )
+          print(f'Fresh: {len(fresh)} | Remote HEAD: {len(existing)}')
+
+          # Stamp first_seen_at; keep earliest timestamp when a job is re-seen
+          existing_by_id = {j['id']: j for j in existing}
+          for j in fresh:
+              prev = existing_by_id.get(j['id'])
+              j['first_seen_at'] = (
+                  (prev or {}).get('first_seen_at')
+                  or j.get('scraped_at')
+                  or now_iso
+              )
+
+          # Carry over every existing job not returned fresh this run
+          fresh_ids = {j['id'] for j in fresh}
+          carried = 0
+          for ex in existing:
+              if ex['id'] not in fresh_ids:
+                  if 'first_seen_at' not in ex:
+                      ex['first_seen_at'] = ex.get('scraped_at') or now_iso
+                  fresh.append(ex)
+                  carried += 1
+
+          # Expire jobs older than EXPIRE_DAYS (based on first_seen_at)
+          def not_expired(j):
+              fsa = j.get('first_seen_at') or j.get('scraped_at')
+              if not fsa:
+                  return True
+              try:
+                  dt = datetime.fromisoformat(fsa)
+                  if dt.tzinfo is None:
+                      dt = dt.replace(tzinfo=timezone.utc)
+                  return dt >= expire_cutoff
+              except Exception:
+                  return True
+
+          before  = len(fresh)
+          merged  = [j for j in fresh if not_expired(j)]
+          expired = before - len(merged)
+
+          Path('backend/jobs.json').write_text(
+              json.dumps(merged, indent=2, ensure_ascii=False),
+              encoding='utf-8'
+          )
+
+          atses = Counter(j['ats'] for j in merged)
+          print(
+              f'Merge done — {len(merged)} total '
+              f'({carried} carried over, {expired} expired after {EXPIRE_DAYS}d)'
+          )
+          for ats, cnt in sorted(atses.items(), key=lambda x: -x[1]):
+              print(f'  {ats}: {cnt}')
+          PYEOF
 
       - name: Commit & push updated jobs.json
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add backend/jobs.json
-          # Only commit when the file actually changed
           if git diff --staged --quiet; then
             echo "No changes to jobs.json — skipping commit"
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
             git commit -m "chore: refresh jobs.json — ${TOTAL} US jobs ($(date -u '+%Y-%m-%d'))"
-            # Sync with remote and push — retry up to 3 times in case of
-            # a last-second concurrent push from another run.
+            # We already merged against the remote HEAD above, so any remaining
+            # conflict is a tiny window (seconds).  -X ours is safe here.
             for attempt in 1 2 3; do
-              git fetch origin main
-              git merge -X ours origin/main --no-edit
-              git push && break
-              echo "Push attempt $attempt failed — retrying in 5s..."
-              sleep 5
+              git pull --rebase -X ours origin main && git push && break
+              echo "Push attempt $attempt failed — retrying in 10s..."
+              sleep 10
             done
           fi
