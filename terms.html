@@ -68,7 +68,23 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .doc-footer{margin-top:60px;padding-top:28px;border-top:1px solid var(--border);display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;font-size:0.8rem;color:var(--muted)}
 .doc-footer a{color:var(--accent)}
 
-@media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
+/* TOOL DOS & DON'TS */
+.tool-entry{margin-bottom:32px;padding-bottom:32px;border-bottom:1px solid var(--border)}
+.tool-entry:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.tool-entry h3{font-size:0.95rem;font-weight:800;color:#fff;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.tool-entry h3 .tool-icon{font-size:1rem;width:30px;height:30px;background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.25);border-radius:8px;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.dos-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.dos-col{background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.18);border-radius:10px;padding:14px 16px}
+.dos-col.donts{background:rgba(239,68,68,0.05);border-color:rgba(239,68,68,0.18)}
+.dos-col-title{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px;display:flex;align-items:center;gap:5px}
+.dos-col .dos-col-title{color:#6ee7b7}
+.dos-col.donts .dos-col-title{color:#fca5a5}
+.dos-col ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:7px}
+.dos-col ul li{font-size:0.83rem;color:rgba(255,255,255,0.6);padding-left:16px;position:relative;line-height:1.5}
+.dos-col ul li::before{position:absolute;left:0;top:0;font-size:0.8rem}
+.dos-col ul li::before{content:'✓';color:#6ee7b7}
+.dos-col.donts ul li::before{content:'✗';color:#fca5a5}
+@media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}.dos-grid{grid-template-columns:1fr}}
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -124,6 +140,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
       <li><a href="#t13">Governing Law</a></li>
       <li><a href="#t14">Changes to These Terms</a></li>
       <li><a href="#t15">Contact</a></li>
+      <li><a href="#t16">Tool Capabilities &amp; Limitations (Dos &amp; Don'ts)</a></li>
     </ol>
   </div>
 
@@ -351,6 +368,295 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
       <li><strong>Website:</strong> <a href="https://ambore.org">ambore.org</a></li>
     </ul>
     <p>We aim to respond to all inquiries within 30 days.</p>
+  </div>
+
+  <!-- SECTION 16 -->
+  <div class="section" id="t16">
+    <div class="section-num">Section 16</div>
+    <h2>Tool Capabilities &amp; Limitations (Dos &amp; Don'ts)</h2>
+    <p>Each Ambore tool has a specific purpose and designed use case. The following guidelines explain what each tool is built to do and what it is <strong>not</strong> designed or permitted to be used for. Using any tool outside its intended scope may violate Section 4 (Acceptable Use) and Section 5 (Prohibited Activities).</p>
+    <div class="info-box">
+      <strong>General rule for all AI tools:</strong> Always review AI-generated content before using it. AI can make mistakes, hallucinate details, or produce output that does not match your actual experience. You are responsible for everything you submit to employers or post publicly.
+    </div>
+
+    <!-- 1. Job Portal -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">💼</span> Job Portal</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Search and filter aggregated US tech job listings</li>
+            <li>Use filters (role, level, work type, salary) to narrow results</li>
+            <li>Click "Apply" to visit the original job posting on the employer's site</li>
+            <li>Browse listings as a research tool to understand market demand</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Treat listings as guaranteed to be current or still open — always verify on the employer's site</li>
+            <li>Use the job portal as your only job-search source</li>
+            <li>Scrape, automate, or bulk-download job listings</li>
+            <li>Assume salary ranges shown are confirmed offers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. Resume Builder -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">📄</span> AI Resume Builder</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Enter your real work experience, skills, and education</li>
+            <li>Use the AI to improve phrasing, structure, and keyword alignment</li>
+            <li>Tailor your resume to a specific job description using the tool</li>
+            <li>Review and edit the AI output before submitting to employers</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Fabricate job titles, companies, years of experience, or degrees</li>
+            <li>Submit AI-generated resumes without reviewing them for accuracy</li>
+            <li>Use the tool to create resumes for other people commercially</li>
+            <li>Expect the AI output to be perfect — it requires your personal review</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Cover Letter Generator -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">📝</span> Cover Letter Generator</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Provide accurate details about the role and your real background</li>
+            <li>Use the AI output as a starting draft to personalize further</li>
+            <li>Adjust the tone, add specific examples, and review before sending</li>
+            <li>Generate multiple variations and choose the best one</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Send generic, unedited AI cover letters to employers</li>
+            <li>Include false claims about skills or accomplishments</li>
+            <li>Use the tool to write cover letters for other people for pay</li>
+            <li>Assume AI-generated letters will always match each employer's expectations</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. Email Generator -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">✉️</span> Job Email Generator</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use it to draft professional job inquiry or follow-up emails</li>
+            <li>Customize the generated email with the correct name, company, and role</li>
+            <li>Use for cold outreach, referral requests, or thank-you notes</li>
+            <li>Review and personalize before sending</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Use it to send bulk or mass unsolicited emails (spam)</li>
+            <li>Generate phishing, scam, or deceptive emails of any kind</li>
+            <li>Send AI-generated emails without reading them first</li>
+            <li>Use the tool for any purpose other than legitimate job-related communication</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. LinkedIn Optimizer -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">🔗</span> LinkedIn Profile Optimizer</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Provide your real LinkedIn profile sections for AI suggestions</li>
+            <li>Use AI suggestions to improve the clarity and impact of your profile</li>
+            <li>Manually apply improvements to your actual LinkedIn profile</li>
+            <li>Use the tool to tailor your profile for specific industries or roles</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Add AI-suggested skills or endorsements that you don't actually have</li>
+            <li>Misrepresent your experience or credentials on LinkedIn</li>
+            <li>Use the tool to optimize profiles for other people commercially</li>
+            <li>Copy AI output directly without adapting it to your real voice and experience</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 6. Portfolio Builder -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">🌐</span> Portfolio Builder</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use AI to generate a starting portfolio website based on your real projects</li>
+            <li>Customize the output with your actual work samples and links</li>
+            <li>Use the portfolio as a template that you fully own and edit</li>
+            <li>Include only projects you genuinely built or contributed to</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Publish a portfolio with fabricated or non-existent projects</li>
+            <li>Claim full credit for projects you did not build</li>
+            <li>Use the tool to create portfolios for other people commercially</li>
+            <li>Present AI-generated project descriptions as your own original writing without editing</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7. Interview AI Co-Pilot -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">🎙</span> AI Interview Co-Pilot</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use it for mock interview practice and preparation sessions</li>
+            <li>Practice answering common behavioral and technical questions</li>
+            <li>Use AI feedback to improve the structure and clarity of your responses</li>
+            <li>Prepare for specific companies or roles using practice mode</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Use the tool during a live employer interview without their knowledge and permission</li>
+            <li>Use it to cheat on any employer's interview assessment or coding test</li>
+            <li>Misrepresent your skills or experience to an employer during a hiring process</li>
+            <li>Use it on any platform that explicitly prohibits AI assistance (see Section 6)</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8. English Writing Assistant -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">🖊</span> English Writing Assistant</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Paste your own text to improve grammar, clarity, and professional tone</li>
+            <li>Use it to polish job-related writing (emails, bios, summaries)</li>
+            <li>Use suggestions as a learning aid to improve your own writing skills</li>
+            <li>Review AI suggestions critically before applying them</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Use it to write academic essays or assignments and submit them as your own (academic dishonesty)</li>
+            <li>Assume AI suggestions are always grammatically or stylistically correct</li>
+            <li>Use the tool to generate content that misrepresents your writing ability to an employer</li>
+            <li>Submit AI-polished writing for assessments that prohibit AI assistance</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Coding Assistant -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">💻</span> Coding Assistant</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use it to learn, debug, and understand code concepts</li>
+            <li>Ask for explanations of algorithms, data structures, or language features</li>
+            <li>Use AI-generated code as a learning reference and study it</li>
+            <li>Practice coding patterns and get feedback on your own code</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Submit AI-generated code as your own in employer coding assessments or take-home tests</li>
+            <li>Use it to cheat on programming exams, bootcamp assignments, or academic coursework</li>
+            <li>Assume AI-generated code is bug-free or production-ready without testing</li>
+            <li>Use it to generate malicious code, exploits, or anything that could harm others</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 10. Build Your Own Project -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">🔨</span> Build Your Own Project</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use AI-generated project plans as a structured learning roadmap</li>
+            <li>Select a role or technology that genuinely matches your goals</li>
+            <li>Build the project yourself using the plan as a guide</li>
+            <li>Expand and customize the suggested project to make it your own</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Claim an AI-suggested project plan as your own original design without building it</li>
+            <li>Add projects you never built to your resume or portfolio</li>
+            <li>Use project plans for roles outside your actual domain (the tool requires your real target role)</li>
+            <li>Submit AI-generated project write-ups as original coursework or thesis material</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Dashboard -->
+    <div class="tool-entry">
+      <h3><span class="tool-icon">📊</span> Dashboard</h3>
+      <div class="dos-grid">
+        <div class="dos-col">
+          <div class="dos-col-title">✓ Do</div>
+          <ul>
+            <li>Use the dashboard to manage your resumes, cover letters, and job applications</li>
+            <li>Track the status of applications you have genuinely submitted</li>
+            <li>Store your own career documents for quick access across tools</li>
+            <li>Back up your dashboard data by exporting it (if available)</li>
+          </ul>
+        </div>
+        <div class="dos-col donts">
+          <div class="dos-col-title">✗ Don't</div>
+          <ul>
+            <li>Store sensitive third-party data (other people's personal information) in the dashboard</li>
+            <li>Rely solely on browser localStorage for long-term data backup — it can be cleared</li>
+            <li>Share your account or dashboard data with other people</li>
+            <li>Use the dashboard to track or manage job applications on behalf of others commercially</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="warn-box" style="margin-top:24px">
+      <strong>Reminder:</strong> Using any Ambore tool in a way that violates its intended purpose, or that violates the Acceptable Use (Section 4) or Prohibited Activities (Section 5) clauses, may result in account termination. When in doubt, contact us at <a href="mailto:amborenikhil46@gmail.com" style="color:#fca5a5">amborenikhil46@gmail.com</a>.
+    </div>
   </div>
 
   <!-- FOOTER -->
