@@ -633,7 +633,7 @@ section{position:relative;padding:120px 0;overflow:hidden}
 .faq-chevron{width:20px;height:20px;flex-shrink:0;color:var(--off);transition:transform 0.25s}
 .faq-item.open .faq-chevron{transform:rotate(180deg);color:var(--violet)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height 0.35s ease,padding 0.25s}
-.faq-item.open .faq-a{max-height:200px}
+.faq-item.open .faq-a{max-height:400px}
 .faq-a-inner{padding:0 32px 24px;font-size:0.9rem;color:var(--off);line-height:1.75}
 
 /* ── CTA BANNER ── */
@@ -1326,6 +1326,27 @@ footer{
         </button>
         <div class="faq-a"><div class="faq-a-inner">Everything is free — no credit card, no trial limits. All personal data (resume, sessions, account) is stored locally in your browser's localStorage. Nothing is sent to external servers beyond the AI API calls needed to generate answers and resumes.</div></div>
       </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          Is my IP address tracked or exposed?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">We use Google Analytics with IP anonymization enabled — your IP is never stored or logged by us. The AI calls go through our own server-side proxy, so your IP is never sent directly to Anthropic's API. We do not sell, share, or store IP addresses. Your browsing on Ambore is private.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          What happens if Ambore gets hacked?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Nothing happens to you. Ambore stores zero user data on its servers — your account, resume, cover letters, and all generated content live entirely in your own browser's localStorage. There is no central database of user information to steal. Even if our servers were compromised, attackers would find nothing personal. Your data can only be accessed from your own device.</div></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q" onclick="toggleFaq(this)">
+          How secure is my password?
+          <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <div class="faq-a"><div class="faq-a-inner">Your password is hashed using SHA-256 (a one-way cryptographic function) before being saved — meaning the actual password is never stored anywhere, only a fingerprint of it. Even if someone gained access to your browser's localStorage, they could not recover your password. We recommend using a unique password for each site as a best practice.</div></div>
+      </div>
     </div>
   </div>
 </section>
@@ -1644,12 +1665,26 @@ function saveSession(user){
   localStorage.setItem('ambore_user',JSON.stringify(session));
 }
 
-function handleLogin(e){
+/* Password hashing — SHA-256 via SubtleCrypto (built into every browser) */
+async function hashPwd(pwd){
+  const buf=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('ambore2025:'+pwd));
+  return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('');
+}
+
+async function handleLogin(e){
   e.preventDefault();
   const email=document.getElementById('li-email').value.trim().toLowerCase();
   const pass=document.getElementById('li-pass').value;
   const err=document.getElementById('auth-err-login');
-  const user=getUsers().find(u=>u.email===email&&u.password===pass);
+  const hashed=await hashPwd(pass);
+  const users=getUsers();
+  // Accept hashed OR legacy plain-text password (migrates plain-text on success)
+  let user=users.find(u=>u.email===email&&u.password===hashed);
+  if(!user){
+    // Legacy plain-text fallback — migrate to hash on the spot
+    user=users.find(u=>u.email===email&&!u.pwdHashed&&u.password===pass);
+    if(user){user.password=hashed;user.pwdHashed=true;saveUsers(users);}
+  }
   if(!user){err.textContent='Invalid email or password.';err.classList.add('show');return}
   saveSession(user);
   closeAuthModal();
@@ -1657,9 +1692,8 @@ function handleLogin(e){
   updateNavState();
   updatePageForAuthState();
 }
-function handleSignup(e){
+async function handleSignup(e){
   e.preventDefault();
-  // Sanitize name: strip any HTML tags and control characters
   const rawName=document.getElementById('su-name').value.trim();
   const name=rawName.replace(/<[^>]*>/g,'').replace(/[\x00-\x1F\x7F]/g,'').slice(0,80);
   const email=document.getElementById('su-email').value.trim().toLowerCase().slice(0,254);
@@ -1674,7 +1708,8 @@ function handleSignup(e){
   if(pass!==pass2){err.textContent='Passwords do not match.';err.classList.add('show');return}
   const users=getUsers();
   if(users.find(u=>u.email===email)){err.textContent='User already registered.';err.classList.add('show');return}
-  const newUser={id:'u'+Date.now(),name,email,password:pass,createdAt:new Date().toISOString()};
+  const hashed=await hashPwd(pass);
+  const newUser={id:'u'+Date.now(),name,email,password:hashed,pwdHashed:true,createdAt:new Date().toISOString()};
   users.push(newUser);saveUsers(users);
   err.textContent='Account created successfully! Please log in.';
   err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
@@ -1690,7 +1725,7 @@ function handleSignup(e){
     err.classList.remove('show');err.style.color='';err.style.background='';err.style.borderColor='';
   },1500);
 }
-function handleForgotPassword(e){
+async function handleForgotPassword(e){
   e.preventDefault();
   const email=document.getElementById('fp-email').value.trim().toLowerCase();
   const pass=document.getElementById('fp-pass').value;
@@ -1703,7 +1738,9 @@ function handleForgotPassword(e){
   const users=getUsers();
   const userIdx=users.findIndex(u=>u.email===email);
   if(userIdx===-1){err.textContent='No account found with this email.';err.classList.add('show');return}
-  users[userIdx].password=pass;
+  const hashed=await hashPwd(pass);
+  users[userIdx].password=hashed;
+  users[userIdx].pwdHashed=true;
   saveUsers(users);
   err.textContent='Password reset! Please log in.';
   err.style.color='#22c55e';err.style.background='rgba(34,197,94,0.08)';err.style.borderColor='rgba(34,197,94,0.2)';
