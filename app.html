@@ -253,6 +253,18 @@ button,input,textarea,select{font-family:inherit}
 .code-block{background:#070710;border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:11px 13px;margin:8px 0;font-family:'Courier New',monospace;font-size:0.8rem;line-height:1.6;color:#a5f3fc;overflow-x:auto;white-space:pre-wrap;word-break:break-all}
 .streaming-text{padding:12px 14px;font-size:0.86rem;line-height:1.7;color:#e2e8f0}
 .streaming-text p{margin-bottom:8px}
+/* Copilot card */
+.copilot-card{padding:12px 14px;display:flex;flex-direction:column;gap:10px}
+.cp-label{font-size:0.58rem;font-weight:900;letter-spacing:0.08em;text-transform:uppercase;color:rgba(255,255,255,0.35);display:block;margin-bottom:4px}
+.cp-strategy{background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.2);border-radius:8px;padding:8px 12px;font-size:0.84rem;color:#c7d2fe;line-height:1.5}
+.cp-strategy .cp-label{color:var(--accent)}
+.cp-section{display:flex;flex-direction:column}
+.cp-points{list-style:none;display:flex;flex-direction:column;gap:6px}
+.cp-points li{display:flex;gap:8px;align-items:flex-start;font-size:0.86rem;line-height:1.5;color:#e2e8f0}
+.cp-points li::before{content:"▸";color:var(--accent);flex-shrink:0;margin-top:2px}
+.cp-footer{display:flex;flex-direction:column;gap:6px;padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)}
+.cp-tip{font-size:0.79rem;color:#fbbf24;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.15);border-radius:7px;padding:6px 10px;line-height:1.4}
+.cp-followup{font-size:0.79rem;color:#60a5fa;background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.15);border-radius:7px;padding:6px 10px;line-height:1.4}
 .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .ans-actions{padding:7px 13px 11px;display:flex;gap:7px}
@@ -941,87 +953,50 @@ function buildSystemPrompt() {
   const isTechnical = r.includes('technical') || r.includes('2nd') || r.includes('3rd');
   const isSysDesign = r.includes('system design') || r.includes('5th');
 
-  const base = `RESUME:\n${cfg.resume}\n\nJOB DESCRIPTION:\n${cfg.jd}\n\nROLE: ${cfg.role} at ${cfg.company}\nROUND: ${cfg.round}`;
+  let category = 'Behavioral';
+  if (isCoding)    category = 'Technical';
+  else if (isSysDesign) category = 'Technical';
+  else if (isTechnical) category = 'Technical';
 
-  const core = `You are an AI Interview Answer Generator for Ambore.org, helping users with mock interview preparation only.
+  return `You are a High-Performance Interview Copilot for Ambore.org. Give instantaneous, metric-driven talking points to a candidate in a live interview.
 
-${base}
+CANDIDATE RESUME:
+${cfg.resume}
 
-═══ CORE RULES — NO EXCEPTIONS ═══
-1. NEVER ask "Could you clarify", "Could you rephrase", or ANY clarifying question.
-2. NEVER say the question is unclear or incomplete — pick the most common interpretation and answer immediately.
-3. NEVER add a *Note:*, disclaimer, tip, or extra paragraph after the answer.
-4. NEVER add --- dividers or extra commentary. Stop after Confidence. Nothing else.
-5. NEVER invent experience, tools, companies, or achievements not in the resume.
-6. NEVER give generic answers — every answer must be custom-made for the resume + JD.
-7. NEVER mention that you are using a resume or JD. Just output the final answer.
-8. If the input is pure noise (only "um", "uh", "okay") → stay silent.
+JOB DESCRIPTION:
+${cfg.jd}
 
-═══ ANSWER RULES ═══
-- Always base the answer strictly on: resume skills/experience + JD requirements + target company.
-- Use simple English, confident tone, no filler, no robotic phrasing.
-- Add metrics, impact, and outcomes from resume projects whenever possible.
-- If resume lacks something in the JD → show transferable skills instead of fabricating.
-- Keep answers short and crisp: 6–10 lines max.
+ROLE: ${cfg.role} at ${cfg.company}
+ROUND: ${cfg.round}
+QUESTION CATEGORY: ${category}
 
-═══ ANSWER FORMAT ═══
-**Answer:** 2-3 lines — confident, direct, resume-based
-**Experience:** 2-3 lines — exact skills/tools/achievements from resume, matched to JD
-**Impact:** 1 line — measurable outcome from resume
-**Confidence:** High / Medium / Low`;
+STRICT RULES:
+1. NEVER ask clarifying questions. Pick the most likely interpretation and respond immediately.
+2. NEVER invent experience, tools, or achievements not in the resume.
+3. NEVER give generic answers — every answer must be tailored to the resume + JD.
+4. ONLY use facts from the candidate's resume for talking points.
+5. Prioritize skills and keywords from the JD.
+6. Output ONLY the raw JSON object — no markdown, no code fences, no extra text before or after.
+7. If input is pure noise ("um", "uh", "okay") → output: {"category":"${category}","strategy":"","talking_points":[],"pro_tip":"Wait for the next question.","follow_up_question":""}
 
-  if (isCoding) {
-    return `${core}
+JSON SCHEMA (output exactly this structure):
+{
+  "category": "${category}",
+  "strategy": "One sentence — the goal of this answer",
+  "talking_points": [
+    "Point 1 with a metric or specific achievement from resume",
+    "Point 2 with a concrete action or skill",
+    "Point 3 mapped to JD requirement (optional)"
+  ],
+  "pro_tip": "One short delivery cue (e.g. Smile, Slow down, Pause for effect)",
+  "follow_up_question": "One smart question to ask the interviewer after answering"
+}
 
-═══ CODING QUESTIONS ═══
-**Answer:** What the solution does (1 line)
-**Steps:** 2-3 short bullets — key logic only
-\`\`\`
-// Clean code — minimal comments
-\`\`\`
-**Complexity:** Time: O(...) | Space: O(...)
-**Confidence:** High / Medium / Low
-
-Add real examples from resume projects. Map to JD technical stack. Under 150 words total.`;
-  }
-
-  if (isSysDesign) {
-    return `${core}
-
-═══ SYSTEM DESIGN QUESTIONS ═══
-**Answer:** The system in 1 sentence
-**Components:** 3-4 bullets — DB, cache, queue, API — use JD-relevant tech from resume
-**Trade-off:** One key trade-off (1 line)
-**Confidence:** High / Medium / Low
-
-Under 150 words total. No long paragraphs.`;
-  }
-
-  if (isTechnical) {
-    return `${core}
-
-═══ TECHNICAL QUESTIONS ═══
-**Answer:** Core concept in 1-2 sentences
-**Experience:** Real examples from resume projects using JD tech stack
-**Code:** Only if directly needed (keep it short)
-**Confidence:** High / Medium / Low
-
-Under 120 words total. Precise, no padding.`;
-  }
-
-  // Behavioral / HR default
-  return `${core}
-
-═══ BEHAVIORAL / HR QUESTIONS — USE STAR ═══
-**Answer:** 1-2 sentences — direct summary from resume
-**STAR:**
-- **S:** One line — situation (when/where, from resume)
-- **T:** One line — task/challenge faced
-- **A:** One line — exact action taken + tool/method used
-- **R:** One line — measurable result/outcome
-**Confidence:** High / Medium / Low
-
-No paragraphs. No filler. Only real resume details. Under 100 words total.`;
+RULES FOR EACH FIELD:
+- strategy: the one-sentence purpose of the answer (e.g. "Show leadership by referencing the team project in resume")
+- talking_points: 2-3 bullets, max 15 words each, resume-backed, include numbers/metrics when available
+- pro_tip: short delivery coaching cue, not content advice
+- follow_up_question: a thoughtful question that shows curiosity about the role or team`;
 }
 /* ═══════════════════════════════════════════
    UTILS
@@ -1054,8 +1029,8 @@ async function streamAnswer(question) {
 
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
-  const roundBadge = isCAAR ? '⚙ CAAR' : '✦ STAR';
-  const maxTok = isCAAR ? 400 : 250;
+  const roundBadge = isCAAR ? '⚙ Technical' : '✦ Behavioral';
+  const maxTok = 350;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
@@ -1120,15 +1095,10 @@ async function streamAnswer(question) {
         } catch(e) {}
       }
     }
-    // Render final answer using round-appropriate renderer
+    // Render final answer using copilot JSON renderer
     textDiv.innerHTML = '';
     textDiv.className = '';
-    const rt = getRoundType();
-    if (rt === 'behavioral') {
-      renderSTAR(textDiv, fullText);
-    } else {
-      renderTechnical(textDiv, fullText, rt);
-    }
+    renderCopilot(textDiv, fullText);
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err) {
@@ -1140,6 +1110,67 @@ async function streamAnswer(question) {
     isGenerating = false;
     drainQueue(); // process next queued question immediately
   }
+}
+
+/* ═══════════════════════════════════════════
+   COPILOT JSON RENDERER
+═══════════════════════════════════════════ */
+function renderCopilot(container, text) {
+  let data;
+  try {
+    // Strip any accidental markdown fences the model might add
+    const clean = text.replace(/^```(?:json)?\s*/i,'').replace(/\s*```$/,'').trim();
+    data = JSON.parse(clean);
+  } catch(e) {
+    // JSON parse failed — fall back to plain text display
+    container.className = 'streaming-text';
+    container.innerHTML = safeMd(text).split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    return;
+  }
+
+  // If model returned a no-op (noise input)
+  if (!data.strategy && (!data.talking_points || !data.talking_points.length)) {
+    container.className = 'streaming-text';
+    container.innerHTML = `<p style="color:rgba(255,255,255,0.35);font-size:0.83rem;padding:4px 0">${escapeHtml(data.pro_tip || 'Waiting for a question...')}</p>`;
+    return;
+  }
+
+  container.className = 'copilot-card';
+
+  // Strategy row
+  if (data.strategy) {
+    const stratDiv = document.createElement('div');
+    stratDiv.className = 'cp-strategy';
+    stratDiv.innerHTML = `<span class="cp-label">Strategy</span><span>${escapeHtml(data.strategy)}</span>`;
+    container.appendChild(stratDiv);
+  }
+
+  // Talking points
+  if (data.talking_points && data.talking_points.length) {
+    const tpDiv = document.createElement('div');
+    tpDiv.className = 'cp-section';
+    tpDiv.innerHTML = `<div class="cp-label">Talking Points</div>`;
+    const ul = document.createElement('ul');
+    ul.className = 'cp-points';
+    data.talking_points.forEach(pt => {
+      const li = document.createElement('li');
+      li.innerHTML = escapeHtml(pt);
+      ul.appendChild(li);
+    });
+    tpDiv.appendChild(ul);
+    container.appendChild(tpDiv);
+  }
+
+  // Pro tip + follow-up row
+  const footer = document.createElement('div');
+  footer.className = 'cp-footer';
+  if (data.pro_tip) {
+    footer.innerHTML += `<span class="cp-tip">💡 ${escapeHtml(data.pro_tip)}</span>`;
+  }
+  if (data.follow_up_question) {
+    footer.innerHTML += `<span class="cp-followup">❓ ${escapeHtml(data.follow_up_question)}</span>`;
+  }
+  if (footer.innerHTML) container.appendChild(footer);
 }
 
 /* ═══════════════════════════════════════════

@@ -204,6 +204,12 @@ a{text-decoration:none;color:inherit}
 .job-tag.hybrid{color:var(--yellow);border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.08)}
 .job-tag.salary{color:var(--accent);border-color:rgba(79,70,229,0.25);background:rgba(79,70,229,0.08)}
 .job-time{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-left:auto}
+/* Level badges */
+.level-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:0.65rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;vertical-align:middle}
+.level-badge.internship{background:rgba(251,191,36,0.12);color:#fbbf24;border:1px solid rgba(251,191,36,0.25)}
+.level-badge.entry{background:rgba(52,211,153,0.12);color:#34d399;border:1px solid rgba(52,211,153,0.25)}
+.level-badge.mid{background:rgba(96,165,250,0.12);color:#60a5fa;border:1px solid rgba(96,165,250,0.25)}
+.level-badge.senior{background:rgba(167,139,250,0.12);color:#a78bfa;border:1px solid rgba(167,139,250,0.25)}
 
 /* Job card action row */
 .job-card-actions{
@@ -389,10 +395,10 @@ a{text-decoration:none;color:inherit}
 
     <div class="filter-card">
       <div class="filter-title">Experience Level</div>
-      <label class="filter-option"><input type="checkbox" value="entry" onchange="applyFilters()"/> Entry Level</label>
-      <label class="filter-option"><input type="checkbox" value="mid" onchange="applyFilters()"/> Mid Level</label>
-      <label class="filter-option"><input type="checkbox" value="senior" onchange="applyFilters()"/> Senior</label>
-      <label class="filter-option"><input type="checkbox" value="executive" onchange="applyFilters()"/> Executive</label>
+      <label class="filter-option"><input type="checkbox" value="internship" onchange="applyFilters()"/> 🎓 Internship <span class="count" id="count-intern"></span></label>
+      <label class="filter-option"><input type="checkbox" value="entry" onchange="applyFilters()"/> 🟢 Entry Level (0–2 yrs) <span class="count" id="count-entry"></span></label>
+      <label class="filter-option"><input type="checkbox" value="mid" onchange="applyFilters()"/> 🔵 Mid Level (3–6 yrs) <span class="count" id="count-mid"></span></label>
+      <label class="filter-option"><input type="checkbox" value="senior" onchange="applyFilters()"/> 🟣 Senior (7+ yrs) <span class="count" id="count-senior"></span></label>
     </div>
 
     <div class="filter-card">
@@ -452,6 +458,7 @@ a{text-decoration:none;color:inherit}
       <select class="sort-select" id="sort-select" onchange="applyFilters()">
         <option value="posted_at">Newest first</option>
         <option value="salary_max">Highest salary</option>
+        <option value="level">By Level</option>
       </select>
     </div>
     <div id="jobs-list">
@@ -503,6 +510,14 @@ function computeStats() {
   // show remote count in third chip
   const chip = document.querySelector('.stat-chip:nth-child(3)');
   if (chip) chip.innerHTML = `<strong>${remote.toLocaleString()}</strong> remote jobs`;
+
+  // Level filter counts
+  const lc = { internship: 0, entry: 0, mid: 0, senior: 0 };
+  _allJobs.forEach(j => { if (lc[j.level] !== undefined) lc[j.level]++; });
+  document.getElementById('count-intern').textContent  = lc.internship ? `(${lc.internship.toLocaleString()})` : '';
+  document.getElementById('count-entry').textContent   = lc.entry      ? `(${lc.entry.toLocaleString()})` : '';
+  document.getElementById('count-mid').textContent     = lc.mid        ? `(${lc.mid.toLocaleString()})` : '';
+  document.getElementById('count-senior').textContent  = lc.senior     ? `(${lc.senior.toLocaleString()})` : '';
 }
 
 function buildCategoryPills() {
@@ -577,10 +592,11 @@ function normalizeQuery(raw) {
 ═══════════════════════════════════════════ */
 function inferLevel(title) {
   const t = (title || '').toLowerCase();
-  if (/\b(director|vp |vice president|head of|chief|cto|ceo|coo|svp|evp)\b/.test(t)) return 'executive';
-  if (/\b(senior|sr\.|staff|principal|lead|architect)\b/.test(t)) return 'senior';
-  if (/\b(junior|jr\.|entry.?level|associate|intern|graduate|new grad)\b/.test(t)) return 'entry';
-  return 'mid';
+  if (/\b(intern(ship)?|co[\s\-]?op|trainee|apprentice)\b/.test(t)) return 'internship';
+  if (/\b(senior|sr\.?\s|lead|principal|staff|architect|director|vp\b|vice president|head of|chief|cto|ceo|coo|svp|evp|managing)\b/.test(t)) return 'senior';
+  if (/\b(junior|jr\.?\s|entry[\s\-]?level|associate|graduate|new grad|early career)\b/.test(t)) return 'entry';
+  if (/\bmid[\s\-]?level\b|\bintermediate\b/.test(t)) return 'mid';
+  return 'unknown';
 }
 
 /* ═══════════════════════════════════════════
@@ -604,10 +620,10 @@ function applyAndRender() {
   )].filter(cb => cb.checked).map(cb => cb.value);
 
   const expLevels = [...document.querySelectorAll(
+    '.sidebar input[type=checkbox][value="internship"],' +
     '.sidebar input[type=checkbox][value="entry"],' +
     '.sidebar input[type=checkbox][value="mid"],' +
-    '.sidebar input[type=checkbox][value="senior"],' +
-    '.sidebar input[type=checkbox][value="executive"]'
+    '.sidebar input[type=checkbox][value="senior"]'
   )].filter(cb => cb.checked).map(cb => cb.value);
 
   const now = Date.now();
@@ -635,14 +651,20 @@ function applyAndRender() {
     if (dateFilter && j.posted_at) {
       if (now - new Date(j.posted_at).getTime() > (DATE_MS[dateFilter] || Infinity)) return false;
     }
-    // ── Experience level
-    if (expLevels.length && !expLevels.includes(inferLevel(j.title))) return false;
+    // ── Experience level (use scraped level if set, fall back to title inference)
+    if (expLevels.length) {
+      const lvl = (j.level && j.level !== 'unknown') ? j.level : inferLevel(j.title);
+      if (!expLevels.includes(lvl)) return false;
+    }
     return true;
   });
 
   // ── Sort
+  const _LEVEL_ORDER = { internship: 0, entry: 1, mid: 2, senior: 3, unknown: 4 };
   if (sortBy === 'salary_max') {
     _filtered.sort((a, b) => (b.salary_max || 0) - (a.salary_max || 0));
+  } else if (sortBy === 'level') {
+    _filtered.sort((a, b) => (_LEVEL_ORDER[a.level] ?? 4) - (_LEVEL_ORDER[b.level] ?? 4));
   } else {
     _filtered.sort((a, b) => {
       const da = a.posted_at ? new Date(a.posted_at).getTime() : 0;
@@ -712,8 +734,13 @@ function renderJobCard(job) {
     ? `<span class="job-tag">${escapeHtml(job.department)}</span>`
     : '';
 
+  // Level badge (use scraped level if set, fall back to title inference)
+  const lvl = (job.level && job.level !== 'unknown') ? job.level : inferLevel(job.title);
+  const lvlLabels = { internship: 'Intern', entry: 'Entry', mid: 'Mid', senior: 'Senior' };
+  const levelBadge = lvlLabels[lvl] ? `<span class="level-badge ${lvl}">${lvlLabels[lvl]}</span>` : '';
+
   // ATS source badge
-  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', linkedin: 'LinkedIn', apify: 'Indeed', icims: 'iCIMS', taleo: 'Taleo', html: 'Direct' };
+  const atsLabels = { greenhouse: 'Greenhouse', lever: 'Lever', ashby: 'Ashby', workday: 'Workday', remotive: 'Remotive', themuse: 'The Muse', remoteok: 'RemoteOK', weworkremotely: 'WeWorkRemotely', usajobs: 'USAJobs', adzuna: 'Adzuna', serpapi: 'Google Jobs', linkedin: 'LinkedIn', apify: 'Indeed', indeed: 'Indeed', jobvite: 'Jobvite', jobicy: 'Jobicy', icims: 'iCIMS', taleo: 'Taleo', workable: 'Workable', smartrecruiters: 'SmartRecruiters', html: 'Direct' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || ''}</span>`;
 
   const timeStr = job.posted_at ? timeAgo(new Date(job.posted_at)) : '';
@@ -731,7 +758,7 @@ function renderJobCard(job) {
           <div class="job-title">${escapeHtml(job.title)}</div>
           <div class="job-company">${escapeHtml(job.company)} &middot; ${escapeHtml(location)}</div>
           <div class="job-meta">
-            ${workTypeTag}${salaryTag}${deptTag}${atsTag}
+            ${levelBadge}${workTypeTag}${salaryTag}${deptTag}${atsTag}
             <span class="job-time">${timeStr}</span>
           </div>
         </div>
