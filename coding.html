@@ -191,6 +191,17 @@ textarea.code-editor::placeholder{color:rgba(255,255,255,0.2)}
   .code-editor-wrap,.input-row{padding-left:16px;padding-right:16px}
   .msg-bubble{max-width:92%}
 }
+
+/* ── DOS & DON'TS ── */
+.info-card{background:rgba(14,14,29,0.6);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:20px}
+.info-card-title{font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.45);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.dos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:560px){.dos-grid{grid-template-columns:1fr}}
+.dos-col-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.dos-col-title.green{color:#22c55e}.dos-col-title.red{color:#f87171}
+.dos-list{list-style:none;display:flex;flex-direction:column;gap:7px}
+.dos-list li{font-size:0.78rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.dos-list li span.icon{flex-shrink:0;margin-top:1px}
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -253,6 +264,32 @@ textarea.code-editor::placeholder{color:rgba(255,255,255,0.2)}
 <div class="page">
   <div class="main">
 
+
+    <div class="info-card">
+      <div class="info-card-title">&#9432; What this tool does &amp; doesn&#39;t do</div>
+      <div class="dos-grid">
+        <div>
+          <div class="dos-col-title green">&#10003; What you CAN do</div>
+          <ul class="dos-list">
+          <li><span class="icon">&#9989;</span>Explain programming concepts, algorithms, and data structures clearly</li>
+          <li><span class="icon">&#9989;</span>Help debug code and suggest fixes with step-by-step reasoning</li>
+          <li><span class="icon">&#9989;</span>Generate code snippets, templates, and starter code in any language</li>
+          <li><span class="icon">&#9989;</span>Practice coding interview questions and walk through solutions</li>
+          <li><span class="icon">&#9989;</span>Answer questions about architecture, design patterns, and best practices</li>
+          </ul>
+        </div>
+        <div>
+          <div class="dos-col-title red">&#10007; What it CANNOT do</div>
+          <ul class="dos-list">
+          <li><span class="icon">&#10060;</span>Run or execute code &mdash; all output is text-based, not live execution</li>
+          <li><span class="icon">&#10060;</span>Access your actual codebase, files, or development environment</li>
+          <li><span class="icon">&#10060;</span>Guarantee production-ready code &mdash; always review and test generated code</li>
+          <li><span class="icon">&#10060;</span>Replace a real code review by experienced engineers on critical systems</li>
+          <li><span class="icon">&#10060;</span>Provide up-to-the-minute info on new library versions released after its training</li>
+          </ul>
+        </div>
+      </div>
+    </div>
     <!-- SIDEBAR -->
     <aside class="sidebar">
       <!-- Language -->
