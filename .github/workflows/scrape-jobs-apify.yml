@@ -39,11 +39,8 @@ jobs:
           pip install --upgrade pip
           pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
 
-      - name: Run Apify scrapers (LinkedIn + Indeed)
+      - name: Scrape Apify jobs (LinkedIn + Indeed)
         env:
-          # ── Apify (https://apify.com/ — $5 free credits/month) ───────────
-          # Go to https://apify.com/ → sign up → Settings → Integrations → API tokens
-          # Add your token as APIFY_TOKEN in GitHub Secrets (Settings → Secrets → Actions)
           APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
 
         run: |
@@ -52,60 +49,81 @@ jobs:
             VERBOSE_FLAG="--verbose"
           fi
 
-          # Pull existing jobs so Apify results are merged, not overwritten
           python backend/job_scraper.py \
             --only-ats apify \
-            --output /tmp/apify_jobs.json \
+            --output /tmp/apify_fresh.json \
             $VERBOSE_FLAG
 
-          echo "=== Apify results ==="
+          echo "=== Apify fresh results ==="
           python -c "
           import json
-          jobs = json.load(open('/tmp/apify_jobs.json'))
+          jobs = json.load(open('/tmp/apify_fresh.json'))
           sources = {}
           for j in jobs:
               sources[j['ats']] = sources.get(j['ats'], 0) + 1
-          print(f'Apify jobs: {len(jobs)}')
+          print(f'Apify fresh: {len(jobs)} jobs')
           for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
           "
 
-          # Merge Apify jobs into existing jobs.json — preserve first_seen_at, expire >45d
-          python - <<'PYEOF'
-          import json, pathlib
+      - name: Merge Apify jobs with latest remote jobs.json
+        # Use the same race-condition-safe pattern as scrape-jobs.yml:
+        # fetch origin/main HEAD and merge at Python level before pushing.
+        run: |
+          git fetch origin main
+
+          python3 - <<'PYEOF'
+          import json, subprocess
           from datetime import datetime, timezone, timedelta
+          from pathlib import Path
+          from collections import Counter
 
           EXPIRE_DAYS   = 45
           now_utc       = datetime.now(timezone.utc)
           expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
           now_iso       = now_utc.isoformat()
 
-          existing_path = pathlib.Path('backend/jobs.json')
-          apify_path    = pathlib.Path('/tmp/apify_jobs.json')
+          apify = json.loads(Path('/tmp/apify_fresh.json').read_text(encoding='utf-8'))
 
-          existing = json.loads(existing_path.read_text(encoding='utf-8')) if existing_path.exists() else []
-          apify    = json.loads(apify_path.read_text(encoding='utf-8'))
+          # Get the LATEST remote jobs.json (not the stale local checkout)
+          r = subprocess.run(
+              ['git', 'show', 'origin/main:backend/jobs.json'],
+              capture_output=True, text=True
+          )
+          existing = (
+              json.loads(r.stdout)
+              if r.returncode == 0 and r.stdout.strip().startswith('[')
+              else []
+          )
+          print(f'Apify fresh: {len(apify)} | Remote HEAD: {len(existing)}')
 
-          # Index existing by id to preserve first_seen_at
           existing_by_id = {j['id']: j for j in existing}
 
           # Stamp first_seen_at on fresh Apify jobs
           for j in apify:
               prev = existing_by_id.get(j['id'])
-              j['first_seen_at'] = (prev or {}).get('first_seen_at') or j.get('scraped_at') or now_iso
+              j['first_seen_at'] = (
+                  (prev or {}).get('first_seen_at')
+                  or j.get('scraped_at')
+                  or now_iso
+              )
 
-          # Carry over non-Apify jobs (never drop them here)
+          # Carry over ALL non-Apify jobs from remote HEAD
           fresh_ids = {j['id'] for j in apify}
-          non_apify = []
+          carried = 0
           for ex in existing:
               if ex.get('ats') != 'apify':
                   if 'first_seen_at' not in ex:
                       ex['first_seen_at'] = ex.get('scraped_at') or now_iso
-                  non_apify.append(ex)
+                  apify.append(ex)
+                  carried += 1
+              # Also carry over old Apify jobs not in fresh set
+              elif ex['id'] not in fresh_ids:
+                  if 'first_seen_at' not in ex:
+                      ex['first_seen_at'] = ex.get('scraped_at') or now_iso
+                  apify.append(ex)
+                  carried += 1
 
-          merged = apify + non_apify
-
-          # Expire jobs older than EXPIRE_DAYS
           def not_expired(j):
               fsa = j.get('first_seen_at') or j.get('scraped_at')
               if not fsa:
@@ -118,12 +136,18 @@ jobs:
               except Exception:
                   return True
 
-          before = len(merged)
-          merged = [j for j in merged if not_expired(j)]
+          before = len(apify)
+          merged = [j for j in apify if not_expired(j)]
           expired = before - len(merged)
 
-          existing_path.write_text(json.dumps(merged, indent=2, ensure_ascii=False), encoding='utf-8')
-          print(f'Merged: {len(apify)} Apify + {len(non_apify)} other = {len(merged)} total  ({expired} expired)')
+          Path('backend/jobs.json').write_text(
+              json.dumps(merged, indent=2, ensure_ascii=False),
+              encoding='utf-8'
+          )
+          atses = Counter(j['ats'] for j in merged)
+          print(f'Merge done — {len(merged)} total ({carried} carried over, {expired} expired)')
+          for ats, cnt in sorted(atses.items(), key=lambda x: -x[1]):
+              print(f'  {ats}: {cnt}')
           PYEOF
 
       - name: Commit & push updated jobs.json
@@ -136,7 +160,9 @@ jobs:
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
             git commit -m "chore: refresh Apify jobs (LinkedIn+Indeed) — ${TOTAL} total ($(date -u '+%Y-%m-%d'))"
-            # Rebase onto latest remote before pushing (handles concurrent pushes)
-            git pull --rebase origin main
-            git push
+            for attempt in 1 2 3; do
+              git pull --rebase -X ours origin main && git push && break
+              echo "Push attempt $attempt failed — retrying in 10s..."
+              sleep 10
+            done
           fi
