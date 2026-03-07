@@ -1,6 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<!-- Google OAuth popup callback — must run before anything renders -->
+<script>
+(function(){
+  if(!window.opener)return;
+  var h=window.location.hash;
+  if(!h||h.indexOf('access_token')===-1)return;
+  // Hide the page instantly so users never see a flash
+  document.documentElement.style.visibility='hidden';
+  var p=new URLSearchParams(h.slice(1));
+  var token=p.get('access_token'),state=p.get('state');
+  if(token){
+    window.opener.postMessage({type:'_ambore_gauth',token:token,state:state},window.location.origin);
+    window.close();
+  }
+})();
+</script>
 <!-- Performance: preconnect to external origins -->
 <link rel="preconnect" href="https://api.anthropic.com"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -1554,22 +1570,6 @@ function toggleFaq(btn){
   document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
   if(!isOpen)item.classList.add('open');
 }
-
-/* ── GOOGLE OAUTH POPUP CALLBACK ── */
-/* When Google redirects the popup back to this page with #access_token,
-   we detect it immediately, post the token to the opener, and close.   */
-(function(){
-  if(!window.opener) return;
-  const hash = window.location.hash;
-  if(!hash || !hash.includes('access_token')) return;
-  const p = new URLSearchParams(hash.slice(1));
-  const token = p.get('access_token');
-  const state = p.get('state');
-  if(token){
-    window.opener.postMessage({type:'_ambore_gauth',token,state},window.location.origin);
-    window.close();
-  }
-})();
 
 /* AUTH MODAL */
 function goToFeature(page){
