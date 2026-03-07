@@ -355,7 +355,6 @@ a{text-decoration:none;color:inherit}
   .tabs-nav{flex-wrap:nowrap;overflow-x:auto}
   .tab-btn{flex-shrink:0}
 }
-
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -443,8 +442,7 @@ a{text-decoration:none;color:inherit}
       <div class="stat-sub" id="s-rate-sub"></div>
     </div>
   </div>
-    
-  </div>
+
   <!-- Tabs Nav -->
   <div class="tabs-nav">
     <button class="tab-btn active" onclick="showTab('resumes')">📄 Resumes</button>
@@ -1651,8 +1649,8 @@ function renderRecommendations() {
 /* ═══════════════════════════════════════════
    AI INSIGHTS — CLAUDE API
 ═══════════════════════════════════════════ */
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 let insightsGenerating = false;

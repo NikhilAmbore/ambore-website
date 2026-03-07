@@ -377,7 +377,6 @@ button,input,textarea,select{font-family:inherit}
   .auth-body{padding:16px 12px}
   .panel.transcript-panel{height:150px}
 }
-
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -478,8 +477,6 @@ button,input,textarea,select{font-family:inherit}
   <div class="setup-content">
     <h1 class="setup-heading">Start your interview prep journey</h1>
     <p class="setup-hint">Upload your resume, job description, and target company — Ambore will coach you from prep to offer letter.</p>
-      
-    </div>
 
     <div class="setup-row">
       <div class="setup-field"><label>Job Role</label><input type="text" id="s-role" placeholder="e.g. Software Engineer"/></div>
@@ -815,8 +812,8 @@ async function processResumeFile(file) {
    SESSION CONFIG
 ═══════════════════════════════════════════ */
 const cfg = { jd:'', resume:'', role:'', company:'', round:'' };
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 let isListening = false, speakerIsIV = true;
 let recognition = null, silenceTimer = null;
@@ -1043,8 +1040,8 @@ async function streamAnswer(question) {
       headers:{
         'Content-Type':'application/json',
         'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens: maxTok, stream: true,
@@ -1345,9 +1342,9 @@ async function streamCodeAnswer(base64) {
       method:'POST',
       headers:{
         'Content-Type':'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
+        'x-api-key':CLAUDE_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
       },
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens:1200, stream:true,

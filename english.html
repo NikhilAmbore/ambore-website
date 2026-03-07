@@ -220,7 +220,6 @@ a{text-decoration:none;color:inherit}
 /* Toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:10px 20px;font-size:0.84rem;color:#fff;z-index:9999;transition:transform 0.3s,opacity 0.3s;opacity:0;pointer-events:none;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0);opacity:1}
-
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -286,8 +285,7 @@ a{text-decoration:none;color:inherit}
     <div class="page-title">🇬🇧 <span>English AI</span> — Speaking, Writing &amp; Exam Coach</div>
     <div class="page-sub">Improve English skills, professional communication, and exam scores with AI-powered coaching</div>
   </div>
-    
-  </div>
+
   <!-- Mode selector -->
   <div class="mode-bar">
     <div class="mode-label">Learning Mode</div>
@@ -337,8 +335,8 @@ a{text-decoration:none;color:inherit}
 /* ═══════════════════════════════════════════
    CONFIG
 ═══════════════════════════════════════════ */
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY   = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 
 /* ═══════════════════════════════════════════

@@ -437,7 +437,6 @@ button,input,textarea,select{font-family:inherit}
 .mobile-nav-inner a{padding:16px 0;font-size:1rem;font-weight:600;color:rgba(255,255,255,0.7);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.15s}
 .mobile-nav-inner a:hover,.mobile-nav-inner a.active{color:#fff}
 .mob-nav-footer{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
-
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -571,8 +570,6 @@ button,input,textarea,select{font-family:inherit}
 
     <h1 class="page-heading" id="page-heading">Tailor Your Resume with AI</h1>
     <p class="page-hint" id="page-hint">Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.</p>
-    
-  </div>
 
     <div class="input-grid" id="input-grid">
       <!-- Resume upload -->
@@ -920,8 +917,8 @@ function showResultView() {
 /* ═══════════════════════════════════════════
    AI RESUME GENERATION
 ═══════════════════════════════════════════ */
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 let generatedMarkdown = '';
