@@ -1,6 +1,14 @@
 [build]
   publish = "."
 
+# ── Edge Functions ────────────────────────────────────────────────────────────
+# claude-proxy — serverless AI proxy that keeps the Anthropic key server-side.
+# Mounted at /api/claude; all HTML pages POST here instead of calling
+# api.anthropic.com directly.
+[[edge_functions]]
+  path     = "/api/claude"
+  function = "claude-proxy"
+
 # ── Auto-minify CSS, JS, HTML ────────────────────────────────────────────────
 [build.processing]
   skip_processing = false
@@ -25,7 +33,9 @@
     Referrer-Policy           = "strict-origin-when-cross-origin"
     Permissions-Policy        = "camera=(), microphone=(self), geolocation=(), payment=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src blob: https://cdnjs.cloudflare.com; connect-src 'self' https://api.anthropic.com https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.google-analytics.com; frame-src blob:; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+    # CSP: api.anthropic.com removed from connect-src — all AI calls now go
+    # through the /api/claude edge-function proxy (key never leaves the server).
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; worker-src blob: https://cdnjs.cloudflare.com; connect-src 'self' https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://www.google-analytics.com; frame-src blob:; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
     Vary                      = "Accept-Encoding"
 
 # ── HTML pages: aggressive edge caching ──────────────────────────────────────
