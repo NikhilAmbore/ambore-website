@@ -193,16 +193,6 @@ button,input,textarea,select{font-family:inherit}
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
 
-/* ── DOS & DON'TS ── */
-.info-card{background:rgba(14,14,29,0.6);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:20px}
-.info-card-title{font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.45);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.dos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:560px){.dos-grid{grid-template-columns:1fr}}
-.dos-col-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.dos-col-title.green{color:#22c55e}.dos-col-title.red{color:#f87171}
-.dos-list{list-style:none;display:flex;flex-direction:column;gap:7px}
-.dos-list li{font-size:0.78rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
-.dos-list li span.icon{flex-shrink:0;margin-top:1px}
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -266,30 +256,7 @@ button,input,textarea,select{font-family:inherit}
   <div class="main">
     <h1 class="page-heading">AI Portfolio Builder</h1>
     <p class="page-hint">Fill in your details and get a complete, downloadable portfolio website in seconds — no coding needed.</p>
-
-  <div class="info-card">
-    <div class="info-card-title">&#9432; What this tool does &amp; doesn&#39;t do</div>
-    <div class="dos-grid">
-      <div>
-        <div class="dos-col-title green">&#10003; What you CAN do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#9989;</span>Generate a full, polished portfolio with project descriptions and an About Me</li>
-        <li><span class="icon">&#9989;</span>Write compelling, professional-sounding copy based on your real projects</li>
-        <li><span class="icon">&#9989;</span>Download the portfolio as an HTML file you can host yourself</li>
-        <li><span class="icon">&#9989;</span>Tailor the tone and style to your target role and industry</li>
-        </ul>
-      </div>
-      <div>
-        <div class="dos-col-title red">&#10007; What it CANNOT do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#10060;</span>Build or host a live website for you &mdash; you must deploy it yourself</li>
-        <li><span class="icon">&#10060;</span>Design graphics, logos, or visual UI elements</li>
-        <li><span class="icon">&#10060;</span>Publish anything online or create social media accounts</li>
-        <li><span class="icon">&#10060;</span>Invent projects or skills you haven&apos;t actually worked on</li>
-        <li><span class="icon">&#10060;</span>Guarantee job opportunities or portfolio views</li>
-        </ul>
-      </div>
-    </div>
+    
   </div>
 
     <!-- STEPS -->

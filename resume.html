@@ -438,16 +438,6 @@ button,input,textarea,select{font-family:inherit}
 .mobile-nav-inner a:hover,.mobile-nav-inner a.active{color:#fff}
 .mob-nav-footer{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
 
-/* ── DOS & DON'TS ── */
-.info-card{background:rgba(14,14,29,0.6);border:1px solid var(--border);border-radius:16px;padding:22px 24px;margin-bottom:20px}
-.info-card-title{font-size:0.78rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:rgba(255,255,255,0.45);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.dos-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:560px){.dos-grid{grid-template-columns:1fr}}
-.dos-col-title{font-size:0.75rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;margin-bottom:10px;display:flex;align-items:center;gap:6px}
-.dos-col-title.green{color:#22c55e}.dos-col-title.red{color:#f87171}
-.dos-list{list-style:none;display:flex;flex-direction:column;gap:7px}
-.dos-list li{font-size:0.78rem;color:rgba(255,255,255,0.5);display:flex;align-items:flex-start;gap:8px;line-height:1.4}
-.dos-list li span.icon{flex-shrink:0;margin-top:1px}
 </style>
 <script src="/protect.js"></script>
 </head>
@@ -581,31 +571,7 @@ button,input,textarea,select{font-family:inherit}
 
     <h1 class="page-heading" id="page-heading">Tailor Your Resume with AI</h1>
     <p class="page-hint" id="page-hint">Upload your resume and paste the job description — Ambore AI rewrites it for 100% ATS alignment.</p>
-
-  <div class="info-card">
-    <div class="info-card-title">&#9432; What this tool does &amp; doesn&#39;t do</div>
-    <div class="dos-grid">
-      <div>
-        <div class="dos-col-title green">&#10003; What you CAN do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#9989;</span>Rewrite and tailor your resume to a specific job for better ATS matching</li>
-        <li><span class="icon">&#9989;</span>Strengthen bullet points to be results-focused and impactful</li>
-        <li><span class="icon">&#9989;</span>Optimize keywords so your resume passes ATS screening filters</li>
-        <li><span class="icon">&#9989;</span>See an ATS score before and after — measure real improvement</li>
-        <li><span class="icon">&#9989;</span>Download the tailored resume as text ready to paste into your template</li>
-        </ul>
-      </div>
-      <div>
-        <div class="dos-col-title red">&#10007; What it CANNOT do</div>
-        <ul class="dos-list">
-        <li><span class="icon">&#10060;</span>Fabricate or invent work experience, skills, or qualifications you don&apos;t have</li>
-        <li><span class="icon">&#10060;</span>Guarantee ATS pass or interview callbacks &mdash; results depend on many factors</li>
-        <li><span class="icon">&#10060;</span>Submit or send your resume to employers on your behalf</li>
-        <li><span class="icon">&#10060;</span>Generate a visually formatted PDF &mdash; output is plain text only</li>
-        <li><span class="icon">&#10060;</span>Replace a professional resume reviewer for high-stakes applications</li>
-        </ul>
-      </div>
-    </div>
+    
   </div>
 
     <div class="input-grid" id="input-grid">
@@ -954,8 +920,8 @@ function showResultView() {
 /* ═══════════════════════════════════════════
    AI RESUME GENERATION
 ═══════════════════════════════════════════ */
-const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY = _k.join('');
+const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY=_k.join('');
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 let generatedMarkdown = '';

@@ -726,6 +726,55 @@ footer{
 </head>
 <body>
 
+<!--
+  ── SPLASH SCREEN ──────────────────────────────────────────────────────────
+  Plain dark background, Inter font, single-word type animation.
+  Runs once per page load for ~1.4 s, then fades out in 300 ms.
+  No external requests. JS is inline so it runs before any other content.
+-->
+<div id="amb-splash" aria-hidden="true" style="
+  position:fixed;inset:0;z-index:99999;
+  background:#030305;
+  display:flex;align-items:center;justify-content:center;
+  transition:opacity 0.3s ease;
+">
+  <span id="amb-splash-text" style="
+    font-family:'Inter','Space Grotesk',system-ui,sans-serif;
+    font-size:2rem;font-weight:900;letter-spacing:0.06em;
+    color:#fff;
+  "></span>
+  <span id="amb-splash-cur" style="
+    display:inline-block;width:3px;height:2rem;
+    background:#818cf8;border-radius:2px;margin-left:3px;
+    animation:ambCurBlink 0.7s step-end infinite;
+  "></span>
+</div>
+<style>
+@keyframes ambCurBlink{0%,100%{opacity:1}50%{opacity:0}}
+</style>
+<script>
+(function(){
+  var el    = document.getElementById('amb-splash-text');
+  var cur   = document.getElementById('amb-splash-cur');
+  var wrap  = document.getElementById('amb-splash');
+  var word  = 'Ambore';
+  var delay = 90; // ms per character
+  var i     = 0;
+  var timer = setInterval(function(){
+    if(i >= word.length){
+      clearInterval(timer);
+      // Hold for 400 ms after typing, then fade out
+      setTimeout(function(){
+        wrap.style.opacity = '0';
+        setTimeout(function(){ wrap.style.display = 'none'; }, 300);
+      }, 400);
+      return;
+    }
+    el.textContent += word[i++];
+  }, delay);
+})();
+</script>
+
 <!-- WHATSAPP COMMUNITY BANNER -->
 <div class="wa-banner" id="wa-banner">
   <span>&#128172; Join the Ambore community — get job tips, resume help &amp; career advice</span>

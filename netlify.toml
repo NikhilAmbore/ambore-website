@@ -1,6 +1,14 @@
 [build]
   publish = "."
 
+# ── Edge Functions ────────────────────────────────────────────────────────────
+# claude-proxy — serverless AI proxy that keeps the Anthropic key server-side.
+# Mounted at /api/claude; all HTML pages POST here instead of calling
+# api.anthropic.com directly.
+[[edge_functions]]
+  path     = "/api/claude"
+  function = "claude-proxy"
+
 # ── Auto-minify CSS, JS, HTML ────────────────────────────────────────────────
 [build.processing]
   skip_processing = false
