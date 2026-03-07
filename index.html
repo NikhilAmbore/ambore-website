@@ -9,8 +9,6 @@
 <link rel="dns-prefetch" href="https://www.google-analytics.com"/>
 <link rel="dns-prefetch" href="https://web-production-d62ab.up.railway.app"/>
 <link rel="preconnect" href="https://accounts.google.com"/>
-<!-- Google Identity Services — loaded async so it never blocks render -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
 <!-- Google Analytics GA4 — cookieless, privacy-safe -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
 <script>
@@ -1710,65 +1708,90 @@ function handleLogout(){
   updatePageForAuthState();
 }
 
-/* ── GOOGLE SIGN-IN ─────────────────────────────────────────────────────── */
-// Replace the placeholder below with your Google OAuth 2.0 Client ID.
-// Get one at: https://console.cloud.google.com/apis/credentials
-// Add your site domain to "Authorized JavaScript origins" (e.g. https://ambore.org)
+/* ── GOOGLE SIGN-IN (OAuth 2.0 popup — no external library required) ─────── */
 const GOOGLE_CLIENT_ID = '288905989713-qa7ha78cpf9jt5ch5u361uu7ck495n2e.apps.googleusercontent.com';
+let _googlePollTimer = null;
 
-function initGoogleAuth(){
-  if(typeof google==='undefined'||!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID==='YOUR_GOOGLE_CLIENT_ID_HERE')return;
-  google.accounts.id.initialize({
-    client_id:GOOGLE_CLIENT_ID,
-    callback:handleGoogleCredential,
-    auto_select:false,
-    cancel_on_tap_outside:true,
-  });
+function _googleErr(msg){
+  const panel=document.querySelector('.auth-panel.active');
+  const el=panel?panel.querySelector('.auth-err'):null;
+  if(el){el.textContent=msg;el.classList.add('show');}
 }
-// Called once the GSI library finishes loading
-window.onGoogleLibraryLoad=initGoogleAuth;
-// Also attempt immediately in case the script was already cached
-if(typeof google!=='undefined')initGoogleAuth();
 
 function handleGoogleSignIn(e){
   e.preventDefault();
-  if(typeof google==='undefined'||!GOOGLE_CLIENT_ID||GOOGLE_CLIENT_ID==='YOUR_GOOGLE_CLIENT_ID_HERE'){
-    const panel=document.querySelector('.auth-panel.active');
-    const errId=panel?panel.querySelector('.auth-err'):null;
-    if(errId){errId.textContent='Google Sign-In is not configured yet. Please use email/password.';errId.classList.add('show');}
+  // Clear any previous poll
+  if(_googlePollTimer){clearInterval(_googlePollTimer);_googlePollTimer=null;}
+
+  const redirectUri = window.location.origin + '/';
+  const state = (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2));
+  sessionStorage.setItem('_g_state', state);
+
+  const params = new URLSearchParams({
+    client_id   : GOOGLE_CLIENT_ID,
+    redirect_uri: redirectUri,
+    response_type: 'token',
+    scope       : 'openid email profile',
+    state       : state,
+    prompt      : 'select_account',
+  });
+
+  const w=480, h=600;
+  const left=Math.max(0,Math.round((screen.width-w)/2));
+  const top =Math.max(0,Math.round((screen.height-h)/2));
+  const popup=window.open(
+    'https://accounts.google.com/o/oauth2/v2/auth?'+params,
+    'ambore_google',
+    `width=${w},height=${h},left=${left},top=${top},scrollbars=yes,resizable=yes`
+  );
+
+  if(!popup||popup.closed){
+    _googleErr('Popup was blocked. Please allow popups for this site and try again.');
     return;
   }
-  google.accounts.id.prompt(notification=>{
-    if(notification.isNotDisplayed()||notification.isSkippedMoment()){
-      // One Tap blocked (3rd-party cookies off, etc.) — nothing more to do client-side
-      const panel=document.querySelector('.auth-panel.active');
-      const errId=panel?panel.querySelector('.auth-err'):null;
-      if(errId){errId.textContent='Google sign-in was cancelled or blocked. Try again or use email/password.';errId.classList.add('show');}
-    }
-  });
+
+  // Poll until the popup redirects back to our origin with the token in the hash
+  _googlePollTimer = setInterval(()=>{
+    try{
+      if(!popup||popup.closed){clearInterval(_googlePollTimer);return;}
+      const hash=popup.location.hash;
+      if(popup.location.origin===window.location.origin && hash){
+        clearInterval(_googlePollTimer);
+        popup.close();
+        const p=new URLSearchParams(hash.slice(1));
+        const token=p.get('access_token');
+        const retState=p.get('state');
+        if(retState!==sessionStorage.getItem('_g_state')){
+          _googleErr('Sign-in failed (state mismatch). Please try again.');
+          return;
+        }
+        if(token) _fetchGoogleUser(token);
+        else _googleErr('Google sign-in cancelled. Please try again.');
+      }
+    }catch(_){/* cross-origin while popup is on google.com — expected */}
+  },400);
 }
 
-function handleGoogleCredential(response){
+async function _fetchGoogleUser(accessToken){
   try{
-    // Decode the signed JWT — no server call needed for this site's client-only auth
-    const parts=response.credential.split('.');
-    const payload=JSON.parse(atob(parts[1].replace(/-/g,'+').replace(/_/g,'/')));
-    const email=(payload.email||'').toLowerCase().trim();
-    const name=payload.name||payload.given_name||email.split('@')[0];
-    const googleId=String(payload.sub||'');
-    if(!email||!email.includes('@')){throw new Error('Invalid Google account email');}
+    const r=await fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
+      headers:{Authorization:'Bearer '+accessToken}
+    });
+    if(!r.ok) throw new Error('userinfo '+r.status);
+    const info=await r.json();
+    if(!info.email) throw new Error('No email');
+
+    const email=info.email.toLowerCase().trim();
+    const name=info.name||info.given_name||email.split('@')[0];
+    const googleId=String(info.sub||'');
 
     const users=getUsers();
     let user=users.find(u=>u.email===email);
     if(!user){
-      // New user — create account automatically via Google
       user={id:'u'+Date.now(),name,email,googleId,password:null,createdAt:new Date().toISOString()};
-      users.push(user);
-      saveUsers(users);
-    } else if(!user.googleId){
-      // Existing email/password user — link Google ID
-      user.googleId=googleId;
-      saveUsers(users);
+      users.push(user);saveUsers(users);
+    }else if(!user.googleId){
+      user.googleId=googleId;saveUsers(users);
     }
     saveSession(user);
     closeAuthModal();
@@ -1776,10 +1799,8 @@ function handleGoogleCredential(response){
     updateNavState();
     updatePageForAuthState();
   }catch(err){
-    const panel=document.querySelector('.auth-panel.active');
-    const errId=panel?panel.querySelector('.auth-err'):null;
-    if(errId){errId.textContent='Google sign-in failed. Please try again or use email/password.';errId.classList.add('show');}
-    console.error('[Ambore] Google credential error:',err);
+    _googleErr('Google sign-in failed. Please try again or use email/password.');
+    console.error('[Ambore] Google sign-in error:',err);
   }
 }
 function updateNavState(){
