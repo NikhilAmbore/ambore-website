@@ -948,17 +948,7 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  const r = cfg.round.toLowerCase();
-  const isCoding    = r.includes('coding') || r.includes('hackathon') || r.includes('4th');
-  const isTechnical = r.includes('technical') || r.includes('2nd') || r.includes('3rd');
-  const isSysDesign = r.includes('system design') || r.includes('5th');
-
-  let category = 'Behavioral';
-  if (isCoding)    category = 'Technical';
-  else if (isSysDesign) category = 'Technical';
-  else if (isTechnical) category = 'Technical';
-
-  return `You are a High-Performance Interview Copilot for Ambore.org. Give instantaneous, metric-driven talking points to a candidate in a live interview.
+  return `You are InterviewAI, a practice interview assistant. You listen to the interviewer's question and generate a natural, human-sounding answer in a single, well-structured paragraph.
 
 CANDIDATE RESUME:
 ${cfg.resume}
@@ -968,35 +958,24 @@ ${cfg.jd}
 
 ROLE: ${cfg.role} at ${cfg.company}
 ROUND: ${cfg.round}
-QUESTION CATEGORY: ${category}
 
-STRICT RULES:
-1. NEVER ask clarifying questions. Pick the most likely interpretation and respond immediately.
-2. NEVER invent experience, tools, or achievements not in the resume.
-3. NEVER give generic answers — every answer must be tailored to the resume + JD.
-4. ONLY use facts from the candidate's resume for talking points.
-5. Prioritize skills and keywords from the JD.
-6. Output ONLY the raw JSON object — no markdown, no code fences, no extra text before or after.
-7. If input is pure noise ("um", "uh", "okay") → output: {"category":"${category}","strategy":"","talking_points":[],"pro_tip":"Wait for the next question.","follow_up_question":""}
+CORE RULES:
+1. Respond ONLY when the input is a clear interviewer question.
+2. If the input is the user's own voice, thinking, explanation, or any non-question — output exactly the word: SILENT
+3. You only help users practice. Do not assist with real-time cheating in actual interviews.
+4. Every answer must draw only from: the user's resume, the job description, and the target company.
+5. Never invent experience, tools, companies, or achievements not in the resume.
+6. Never start with filler phrases like "Sure", "Great question", "Here is your answer", or "Certainly".
+7. Always answer in ONE smooth paragraph (5–7 lines). No bullet points. No section headers.
+8. Use first-person voice ("I"). Sound like a real, confident candidate speaking naturally.
 
-JSON SCHEMA (output exactly this structure):
-{
-  "category": "${category}",
-  "strategy": "One sentence — the goal of this answer",
-  "talking_points": [
-    "Point 1 with a metric or specific achievement from resume",
-    "Point 2 with a concrete action or skill",
-    "Point 3 mapped to JD requirement (optional)"
-  ],
-  "pro_tip": "One short delivery cue (e.g. Smile, Slow down, Pause for effect)",
-  "follow_up_question": "One smart question to ask the interviewer after answering"
-}
+BEHAVIORAL QUESTIONS: Weave in a subtle Situation → Action → Result mini-story. Keep it natural, not formulaic.
+TECHNICAL QUESTIONS: Give a clear explanation plus a short example drawn from the user's resume experience.
+HR / CULTURE QUESTIONS: Warm, genuine tone aligned with the company's stated values.
 
-RULES FOR EACH FIELD:
-- strategy: the one-sentence purpose of the answer (e.g. "Show leadership by referencing the team project in resume")
-- talking_points: 2-3 bullets, max 15 words each, resume-backed, include numbers/metrics when available
-- pro_tip: short delivery coaching cue, not content advice
-- follow_up_question: a thoughtful question that shows curiosity about the role or team`;
+QUESTION DETECTION:
+- Input with a question mark or clear question intent → answer it.
+- Input that is the user speaking, explaining, or practicing their own answer → output: SILENT`;
 }
 /* ═══════════════════════════════════════════
    UTILS
@@ -1029,8 +1008,8 @@ async function streamAnswer(question) {
 
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
-  const roundBadge = isCAAR ? '⚙ Technical' : '✦ Behavioral';
-  const maxTok = 350;
+  const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
+  const maxTok = 220;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
@@ -1095,10 +1074,17 @@ async function streamAnswer(question) {
         } catch(e) {}
       }
     }
-    // Render final answer using copilot JSON renderer
+    // If model detected non-question input, silently discard the card
+    if (!fullText.trim() || fullText.trim().toUpperCase() === 'SILENT') {
+      card.remove();
+      setStatus('','');
+      return;
+    }
+    // Render final answer as natural paragraph
     textDiv.innerHTML = '';
-    textDiv.className = '';
-    renderCopilot(textDiv, fullText);
+    textDiv.className = 'streaming-text';
+    textDiv.innerHTML = safeMd(fullText.trim()).split(/\n\n+/).filter(Boolean)
+      .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err) {
