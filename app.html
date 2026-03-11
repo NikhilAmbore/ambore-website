@@ -1034,10 +1034,15 @@ async function streamAnswer(question) {
   let fullText = '';
 
   try {
-    const res = await fetch('/api/claude', {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       signal: _ctrl.signal,
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{
+        'Content-Type':'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version':'2023-06-01',
+        'anthropic-dangerous-direct-browser-access':'true'
+      },
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens: maxTok, stream: true,
         system: buildSystemPrompt(),
