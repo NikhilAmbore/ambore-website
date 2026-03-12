@@ -415,38 +415,48 @@ Rules:
   ].filter(Boolean).join('\n');
 
   const _ctrl=new AbortController();const _ctrlTimer=setTimeout(()=>_ctrl.abort(),90000);
+  const MAX_RETRIES=3;let attempt=0;
   try{
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      signal:_ctrl.signal,
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:900,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||`Generate a professional ${typeLabel} email.`}]})
-    });
-    if(!res.ok)throw new Error('API error '+res.status);
+    while(attempt<=MAX_RETRIES){
+      try{
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          signal:_ctrl.signal,
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+          body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:900,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||`Generate a professional ${typeLabel} email.`}]})
+        });
+        if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
-    document.getElementById('spinner-row').classList.add('hidden');
-    document.getElementById('output-section').classList.remove('hidden');
+        document.getElementById('spinner-row').classList.add('hidden');
+        document.getElementById('output-section').classList.remove('hidden');
 
-    const reader=res.body.getReader();const dec=new TextDecoder();
-    let full='';
-    while(true){
-      const{done,value}=await reader.read();if(done)break;
-      const chunk=dec.decode(value,{stream:true});
-      for(const line of chunk.split('\n')){
-        if(!line.startsWith('data:'))continue;
-        const data=line.slice(5).trim();
-        if(data==='[DONE]')break;
-        try{
-          const j=JSON.parse(data);
-          if(j.type==='error') throw new Error(j.error?.message||'Stream error');
-          if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
-            full+=j.delta.text;
-            renderEmail(full);
+        const reader=res.body.getReader();const dec=new TextDecoder();
+        let full='';
+        while(true){
+          const{done,value}=await reader.read();if(done)break;
+          const chunk=dec.decode(value,{stream:true});
+          for(const line of chunk.split('\n')){
+            if(!line.startsWith('data:'))continue;
+            const data=line.slice(5).trim();
+            if(data==='[DONE]')break;
+            try{
+              const j=JSON.parse(data);
+              if(j.type==='error') throw new Error(j.error?.message||'Stream error');
+              if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
+                full+=j.delta.text;
+                renderEmail(full);
+              }
+            }catch(e){if(!(e instanceof SyntaxError))throw e;}
           }
-        }catch(e){if(!(e instanceof SyntaxError))throw e;}
+        }
+        document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
+        break;
+      }catch(retryErr){
+        const isOverloaded=retryErr.message?.toLowerCase().includes('overload')||retryErr.message?.includes('529');
+        if(isOverloaded&&attempt<MAX_RETRIES){attempt++;const w=attempt*5;showToast(`⏳ API busy — retrying in ${w}s...`);await new Promise(r=>setTimeout(r,w*1000));continue;}
+        throw retryErr;
       }
     }
-    document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
   }catch(e){
     document.getElementById('spinner-row').classList.add('hidden');
     showToast('Error: '+e.message);

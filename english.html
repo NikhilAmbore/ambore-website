@@ -882,65 +882,83 @@ async function sendMessage() {
   const ctrl = new AbortController();
   const timer = setTimeout(() => ctrl.abort(), 60000);
 
+  const MAX_RETRIES = 3; let attempt = 0;
   try {
     const modeData = MODES[activeMode];
     const messages = chatHistory.slice(-12).map(m => ({ role: m.role, content: m.content }));
 
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      signal: ctrl.signal,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 1200,
-        stream: true,
-        system: modeData.system,
-        messages,
-      })
-    });
+    while (attempt <= MAX_RETRIES) {
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          signal: ctrl.signal,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true',
+          },
+          body: JSON.stringify({
+            model: CLAUDE_MODEL,
+            max_tokens: 1200,
+            stream: true,
+            system: modeData.system,
+            messages,
+          })
+        });
 
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      throw new Error(e.error?.message || 'API error ' + res.status);
-    }
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.error?.message || 'API error ' + res.status);
+        }
 
-    removeTyping();
-    let fullText = '';
-    const bubble = addMessage('ai', '');
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
+        removeTyping();
+        let fullText = '';
+        const bubble = addMessage('ai', '');
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n');
-      buf = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const p = JSON.parse(data);
-          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
-          if (p.type === 'content_block_delta' && p.delta?.text) {
-            fullText += p.delta.text;
-            bubble.innerHTML = renderMd(fullText) + '<span style="display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px"></span>';
-            scrollToBottom();
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split('\n');
+          buf = lines.pop();
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (!data || data === '[DONE]') continue;
+            try {
+              const p = JSON.parse(data);
+              if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
+              if (p.type === 'content_block_delta' && p.delta?.text) {
+                fullText += p.delta.text;
+                bubble.innerHTML = renderMd(fullText) + '<span style="display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px"></span>';
+                scrollToBottom();
+              }
+            } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
           }
-        } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
+        }
+
+        bubble.innerHTML = renderMd(fullText);
+        chatHistory.push({ role: 'assistant', content: fullText });
+        scrollToBottom();
+        break;
+
+      } catch (retryErr) {
+        const isOverloaded = retryErr.message?.toLowerCase().includes('overload') || retryErr.message?.includes('529');
+        if (isOverloaded && attempt < MAX_RETRIES) {
+          attempt++;
+          const w = attempt * 5;
+          addTyping(`⏳ API busy — retrying in ${w}s...`);
+          await new Promise(r => setTimeout(r, w * 1000));
+          removeTyping();
+          continue;
+        }
+        throw retryErr;
       }
     }
-
-    bubble.innerHTML = renderMd(fullText);
-    chatHistory.push({ role: 'assistant', content: fullText });
-    scrollToBottom();
 
   } catch(err) {
     removeTyping();

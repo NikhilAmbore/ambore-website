@@ -1289,71 +1289,92 @@ async function generateResume() {
 
   const _ctrl = new AbortController();
   const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
+  const MAX_RETRIES = 3;
+  let attempt = 0;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      signal: _ctrl.signal,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 4000,
-        stream: true,
-        system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
-        messages: [{
-          role: 'user',
-          content: generateMode === 'transform'
-            ? `Please transform my resume:\n\n${resume}`
-            : `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
-        }]
-      })
-    });
+    while (attempt <= MAX_RETRIES) {
+      try {
+        generatedMarkdown = '';
+        output.innerHTML = '<span class="cursor"></span>';
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          signal: _ctrl.signal,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: CLAUDE_MODEL,
+            max_tokens: 4000,
+            stream: true,
+            system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
+            messages: [{
+              role: 'user',
+              content: generateMode === 'transform'
+                ? `Please transform my resume:\n\n${resume}`
+                : `RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`
+            }]
+          })
+        });
 
-    if (!res.ok) {
-      const e = await res.json().catch(() => ({}));
-      throw new Error(e.error?.message || 'API error ' + res.status);
-    }
+        if (!res.ok) {
+          const e = await res.json().catch(() => ({}));
+          throw new Error(e.error?.message || 'API error ' + res.status);
+        }
 
-    setGenStatus('thinking', 'Writing tailored resume...');
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
+        setGenStatus('thinking', 'Writing tailored resume...');
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n');
-      buf = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const p = JSON.parse(data);
-          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
-          if (p.type === 'content_block_delta' && p.delta?.text) {
-            generatedMarkdown += p.delta.text;
-            output.innerHTML = renderMarkdown(generatedMarkdown) + '<span class="cursor"></span>';
-            output.scrollTop = output.scrollHeight;
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split('\n');
+          buf = lines.pop();
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if (!data || data === '[DONE]') continue;
+            try {
+              const p = JSON.parse(data);
+              if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
+              if (p.type === 'content_block_delta' && p.delta?.text) {
+                generatedMarkdown += p.delta.text;
+                output.innerHTML = renderMarkdown(generatedMarkdown) + '<span class="cursor"></span>';
+                output.scrollTop = output.scrollHeight;
+              }
+            } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
           }
-        } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
+        }
+
+        // Final render without cursor
+        output.innerHTML = renderMarkdown(generatedMarkdown);
+        setGenStatus('done', 'Complete');
+        setTimeout(() => setGenStatus('', ''), 4000);
+
+        // Compute AFTER score (tailor mode only)
+        if (generateMode === 'tailor' && beforeResult) {
+          const afterResult = computeATSScore(stripMarkdown(generatedMarkdown), jd);
+          updateATSAfter(afterResult, beforeResult);
+        }
+        break; // success — exit retry loop
+
+      } catch (retryErr) {
+        const isOverloaded = retryErr.message?.toLowerCase().includes('overload') || retryErr.message?.includes('529');
+        if (isOverloaded && attempt < MAX_RETRIES) {
+          attempt++;
+          const wait = attempt * 5;
+          setGenStatus('thinking', `⏳ API busy — retrying in ${wait}s (${attempt}/${MAX_RETRIES})...`);
+          output.innerHTML = `<p style="color:rgba(251,191,36,0.8);padding:20px;font-size:0.9rem">⏳ API is busy — retrying in ${wait}s... (${attempt}/${MAX_RETRIES})</p>`;
+          await new Promise(r => setTimeout(r, wait * 1000));
+          continue;
+        }
+        throw retryErr;
       }
-    }
-
-    // Final render without cursor
-    output.innerHTML = renderMarkdown(generatedMarkdown);
-    setGenStatus('done', 'Complete');
-    setTimeout(() => setGenStatus('', ''), 4000);
-
-    // Compute AFTER score (tailor mode only)
-    if (generateMode === 'tailor' && beforeResult) {
-      const afterResult = computeATSScore(stripMarkdown(generatedMarkdown), jd);
-      updateATSAfter(afterResult, beforeResult);
     }
   } catch (err) {
     output.innerHTML = `<p style="color:var(--red);padding:20px">Error: ${err.message}<br><br><small style="opacity:0.6">Check your internet connection and try again.</small></p>`;

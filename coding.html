@@ -505,60 +505,78 @@ async function streamResponse(userMsg){
   const timer = setTimeout(() => ctrl.abort(), 90000);
 
   let fullText = '';
+  const MAX_RETRIES = 3; let attempt = 0;
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
-      signal: ctrl.signal,
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true'
-      },
-      body: JSON.stringify({
-        model: CLAUDE_MODEL,
-        max_tokens: 3000,
-        stream: true,
-        system: buildSystemPrompt(),
-        messages: chatHistory
-      })
-    });
+    while (attempt <= MAX_RETRIES) {
+      try {
+        fullText = '';
+        bubble.innerHTML = '<span class="cursor"></span>';
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          signal: ctrl.signal,
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-api-key': CLAUDE_KEY,
+            'anthropic-version': '2023-06-01',
+            'anthropic-dangerous-direct-browser-access': 'true'
+          },
+          body: JSON.stringify({
+            model: CLAUDE_MODEL,
+            max_tokens: 3000,
+            stream: true,
+            system: buildSystemPrompt(),
+            messages: chatHistory
+          })
+        });
 
-    if(!res.ok){
-      const e = await res.json().catch(()=>({}));
-      throw new Error(e.error?.message || 'API error ' + res.status);
-    }
+        if(!res.ok){
+          const e = await res.json().catch(()=>({}));
+          throw new Error(e.error?.message || 'API error ' + res.status);
+        }
 
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '';
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buf = '';
 
-    while(true){
-      const {done, value} = await reader.read();
-      if(done) break;
-      buf += decoder.decode(value, {stream:true});
-      const lines = buf.split('\n');
-      buf = lines.pop();
-      for(const line of lines){
-        if(!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if(!data || data === '[DONE]') continue;
-        try{
-          const p = JSON.parse(data);
-          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
-          if(p.type === 'content_block_delta' && p.delta?.text){
-            fullText += p.delta.text;
-            bubble.innerHTML = renderMd(fullText) + '<span class="cursor"></span>';
-            scrollToBottom();
+        while(true){
+          const {done, value} = await reader.read();
+          if(done) break;
+          buf += decoder.decode(value, {stream:true});
+          const lines = buf.split('\n');
+          buf = lines.pop();
+          for(const line of lines){
+            if(!line.startsWith('data: ')) continue;
+            const data = line.slice(6).trim();
+            if(!data || data === '[DONE]') continue;
+            try{
+              const p = JSON.parse(data);
+              if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
+              if(p.type === 'content_block_delta' && p.delta?.text){
+                fullText += p.delta.text;
+                bubble.innerHTML = renderMd(fullText) + '<span class="cursor"></span>';
+                scrollToBottom();
+              }
+            }catch(e){ if(!(e instanceof SyntaxError)) throw e; }
           }
-        }catch(e){ if(!(e instanceof SyntaxError)) throw e; }
+        }
+
+        bubble.innerHTML = renderMd(fullText);
+        chatHistory.push({ role: 'assistant', content: fullText });
+        if(chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+        break;
+
+      } catch(retryErr) {
+        const isOverloaded = retryErr.message?.toLowerCase().includes('overload') || retryErr.message?.includes('529');
+        if (isOverloaded && attempt < MAX_RETRIES) {
+          attempt++;
+          const w = attempt * 5;
+          bubble.innerHTML = `<span style="color:rgba(251,191,36,0.8);font-size:0.85rem">⏳ API busy — retrying in ${w}s... (${attempt}/${MAX_RETRIES})</span>`;
+          await new Promise(r => setTimeout(r, w * 1000));
+          continue;
+        }
+        throw retryErr;
       }
     }
-
-    bubble.innerHTML = renderMd(fullText);
-    chatHistory.push({ role: 'assistant', content: fullText });
-    if(chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
-
   }catch(err){
     if(err.name !== 'AbortError'){
       bubble.innerHTML = `<span style="color:var(--red)">Error: ${escHtml(err.message)}</span>`;
