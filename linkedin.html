@@ -518,7 +518,7 @@ Rules:
   },2500);
 
   const _ctrl=new AbortController();const _ctrlTimer=setTimeout(()=>_ctrl.abort(),90000);
-  const MAX_RETRIES=3;let attempt=0;
+  const MAX_RETRIES=3;let attempt=0;const FALLBACK_MODEL='claude-haiku-4-5-20251001';
   try{
     while(attempt<=MAX_RETRIES){
       try{
@@ -526,7 +526,7 @@ Rules:
           signal:_ctrl.signal,
           method:'POST',
           headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-          body:JSON.stringify({model:CLAUDE_MODEL,max_tokens:2500,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||'Optimize my LinkedIn profile for a software engineering role.'}]})
+          body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:2500,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||'Optimize my LinkedIn profile for a software engineering role.'}]})
         });
         if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
@@ -553,7 +553,7 @@ Rules:
         break;
       }catch(retryErr){
         const isOverloaded=retryErr.message?.toLowerCase().includes('overload')||retryErr.message?.includes('529');
-        if(isOverloaded&&attempt<MAX_RETRIES){attempt++;const w=attempt*5;if(statusEl)statusEl.textContent=`⏳ API busy — retrying in ${w}s... (${attempt}/${MAX_RETRIES})`;await new Promise(r=>setTimeout(r,w*1000));continue;}
+        if(isOverloaded&&attempt<MAX_RETRIES){attempt++;const w=attempt===1?0:(attempt-1)*5;if(statusEl)statusEl.textContent=attempt===1?'⚡ Switching to faster model...':`⏳ Retrying in ${w}s...`;if(w>0)await new Promise(r=>setTimeout(r,w*1000));continue;}
         throw retryErr;
       }
     }

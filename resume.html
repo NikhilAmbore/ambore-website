@@ -1291,11 +1291,14 @@ async function generateResume() {
   const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
   const MAX_RETRIES = 3;
   let attempt = 0;
+  // Fall back to haiku after first sonnet failure — haiku has far more capacity
+  const FALLBACK_MODEL = 'claude-haiku-4-5-20251001';
   try {
     while (attempt <= MAX_RETRIES) {
       try {
         generatedMarkdown = '';
         output.innerHTML = '<span class="cursor"></span>';
+        const modelToUse = attempt >= 1 ? FALLBACK_MODEL : CLAUDE_MODEL;
         const res = await fetch('https://api.anthropic.com/v1/messages', {
           signal: _ctrl.signal,
           method: 'POST',
@@ -1306,7 +1309,7 @@ async function generateResume() {
             'anthropic-dangerous-direct-browser-access': 'true'
           },
           body: JSON.stringify({
-            model: CLAUDE_MODEL,
+            model: modelToUse,
             max_tokens: 4000,
             stream: true,
             system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
@@ -1367,10 +1370,12 @@ async function generateResume() {
         const isOverloaded = retryErr.message?.toLowerCase().includes('overload') || retryErr.message?.includes('529');
         if (isOverloaded && attempt < MAX_RETRIES) {
           attempt++;
-          const wait = attempt * 5;
-          setGenStatus('thinking', `⏳ API busy — retrying in ${wait}s (${attempt}/${MAX_RETRIES})...`);
-          output.innerHTML = `<p style="color:rgba(251,191,36,0.8);padding:20px;font-size:0.9rem">⏳ API is busy — retrying in ${wait}s... (${attempt}/${MAX_RETRIES})</p>`;
-          await new Promise(r => setTimeout(r, wait * 1000));
+          // attempt 1: switch to haiku immediately (no wait), attempts 2-3: short waits
+          const wait = attempt === 1 ? 0 : (attempt - 1) * 5;
+          const msg = attempt === 1 ? '⚡ Switching to faster model...' : `⏳ Retrying in ${wait}s... (${attempt}/${MAX_RETRIES})`;
+          setGenStatus('thinking', msg);
+          output.innerHTML = `<p style="color:rgba(251,191,36,0.8);padding:20px;font-size:0.9rem">${msg}</p>`;
+          if (wait > 0) await new Promise(r => setTimeout(r, wait * 1000));
           continue;
         }
         throw retryErr;
