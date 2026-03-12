@@ -545,12 +545,13 @@ async function streamResponse(userMsg){
         if(!data || data === '[DONE]') continue;
         try{
           const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
           if(p.type === 'content_block_delta' && p.delta?.text){
             fullText += p.delta.text;
             bubble.innerHTML = renderMd(fullText) + '<span class="cursor"></span>';
             scrollToBottom();
           }
-        }catch(e){}
+        }catch(e){ if(!(e instanceof SyntaxError)) throw e; }
       }
     }
 

@@ -1149,12 +1149,13 @@ async function generateAchievements() {
         if (!data || data === '[DONE]') continue;
         try {
           const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
           if (p.type === 'content_block_delta' && p.delta?.text) {
             achMarkdown += p.delta.text;
             output.innerHTML = renderMarkdown(achMarkdown) + '<span class="cursor"></span>';
             output.scrollTop = output.scrollHeight;
           }
-        } catch (e) {}
+        } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
       }
     }
     output.innerHTML = renderMarkdown(achMarkdown);
@@ -1334,12 +1335,13 @@ async function generateResume() {
         if (!data || data === '[DONE]') continue;
         try {
           const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
           if (p.type === 'content_block_delta' && p.delta?.text) {
             generatedMarkdown += p.delta.text;
             output.innerHTML = renderMarkdown(generatedMarkdown) + '<span class="cursor"></span>';
             output.scrollTop = output.scrollHeight;
           }
-        } catch (e) {}
+        } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
       }
     }
 

@@ -438,11 +438,12 @@ Rules:
         if(data==='[DONE]')break;
         try{
           const j=JSON.parse(data);
+          if(j.type==='error') throw new Error(j.error?.message||'Stream error');
           if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
             full+=j.delta.text;
             renderEmail(full);
           }
-        }catch{}
+        }catch(e){if(!(e instanceof SyntaxError))throw e;}
       }
     }
     document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});

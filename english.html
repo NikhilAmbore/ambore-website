@@ -928,12 +928,13 @@ async function sendMessage() {
         if (!data || data === '[DONE]') continue;
         try {
           const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
           if (p.type === 'content_block_delta' && p.delta?.text) {
             fullText += p.delta.text;
             bubble.innerHTML = renderMd(fullText) + '<span style="display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px"></span>';
             scrollToBottom();
           }
-        } catch {}
+        } catch (e) { if (!(e instanceof SyntaxError)) throw e; }
       }
     }
 

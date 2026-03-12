@@ -1064,6 +1064,7 @@ async function streamAnswer(question) {
         if (!data || data==='[DONE]') continue;
         try {
           const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
           if (p.type==='content_block_delta' && p.delta?.text) {
             fullText += p.delta.text;
             // Show streaming text with cursor (escape then render bold markdown)
@@ -1071,7 +1072,7 @@ async function streamAnswer(question) {
             textDiv.innerHTML = streamed.split(/\n\n+/).filter(Boolean).map(para=>`<p>${para.replace(/\n/g,'<br>')}</p>`).join('') + '<span class="cursor"></span>';
             body.scrollTop = body.scrollHeight;
           }
-        } catch(e) {}
+        } catch(e) { if (!(e instanceof SyntaxError)) throw e; }
       }
     }
     // If model detected non-question input, silently discard the card
