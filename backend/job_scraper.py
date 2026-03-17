@@ -488,6 +488,9 @@ class PoliteClient:
         "www.indeed.com",         # /rss — public RSS feed, no key required
         "jobs.jobvite.com",       # /api/{slug}/jobs — public JSON API
         "jobicy.com",             # /api/v2/remote-jobs — public JSON API
+        "job-search-api.svc.dhigroupinc.com",  # Dice public search API
+        "www.ziprecruiter.com",   # ZipRecruiter RSS feeds
+        "rss.jobs.monster.com",   # Monster RSS feeds
     })
 
     def _robots_allow(self, url: str) -> bool:
@@ -514,6 +517,9 @@ class PoliteClient:
         "jobs.jobvite.com":         0.3,
         "jobicy.com":               0.5,
         "api.adzuna.com":           0.5,
+        "job-search-api.svc.dhigroupinc.com": 0.5,
+        "www.ziprecruiter.com":     1.0,
+        "rss.jobs.monster.com":     1.0,
         "www.themuse.com":          0.5,
         "data.usajobs.gov":         0.5,
         "remotive.com":             0.5,
@@ -3111,6 +3117,328 @@ class IndeedRSSScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# Dice  (public JSON search API — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class DiceScraper(BaseScraper):
+    """
+    Dice.com technology jobs search API — no authentication required.
+
+    Endpoint: GET https://job-search-api.svc.dhigroupinc.com/v1/dice/jobs/search
+    Parameters: q, countryCode=US, page, pageSize, language=en
+    Response:   {"data": [...], "meta": {"totalElements": N}}
+    """
+
+    ATS_NAME  = "dice"
+    _BASE_URL = "https://job-search-api.svc.dhigroupinc.com/v1/dice/jobs/search"
+    _PAGE_SIZE = 100
+    _MAX_PAGES = 3   # up to 300 results per keyword
+
+    _KEYWORDS: list[str] = [
+        "software engineer", "data scientist", "product manager",
+        "devops engineer", "backend engineer", "frontend engineer",
+        "full stack developer", "data engineer", "machine learning engineer",
+        "cloud architect", "security engineer", "mobile developer",
+        "engineering manager", "solutions architect", "qa engineer",
+        "data analyst", "business analyst", "python developer",
+        "java developer", "site reliability engineer",
+    ]
+
+    _HEADERS: dict[str, str] = {
+        **DEFAULT_HEADERS,
+        "Accept": "application/json, text/plain, */*",
+        "Origin": "https://www.dice.com",
+        "Referer": "https://www.dice.com/",
+    }
+
+    def fetch_jobs(self) -> list[Job]:
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            for page in range(1, self._MAX_PAGES + 1):
+                try:
+                    resp = self.client.get(
+                        self._BASE_URL,
+                        params={
+                            "q":            keyword,
+                            "countryCode":  "US",
+                            "radius":       "50",
+                            "radiusUnit":   "mi",
+                            "page":         page,
+                            "pageSize":     self._PAGE_SIZE,
+                            "language":     "en",
+                            "eid":          "search",
+                        },
+                        headers=self._HEADERS,
+                    )
+                    data = _safe_json(resp)
+                except Exception as exc:
+                    log.error("[Dice] %s p%d — %s", keyword, page, exc)
+                    break
+
+                items = data.get("data") or []
+                if not items:
+                    break
+
+                for raw in items:
+                    job_id = str(raw.get("id", ""))
+                    if job_id and job_id in seen:
+                        continue
+                    if job_id:
+                        seen.add(job_id)
+
+                    title    = (raw.get("title",       "") or "").strip()
+                    company  = (raw.get("companyName", "") or "").strip()
+                    location = (raw.get("location",    "") or "").strip()
+                    url      = (raw.get("jobDetailUrl","") or "").strip()
+                    emp_type = (raw.get("employmentType","") or None)
+                    posted   = raw.get("postedDate") or None
+
+                    skills   = raw.get("skills") or []
+                    desc     = (raw.get("summary", "") or "").strip()
+                    if skills:
+                        desc += "\n\nSkills: " + ", ".join(str(s) for s in skills)
+
+                    if not title or not url:
+                        continue
+
+                    job = self._make_job(
+                        title=title,
+                        location=location or "United States",
+                        url=url,
+                        description=desc,
+                        employment_type=emp_type,
+                        posted_at=str(posted) if posted else None,
+                        company_override=company or None,
+                    )
+                    if job:
+                        jobs.append(job)
+
+                meta  = data.get("meta") or {}
+                total = int(meta.get("totalElements") or 0)
+                if page * self._PAGE_SIZE >= min(total, self._MAX_PAGES * self._PAGE_SIZE):
+                    break
+
+            log.info("[Dice] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[Dice] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# ZipRecruiter  (public RSS feeds — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class ZipRecruiterScraper(BaseScraper):
+    """
+    ZipRecruiter public RSS feed scraper — no API key required.
+
+    Endpoint: https://www.ziprecruiter.com/candidate/suggested-jobs/feed/rss
+    Parameters: search={keyword}, location=United+States
+    Each call returns up to 25 listings per keyword.
+    """
+
+    ATS_NAME  = "ziprecruiter"
+    _BASE_URL = "https://www.ziprecruiter.com/candidate/suggested-jobs/feed/rss"
+
+    _KEYWORDS: list[str] = [
+        "software engineer", "data scientist", "product manager",
+        "devops engineer", "backend engineer", "frontend engineer",
+        "full stack developer", "data engineer", "machine learning engineer",
+        "cloud engineer", "security engineer", "mobile engineer",
+        "engineering manager", "solutions architect", "qa engineer",
+        "data analyst", "business analyst", "python developer",
+        "java developer", "site reliability engineer", "AI engineer",
+    ]
+
+    _HEADERS: dict[str, str] = {
+        **DEFAULT_HEADERS,
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+
+    def fetch_jobs(self) -> list[Job]:
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            try:
+                resp = self.client.get(
+                    self._BASE_URL,
+                    params={"search": keyword, "location": "United States"},
+                    headers=self._HEADERS,
+                )
+                root    = ET.fromstring(resp.content)
+                channel = root.find("channel")
+                if channel is None:
+                    continue
+
+                for item in channel.findall("item"):
+                    raw_title = (item.findtext("title")       or "").strip()
+                    link      = (item.findtext("link")        or "").strip()
+                    guid      = (item.findtext("guid")        or "").strip()
+                    pub_str   = (item.findtext("pubDate")     or "").strip()
+                    desc_raw  = (item.findtext("description") or "").strip()
+
+                    url = link or guid
+                    if not url or url in seen:
+                        continue
+                    seen.add(url)
+
+                    # ZipRecruiter title: "Job Title at Company in City, State"
+                    title = raw_title
+                    company = ""
+                    location = ""
+                    if " at " in raw_title:
+                        parts = raw_title.split(" at ", 1)
+                        title = parts[0].strip()
+                        rest  = parts[1]
+                        if " in " in rest:
+                            p2 = rest.split(" in ", 1)
+                            company  = p2[0].strip()
+                            location = p2[1].strip()
+                        else:
+                            company = rest.strip()
+
+                    posted_at: str | None = None
+                    if pub_str:
+                        try:
+                            posted_at = parsedate_to_datetime(pub_str).isoformat()
+                        except Exception:
+                            pass
+
+                    job = self._make_job(
+                        title=title or raw_title,
+                        location=location or "United States",
+                        url=url,
+                        description=_strip_html(desc_raw),
+                        posted_at=posted_at,
+                        company_override=company or None,
+                    )
+                    if job:
+                        jobs.append(job)
+
+            except Exception as exc:
+                log.warning("[ZipRecruiter] %r — %s", keyword, exc)
+                continue
+
+            log.info("[ZipRecruiter] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[ZipRecruiter] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Monster  (public RSS feeds — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class MonsterScraper(BaseScraper):
+    """
+    Monster.com public RSS feed scraper — no API key required.
+
+    Endpoint: https://rss.jobs.monster.com/rss.ashx
+    Parameters: q={keyword}, where=United+States, rad=100, sort=date
+    Returns up to 25 jobs per keyword.
+    """
+
+    ATS_NAME  = "monster"
+    _BASE_URL = "https://rss.jobs.monster.com/rss.ashx"
+
+    _KEYWORDS: list[str] = [
+        "software engineer", "data scientist", "product manager",
+        "devops engineer", "full stack developer", "data engineer",
+        "machine learning engineer", "cloud architect", "security engineer",
+        "backend engineer", "frontend engineer", "mobile developer",
+        "engineering manager", "qa engineer", "data analyst",
+        "business analyst", "solutions architect", "python developer",
+        "java developer", "site reliability engineer",
+    ]
+
+    _HEADERS: dict[str, str] = {
+        **DEFAULT_HEADERS,
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+
+    def fetch_jobs(self) -> list[Job]:
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for keyword in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            try:
+                resp = self.client.get(
+                    self._BASE_URL,
+                    params={
+                        "q":     keyword,
+                        "where": "United States",
+                        "rad":   "100",
+                        "sort":  "date",
+                    },
+                    headers=self._HEADERS,
+                )
+                root    = ET.fromstring(resp.content)
+                channel = root.find("channel")
+                if channel is None:
+                    continue
+
+                for item in channel.findall("item"):
+                    raw_title = (item.findtext("title")       or "").strip()
+                    link      = (item.findtext("link")        or "").strip()
+                    guid      = (item.findtext("guid")        or "").strip()
+                    pub_str   = (item.findtext("pubDate")     or "").strip()
+                    desc_raw  = (item.findtext("description") or "").strip()
+
+                    url = link or guid
+                    if not url or url in seen:
+                        continue
+                    seen.add(url)
+
+                    # Monster title often: "Job Title - Company - City, ST"
+                    title = raw_title
+                    company  = ""
+                    location = ""
+                    if " - " in raw_title:
+                        parts = raw_title.split(" - ")
+                        title = parts[0].strip()
+                        if len(parts) >= 2:
+                            company = parts[1].strip()
+                        if len(parts) >= 3:
+                            location = parts[2].strip()
+
+                    posted_at: str | None = None
+                    if pub_str:
+                        try:
+                            posted_at = parsedate_to_datetime(pub_str).isoformat()
+                        except Exception:
+                            pass
+
+                    job = self._make_job(
+                        title=title or raw_title,
+                        location=location or "United States",
+                        url=url,
+                        description=_strip_html(desc_raw),
+                        posted_at=posted_at,
+                        company_override=company or None,
+                    )
+                    if job:
+                        jobs.append(job)
+
+            except Exception as exc:
+                log.warning("[Monster] %r — %s", keyword, exc)
+                continue
+
+            log.info("[Monster] %s — %d jobs so far", keyword, len(jobs))
+
+        log.info("[Monster] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -3138,6 +3466,9 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "indeed":          IndeedRSSScraper,     # Indeed RSS feeds — no key needed
     "jobvite":         JobviteScraper,       # Jobvite company boards — no key needed
     "jobicy":          JobicyScraper,        # Jobicy remote aggregator — no key needed
+    "dice":            DiceScraper,          # Dice tech jobs JSON API — no key needed
+    "ziprecruiter":    ZipRecruiterScraper,  # ZipRecruiter RSS feeds — no key needed
+    "monster":         MonsterScraper,       # Monster RSS feeds — no key needed
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -3753,6 +4084,15 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
 
     # ── Indeed RSS (no API key — public RSS feeds, 38 keywords × 8 pages) ────
     {"ats": "indeed", "company": "indeed-aggregator", "company_name": "Indeed"},
+
+    # ── Dice (tech-focused JSON API — no auth, 20 keywords × up to 300 results) ─
+    {"ats": "dice", "company": "dice-aggregator", "company_name": "Dice"},
+
+    # ── ZipRecruiter RSS (no auth — 21 keywords × 25 results each) ──────────
+    {"ats": "ziprecruiter", "company": "ziprecruiter-aggregator", "company_name": "ZipRecruiter"},
+
+    # ── Monster RSS (no auth — 20 keywords × 25 results each) ────────────────
+    {"ats": "monster", "company": "monster-aggregator", "company_name": "Monster"},
 
     # ── Workday (POST /wday/cxs/{tenant}/{site}/jobs — CSRF via session warmup)
     # The scraper GETs the careers page first to capture the CALYPSO_CSRF_TOKEN
