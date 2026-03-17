@@ -163,6 +163,15 @@ jobs:
           merged  = [j for j in fresh if not_expired(j)]
           expired = before - len(merged)
 
+          # Cap at 50 000 most-recent jobs so jobs.json never exceeds GitHub's 100 MB limit
+          MAX_JOBS = 50_000
+          if len(merged) > MAX_JOBS:
+              merged.sort(key=lambda j: j.get('first_seen_at') or j.get('scraped_at') or '', reverse=True)
+              trimmed = len(merged) - MAX_JOBS
+              merged  = merged[:MAX_JOBS]
+          else:
+              trimmed = 0
+
           Path('backend/jobs.json').write_text(
               json.dumps(merged, indent=2, ensure_ascii=False),
               encoding='utf-8'
@@ -171,7 +180,7 @@ jobs:
           atses = Counter(j['ats'] for j in merged)
           print(
               f'Merge done — {len(merged)} total '
-              f'({carried} carried over, {expired} expired after {EXPIRE_DAYS}d)'
+              f'({carried} carried over, {expired} expired, {trimmed} trimmed to cap)'
           )
           for ats, cnt in sorted(atses.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
