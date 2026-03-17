@@ -204,6 +204,12 @@ button,input,textarea,select{font-family:inherit}
 .btn-screen:hover{background:rgba(124,58,237,0.3)}
 .btn-end{padding:6px 14px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.25);border-radius:8px;color:var(--red);font-size:0.78rem;font-weight:600;cursor:pointer}
 .btn-end:hover{background:rgba(239,68,68,0.2)}
+.btn-share{padding:6px 14px;border:1px solid rgba(34,197,94,0.25);border-radius:8px;background:rgba(34,197,94,0.08);color:#22c55e;font-size:0.78rem;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-share:hover{background:rgba(34,197,94,0.18)}
+.btn-share.active{background:rgba(34,197,94,0.22);border-color:rgba(34,197,94,0.5);animation:pulse-share 2s infinite}
+.btn-share:disabled{opacity:0.5;cursor:not-allowed}
+@keyframes pulse-share{0%,100%{box-shadow:0 0 0 0 rgba(34,197,94,0.4)}50%{box-shadow:0 0 0 5px rgba(34,197,94,0)}}
+.screen-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.15);transition:background 0.25s;flex-shrink:0}
 .sess-body{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0}
 .panel{display:flex;flex-direction:column;overflow:hidden;border-bottom:1px solid var(--border);min-height:0}
 .panel:last-child{border-bottom:none;flex:1;min-height:0}
@@ -334,6 +340,7 @@ button,input,textarea,select{font-family:inherit}
   .countdown{font-size:0.82rem;padding:3px 8px}
   .btn-listen{padding:5px 10px;font-size:0.7rem}
   .btn-screen{padding:5px 10px;font-size:0.7rem}
+  .btn-share{padding:5px 10px;font-size:0.7rem}
   .btn-end{padding:5px 10px;font-size:0.7rem}
 
   /* Session body panels */
@@ -549,6 +556,8 @@ button,input,textarea,select{font-family:inherit}
       </div>
       <button class="btn-listen" id="btn-listen" onclick="toggleListen()">● Start Listening</button>
       <button class="btn-screen" id="btn-screen" onclick="captureScreen()">📸 Analyze Screen</button>
+      <div class="screen-dot" id="screen-dot" title="System audio activity"></div>
+      <button class="btn-share" id="btn-share" onclick="toggleScreenShare()">🖥 Share Screen</button>
       <button class="btn-end" onclick="endSession(false)">End Session</button>
     </div>
   </div>
@@ -901,6 +910,7 @@ function updateCountdownDisplay() {
 ═══════════════════════════════════════════ */
 function endSession(timeUp) {
   stopListen();
+  stopScreenShare();
   clearInterval(countdownInt);
   const durationSec = elapsedSecs;
   const m = Math.floor(durationSec/60).toString().padStart(2,'0');
@@ -929,6 +939,7 @@ function endSession(timeUp) {
   document.getElementById('end-modal').classList.remove('hidden');
 }
 function backToSetup() {
+  stopScreenShare();
   document.getElementById('end-modal').classList.add('hidden');
   document.getElementById('session').classList.add('hidden');
   showSetup();
@@ -1048,7 +1059,13 @@ async function streamAnswer(question) {
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens: maxTok, stream: true,
         system: buildSystemPrompt(),
-        messages:[{ role:'user', content: `Interview question: "${question}"` }]
+        messages:[{ role:'user', content: latestScreenshot
+          ? [
+              { type:'image', source:{ type:'base64', media_type:'image/jpeg', data: latestScreenshot }},
+              { type:'text', text: `Interview question: "${question}"\n\n(The screenshot shows what is currently on the candidate's screen — use it as context if relevant.)` }
+            ]
+          : `Interview question: "${question}"`
+        }]
       })
     });
     if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
@@ -1282,6 +1299,107 @@ function renderTechnical(container, text, roundType) {
     container.className = 'streaming-text';
     container.innerHTML = safeMd(text).split(/\n\n+/).filter(Boolean).map(p=>`<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
   }
+}
+
+/* ═══════════════════════════════════════════
+   LIVE SCREEN SHARE — continuous context
+   Auto-captures a screenshot every 3 s and
+   attaches it to every Claude API call so
+   the AI always sees what's on screen.
+═══════════════════════════════════════════ */
+let screenStream      = null;
+let screenVideo       = null;
+let latestScreenshot  = null;
+let screenshotInterval = null;
+let isScreenSharing   = false;
+let audioCtx          = null;
+
+async function toggleScreenShare() {
+  isScreenSharing ? stopScreenShare() : await startScreenShare();
+}
+
+async function startScreenShare() {
+  const btn = document.getElementById('btn-share');
+  btn.textContent = '⏳ Starting...'; btn.disabled = true;
+  try {
+    screenStream = await navigator.mediaDevices.getDisplayMedia({
+      video: { width: { ideal: 1280 }, frameRate: { ideal: 2 } },
+      audio: true   // request system audio where supported
+    });
+
+    screenVideo = document.createElement('video');
+    screenVideo.srcObject = screenStream;
+    screenVideo.muted = true;
+    await new Promise(res => { screenVideo.onloadedmetadata = () => { screenVideo.play(); res(); }; });
+
+    isScreenSharing = true;
+    btn.textContent = '🟢 Screen Live'; btn.classList.add('active'); btn.disabled = false;
+
+    // Capture first frame immediately, then refresh every 3 s
+    captureLatestScreenshot();
+    screenshotInterval = setInterval(captureLatestScreenshot, 3000);
+
+    // Auto-stop if user dismisses browser share UI
+    screenStream.getVideoTracks()[0]?.addEventListener('ended', stopScreenShare);
+
+    showToast('🖥 Screen sharing active — AI sees your screen on every answer');
+
+    // Optional: visualise system audio activity in the screen-dot
+    const audioTracks = screenStream.getAudioTracks();
+    if (audioTracks.length) setupAudioMonitor(audioTracks[0]);
+  } catch(e) {
+    if (e.name !== 'NotAllowedError' && e.name !== 'AbortError') {
+      showToast('⚠️ Screen share failed: ' + e.message);
+    }
+    btn.textContent = '🖥 Share Screen'; btn.disabled = false;
+  }
+}
+
+function stopScreenShare() {
+  isScreenSharing = false;
+  latestScreenshot = null;
+  clearInterval(screenshotInterval); screenshotInterval = null;
+  if (screenStream) { screenStream.getTracks().forEach(t => t.stop()); screenStream = null; }
+  screenVideo = null;
+  if (audioCtx) { try { audioCtx.close(); } catch(e){} audioCtx = null; }
+  const dot = document.getElementById('screen-dot');
+  if (dot) dot.style.background = 'rgba(255,255,255,0.15)';
+  const btn = document.getElementById('btn-share');
+  if (btn) { btn.textContent = '🖥 Share Screen'; btn.classList.remove('active'); btn.disabled = false; }
+}
+
+function captureLatestScreenshot() {
+  if (!screenVideo || !isScreenSharing) return;
+  try {
+    const scale = Math.min(1, 1280 / (screenVideo.videoWidth || 1280));
+    const w = Math.round((screenVideo.videoWidth  || 1280) * scale);
+    const h = Math.round((screenVideo.videoHeight || 720)  * scale);
+    if (!w || !h) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = w; canvas.height = h;
+    canvas.getContext('2d').drawImage(screenVideo, 0, 0, w, h);
+    latestScreenshot = canvas.toDataURL('image/jpeg', 0.65).split(',')[1];
+  } catch(e) {}
+}
+
+/** Visualise system audio activity in the screen-dot (no transcription — browser limitation). */
+function setupAudioMonitor(audioTrack) {
+  try {
+    audioCtx = new AudioContext();
+    const src      = audioCtx.createMediaStreamSource(new MediaStream([audioTrack]));
+    const analyser = audioCtx.createAnalyser();
+    analyser.fftSize = 256;
+    src.connect(analyser);
+    const data = new Uint8Array(analyser.frequencyBinCount);
+    const dot  = document.getElementById('screen-dot');
+    (function tick() {
+      if (!audioCtx) return;
+      analyser.getByteFrequencyData(data);
+      const avg = data.reduce((a, b) => a + b, 0) / data.length;
+      if (dot) dot.style.background = avg > 18 ? '#22c55e' : 'rgba(255,255,255,0.15)';
+      requestAnimationFrame(tick);
+    })();
+  } catch(e) {}
 }
 
 /* ═══════════════════════════════════════════
