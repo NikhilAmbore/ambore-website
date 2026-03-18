@@ -495,7 +495,7 @@ class PoliteClient:
         "himalayas.app",          # Himalayas remote jobs API
         "hn.algolia.com",         # HN Algolia search API
         "hacker-news.firebaseio.com",  # HN Firebase API
-        "www.workingnomads.com",  # WorkingNomads RSS feeds
+        "www.workingnomads.com",  # WorkingNomads public JSON API
         "authenticjobs.com",      # AuthenticJobs RSS feed
         "jobspresso.co",          # Jobspresso RSS feed
     })
@@ -3514,6 +3514,7 @@ class ArbeitnowScraper(BaseScraper):
                     description=desc,
                     posted_at=posted_at,
                     company_override=company or None,
+                    force_usa=remote,  # remote jobs are globally workable; treat as US-eligible
                 )
                 if job:
                     jobs.append(job)
@@ -3589,6 +3590,7 @@ class HimalayasScraper(BaseScraper):
                     description=desc,
                     posted_at=posted_at,
                     company_override=company or None,
+                    force_usa=True,  # Himalayas is a fully remote board; all jobs US-eligible
                 )
                 if job:
                     jobs.append(job)
@@ -3725,86 +3727,63 @@ class HackerNewsJobsScraper(BaseScraper):
 
 class WorkingNomadsScraper(BaseScraper):
     """
-    WorkingNomads.com remote job RSS feeds — no authentication required.
+    WorkingNomads.com public JSON API — no authentication required.
 
-    Category feeds: development, devops, product, data, design, marketing,
-                    finance, project-mgmt, writing, testing, api
+    Endpoint: GET https://www.workingnomads.com/api/exposed_jobs/
+    Returns all current remote listings as a JSON array.
     """
 
     ATS_NAME  = "workingnomads"
-    _FEEDS: list[str] = [
-        "https://www.workingnomads.com/jobs?category=development&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=devops&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=product&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=data&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=design&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=marketing&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=finance&remote=true&feed=json_feed",
-        "https://www.workingnomads.com/jobs?category=testing&remote=true&feed=json_feed",
-    ]
-    # Fallback to RSS if JSON feed unavailable
-    _RSS_FEEDS: list[str] = [
-        "https://www.workingnomads.com/feed/development/",
-        "https://www.workingnomads.com/feed/devops/",
-        "https://www.workingnomads.com/feed/product/",
-        "https://www.workingnomads.com/feed/data/",
-        "https://www.workingnomads.com/feed/design/",
-    ]
+    _API_URL  = "https://www.workingnomads.com/api/exposed_jobs/"
 
     _HEADERS: dict[str, str] = {
         **DEFAULT_HEADERS,
-        "Accept": "application/json, application/rss+xml, application/xml, text/xml, */*",
+        "Accept": "application/json, */*",
     }
-
-    def _parse_rss_feed(self, url: str, seen: set[str]) -> list[Job]:
-        jobs: list[Job] = []
-        try:
-            resp = self.client.get(url, headers=self._HEADERS)
-            root    = ET.fromstring(resp.content)
-            channel = root.find("channel")
-            if channel is None:
-                return jobs
-            for item in channel.findall("item"):
-                link     = (item.findtext("link")        or "").strip()
-                guid     = (item.findtext("guid")        or "").strip()
-                job_url  = link or guid
-                if not job_url or job_url in seen:
-                    continue
-                seen.add(job_url)
-
-                title    = (item.findtext("title")       or "").strip()
-                desc_raw = (item.findtext("description") or "").strip()
-                pub_str  = (item.findtext("pubDate")     or "").strip()
-                posted_at: str | None = None
-                if pub_str:
-                    try:
-                        posted_at = parsedate_to_datetime(pub_str).isoformat()
-                    except Exception:
-                        pass
-
-                job = self._make_job(
-                    title=title,
-                    location="Remote",
-                    url=job_url,
-                    description=_strip_html(desc_raw),
-                    posted_at=posted_at,
-                )
-                if job:
-                    jobs.append(job)
-        except Exception as exc:
-            log.warning("[WorkingNomads] RSS %s — %s", url, exc)
-        return jobs
 
     def fetch_jobs(self) -> list[Job]:
         jobs: list[Job] = []
         seen: set[str]  = set()
 
-        for feed_url in self._RSS_FEEDS:
+        try:
+            resp = self.client.get(self._API_URL, headers=self._HEADERS)
+            items = _safe_json(resp)
+            if not isinstance(items, list):
+                items = (items or {}).get("results") or []
+        except Exception as exc:
+            log.warning("[WorkingNomads] API — %s", exc)
+            return jobs
+
+        for raw in items:
             if len(jobs) >= MAX_JOBS_PER_SRC:
                 break
-            new = self._parse_rss_feed(feed_url, seen)
-            jobs.extend(new)
-            log.info("[WorkingNomads] %s — %d jobs so far", feed_url, len(jobs))
+
+            url = (raw.get("url") or "").strip()
+            if not url or url in seen:
+                continue
+            seen.add(url)
+
+            title    = (raw.get("title",        "") or "").strip()
+            company  = (raw.get("company_name", "") or "").strip()
+            location = (raw.get("location",     "") or "Remote").strip()
+            desc     = _strip_html(raw.get("description") or "")
+            pub_date = raw.get("pub_date") or raw.get("created")
+            posted_at = str(pub_date) if pub_date else None
+
+            if not title:
+                continue
+
+            job = self._make_job(
+                title=title,
+                location=location,
+                url=url,
+                description=desc,
+                posted_at=posted_at,
+                company_override=company or None,
+                force_usa=True,  # global remote board — all listings US-eligible
+            )
+            if job:
+                jobs.append(job)
 
         log.info("[WorkingNomads] Total: %d remote jobs", len(jobs))
         return jobs[:MAX_JOBS_PER_SRC]
@@ -4597,17 +4576,10 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # ── Jobicy (free remote-jobs aggregator — no API key) ─────────────────
     {"ats": "jobicy", "company": "jobicy-aggregator", "company_name": "Jobicy"},
 
-    # ── Indeed RSS (no API key — public RSS feeds, 38 keywords × 8 pages) ────
-    {"ats": "indeed", "company": "indeed-aggregator", "company_name": "Indeed"},
-
-    # ── Dice (tech-focused JSON API — no auth, 20 keywords × up to 300 results) ─
-    {"ats": "dice", "company": "dice-aggregator", "company_name": "Dice"},
-
-    # ── ZipRecruiter RSS (no auth — 21 keywords × 25 results each) ──────────
-    {"ats": "ziprecruiter", "company": "ziprecruiter-aggregator", "company_name": "ZipRecruiter"},
-
-    # ── Monster RSS (no auth — 20 keywords × 25 results each) ────────────────
-    {"ats": "monster", "company": "monster-aggregator", "company_name": "Monster"},
+    # ── Indeed / Dice / ZipRecruiter / Monster ────────────────────────────────
+    # All blocked (403) from GitHub Actions IP ranges by Cloudflare/WAF.
+    # Removed to avoid wasting ~10 min per run on failed requests.
+    # Re-enable if using a proxy or self-hosted runner with a residential IP.
 
     # ── Arbeitnow (free JSON API — up to 300 jobs, remote-friendly) ──────────
     {"ats": "arbeitnow", "company": "arbeitnow-aggregator", "company_name": "Arbeitnow"},
