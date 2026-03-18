@@ -130,6 +130,8 @@ a{text-decoration:none;color:inherit}
 }
 </style>
 <script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 
@@ -141,14 +143,16 @@ a{text-decoration:none;color:inherit}
     <a href="resume.html">Resume</a>
     <a href="jobs.html" class="active">Jobs</a>
   </div>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark mode" style="margin-left:auto"></button>
 </div>
+
 
 <div class="content" id="content">
-  <div class="loading"><div class="loading-spinner"></div>Loading job details...</div>
-</div>
+  <div class="loading"><div class="loading-spinner"></div>Loading job details...
+
 
 <!-- Sticky apply bar (shown on all screen sizes) -->
-<div class="apply-sticky" id="apply-sticky"></div>
+<div class="apply-sticky" id="apply-sticky">
 
 <script>
 const API_BASE = 'https://web-production-d62ab.up.railway.app';
@@ -205,38 +209,38 @@ function renderJob(job) {
     <a href="jobs.html" class="back-link">&larr; Back to Jobs</a>
 
     <div class="job-header">
-      <div class="jh-logo">${logo}</div>
+      <div class="jh-logo">${logo}
       <div class="jh-info">
         <h1 class="jh-title">${esc(job.title)}</h1>
-        <div class="jh-company">${esc(job.company)} &middot; ${esc(location)}</div>
+        <div class="jh-company">${esc(job.company)} &middot; ${esc(location)}
         <div class="jh-tags">
           ${job.work_type ? `<span class="jh-tag ${workTypeClass}">${esc(job.work_type)}</span>` : ''}
           ${salaryStr ? `<span class="jh-tag salary">${salaryStr}/yr</span>` : ''}
           ${job.experience_level ? `<span class="jh-tag">${esc(job.experience_level)}</span>` : ''}
           ${job.category ? `<span class="jh-tag">${esc(job.category)}</span>` : ''}
-        </div>
-      </div>
-    </div>
+        
+      
+    
 
     <div class="info-grid">
-      <div class="info-item"><div class="info-label">Location</div><div class="info-value">${esc(location)}</div></div>
-      <div class="info-item"><div class="info-label">Work Type</div><div class="info-value">${esc(job.work_type || 'On-site')}</div></div>
+      <div class="info-item"><div class="info-label">Location</div><div class="info-value">${esc(location)}</div>
+      <div class="info-item"><div class="info-label">Work Type</div><div class="info-value">${esc(job.work_type || 'On-site')}</div>
       ${salaryStr ? `<div class="info-item"><div class="info-label">Salary</div><div class="info-value">${salaryStr}/yr</div></div>` : ''}
-      <div class="info-item"><div class="info-label">Experience</div><div class="info-value">${esc(job.experience_level || 'Not specified')}</div></div>
+      <div class="info-item"><div class="info-label">Experience</div><div class="info-value">${esc(job.experience_level || 'Not specified')}</div>
       ${postedDate ? `<div class="info-item"><div class="info-label">Posted</div><div class="info-value">${postedDate}</div></div>` : ''}
-      <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source)}</div></div>
-    </div>
+      <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source)}</div>
+    
 
     <a href="${getApplyUrl(job)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>
 
     ${skillsHtml}
 
     <div class="desc-card">
-      <div class="desc-title">Job Description</div>
-      <div class="desc-body">${descHtml}</div>
-    </div>
+      <div class="desc-title">Job Description
+      <div class="desc-body">${descHtml}
+    
 
-    <div class="source-badge">Source: ${esc(job.source)} &middot; Job ID: ${job.id}</div>
+    <div class="source-badge">Source: ${esc(job.source)} &middot; Job ID: ${job.id}
   `;
 
   // Populate sticky apply bar — always show
@@ -244,9 +248,9 @@ function renderJob(job) {
   stickyBar.innerHTML = `
     <div class="apply-sticky-inner">
       <div class="apply-sticky-info">
-        <div class="apply-sticky-title">${esc(job.title)}</div>
-        <div class="apply-sticky-company">${esc(job.company)}</div>
-      </div>
+        <div class="apply-sticky-title">${esc(job.title)}
+        <div class="apply-sticky-company">${esc(job.company)}
+      
       <a href="${getApplyUrl(job)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
     </div>`;
   stickyBar.classList.add('visible');

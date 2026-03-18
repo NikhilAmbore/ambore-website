@@ -390,6 +390,8 @@ button,input,textarea,select{font-family:inherit}
 .mob-nav-footer{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
 </style>
 <script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 <!-- PROMO BANNER -->
@@ -459,7 +461,8 @@ button,input,textarea,select{font-family:inherit}
     <span class="user-name" id="user-display"></span>
     <button class="logout-btn" onclick="logout()">Log Out</button>
   </div>
-  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark mode"></button>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </div>
@@ -1408,6 +1411,8 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head><body>${html}</body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -1444,7 +1449,9 @@ async function downloadDocx() {
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
+<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style><script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
+</head>
 <body>${renderMarkdown(generatedMarkdown)}</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);

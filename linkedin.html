@@ -175,6 +175,8 @@ button,input,textarea,select{font-family:inherit}
 .toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
 </style>
 <script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 <!-- PROMO BANNER -->
@@ -207,6 +209,7 @@ button,input,textarea,select{font-family:inherit}
       <span class="user-name" id="user-display"></span>
       <button class="logout-btn" onclick="logout()">Log Out</button>
     </div>
+    <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark mode"></button>
     <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
       <span></span><span></span><span></span>
     </button>

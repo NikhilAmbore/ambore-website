@@ -306,6 +306,8 @@ button,input,textarea,select{font-family:inherit}
   body{background:#fff}
 }
 </style>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 
@@ -329,7 +331,8 @@ button,input,textarea,select{font-family:inherit}
     <span class="user-name" id="user-display"></span>
     <button class="logout-btn" onclick="logout()">Log Out</button>
   </div>
-  <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark mode"></button>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
     <span></span><span></span><span></span>
   </button>
 </div>
@@ -959,7 +962,9 @@ function downloadPDF() {
       body{background:#fff;font-family:'Inter',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       ${document.querySelector('style').textContent}
     </style>
-    </head><body>${printContent}</body></html>`);
+    <script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
+</head><body>${printContent}</body></html>`);
   win.document.close();
   setTimeout(() => { win.focus(); win.print(); }, 600);
 }

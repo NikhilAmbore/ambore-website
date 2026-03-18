@@ -66,6 +66,8 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 @media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
 </style>
 <script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 
@@ -80,6 +82,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
     <a href="/privacy" class="active">Privacy</a>
     <a href="/terms">Terms</a>
   </div>
+  <button class="theme-toggle" onclick="toggleTheme()" title="Toggle theme" aria-label="Toggle light/dark mode"></button>
 </div>
 
 <div class="page-wrap">
