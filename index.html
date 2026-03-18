@@ -282,10 +282,19 @@ nav.scrolled{
 }
 
 .hero-tools{margin-top:28px}
-.hero-tools-label{font-size:0.72rem;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
-.hero-tools-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
-.hero-tool-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.62);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap;font-family:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
-.hero-tool-btn:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3);color:#fff}
+.hero-tools-label{font-size:0.72rem;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:14px;text-align:center}
+
+/* ── TOOL NAV PANEL ── */
+.tool-nav-panel{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;width:100%}
+@media(max-width:900px){.tool-nav-panel{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.tool-nav-panel{grid-template-columns:1fr}}
+.tool-nav-group{background:rgba(255,255,255,0.025);border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:14px 12px;display:flex;flex-direction:column;gap:2px}
+.tool-nav-group-label{font-size:0.62rem;font-weight:800;text-transform:uppercase;letter-spacing:0.1em;color:rgba(255,255,255,0.22);padding:0 6px;margin-bottom:6px}
+.tool-nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:9px;cursor:pointer;background:none;border:none;width:100%;text-align:left;font-family:inherit;font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.55);transition:all 0.15s}
+.tool-nav-item:hover{background:rgba(255,255,255,0.06);color:#fff;transform:translateX(2px)}
+.tool-nav-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.95rem;flex-shrink:0}
+.tool-nav-cta{margin-top:16px;width:100%;padding:14px;background:var(--grad);border:none;border-radius:12px;color:#fff;font-size:0.95rem;font-weight:800;cursor:pointer;font-family:inherit;transition:opacity 0.2s,transform 0.15s;box-shadow:0 4px 20px rgba(79,70,229,0.4)}
+.tool-nav-cta:hover{opacity:0.9;transform:translateY(-1px)}
 
 /* ── MARQUEE STRIP ── */
 .marquee-strip{
@@ -872,24 +881,79 @@ footer{
         <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>Your data stays in your browser</span>
       </div>
 
-      <!-- Tool Quick-Launch Grid — visible above the fold -->
+      <!-- Tool Nav Panel -->
       <div class="hero-tools reveal reveal-d5">
         <div class="hero-tools-label">Jump straight to a tool</div>
-        <div class="hero-tools-grid">
-          <button class="hero-tool-btn" onclick="goToFeature('/interview')" style="background:linear-gradient(135deg,rgba(139,92,246,0.28),rgba(109,40,217,0.18));border-color:rgba(139,92,246,0.6);color:#c4b5fd;">🎙 Interview AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/resume')" style="background:linear-gradient(135deg,rgba(59,130,246,0.28),rgba(37,99,235,0.18));border-color:rgba(59,130,246,0.6);color:#93c5fd;">📄 Resume Tailor</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/resume-builder')" style="background:linear-gradient(135deg,rgba(99,102,241,0.32),rgba(79,70,229,0.22));border-color:rgba(99,102,241,0.65);color:#a5b4fc;">✏️ Build Resume</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/jobs')" style="background:linear-gradient(135deg,rgba(16,185,129,0.28),rgba(5,150,105,0.18));border-color:rgba(16,185,129,0.6);color:#6ee7b7;">💼 Job Portal</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/cover-letter')" style="background:linear-gradient(135deg,rgba(236,72,153,0.28),rgba(219,39,119,0.18));border-color:rgba(236,72,153,0.6);color:#f9a8d4;">📝 Cover Letter</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/email')" style="background:linear-gradient(135deg,rgba(14,165,233,0.28),rgba(2,132,199,0.18));border-color:rgba(14,165,233,0.6);color:#7dd3fc;">✉️ Email Generator</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/linkedin')" style="background:linear-gradient(135deg,rgba(10,102,194,0.32),rgba(8,81,156,0.22));border-color:rgba(10,102,194,0.65);color:#93c5fd;">🔗 LinkedIn</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/portfolio')" style="background:linear-gradient(135deg,rgba(20,184,166,0.28),rgba(13,148,136,0.18));border-color:rgba(20,184,166,0.6);color:#5eead4;">🌐 Portfolio</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/english')" style="background:linear-gradient(135deg,rgba(239,68,68,0.25),rgba(220,38,38,0.15));border-color:rgba(239,68,68,0.6);color:#fca5a5;">🇬🇧 English AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/coding')" style="background:linear-gradient(135deg,rgba(132,204,22,0.25),rgba(101,163,13,0.15));border-color:rgba(132,204,22,0.6);color:#bef264;">💻 Coding AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/project')" style="background:linear-gradient(135deg,rgba(249,115,22,0.28),rgba(234,88,12,0.18));border-color:rgba(249,115,22,0.6);color:#fdba74;">🚀 Build Project</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/dashboard')" style="background:linear-gradient(135deg,rgba(234,179,8,0.25),rgba(202,138,4,0.15));border-color:rgba(234,179,8,0.6);color:#fde047;">📊 Dashboard</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/feedback')" style="background:linear-gradient(135deg,rgba(168,85,247,0.28),rgba(147,51,234,0.18));border-color:rgba(168,85,247,0.6);color:#d8b4fe;">💬 Give Feedback</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/ats-score')" style="background:linear-gradient(135deg,rgba(245,158,11,0.28),rgba(217,119,6,0.18));border-color:rgba(245,158,11,0.6);color:#fcd34d;">🎯 ATS Score</button>
+        <div class="tool-nav-panel">
+
+          <!-- Group 1: Jobs & Applications -->
+          <div class="tool-nav-group">
+            <div class="tool-nav-group-label">Jobs &amp; Applications</div>
+            <button class="tool-nav-item" onclick="goToFeature('/jobs')">
+              <div class="tool-nav-icon" style="background:rgba(16,185,129,0.18);color:#34d399">💼</div>Job Portal
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/resume')">
+              <div class="tool-nav-icon" style="background:rgba(59,130,246,0.18);color:#60a5fa">📄</div>Resume Tailor
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/resume-builder')">
+              <div class="tool-nav-icon" style="background:rgba(99,102,241,0.18);color:#a5b4fc">✏️</div>Build Resume
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/cover-letter')">
+              <div class="tool-nav-icon" style="background:rgba(236,72,153,0.18);color:#f9a8d4">📝</div>Cover Letter
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/email')">
+              <div class="tool-nav-icon" style="background:rgba(14,165,233,0.18);color:#38bdf8">✉️</div>Email Generator
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/ats-score')">
+              <div class="tool-nav-icon" style="background:rgba(245,158,11,0.18);color:#fbbf24">🎯</div>ATS Score
+            </button>
+          </div>
+
+          <!-- Group 2: Profile & Presence -->
+          <div class="tool-nav-group">
+            <div class="tool-nav-group-label">Profile &amp; Presence</div>
+            <button class="tool-nav-item" onclick="goToFeature('/linkedin')">
+              <div class="tool-nav-icon" style="background:rgba(10,102,194,0.18);color:#5ba4e0">🔗</div>LinkedIn Optimizer
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/portfolio')">
+              <div class="tool-nav-icon" style="background:rgba(20,184,166,0.18);color:#2dd4bf">🌐</div>Portfolio Builder
+            </button>
+            <div class="tool-nav-group-label" style="margin-top:12px">AI Coaching</div>
+            <button class="tool-nav-item" onclick="goToFeature('/interview')">
+              <div class="tool-nav-icon" style="background:rgba(139,92,246,0.18);color:#a78bfa">🎙</div>Interview AI
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/english')">
+              <div class="tool-nav-icon" style="background:rgba(239,68,68,0.18);color:#f87171">🇬🇧</div>English AI
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/coding')">
+              <div class="tool-nav-icon" style="background:rgba(132,204,22,0.18);color:#a3e635">💻</div>Coding AI
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/project')">
+              <div class="tool-nav-icon" style="background:rgba(249,115,22,0.18);color:#fb923c">🚀</div>Build Project
+            </button>
+          </div>
+
+          <!-- Group 3: Account + CTA -->
+          <div class="tool-nav-group">
+            <div class="tool-nav-group-label">Account</div>
+            <button class="tool-nav-item" onclick="goToFeature('/dashboard')">
+              <div class="tool-nav-icon" style="background:rgba(234,179,8,0.18);color:#facc15">📊</div>Dashboard
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/help')">
+              <div class="tool-nav-icon" style="background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5)">❓</div>Help Center
+            </button>
+            <button class="tool-nav-item" onclick="goToFeature('/feedback')">
+              <div class="tool-nav-icon" style="background:rgba(168,85,247,0.18);color:#c084fc">💬</div>Give Feedback
+            </button>
+            <div style="flex:1"></div>
+            <button class="tool-nav-cta" onclick="document.getElementById('auth-modal').classList.remove('hidden');document.getElementById('tab-signup').click()">
+              Sign Up Free &rarr;
+            </button>
+            <button class="tool-nav-cta" onclick="goToFeature('/jobs')" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.35);color:#34d399;box-shadow:none;margin-top:8px;font-size:0.85rem;padding:11px">
+              Browse 50,000+ Jobs
+            </button>
+          </div>
+
         </div>
       </div>
 
