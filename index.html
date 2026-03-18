@@ -433,6 +433,25 @@ section{position:relative;padding:120px 0;overflow:hidden}
 }
 .product-btn:hover{opacity:0.85}
 
+/* ── PRODUCT CARD ILLUSTRATION ── */
+.product-illus{
+  width:100%;border-radius:10px;overflow:hidden;margin-bottom:20px;
+  border:1px solid rgba(255,255,255,0.06);
+  position:relative;z-index:1;
+  transition:transform 0.3s;
+}
+.product-card:hover .product-illus{transform:scale(1.02)}
+.product-illus img{width:100%;display:block}
+
+/* ── HERO ILLUSTRATION ── */
+.hero-illus{
+  margin:36px auto 0;max-width:560px;width:100%;
+  position:relative;z-index:1;
+  filter:drop-shadow(0 0 40px rgba(109,92,255,0.25));
+  animation:heroFloat 5s ease-in-out infinite;
+}
+.hero-illus img{width:100%;display:block}
+
 /* ── TOP COMPANIES SECTION ── */
 .companies-section{
   padding:80px 0;
@@ -873,6 +892,11 @@ footer{
           <button class="hero-tool-btn" onclick="goToFeature('/feedback')">💬 Give Feedback</button>
         </div>
       </div>
+
+      <!-- Hero illustration -->
+      <div class="hero-illus reveal reveal-d5">
+        <img src="/img/hero-illustration.svg" alt="Ambore AI Career Platform" loading="lazy"/>
+      </div>
     </div>
   </div>
 </section>
@@ -922,6 +946,9 @@ footer{
     <!-- PRODUCT CARDS -->
     <div class="products-row">
       <div class="product-card reveal reveal-d1" style="--accent:#6d5cff;--accent-bg:rgba(109,92,255,0.1);--accent-border:rgba(109,92,255,0.25)">
+        <div class="product-illus">
+          <img src="/img/interview-ai.svg" alt="Interview AI preview" loading="lazy"/>
+        </div>
         <div class="product-icon">&#127897;</div>
         <div class="product-badge">AI Interview</div>
         <h3 class="product-title">Real-Time Interview Co-Pilot</h3>
@@ -936,6 +963,9 @@ footer{
       </div>
 
       <div class="product-card reveal reveal-d2" style="--accent:#9c5fff;--accent-bg:rgba(124,58,237,0.1);--accent-border:rgba(124,58,237,0.25)">
+        <div class="product-illus">
+          <img src="/img/ai-resume.svg" alt="AI Resume preview" loading="lazy"/>
+        </div>
         <div class="product-icon">&#128196;</div>
         <div class="product-badge">AI Resume</div>
         <h3 class="product-title">Smart Resume Tailoring Engine</h3>
@@ -950,6 +980,9 @@ footer{
       </div>
 
       <div class="product-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.1);--accent-border:rgba(34,197,94,0.25)">
+        <div class="product-illus">
+          <img src="/img/jobs-portal.svg" alt="Jobs Portal preview" loading="lazy"/>
+        </div>
         <div class="product-icon">&#128188;</div>
         <div class="product-badge">Job Portal</div>
         <h3 class="product-title">7,000+ Jobs, Updated Hourly</h3>

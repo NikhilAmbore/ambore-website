@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 220" fill="none">
+  <defs>
+    <linearGradient id="ig" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#4F46E5"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <filter id="iglow"><feGaussianBlur stdDeviation="6" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+  <rect width="300" height="220" rx="16" fill="#0e0e1d"/>
+  <rect x="1" y="1" width="298" height="218" rx="15" stroke="#6d5cff" stroke-width="1" stroke-opacity="0.25"/>
+
+  <!-- Mic icon centered -->
+  <circle cx="150" cy="80" r="40" fill="url(#ig)" opacity="0.12" filter="url(#iglow)"/>
+  <circle cx="150" cy="80" r="28" fill="#13132a" stroke="rgba(109,92,255,0.4)" stroke-width="1.5"/>
+  <!-- Mic shape -->
+  <rect x="143" y="62" width="14" height="22" rx="7" fill="url(#ig)"/>
+  <path d="M135 82 Q135 96 150 96 Q165 96 165 82" stroke="url(#ig)" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <line x1="150" y1="96" x2="150" y2="103" stroke="url(#ig)" stroke-width="2" stroke-linecap="round"/>
+  <line x1="143" y1="103" x2="157" y2="103" stroke="url(#ig)" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- Sound waves -->
+  <path d="M125 72 Q118 80 125 88" stroke="#6d5cff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M118 67 Q107 80 118 93" stroke="#6d5cff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+  <path d="M175 72 Q182 80 175 88" stroke="#6d5cff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.5"/>
+  <path d="M182 67 Q193 80 182 93" stroke="#6d5cff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3"/>
+
+  <!-- AI Response bubble -->
+  <rect x="24" y="130" width="252" height="40" rx="10" fill="#13132a" stroke="rgba(109,92,255,0.2)" stroke-width="1"/>
+  <circle cx="42" cy="150" r="10" fill="url(#ig)" opacity="0.9"/>
+  <text x="37" y="154" font-family="sans-serif" font-size="11" fill="white">✦</text>
+  <rect x="60" y="138" width="120" height="6" rx="3" fill="rgba(255,255,255,0.15)"/>
+  <rect x="60" y="150" width="90" height="6" rx="3" fill="rgba(255,255,255,0.1)"/>
+  <rect x="60" y="162" width="105" height="6" rx="3" fill="rgba(255,255,255,0.07)"/>
+
+  <!-- Score badge -->
+  <rect x="196" y="138" width="68" height="24" rx="7" fill="rgba(34,197,94,0.1)" stroke="rgba(34,197,94,0.3)" stroke-width="1"/>
+  <text x="207" y="154" font-family="Inter,sans-serif" font-size="11" font-weight="900" fill="#22c55e">98/100</text>
+
+  <!-- Waveform bar -->
+  <rect x="24" y="182" width="252" height="24" rx="8" fill="#13132a"/>
+  <!-- Animated wave bars representation -->
+  <rect x="36" y="188" width="4" height="12" rx="2" fill="#6d5cff" opacity="0.4"/>
+  <rect x="44" y="185" width="4" height="18" rx="2" fill="#6d5cff" opacity="0.6"/>
+  <rect x="52" y="189" width="4" height="10" rx="2" fill="#6d5cff" opacity="0.5"/>
+  <rect x="60" y="186" width="4" height="16" rx="2" fill="#6d5cff" opacity="0.7"/>
+  <rect x="68" y="190" width="4" height="8" rx="2" fill="#6d5cff" opacity="0.45"/>
+  <rect x="76" y="184" width="4" height="20" rx="2" fill="#9c5fff" opacity="0.8"/>
+  <rect x="84" y="188" width="4" height="12" rx="2" fill="#6d5cff" opacity="0.5"/>
+  <rect x="92" y="186" width="4" height="16" rx="2" fill="#6d5cff" opacity="0.6"/>
+  <rect x="100" y="190" width="4" height="8" rx="2" fill="#6d5cff" opacity="0.4"/>
+  <rect x="108" y="185" width="4" height="18" rx="2" fill="#9c5fff" opacity="0.7"/>
+  <rect x="116" y="189" width="4" height="10" rx="2" fill="#6d5cff" opacity="0.5"/>
+  <rect x="124" y="187" width="4" height="14" rx="2" fill="#6d5cff" opacity="0.55"/>
+  <rect x="132" y="183" width="4" height="22" rx="2" fill="#9c5fff" opacity="0.9"/>
+  <rect x="140" y="188" width="4" height="12" rx="2" fill="#6d5cff" opacity="0.5"/>
+  <rect x="148" y="186" width="4" height="16" rx="2" fill="#6d5cff" opacity="0.6"/>
+  <text x="164" y="197" font-family="Inter,sans-serif" font-size="8" fill="rgba(255,255,255,0.3)">Recording…</text>
+  <circle cx="254" cy="194" r="6" fill="#ef4444" opacity="0.9"/>
+</svg>
