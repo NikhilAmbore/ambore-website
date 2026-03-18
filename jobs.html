@@ -500,7 +500,21 @@ async function loadJobsData() {
   try {
     const res = await fetch(JOBS_JSON_URL);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    _allJobs = await res.json();
+    const raw = await res.json();
+    // Normalise relative date strings ("Posted Today", "Posted 3 Days Ago") to ISO timestamps
+    const now = Date.now();
+    const DAY = 86400000;
+    _allJobs = raw.map(j => {
+      const pa = j.posted_at;
+      if (!pa || pa.startsWith('20')) return j; // already ISO or missing
+      const t = pa.toLowerCase();
+      let ms = null;
+      if (t.includes('today'))     ms = now;
+      else if (t.includes('yesterday')) ms = now - DAY;
+      else { const m = t.match(/(\d+)\+?\s*day/); if (m) ms = now - parseInt(m[1]) * DAY; }
+      if (ms) return {...j, posted_at: new Date(ms).toISOString()};
+      return j;
+    });
   } catch (e) {
     list.innerHTML = `<div class="empty-state"><p>Could not load jobs.json — ${e.message}</p></div>`;
     return false;

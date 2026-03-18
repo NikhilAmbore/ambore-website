@@ -398,6 +398,32 @@ def _classify_location(location: str) -> tuple[bool, bool]:
     return False, is_remote
 
 
+def _parse_relative_date(text: str | None) -> str | None:
+    """
+    Convert Workday relative date strings to ISO-8601 UTC timestamps.
+    e.g. "Posted Today" → today, "Posted Yesterday" → yesterday,
+         "Posted 3 Days Ago" → 3 days ago, "Posted 30+ Days Ago" → 30 days ago.
+    Returns None if text is not a recognisable relative-date string.
+    """
+    if not text:
+        return None
+    t = text.strip().lower()
+    now = datetime.now(timezone.utc)
+    if "today" in t:
+        return now.isoformat()
+    if "yesterday" in t:
+        return (now - timedelta(days=1)).isoformat()
+    m = re.search(r"(\d+)\+?\s*day", t)
+    if m:
+        return (now - timedelta(days=int(m.group(1)))).isoformat()
+    # Already an ISO string — return as-is
+    try:
+        datetime.fromisoformat(text.replace("Z", "+00:00"))
+        return text
+    except (ValueError, AttributeError):
+        return None
+
+
 def _parse_salary(text: str) -> tuple[float | None, float | None, str]:
     """
     Extract ``(min, max, currency)`` from a free-form salary string.
@@ -1221,7 +1247,7 @@ class WorkdayScraper(BaseScraper):
                     location = f"{remote_type} — {location}".strip(" —")
 
                 time_type = raw.get("timeType", "")  # "Full time" | "Part time"
-                posted_on = raw.get("postedOn")       # e.g. "Posted 3 Days Ago" — string
+                posted_on = _parse_relative_date(raw.get("postedOn"))  # convert "Posted 3 Days Ago" → ISO
 
                 job = self._make_job(
                     title=raw.get("title", ""),
