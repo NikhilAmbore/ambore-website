@@ -76,7 +76,7 @@ jobs:
           # (now-stale) local jobs.json — we do a proper merge below.
           python backend/job_scraper.py \
             --output /tmp/fresh_jobs.json \
-            --skip-ats apify \
+            --skip-ats apify,adzuna,serpapi \
             $VERBOSE_FLAG $SINCE_FLAG
 
           echo "=== Fresh jobs scraped this run ==="

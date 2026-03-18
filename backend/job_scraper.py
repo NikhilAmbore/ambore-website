@@ -2073,33 +2073,16 @@ class AdzunaScraper(BaseScraper):
     ATS_NAME = "adzuna"
     _BASE    = "https://api.adzuna.com/v1/api/jobs/us/search"
 
-    # Broad keyword sweep — Adzuna returns US-filtered results for all
+    # Focused keyword list — stays within Adzuna free tier (250 calls/day).
+    # Run once daily; each keyword = 1 API call (1 page × 50 results).
     _KEYWORDS = [
-        # Core engineering
-        "software engineer", "backend engineer", "frontend engineer",
-        "full stack engineer", "systems engineer", "infrastructure engineer",
-        # Data & AI
-        "data engineer", "data scientist", "machine learning engineer",
-        "ai engineer", "analytics engineer", "data analyst",
-        "business analyst", "database administrator", "bi developer",
-        # DevOps & Cloud
-        "devops engineer", "cloud engineer", "site reliability engineer",
-        "platform engineer", "cloud architect", "solutions architect",
-        # Security
-        "security engineer", "cybersecurity analyst", "application security",
-        # Mobile & Web
-        "mobile engineer", "ios developer", "android developer",
-        "react developer", "javascript developer",
-        # Languages
-        "python developer", "java developer", "golang engineer",
-        # Product & Design
-        "product manager", "ux designer", "product designer",
-        "ui designer",
-        # Operations & Management
-        "it specialist", "it manager", "systems administrator",
-        "technical program manager", "engineering manager",
-        # QA
-        "qa engineer", "automation engineer",
+        "software engineer", "data scientist", "machine learning engineer",
+        "devops engineer", "data engineer", "product manager",
+        "backend engineer", "frontend engineer", "full stack engineer",
+        "cloud engineer", "security engineer", "mobile engineer",
+        "python developer", "java developer", "solutions architect",
+        "engineering manager", "qa engineer", "data analyst",
+        "site reliability engineer", "ai engineer",
     ]
 
     def fetch_jobs(self) -> list[Job]:

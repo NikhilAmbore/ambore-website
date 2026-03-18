@@ -1,4 +1,4 @@
-name: Daily Apify Scraper (Indeed)
+name: Daily API Scrapers (Apify + Adzuna + SerpAPI)
 
 on:
   schedule:
@@ -39,9 +39,12 @@ jobs:
           pip install --upgrade pip
           pip install "httpx[http2]>=0.27.0" beautifulsoup4>=4.12.0 lxml>=5.0.0 brotli
 
-      - name: Scrape Apify jobs (LinkedIn + Indeed)
+      - name: Scrape daily API jobs (Apify + Adzuna + SerpAPI)
         env:
-          APIFY_TOKEN: ${{ secrets.APIFY_TOKEN }}
+          APIFY_TOKEN:    ${{ secrets.APIFY_TOKEN }}
+          ADZUNA_APP_ID:  ${{ secrets.ADZUNA_APP_ID }}
+          ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+          SERPAPI_KEY:    ${{ secrets.SERPAPI_KEY }}
 
         run: |
           VERBOSE_FLAG=""
@@ -50,18 +53,18 @@ jobs:
           fi
 
           python backend/job_scraper.py \
-            --only-ats apify \
+            --only-ats apify,adzuna,serpapi \
             --output /tmp/apify_fresh.json \
             $VERBOSE_FLAG
 
-          echo "=== Apify fresh results ==="
+          echo "=== Daily API fresh results ==="
           python -c "
           import json
           jobs = json.load(open('/tmp/apify_fresh.json'))
           sources = {}
           for j in jobs:
               sources[j['ats']] = sources.get(j['ats'], 0) + 1
-          print(f'Apify fresh: {len(jobs)} jobs')
+          print(f'Daily API fresh: {len(jobs)} jobs')
           for ats, cnt in sorted(sources.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
           "
@@ -108,16 +111,18 @@ jobs:
                   or now_iso
               )
 
-          # Carry over ALL non-Apify jobs from remote HEAD
+          # ATS types refreshed by this daily workflow
+          DAILY_ATES = {'apify', 'adzuna', 'serpapi'}
+
+          # Carry over all jobs from non-daily ATS sources, plus old daily jobs not in fresh set
           fresh_ids = {j['id'] for j in apify}
           carried = 0
           for ex in existing:
-              if ex.get('ats') != 'apify':
+              if ex.get('ats') not in DAILY_ATES:
                   if 'first_seen_at' not in ex:
                       ex['first_seen_at'] = ex.get('scraped_at') or now_iso
                   apify.append(ex)
                   carried += 1
-              # Also carry over old Apify jobs not in fresh set
               elif ex['id'] not in fresh_ids:
                   if 'first_seen_at' not in ex:
                       ex['first_seen_at'] = ex.get('scraped_at') or now_iso
@@ -168,7 +173,7 @@ jobs:
             echo "No changes to jobs.json — skipping commit"
           else
             TOTAL=$(python -c "import json; print(len(json.load(open('backend/jobs.json'))))")
-            git commit -m "chore: refresh Apify jobs (LinkedIn+Indeed) — ${TOTAL} total ($(date -u '+%Y-%m-%d'))"
+            git commit -m "chore: daily API refresh (Apify+Adzuna+SerpAPI) — ${TOTAL} total ($(date -u '+%Y-%m-%d'))"
             for attempt in 1 2 3; do
               git pull --rebase -X ours origin main && git push && break
               echo "Push attempt $attempt failed — retrying in 10s..."
