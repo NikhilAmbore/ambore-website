@@ -2,8 +2,7 @@
 (function () {
   var STORAGE_KEY = 'ambore_theme';
   var saved = localStorage.getItem(STORAGE_KEY);
-  var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  var theme = saved || (prefersDark ? 'dark' : 'light');
+  var theme = saved || 'dark';
   document.documentElement.setAttribute('data-theme', theme);
 
   window.toggleTheme = function () {
