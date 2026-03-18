@@ -333,7 +333,7 @@ a{text-decoration:none;color:inherit}
     <h2>Not sure where to start?</h2>
     <p>Use the AI advisor above or book a free 15-minute discovery call and we'll help you find the right course.</p>
     <div class="cta-banner-btns">
-      <button class="cta-primary" onclick="bookSlot('Discovery Call — Free 15-min Consultation')">Book Free Discovery Call</button>
+      <button class="cta-primary" onclick="bookSlot()">Book Free Discovery Call</button>
       <button class="cta-secondary" onclick="document.getElementById('ai-goal').focus();document.getElementById('ai-goal').scrollIntoView({behavior:'smooth'})">Ask AI Advisor</button>
     </div>
   </div>
@@ -394,11 +394,9 @@ function getDiffClass(d) {
   return d === 'Beginner' ? 'tag-beg' : d === 'Intermediate' ? 'tag-int' : 'tag-adv';
 }
 
-function bookSlot(courseName) {
+function bookSlot() {
   track('book_click', 'coaching');
-  // Opens Google Form in new tab — pre-fill course name if supported
-  const url = BOOKING_FORM_URL + (BOOKING_FORM_URL.includes('forms.gle') ? '' : '?entry.COURSE_FIELD=' + encodeURIComponent(courseName));
-  window.open(url, '_blank', 'noopener,noreferrer');
+  window.open(BOOKING_FORM_URL, '_blank', 'noopener,noreferrer');
   showToast('Your slot request has been submitted. Our team will contact you shortly to schedule your 1:1 live class.');
 }
 
@@ -431,7 +429,7 @@ function renderCard(c) {
         </div>
         <div class="course-mode">1:1 Live Coaching</div>
       </div>
-      <button class="book-btn" onclick="bookSlot('${c.name.replace(/'/g,'\\\'')}')" >
+      <button class="book-btn" onclick="bookSlot()" >
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
         Book Slot
       </button>
