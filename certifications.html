@@ -13,7 +13,7 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>Ambore — Free Certifications</title>
-<meta name="description" content="Browse 40+ free certifications from Google, AWS, Microsoft, Meta, IBM, HubSpot and more. Get AI-powered recommendations based on your career goals."/>
+<meta name="description" content="Browse 118 free certifications from Google, AWS, Microsoft, freeCodeCamp, Kaggle, Fortinet, Oracle, Docker, Postman, DeepLearning.AI and 20+ more providers. Get AI-powered recommendations based on your career goals."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -209,10 +209,10 @@ a{text-decoration:none;color:inherit}
   <div class="page-hero">
     <div class="page-badge">🏆 100% Free · No Credit Card</div>
     <h1 class="page-title">Free <span>Certifications</span> That Get You Hired</h1>
-    <p class="page-sub">Curated free certifications from Google, AWS, Microsoft, Meta, IBM, HubSpot and more — all linking directly to official sources.</p>
+    <p class="page-sub">Curated free certifications from Google, AWS, Microsoft, freeCodeCamp, Kaggle, HubSpot, Fortinet, Oracle, Docker, Postman, DeepLearning.AI and 20+ more providers — all linking directly to official sources.</p>
     <div class="page-stats">
-      <span class="page-stat">🎓 <strong>40+</strong> certifications</span>
-      <span class="page-stat">🏢 <strong>12</strong> trusted providers</span>
+      <span class="page-stat">🎓 <strong>118</strong> certifications</span>
+      <span class="page-stat">🏢 <strong>30+</strong> trusted providers</span>
       <span class="page-stat">💰 <strong>100% free</strong></span>
       <span class="page-stat">🔗 Official links only</span>
     </div>
@@ -268,6 +268,23 @@ a{text-decoration:none;color:inherit}
       <option value="Coursera">Coursera</option>
       <option value="MongoDB">MongoDB</option>
       <option value="CNCF">CNCF</option>
+      <option value="freeCodeCamp">freeCodeCamp</option>
+      <option value="Kaggle">Kaggle</option>
+      <option value="Semrush">Semrush</option>
+      <option value="Fortinet">Fortinet</option>
+      <option value="Oracle">Oracle</option>
+      <option value="Databricks">Databricks</option>
+      <option value="Snowflake">Snowflake</option>
+      <option value="Docker">Docker</option>
+      <option value="Postman">Postman</option>
+      <option value="Atlassian">Atlassian</option>
+      <option value="GitHub">GitHub</option>
+      <option value="Elastic">Elastic</option>
+      <option value="Tableau">Tableau</option>
+      <option value="DeepLearning.AI">DeepLearning.AI</option>
+      <option value="Scrum.org">Scrum.org</option>
+      <option value="Palo Alto">Palo Alto Networks</option>
+      <option value="Red Hat">Red Hat</option>
     </select>
     <select class="filter-select" id="f-difficulty" onchange="applyFilters()">
       <option value="">All Levels</option>
@@ -385,6 +402,121 @@ const CERTS = [
   { id:39, provider:'LinkedIn', name:'Become a Software Developer', domain:'Software', desc:'Full learning path covering HTML, CSS, JavaScript, Python, and professional developer skills.', difficulty:'Beginner', hours:40, url:'https://www.linkedin.com/learning/paths/become-a-software-developer', color:'#0A66C2', bg:'rgba(10,102,194,0.15)' },
   { id:40, provider:'LinkedIn', name:'Advance Your Skills in AI', domain:'AI/ML', desc:'Generative AI, prompt engineering, ethics, and AI tools for productivity — LinkedIn Learning path.', difficulty:'Beginner', hours:10, url:'https://www.linkedin.com/learning/paths/advance-your-skills-in-artificial-intelligence', color:'#0A66C2', bg:'rgba(10,102,194,0.15)' },
   { id:41, provider:'LinkedIn', name:'Become a Project Manager', domain:'Business', desc:'Project planning, stakeholder communication, risk management, and Agile methodologies.', difficulty:'Beginner', hours:20, url:'https://www.linkedin.com/learning/paths/become-a-project-manager', color:'#0A66C2', bg:'rgba(10,102,194,0.15)' },
+
+  // ── FREECODECAMP ──
+  { id:42, provider:'freeCodeCamp', name:'Responsive Web Design', domain:'Software', desc:'HTML5 and CSS3 fundamentals — build accessible, mobile-first websites. Earn a shareable certificate.', difficulty:'Beginner', hours:300, url:'https://www.freecodecamp.org/learn/2022/responsive-web-design/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:43, provider:'freeCodeCamp', name:'JavaScript Algorithms & Data Structures', domain:'Software', desc:'Variables, arrays, objects, OOP, functional programming, and algorithm challenges in JavaScript.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/javascript-algorithms-and-data-structures/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:44, provider:'freeCodeCamp', name:'Front End Development Libraries', domain:'Software', desc:'React, Redux, Sass, Bootstrap, and jQuery — build interactive front-end apps and get certified.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/front-end-development-libraries/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:45, provider:'freeCodeCamp', name:'Data Visualization', domain:'Data', desc:'D3.js charts, SVG, and JSON APIs — turn raw data into compelling interactive visualizations.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/data-visualization/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:46, provider:'freeCodeCamp', name:'Back End Development & APIs', domain:'Software', desc:'Node.js, Express, MongoDB, and REST APIs — build and test a full back-end application.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/back-end-development-and-apis/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:47, provider:'freeCodeCamp', name:'Scientific Computing with Python', domain:'Data', desc:'Python fundamentals, data structures, OOP, and algorithms — complete 5 real-world projects.', difficulty:'Beginner', hours:300, url:'https://www.freecodecamp.org/learn/scientific-computing-with-python/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:48, provider:'freeCodeCamp', name:'Data Analysis with Python', domain:'Data', desc:'NumPy, Pandas, Matplotlib, and Seaborn — analyze datasets and create visualizations.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/data-analysis-with-python/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:49, provider:'freeCodeCamp', name:'Machine Learning with Python', domain:'AI/ML', desc:'TensorFlow, neural networks, NLP, and reinforcement learning with real ML projects.', difficulty:'Advanced', hours:300, url:'https://www.freecodecamp.org/learn/machine-learning-with-python/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:50, provider:'freeCodeCamp', name:'Relational Database', domain:'Data', desc:'PostgreSQL, SQL queries, Bash scripting, and Git — hands-on in a VS Code virtual environment.', difficulty:'Beginner', hours:300, url:'https://www.freecodecamp.org/learn/relational-database/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:51, provider:'freeCodeCamp', name:'Quality Assurance', domain:'Software', desc:'Test JavaScript with Chai, Node.js, Express, and Mocha to ensure reliable production code.', difficulty:'Intermediate', hours:300, url:'https://www.freecodecamp.org/learn/quality-assurance/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+  { id:52, provider:'freeCodeCamp', name:'Information Security', domain:'Cybersecurity', desc:'Penetration testing with HelmetJS, Python basics for hacking, and the Metasploit framework.', difficulty:'Advanced', hours:300, url:'https://www.freecodecamp.org/learn/information-security/', color:'#0A0A23', bg:'rgba(10,10,35,0.25)' },
+
+  // ── KAGGLE ──
+  { id:53, provider:'Kaggle', name:'Python', domain:'Data', desc:'Variables, functions, conditionals, loops, and packages — the fastest way to learn Python for data science.', difficulty:'Beginner', hours:5, url:'https://www.kaggle.com/learn/python', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:54, provider:'Kaggle', name:'Intro to Machine Learning', domain:'AI/ML', desc:'Decision trees, model validation, underfitting vs. overfitting, and random forests with scikit-learn.', difficulty:'Beginner', hours:3, url:'https://www.kaggle.com/learn/intro-to-machine-learning', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:55, provider:'Kaggle', name:'Intermediate Machine Learning', domain:'AI/ML', desc:'Missing values, categorical encoding, pipelines, cross-validation, XGBoost, and data leakage.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/intermediate-machine-learning', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:56, provider:'Kaggle', name:'Data Visualization', domain:'Data', desc:'Seaborn charts — line plots, bar charts, scatter plots, heatmaps, and choosing the right plot type.', difficulty:'Beginner', hours:4, url:'https://www.kaggle.com/learn/data-visualization', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:57, provider:'Kaggle', name:'Pandas', domain:'Data', desc:'Create, read, and write DataFrames; indexing, selecting, grouping, sorting, and data types.', difficulty:'Beginner', hours:4, url:'https://www.kaggle.com/learn/pandas', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:58, provider:'Kaggle', name:'Feature Engineering', domain:'AI/ML', desc:'Mutual information, creating features, k-means clustering, and principal component analysis (PCA).', difficulty:'Intermediate', hours:5, url:'https://www.kaggle.com/learn/feature-engineering', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:59, provider:'Kaggle', name:'Intro to Deep Learning', domain:'AI/ML', desc:'Single neurons, deep neural networks, dropout, batch normalization, and binary classification.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/intro-to-deep-learning', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:60, provider:'Kaggle', name:'Intro to SQL', domain:'Data', desc:'SELECT, FROM, WHERE, GROUP BY, HAVING, COUNT, SUM — query databases with BigQuery and SQL.', difficulty:'Beginner', hours:3, url:'https://www.kaggle.com/learn/intro-to-sql', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:61, provider:'Kaggle', name:'Advanced SQL', domain:'Data', desc:'JOINs, unions, analytic functions, nested queries, and writing efficient queries at scale.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/advanced-sql', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:62, provider:'Kaggle', name:'Natural Language Processing', domain:'AI/ML', desc:'Text classification, word vectors, naive Bayes, word2vec, and sentiment analysis with Python.', difficulty:'Intermediate', hours:3, url:'https://www.kaggle.com/learn/natural-language-processing', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:63, provider:'Kaggle', name:'Computer Vision', domain:'AI/ML', desc:'Convolutional neural networks, the sliding window, data augmentation, and transfer learning.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/computer-vision', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:64, provider:'Kaggle', name:'Intro to AI Ethics', domain:'AI/ML', desc:'Human-centered AI design, fairness, model cards, and identifying sources of bias in AI systems.', difficulty:'Beginner', hours:4, url:'https://www.kaggle.com/learn/intro-to-ai-ethics', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:65, provider:'Kaggle', name:'Data Cleaning', domain:'Data', desc:'Handle missing values, scale and normalize data, parse dates, and deal with inconsistent entries.', difficulty:'Beginner', hours:4, url:'https://www.kaggle.com/learn/data-cleaning', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:66, provider:'Kaggle', name:'Geospatial Analysis', domain:'Data', desc:'Coordinate reference systems, spatial joins, proximity analysis, and interactive maps with Folium.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/geospatial-analysis', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+  { id:67, provider:'Kaggle', name:'Intro to Game AI & Reinforcement Learning', domain:'AI/ML', desc:'Game trees, one-step lookahead, minimax, and deep RL with ConnectX — fun hands-on AI.', difficulty:'Intermediate', hours:4, url:'https://www.kaggle.com/learn/intro-to-game-ai-and-reinforcement-learning', color:'#20BEFF', bg:'rgba(32,190,255,0.15)' },
+
+  // ── HUBSPOT ADDITIONAL ──
+  { id:68, provider:'HubSpot', name:'HubSpot Email Marketing', domain:'Marketing', desc:'Build email lists, design campaigns, A/B testing, automation sequences, and deliverability best practices.', difficulty:'Beginner', hours:3, url:'https://academy.hubspot.com/courses/email-marketing', color:'#FF7A59', bg:'rgba(255,122,89,0.15)' },
+  { id:69, provider:'HubSpot', name:'HubSpot SEO Certification', domain:'Marketing', desc:'On-page SEO, link building, pillar pages, keyword research, and measuring organic performance.', difficulty:'Beginner', hours:4, url:'https://academy.hubspot.com/courses/seo-training', color:'#FF7A59', bg:'rgba(255,122,89,0.15)' },
+  { id:70, provider:'HubSpot', name:'HubSpot CRM', domain:'Business', desc:'Contacts, deals, pipelines, tasks, and reporting — get certified in the world's most popular free CRM.', difficulty:'Beginner', hours:2, url:'https://academy.hubspot.com/courses/hubspot-crm', color:'#FF7A59', bg:'rgba(255,122,89,0.15)' },
+  { id:71, provider:'HubSpot', name:'HubSpot Social Media Marketing', domain:'Marketing', desc:'Social media strategy, content calendar, community management, paid social, and ROI measurement.', difficulty:'Beginner', hours:5, url:'https://academy.hubspot.com/courses/social-media', color:'#FF7A59', bg:'rgba(255,122,89,0.15)' },
+
+  // ── SEMRUSH ──
+  { id:72, provider:'Semrush', name:'SEO Fundamentals', domain:'Marketing', desc:'Keyword research, on-page SEO, link building, and technical SEO — the complete beginner foundation.', difficulty:'Beginner', hours:4, url:'https://www.semrush.com/academy/courses/semrush-seo-fundamentals-course-with-greg-gifford/', color:'#FF642D', bg:'rgba(255,100,45,0.15)' },
+  { id:73, provider:'Semrush', name:'Content-Led SEO', domain:'Marketing', desc:'Brian Dean's framework for creating content that ranks — topic clusters, backlinks, and search intent.', difficulty:'Intermediate', hours:3, url:'https://www.semrush.com/academy/courses/content-led-seo-with-brian-dean/', color:'#FF642D', bg:'rgba(255,100,45,0.15)' },
+  { id:74, provider:'Semrush', name:'Technical SEO', domain:'Marketing', desc:'Site audits, crawl budgets, schema markup, Core Web Vitals, and fixing technical SEO issues.', difficulty:'Intermediate', hours:4, url:'https://www.semrush.com/academy/courses/technical-seo-course-with-bastian-grimm/', color:'#FF642D', bg:'rgba(255,100,45,0.15)' },
+  { id:75, provider:'Semrush', name:'PPC Fundamentals', domain:'Marketing', desc:'Paid search campaigns, Google Ads structure, bid strategies, quality score, and conversion tracking.', difficulty:'Beginner', hours:4, url:'https://www.semrush.com/academy/courses/ppc-fundamentals-course-with-joe-martinez/', color:'#FF642D', bg:'rgba(255,100,45,0.15)' },
+  { id:76, provider:'Semrush', name:'Social Media Strategy', domain:'Marketing', desc:'Build and execute a social media strategy — content types, platform selection, and paid amplification.', difficulty:'Beginner', hours:3, url:'https://www.semrush.com/academy/courses/social-media-strategy-course/', color:'#FF642D', bg:'rgba(255,100,45,0.15)' },
+
+  // ── GOOGLE ADS / SKILLSHOP ──
+  { id:77, provider:'Google', name:'Google Ads Search Certification', domain:'Marketing', desc:'Search campaign creation, bidding, ad formats, audience targeting, and performance measurement.', difficulty:'Intermediate', hours:6, url:'https://skillshop.withgoogle.com/collection/Google-Ads-Search', color:'#4285F4', bg:'rgba(66,133,244,0.15)' },
+  { id:78, provider:'Google', name:'Google Analytics 4 Certification', domain:'Data', desc:'Set up GA4, configure events, build reports, use Explorations, and interpret audience data.', difficulty:'Beginner', hours:5, url:'https://skillshop.withgoogle.com/collection/Google-Analytics', color:'#4285F4', bg:'rgba(66,133,244,0.15)' },
+  { id:79, provider:'Google', name:'Google Ads Display Certification', domain:'Marketing', desc:'Display campaigns, responsive display ads, Smart Display, audience solutions, and brand safety.', difficulty:'Beginner', hours:3, url:'https://skillshop.withgoogle.com/collection/Google-Ads-Display', color:'#4285F4', bg:'rgba(66,133,244,0.15)' },
+  { id:80, provider:'Google', name:'Google Ads Video Certification', domain:'Marketing', desc:'YouTube advertising, TrueView, skippable and non-skippable ads, video campaign management.', difficulty:'Beginner', hours:3, url:'https://skillshop.withgoogle.com/collection/Google-Ads-Video', color:'#4285F4', bg:'rgba(66,133,244,0.15)' },
+
+  // ── FORTINET ──
+  { id:81, provider:'Fortinet', name:'NSE 1 — Information Security Awareness', domain:'Cybersecurity', desc:'Cybersecurity fundamentals: threats, safe internet practices, and protecting personal information.', difficulty:'Beginner', hours:2, url:'https://training.fortinet.com/course/index.php?categoryid=39', color:'#EE3124', bg:'rgba(238,49,36,0.15)' },
+  { id:82, provider:'Fortinet', name:'NSE 2 — The Evolution of Cybersecurity', domain:'Cybersecurity', desc:'History of cybersecurity, attack types, social engineering, threat landscape, and Fortinet solutions.', difficulty:'Beginner', hours:3, url:'https://training.fortinet.com/course/index.php?categoryid=40', color:'#EE3124', bg:'rgba(238,49,36,0.15)' },
+  { id:83, provider:'Fortinet', name:'NSE 3 — Fortinet Product Lines', domain:'Cybersecurity', desc:'Introduction to Fortinet products including FortiGate, FortiAnalyzer, FortiSIEM, and FortiSOAR.', difficulty:'Beginner', hours:4, url:'https://training.fortinet.com/course/index.php?categoryid=41', color:'#EE3124', bg:'rgba(238,49,36,0.15)' },
+  { id:84, provider:'Fortinet', name:'NSE 4 — FortiGate Security', domain:'Cybersecurity', desc:'Firewall policies, NAT, VPNs, SSL inspection, and FortiGate security administration.', difficulty:'Intermediate', hours:10, url:'https://training.fortinet.com/course/index.php?categoryid=42', color:'#EE3124', bg:'rgba(238,49,36,0.15)' },
+
+  // ── ORACLE ──
+  { id:85, provider:'Oracle', name:'OCI Foundations Associate', domain:'Cloud', desc:'Oracle Cloud Infrastructure services, pricing, security, and core architecture fundamentals.', difficulty:'Beginner', hours:8, url:'https://mylearn.oracle.com/ou/learning-path/become-an-oci-foundations-associate/122043', color:'#C74634', bg:'rgba(199,70,52,0.15)' },
+  { id:86, provider:'Oracle', name:'OCI Generative AI Professional', domain:'AI/ML', desc:'Large language models, RAG, prompt engineering, and building AI apps on Oracle Cloud.', difficulty:'Intermediate', hours:10, url:'https://mylearn.oracle.com/ou/learning-path/become-a-generative-ai-professional/127191', color:'#C74634', bg:'rgba(199,70,52,0.15)' },
+  { id:87, provider:'Oracle', name:'Oracle Database SQL', domain:'Data', desc:'SQL fundamentals on Oracle Database — DDL, DML, queries, joins, subqueries, and constraints.', difficulty:'Beginner', hours:12, url:'https://mylearn.oracle.com/ou/learning-path/become-a-database-foundations-associate/116415', color:'#C74634', bg:'rgba(199,70,52,0.15)' },
+
+  // ── DATABRICKS ──
+  { id:88, provider:'Databricks', name:'Lakehouse Fundamentals', domain:'Data', desc:'What is a Lakehouse, Delta Lake, data engineering on Databricks, and unified analytics architecture.', difficulty:'Beginner', hours:4, url:'https://www.databricks.com/learn/training/lakehouse-fundamentals', color:'#FF3621', bg:'rgba(255,54,33,0.15)' },
+  { id:89, provider:'Databricks', name:'Generative AI Fundamentals', domain:'AI/ML', desc:'LLM foundations, prompt engineering, fine-tuning, embeddings, and responsible AI on Databricks.', difficulty:'Beginner', hours:3, url:'https://www.databricks.com/learn/training/generative-ai-fundamentals', color:'#FF3621', bg:'rgba(255,54,33,0.15)' },
+
+  // ── SNOWFLAKE ──
+  { id:90, provider:'Snowflake', name:'Snowflake Essentials', domain:'Data', desc:'Snowflake architecture, virtual warehouses, databases, tables, and query optimization basics.', difficulty:'Beginner', hours:6, url:'https://learn.snowflake.com/en/courses/uni-essentials/', color:'#29B5E8', bg:'rgba(41,181,232,0.15)' },
+  { id:91, provider:'Snowflake', name:'Data Engineering with Snowflake', domain:'Data', desc:'Data loading, transformation, streams, tasks, Snowpipe, and building ELT pipelines on Snowflake.', difficulty:'Intermediate', hours:8, url:'https://learn.snowflake.com/en/courses/uni-data-engineering/', color:'#29B5E8', bg:'rgba(41,181,232,0.15)' },
+
+  // ── DOCKER ──
+  { id:92, provider:'Docker', name:'Docker Foundations Professional Certificate', domain:'Cloud', desc:'Containers, images, Docker Compose, volumes, networking, and deploying apps with Docker Desktop.', difficulty:'Beginner', hours:6, url:'https://www.docker.com/training/docker-foundations-professional-certificate/', color:'#2496ED', bg:'rgba(36,150,237,0.15)' },
+
+  // ── POSTMAN ──
+  { id:93, provider:'Postman', name:'API Fundamentals Student Expert', domain:'Software', desc:'REST APIs, HTTP methods, request/response cycle, authentication, and testing APIs in Postman.', difficulty:'Beginner', hours:6, url:'https://academy.postman.com/path/postman-api-fundamentals-student-expert', color:'#FF6C37', bg:'rgba(255,108,55,0.15)' },
+  { id:94, provider:'Postman', name:'Postman API Test Automation', domain:'Software', desc:'Write test scripts, use collection runner, Newman CLI, and integrate Postman into CI/CD pipelines.', difficulty:'Intermediate', hours:8, url:'https://academy.postman.com/path/api-test-automation', color:'#FF6C37', bg:'rgba(255,108,55,0.15)' },
+
+  // ── ATLASSIAN ──
+  { id:95, provider:'Atlassian', name:'Jira Fundamentals', domain:'Business', desc:'Create projects, build boards, manage sprints, track issues, and generate Jira reports for your team.', difficulty:'Beginner', hours:4, url:'https://university.atlassian.com/student/path/815443-jira-fundamentals', color:'#0052CC', bg:'rgba(0,82,204,0.15)' },
+  { id:96, provider:'Atlassian', name:'Confluence Fundamentals', domain:'Business', desc:'Create and organize pages, use templates, collaborate with teams, and manage Confluence spaces.', difficulty:'Beginner', hours:3, url:'https://university.atlassian.com/student/path/861302-confluence-fundamentals', color:'#0052CC', bg:'rgba(0,82,204,0.15)' },
+  { id:97, provider:'Atlassian', name:'Agile with Atlassian Jira', domain:'Business', desc:'Scrum and Kanban frameworks, sprint planning, backlogs, story points, and retrospectives in Jira.', difficulty:'Beginner', hours:6, url:'https://university.atlassian.com/student/path/818284-agile-with-atlassian-jira', color:'#0052CC', bg:'rgba(0,82,204,0.15)' },
+
+  // ── GITHUB ──
+  { id:98, provider:'GitHub', name:'GitHub Skills — Introduction to GitHub', domain:'Software', desc:'Repositories, branches, commits, pull requests, and merging — core GitHub workflows hands-on.', difficulty:'Beginner', hours:2, url:'https://skills.github.com/', color:'#24292F', bg:'rgba(36,41,47,0.3)' },
+  { id:99, provider:'GitHub', name:'GitHub Actions', domain:'Software', desc:'Automate CI/CD pipelines, build workflows, triggers, jobs, steps, and deploy from GitHub Actions.', difficulty:'Intermediate', hours:4, url:'https://learn.microsoft.com/en-us/training/paths/automate-workflow-github-actions/', color:'#24292F', bg:'rgba(36,41,47,0.3)' },
+  { id:100, provider:'GitHub', name:'GitHub Copilot', domain:'AI/ML', desc:'AI-powered code completions, inline suggestions, natural language to code, and Copilot Chat.', difficulty:'Beginner', hours:3, url:'https://learn.microsoft.com/en-us/training/paths/copilot/', color:'#24292F', bg:'rgba(36,41,47,0.3)' },
+
+  // ── ELASTIC ──
+  { id:101, provider:'Elastic', name:'Elasticsearch Fundamentals', domain:'Data', desc:'Full-text search, indexing, mapping, queries, aggregations, and Kibana dashboards with Elastic.', difficulty:'Beginner', hours:8, url:'https://www.elastic.co/training/free#fundamentals', color:'#FEC514', bg:'rgba(254,197,20,0.2)' },
+  { id:102, provider:'Elastic', name:'Observability Fundamentals', domain:'Cloud', desc:'Logs, metrics, traces, APM, and building observability pipelines with the Elastic Stack (ELK).', difficulty:'Intermediate', hours:8, url:'https://www.elastic.co/training/free#observability', color:'#FEC514', bg:'rgba(254,197,20,0.2)' },
+
+  // ── TABLEAU ──
+  { id:103, provider:'Tableau', name:'Tableau Fundamentals', domain:'Data', desc:'Connect data sources, build vizzes, calculated fields, dashboards, and share on Tableau Public.', difficulty:'Beginner', hours:8, url:'https://www.tableau.com/learn/training/elearning', color:'#E97627', bg:'rgba(233,118,39,0.15)' },
+  { id:104, provider:'Tableau', name:'Tableau Public Starter', domain:'Data', desc:'Create and publish interactive data visualizations for free on Tableau Public for your portfolio.', difficulty:'Beginner', hours:4, url:'https://public.tableau.com/en-us/s/resources', color:'#E97627', bg:'rgba(233,118,39,0.15)' },
+
+  // ── DEEPLEARNING.AI ──
+  { id:105, provider:'DeepLearning.AI', name:'Prompt Engineering for Developers', domain:'AI/ML', desc:'Principles and techniques for effective prompting — summarizing, inferring, transforming, and expanding with LLMs.', difficulty:'Beginner', hours:2, url:'https://www.deeplearning.ai/short-courses/chatgpt-prompt-engineering-for-developers/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+  { id:106, provider:'DeepLearning.AI', name:'Building Systems with the ChatGPT API', domain:'AI/ML', desc:'Chain prompts, build multi-step workflows, evaluate outputs, and create production AI pipelines.', difficulty:'Intermediate', hours:2, url:'https://www.deeplearning.ai/short-courses/building-systems-with-chatgpt/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+  { id:107, provider:'DeepLearning.AI', name:'LangChain for LLM Application Development', domain:'AI/ML', desc:'Build LLM applications using LangChain — memory, agents, chains, and document Q&A.', difficulty:'Intermediate', hours:2, url:'https://www.deeplearning.ai/short-courses/langchain-for-llm-application-development/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+  { id:108, provider:'DeepLearning.AI', name:'Vector Databases & Embeddings', domain:'AI/ML', desc:'Semantic search, embeddings, vector stores, and building retrieval-augmented generation (RAG) apps.', difficulty:'Intermediate', hours:2, url:'https://www.deeplearning.ai/short-courses/vector-databases-embeddings-applications/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+  { id:109, provider:'DeepLearning.AI', name:'AI Python for Beginners', domain:'AI/ML', desc:'Python basics using AI assistance — variables, lists, loops, functions, and file operations.', difficulty:'Beginner', hours:2, url:'https://www.deeplearning.ai/short-courses/ai-python-for-beginners/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+  { id:110, provider:'DeepLearning.AI', name:'Finetuning Large Language Models', domain:'AI/ML', desc:'Why, when, and how to fine-tune LLMs — data prep, training loop, evaluation, and LoRA.', difficulty:'Advanced', hours:2, url:'https://www.deeplearning.ai/short-courses/finetuning-large-language-models/', color:'#E55225', bg:'rgba(229,82,37,0.15)' },
+
+  // ── SCRUM.ORG ──
+  { id:111, provider:'Scrum.org', name:'Professional Scrum Master (PSM I)', domain:'Business', desc:'Scrum framework, events, artifacts, accountabilities, and the Scrum Guide. Free open assessment included.', difficulty:'Intermediate', hours:20, url:'https://www.scrum.org/assessments/professional-scrum-master-i-certification', color:'#009FDA', bg:'rgba(0,159,218,0.15)' },
+  { id:112, provider:'Scrum.org', name:'Scrum Open Assessment', domain:'Business', desc:'Free online Scrum knowledge assessment — 30 questions from the Scrum Open to test your understanding.', difficulty:'Beginner', hours:1, url:'https://www.scrum.org/open-assessments/scrum-open', color:'#009FDA', bg:'rgba(0,159,218,0.15)' },
+
+  // ── PALO ALTO NETWORKS ──
+  { id:113, provider:'Palo Alto', name:'Cybersecurity Foundation', domain:'Cybersecurity', desc:'Cybersecurity fundamentals, threat landscape, Zero Trust, and modern security operations — 100% free.', difficulty:'Beginner', hours:8, url:'https://www.paloaltonetworks.com/services/education/digital-learning/cybersecurity-foundation', color:'#FA582D', bg:'rgba(250,88,45,0.15)' },
+  { id:114, provider:'Palo Alto', name:'Cloud Security Fundamentals', domain:'Cybersecurity', desc:'Secure cloud environments, CSPM, cloud workload protection, and securing multi-cloud deployments.', difficulty:'Intermediate', hours:8, url:'https://www.paloaltonetworks.com/services/education/digital-learning', color:'#FA582D', bg:'rgba(250,88,45,0.15)' },
+  { id:115, provider:'Palo Alto', name:'AI-Powered SOC Fundamentals', domain:'Cybersecurity', desc:'Security operations automation, SIEM, SOAR, threat detection, and AI-driven incident response.', difficulty:'Intermediate', hours:6, url:'https://www.paloaltonetworks.com/services/education/digital-learning', color:'#FA582D', bg:'rgba(250,88,45,0.15)' },
+
+  // ── RED HAT ──
+  { id:116, provider:'Red Hat', name:'Red Hat Enterprise Linux Technical Overview', domain:'Software', desc:'Linux fundamentals, shell navigation, user/group management, networking, and system administration.', difficulty:'Beginner', hours:6, url:'https://www.redhat.com/en/services/training/rh024-red-hat-linux-technical-overview', color:'#EE0000', bg:'rgba(238,0,0,0.15)' },
+  { id:117, provider:'Red Hat', name:'Ansible Essentials: Simplicity in Automation', domain:'Software', desc:'Automation fundamentals with Ansible — playbooks, modules, inventories, and roles. Free course.', difficulty:'Beginner', hours:5, url:'https://www.redhat.com/en/services/training/do007-ansible-essentials', color:'#EE0000', bg:'rgba(238,0,0,0.15)' },
+  { id:118, provider:'Red Hat', name:'Containers, Kubernetes & OpenShift Overview', domain:'Cloud', desc:'Container concepts, Kubernetes architecture, OpenShift basics, and deploying containerized apps.', difficulty:'Beginner', hours:4, url:'https://www.redhat.com/en/services/training/do008-deploying-containerized-applications-technical-overview', color:'#EE0000', bg:'rgba(238,0,0,0.15)' },
 ];
 
 const DURATION_MAP = { short: [0,9], medium: [10,40], long: [41, Infinity] };
