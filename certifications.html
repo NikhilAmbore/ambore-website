@@ -221,25 +221,6 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- AI RECOMMENDATION BOX -->
-  <div class="ai-box">
-    <div class="ai-box-head">
-      <div class="ai-box-icon">🤖</div>
-      <div>
-        <div class="ai-box-title">AI Certification Advisor</div>
-        <div class="ai-box-sub">Tell me your career goal and I'll suggest the best certifications to pursue first.</div>
-      </div>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="ai-goal" placeholder="e.g. I want to become a cloud engineer, data scientist, or full-stack developer..." maxlength="300"/>
-      <button class="ai-btn" id="ai-btn" onclick="getAIRecommendation()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Suggest
-      </button>
-    </div>
-    <div class="ai-result" id="ai-result"></div>
-  </div>
-
   <!-- FILTERS -->
   <div class="filters-bar">
     <div class="search-wrap">
@@ -593,84 +574,6 @@ function applyFilters() {
     grid.innerHTML = filtered.map(renderCard).join('');
   }
 }
-
-/* ── AI RECOMMENDATION ── */
-const API_BASE = '';  // Netlify Edge Function — same domain
-
-async function getAIRecommendation() {
-  const goal = document.getElementById('ai-goal').value.trim();
-  if (!goal) { showToast('Please describe your career goal first.'); return; }
-
-  const btn = document.getElementById('ai-btn');
-  const result = document.getElementById('ai-result');
-  btn.disabled = true;
-  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Thinking...';
-  result.className = 'ai-result visible';
-  result.innerHTML = '<span class="cursor-blink"></span>';
-
-  // Send compact list — group by domain to keep tokens low
-  const byDomain = {};
-  CERTS.forEach(c => { (byDomain[c.domain] = byDomain[c.domain] || []).push(`${c.name} (${c.provider}, ${c.difficulty})`); });
-  const certList = Object.entries(byDomain).map(([d,cs]) => `${d}: ${cs.join(' | ')}`).join('\n');
-
-  try {
-    const res = await fetch(`${API_BASE}/api/claude`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 700,
-        stream: true,
-        messages: [{
-          role: 'user',
-          content: `You are a career advisor. A user wants free certifications for this goal: "${goal}"
-
-Available certifications grouped by domain:
-${certList}
-
-Recommend 3-5 specific certifications from the list above that best match their goal.
-For each: name it, say why it fits (1 sentence), and suggest the order (start with, then, finally).
-Be concise and practical. No markdown headers.`
-        }]
-      })
-    });
-
-    if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t.slice(0,120)}`); }
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '', text = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n'); buf = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const j = JSON.parse(data);
-          const delta = j.delta?.text || j.choices?.[0]?.delta?.content || '';
-          if (delta) {
-            text += delta;
-            result.innerHTML = text.replace(/\n/g, '<br>') + '<span class="cursor-blink"></span>';
-          }
-        } catch(e) {}
-      }
-    }
-    result.innerHTML = text.replace(/\n/g, '<br>');
-  } catch(e) {
-    result.innerHTML = `<span style="color:var(--red)">Could not load recommendation — please try again.<br><small style="opacity:0.6">${e.message}</small></span>`;
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Suggest';
-  }
-}
-
-document.getElementById('ai-goal').addEventListener('keydown', e => {
-  if (e.key === 'Enter') getAIRecommendation();
-});
 
 // Init
 applyFilters();

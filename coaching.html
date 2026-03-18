@@ -270,25 +270,6 @@ a{text-decoration:none;color:inherit}
     </div>
   </div>
 
-  <!-- AI BOX -->
-  <div class="ai-box">
-    <div class="ai-box-head">
-      <div class="ai-box-icon">🤖</div>
-      <div>
-        <div class="ai-box-title">AI Course Advisor</div>
-        <div class="ai-box-sub">Tell me your goal and I'll recommend the best live course for you.</div>
-      </div>
-    </div>
-    <div class="ai-input-row">
-      <input class="ai-input" id="ai-goal" placeholder="e.g. I want to become a data engineer, improve my English, prepare for IELTS..." maxlength="300"/>
-      <button class="ai-btn" id="ai-btn" onclick="getAIRecommendation()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-        Suggest
-      </button>
-    </div>
-    <div class="ai-result" id="ai-result"></div>
-  </div>
-
   <!-- FILTERS -->
   <div class="filters-bar">
     <div class="search-wrap">
@@ -331,10 +312,9 @@ a{text-decoration:none;color:inherit}
   <!-- BOTTOM CTA -->
   <div class="cta-banner">
     <h2>Not sure where to start?</h2>
-    <p>Use the AI advisor above or book a free 15-minute discovery call and we'll help you find the right course.</p>
+    <p>Book a free 15-minute discovery call and we'll help you find the right course.</p>
     <div class="cta-banner-btns">
       <button class="cta-primary" onclick="bookSlot()">Book Free Discovery Call</button>
-      <button class="cta-secondary" onclick="document.getElementById('ai-goal').focus();document.getElementById('ai-goal').scrollIntoView({behavior:'smooth'})">Ask AI Advisor</button>
     </div>
   </div>
 
@@ -461,82 +441,6 @@ function applyFilters() {
   } else {
     empty.classList.add('hidden');
     grid.innerHTML = filtered.map(renderCard).join('');
-  }
-}
-
-// ── AI RECOMMENDATION ──
-const API_BASE = '';  // Netlify Edge Function — same domain
-
-async function getAIRecommendation() {
-  const goal = document.getElementById('ai-goal').value.trim();
-  if (!goal) { showToast('Please describe your career goal first.'); return; }
-
-  const btn = document.getElementById('ai-btn');
-  const result = document.getElementById('ai-result');
-  btn.disabled = true;
-  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg> Thinking...';
-  result.className = 'ai-result visible';
-  result.innerHTML = '<span class="cursor-blink"></span>';
-
-  const courseList = COURSES.map(c => `- ${c.name} (${c.category}, ${c.difficulty}, ${c.duration})`).join('\n');
-
-  try {
-    const res = await fetch(`${API_BASE}/api/claude`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 600,
-        stream: true,
-        messages: [{
-          role: 'user',
-          content: `You are a career advisor for Ambore, a live 1:1 coaching platform.
-
-User goal: "${goal}"
-
-Available live courses:
-${courseList}
-
-Recommend 3-4 courses from this list that best match their goal. For each:
-- Course name
-- Why it fits their goal (1 sentence)
-- Suggested order (do first, second, etc.)
-
-Be concise and motivating. No markdown headers.`
-        }]
-      })
-    });
-
-    if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t.slice(0,120)}`); }
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buf = '', text = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buf += decoder.decode(value, { stream: true });
-      const lines = buf.split('\n'); buf = lines.pop();
-      for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const j = JSON.parse(data);
-          const delta = j.delta?.text || j.choices?.[0]?.delta?.content || '';
-          if (delta) {
-            text += delta;
-            result.innerHTML = text.replace(/\n/g,'<br>') + '<span class="cursor-blink"></span>';
-          }
-        } catch(_){}
-      }
-    }
-    result.innerHTML = text.replace(/\n/g,'<br>');
-  } catch(e) {
-    result.innerHTML = `<span style="color:#ef4444">Something went wrong — please try again.<br><small style="opacity:0.6">${e.message}</small></span>`;
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Suggest';
   }
 }
 
