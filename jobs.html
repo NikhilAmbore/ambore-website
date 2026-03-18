@@ -635,7 +635,12 @@ function applyAndRender() {
 
   const now = Date.now();
 
+  // Non-US country keywords — always exclude these regardless of other filters
+  const FOREIGN_PATTERNS = /\b(china|chn|malaysia|india|uk|germany|france|canada|australia|brazil|mexico|japan|korea|singapore|ireland|netherlands|poland|spain|italy|switzerland|sweden|denmark|norway|finland|austria|belgium|portugal|czech|hungary|romania|ukraine|israel|uae|dubai|hong kong|taiwan|philippines|indonesia|vietnam|thailand|argentina|chile|colombia|peru|nigeria|south africa|kenya|egypt|pakistan|bangladesh)\b/i;
+
   _filtered = _allJobs.filter(j => {
+    // ── Always US-only
+    if (j.location && FOREIGN_PATTERNS.test(j.location)) return false;
     // ── Text search (every word must appear somewhere)
     if (q) {
       const hay = `${j.title} ${j.company} ${j.location} ${j.department||''} ${j.description||''}`.toLowerCase();

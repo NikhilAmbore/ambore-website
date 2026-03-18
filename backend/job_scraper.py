@@ -1229,7 +1229,7 @@ class WorkdayScraper(BaseScraper):
                     url=job_url,
                     employment_type=time_type,
                     posted_at=posted_on,
-                    force_usa=True,   # Workday targets are US-focused companies
+                    force_usa=False,  # filter by actual location — assume_us_remote handles bare "Remote"
                 )
                 if job:
                     jobs.append(job)
