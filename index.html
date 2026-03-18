@@ -284,8 +284,8 @@ nav.scrolled{
 .hero-tools{margin-top:28px}
 .hero-tools-label{font-size:0.72rem;color:rgba(255,255,255,0.28);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
 .hero-tools-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:7px}
-.hero-tool-btn{display:flex;align-items:center;gap:6px;padding:8px 15px;border-radius:9px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.62);font-size:0.81rem;font-weight:600;cursor:pointer;transition:all 0.2s;white-space:nowrap;font-family:inherit}
-.hero-tool-btn:hover{background:rgba(109,92,255,0.14);border-color:rgba(109,92,255,0.35);color:#fff;transform:translateY(-1px)}
+.hero-tool-btn{display:flex;align-items:center;gap:6px;padding:9px 16px;border-radius:10px;background:rgba(255,255,255,0.04);border:1.5px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.62);font-size:0.82rem;font-weight:700;cursor:pointer;transition:all 0.18s;white-space:nowrap;font-family:inherit;box-shadow:0 2px 8px rgba(0,0,0,0.2)}
+.hero-tool-btn:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 6px 20px rgba(0,0,0,0.3);color:#fff}
 
 /* ── MARQUEE STRIP ── */
 .marquee-strip{
@@ -876,20 +876,20 @@ footer{
       <div class="hero-tools reveal reveal-d5">
         <div class="hero-tools-label">Jump straight to a tool</div>
         <div class="hero-tools-grid">
-          <button class="hero-tool-btn" onclick="goToFeature('/interview')" style="background:rgba(139,92,246,0.12);border-color:rgba(139,92,246,0.4);color:#a78bfa;">🎙 Interview AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/resume')" style="background:rgba(59,130,246,0.12);border-color:rgba(59,130,246,0.4);color:#60a5fa;">📄 Resume Tailor</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/resume-builder')" style="background:rgba(109,92,255,0.15);border-color:rgba(109,92,255,0.5);color:#8b7fff;">✏️ Build Resume</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/jobs')" style="background:rgba(16,185,129,0.12);border-color:rgba(16,185,129,0.4);color:#34d399;">💼 Job Portal</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/cover-letter')" style="background:rgba(236,72,153,0.12);border-color:rgba(236,72,153,0.4);color:#f472b6;">📝 Cover Letter</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/email')" style="background:rgba(14,165,233,0.12);border-color:rgba(14,165,233,0.4);color:#38bdf8;">✉️ Email Generator</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/linkedin')" style="background:rgba(10,102,194,0.15);border-color:rgba(10,102,194,0.45);color:#5ba4e0;">🔗 LinkedIn</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/portfolio')" style="background:rgba(20,184,166,0.12);border-color:rgba(20,184,166,0.4);color:#2dd4bf;">🌐 Portfolio</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/english')" style="background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.35);color:#f87171;">🇬🇧 English AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/coding')" style="background:rgba(132,204,22,0.1);border-color:rgba(132,204,22,0.35);color:#a3e635;">💻 Coding AI</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/project')" style="background:rgba(249,115,22,0.12);border-color:rgba(249,115,22,0.4);color:#fb923c;">🚀 Build Project</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/dashboard')" style="background:rgba(234,179,8,0.1);border-color:rgba(234,179,8,0.35);color:#facc15;">📊 Dashboard</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/feedback')" style="background:rgba(168,85,247,0.12);border-color:rgba(168,85,247,0.4);color:#c084fc;">💬 Give Feedback</button>
-          <button class="hero-tool-btn" onclick="goToFeature('/ats-score')" style="background:rgba(245,158,11,0.12);border-color:rgba(245,158,11,0.4);color:#fbbf24;">🎯 ATS Score</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/interview')" style="background:linear-gradient(135deg,rgba(139,92,246,0.28),rgba(109,40,217,0.18));border-color:rgba(139,92,246,0.6);color:#c4b5fd;">🎙 Interview AI</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/resume')" style="background:linear-gradient(135deg,rgba(59,130,246,0.28),rgba(37,99,235,0.18));border-color:rgba(59,130,246,0.6);color:#93c5fd;">📄 Resume Tailor</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/resume-builder')" style="background:linear-gradient(135deg,rgba(99,102,241,0.32),rgba(79,70,229,0.22));border-color:rgba(99,102,241,0.65);color:#a5b4fc;">✏️ Build Resume</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/jobs')" style="background:linear-gradient(135deg,rgba(16,185,129,0.28),rgba(5,150,105,0.18));border-color:rgba(16,185,129,0.6);color:#6ee7b7;">💼 Job Portal</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/cover-letter')" style="background:linear-gradient(135deg,rgba(236,72,153,0.28),rgba(219,39,119,0.18));border-color:rgba(236,72,153,0.6);color:#f9a8d4;">📝 Cover Letter</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/email')" style="background:linear-gradient(135deg,rgba(14,165,233,0.28),rgba(2,132,199,0.18));border-color:rgba(14,165,233,0.6);color:#7dd3fc;">✉️ Email Generator</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/linkedin')" style="background:linear-gradient(135deg,rgba(10,102,194,0.32),rgba(8,81,156,0.22));border-color:rgba(10,102,194,0.65);color:#93c5fd;">🔗 LinkedIn</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/portfolio')" style="background:linear-gradient(135deg,rgba(20,184,166,0.28),rgba(13,148,136,0.18));border-color:rgba(20,184,166,0.6);color:#5eead4;">🌐 Portfolio</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/english')" style="background:linear-gradient(135deg,rgba(239,68,68,0.25),rgba(220,38,38,0.15));border-color:rgba(239,68,68,0.6);color:#fca5a5;">🇬🇧 English AI</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/coding')" style="background:linear-gradient(135deg,rgba(132,204,22,0.25),rgba(101,163,13,0.15));border-color:rgba(132,204,22,0.6);color:#bef264;">💻 Coding AI</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/project')" style="background:linear-gradient(135deg,rgba(249,115,22,0.28),rgba(234,88,12,0.18));border-color:rgba(249,115,22,0.6);color:#fdba74;">🚀 Build Project</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/dashboard')" style="background:linear-gradient(135deg,rgba(234,179,8,0.25),rgba(202,138,4,0.15));border-color:rgba(234,179,8,0.6);color:#fde047;">📊 Dashboard</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/feedback')" style="background:linear-gradient(135deg,rgba(168,85,247,0.28),rgba(147,51,234,0.18));border-color:rgba(168,85,247,0.6);color:#d8b4fe;">💬 Give Feedback</button>
+          <button class="hero-tool-btn" onclick="goToFeature('/ats-score')" style="background:linear-gradient(135deg,rgba(245,158,11,0.28),rgba(217,119,6,0.18));border-color:rgba(245,158,11,0.6);color:#fcd34d;">🎯 ATS Score</button>
         </div>
       </div>
 
