@@ -1411,8 +1411,6 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
-<script src="/theme.js"></script>
-<link rel="stylesheet" href="/theme-light.css"/>
 </head><body>${html}</body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -1449,9 +1447,7 @@ async function downloadDocx() {
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style><script src="/theme.js"></script>
-<link rel="stylesheet" href="/theme-light.css"/>
-</head>
+<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
 <body>${renderMarkdown(generatedMarkdown)}</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);

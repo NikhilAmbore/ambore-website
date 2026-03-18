@@ -962,9 +962,7 @@ function downloadPDF() {
       body{background:#fff;font-family:'Inter',sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
       ${document.querySelector('style').textContent}
     </style>
-    <script src="/theme.js"></script>
-<link rel="stylesheet" href="/theme-light.css"/>
-</head><body>${printContent}</body></html>`);
+    </head><body>${printContent}</body></html>`);
   win.document.close();
   setTimeout(() => { win.focus(); win.print(); }, 600);
 }
