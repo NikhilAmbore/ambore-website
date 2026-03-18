@@ -82,6 +82,32 @@ from urllib.parse import urljoin, urlparse
 import httpx
 from bs4 import BeautifulSoup, Tag
 
+# ── ScraperAPI proxy (bypasses Cloudflare blocks on datacenter IPs) ──────────
+# Set SCRAPERAPI_KEY env var (free 1,000 req/month at scraperapi.com).
+# When set, blocked scrapers automatically route through the proxy.
+_SCRAPERAPI_KEY: str = os.environ.get("SCRAPERAPI_KEY", "")
+_SCRAPERAPI_BASE = "https://api.scraperapi.com/"
+
+def _proxy_get(client: "PoliteClient", url: str,
+               params: dict | None = None,
+               headers: dict | None = None) -> "httpx.Response":
+    """
+    GET request routed through ScraperAPI when SCRAPERAPI_KEY is set.
+    Falls back to a direct request if no key is configured.
+    """
+    if _SCRAPERAPI_KEY:
+        import urllib.parse
+        target = url
+        if params:
+            target = url + "?" + urllib.parse.urlencode(params)
+        return client.get(
+            _SCRAPERAPI_BASE,
+            params={"api_key": _SCRAPERAPI_KEY, "url": target},
+            headers=headers,
+        )
+    return client.get(url, params=params, headers=headers)
+
+
 def _safe_json(resp: httpx.Response) -> Any:
     """
     Parse JSON from an httpx response robustly.
@@ -3052,7 +3078,7 @@ class IndeedRSSScraper(BaseScraper):
                 })
                 url = f"{self._BASE_URL}?{params}"
                 try:
-                    resp = self.client.get(url)
+                    resp = _proxy_get(self.client, url)
                     root = ET.fromstring(resp.text)
                     channel = root.find("channel")
                     if channel is None:
@@ -3183,7 +3209,8 @@ class DiceScraper(BaseScraper):
                 break
             for page in range(1, self._MAX_PAGES + 1):
                 try:
-                    resp = self.client.get(
+                    resp = _proxy_get(
+                        self.client,
                         self._BASE_URL,
                         params={
                             "q":            keyword,
@@ -3290,7 +3317,8 @@ class ZipRecruiterScraper(BaseScraper):
             if len(jobs) >= MAX_JOBS_PER_SRC:
                 break
             try:
-                resp = self.client.get(
+                resp = _proxy_get(
+                    self.client,
                     self._BASE_URL,
                     params={"search": keyword, "location": "United States"},
                     headers=self._HEADERS,
@@ -3394,7 +3422,8 @@ class MonsterScraper(BaseScraper):
             if len(jobs) >= MAX_JOBS_PER_SRC:
                 break
             try:
-                resp = self.client.get(
+                resp = _proxy_get(
+                    self.client,
                     self._BASE_URL,
                     params={
                         "q":     keyword,
