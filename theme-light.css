@@ -3,6 +3,27 @@
    Applied when <html data-theme="light">
 ══════════════════════════════════════════ */
 
+/* ── ATS Score topbar button (shared) ── */
+.ats-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 13px;
+  border-radius: 8px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: opacity 0.2s, transform 0.15s;
+  box-shadow: 0 2px 10px rgba(245,158,11,0.35);
+}
+.ats-nav-btn:hover { opacity: 0.88; transform: translateY(-1px); color: #fff; }
+
 /* ── Theme toggle button (shared) ── */
 .theme-toggle {
   background: none;
