@@ -608,7 +608,10 @@ async function getAIRecommendation() {
   result.className = 'ai-result visible';
   result.innerHTML = '<span class="cursor-blink"></span>';
 
-  const certList = CERTS.map(c => `- ${c.name} (${c.provider}, ${c.difficulty}, ${c.domain})`).join('\n');
+  // Send compact list — group by domain to keep tokens low
+  const byDomain = {};
+  CERTS.forEach(c => { (byDomain[c.domain] = byDomain[c.domain] || []).push(`${c.name} (${c.provider}, ${c.difficulty})`); });
+  const certList = Object.entries(byDomain).map(([d,cs]) => `${d}: ${cs.join(' | ')}`).join('\n');
 
   try {
     const res = await fetch(`${API_BASE}/api/claude`, {
@@ -616,28 +619,23 @@ async function getAIRecommendation() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 600,
+        max_tokens: 700,
         stream: true,
         messages: [{
           role: 'user',
-          content: `You are a career advisor helping a job seeker choose free certifications.
+          content: `You are a career advisor. A user wants free certifications for this goal: "${goal}"
 
-Career goal: "${goal}"
-
-Available certifications:
+Available certifications grouped by domain:
 ${certList}
 
-Recommend 3-5 certifications from this list that best match their goal. For each one:
-- Name the certification
-- One sentence on why it's relevant to their goal
-- Whether to do it first, second, etc.
-
-Keep the response concise and actionable. No markdown headers. Use simple formatting.`
+Recommend 3-5 specific certifications from the list above that best match their goal.
+For each: name it, say why it fits (1 sentence), and suggest the order (start with, then, finally).
+Be concise and practical. No markdown headers.`
         }]
       })
     });
 
-    if (!res.ok) throw new Error('API error');
+    if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t.slice(0,120)}`); }
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buf = '', text = '';
@@ -663,7 +661,7 @@ Keep the response concise and actionable. No markdown headers. Use simple format
     }
     result.innerHTML = text.replace(/\n/g, '<br>');
   } catch(e) {
-    result.innerHTML = '<span style="color:var(--red)">Could not load recommendation — please try again.</span>';
+    result.innerHTML = `<span style="color:var(--red)">Could not load recommendation — please try again.<br><small style="opacity:0.6">${e.message}</small></span>`;
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Suggest';

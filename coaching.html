@@ -507,7 +507,7 @@ Be concise and motivating. No markdown headers.`
       })
     });
 
-    if (!res.ok) throw new Error('API error');
+    if (!res.ok) { const t = await res.text(); throw new Error(`API ${res.status}: ${t.slice(0,120)}`); }
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
     let buf = '', text = '';
@@ -533,7 +533,7 @@ Be concise and motivating. No markdown headers.`
     }
     result.innerHTML = text.replace(/\n/g,'<br>');
   } catch(e) {
-    result.innerHTML = 'Something went wrong. Please try again.';
+    result.innerHTML = `<span style="color:#ef4444">Something went wrong — please try again.<br><small style="opacity:0.6">${e.message}</small></span>`;
   } finally {
     btn.disabled = false;
     btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg> Suggest';
