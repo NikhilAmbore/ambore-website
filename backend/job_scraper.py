@@ -491,6 +491,7 @@ class PoliteClient:
         "job-search-api.svc.dhigroupinc.com",  # Dice public search API
         "www.ziprecruiter.com",   # ZipRecruiter RSS feeds
         "rss.jobs.monster.com",   # Monster RSS feeds
+        "www.linkedin.com",        # LinkedIn public jobs search
         "arbeitnow.com",          # Arbeitnow free job board API
         "himalayas.app",          # Himalayas remote jobs API
         "hn.algolia.com",         # HN Algolia search API
@@ -531,6 +532,7 @@ class PoliteClient:
         "data.usajobs.gov":         0.5,
         "remotive.com":             0.5,
         "remoteok.com":             0.5,
+        "www.linkedin.com":         1.0,
         "arbeitnow.com":            0.5,
         "himalayas.app":            0.5,
         "hn.algolia.com":           0.3,
@@ -2713,24 +2715,30 @@ class LinkedInGuestScraper(BaseScraper):
     _MAX_PAGES  = 4             # 4 × 25 = up to 100 results per keyword (more = timeout risk)
 
     _HEADERS: dict[str, str] = {
-        "User-Agent":         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "User-Agent":         "Mozilla/5.0 (X11; Linux x86_64) "
                               "AppleWebKit/537.36 (KHTML, like Gecko) "
-                              "Chrome/124.0.0.0 Safari/537.36",
-        "Accept":             "*/*",
+                              "Chrome/125.0.0.0 Safari/537.36",
+        "Accept":             "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
         "Accept-Language":    "en-US,en;q=0.9",
+        "Accept-Encoding":    "gzip, deflate, br",
+        "Cache-Control":      "no-cache",
+        "Pragma":             "no-cache",
         "csrf-token":         "ajax:0000000000000000000",
-        "sec-ch-ua":          '"Chromium";v="124", "Google Chrome";v="124"',
+        "sec-ch-ua":          '"Chromium";v="125", "Google Chrome";v="125"',
         "sec-ch-ua-mobile":   "?0",
-        "sec-ch-ua-platform": '"macOS"',
-        "sec-fetch-dest":     "empty",
-        "sec-fetch-mode":     "cors",
-        "sec-fetch-site":     "same-origin",
+        "sec-ch-ua-platform": '"Linux"',
+        "sec-fetch-dest":     "document",
+        "sec-fetch-mode":     "navigate",
+        "sec-fetch-site":     "none",
         "Referer":            "https://www.linkedin.com/jobs/search"
                               "?keywords=software+engineer&location=United+States",
     }
 
+    # Public LinkedIn jobs page (no login) — alternative to guest API
+    _PUBLIC_SEARCH = "https://www.linkedin.com/jobs/search/"
+
     def _search_page(self, keyword: str, start: int) -> list[str]:
-        """Return job IDs from one search result page."""
+        """Return job IDs from one search result page, trying guest API then public page."""
         params: dict[str, str] = {
             "keywords": keyword,
             "location": "United States",
@@ -2738,21 +2746,39 @@ class LinkedInGuestScraper(BaseScraper):
             "f_TPR":    "r604800",   # last 7 days
             "start":    str(start),
         }
+
+        ids: list[str] = []
+
+        # Try guest API first
         try:
             resp = self.client.get(self._SEARCH_URL, params=params,
                                    headers=self._HEADERS)
             resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for card in soup.select(".job-search-card, [data-entity-urn]"):
+                urn = card.get("data-entity-urn", "")
+                job_id = urn.split(":")[-1] if ":" in urn else ""
+                if job_id and job_id.isdigit():
+                    ids.append(job_id)
+            if ids:
+                return ids
         except Exception as exc:
-            log.debug("[LinkedIn] search error (kw=%r start=%d): %s", keyword, start, exc)
-            return []
+            log.debug("[LinkedIn] guest API error (kw=%r start=%d): %s", keyword, start, exc)
 
-        soup = BeautifulSoup(resp.text, "html.parser")
-        ids: list[str] = []
-        for card in soup.select(".job-search-card"):
-            urn = card.get("data-entity-urn", "")
-            job_id = urn.split(":")[-1] if ":" in urn else ""
-            if job_id and job_id.isdigit():
-                ids.append(job_id)
+        # Fallback: public /jobs/search/ HTML page
+        try:
+            resp = self.client.get(self._PUBLIC_SEARCH, params=params,
+                                   headers=self._HEADERS)
+            resp.raise_for_status()
+            soup = BeautifulSoup(resp.text, "html.parser")
+            for card in soup.select("[data-entity-urn]"):
+                urn = card.get("data-entity-urn", "")
+                job_id = urn.split(":")[-1] if ":" in urn else ""
+                if job_id and job_id.isdigit():
+                    ids.append(job_id)
+        except Exception as exc:
+            log.debug("[LinkedIn] public page error (kw=%r start=%d): %s", keyword, start, exc)
+
         return ids
 
     def _fetch_detail(self, job_id: str) -> Job | None:
@@ -4576,10 +4602,17 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # ── Jobicy (free remote-jobs aggregator — no API key) ─────────────────
     {"ats": "jobicy", "company": "jobicy-aggregator", "company_name": "Jobicy"},
 
-    # ── Indeed / Dice / ZipRecruiter / Monster ────────────────────────────────
-    # All blocked (403) from GitHub Actions IP ranges by Cloudflare/WAF.
-    # Removed to avoid wasting ~10 min per run on failed requests.
-    # Re-enable if using a proxy or self-hosted runner with a residential IP.
+    # ── Indeed RSS (public RSS feeds — no API key) ────────────────────────────
+    {"ats": "indeed", "company": "indeed-aggregator", "company_name": "Indeed"},
+
+    # ── Dice (tech-focused JSON API — no auth) ────────────────────────────────
+    {"ats": "dice", "company": "dice-aggregator", "company_name": "Dice"},
+
+    # ── ZipRecruiter RSS (no auth) ────────────────────────────────────────────
+    {"ats": "ziprecruiter", "company": "ziprecruiter-aggregator", "company_name": "ZipRecruiter"},
+
+    # ── Monster RSS (no auth) ─────────────────────────────────────────────────
+    {"ats": "monster", "company": "monster-aggregator", "company_name": "Monster"},
 
     # ── Arbeitnow (free JSON API — up to 300 jobs, remote-friendly) ──────────
     {"ats": "arbeitnow", "company": "arbeitnow-aggregator", "company_name": "Arbeitnow"},
