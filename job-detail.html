@@ -16,7 +16,7 @@ window.addEventListener('load',()=>track('page_view','job_detail'));
   var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
   if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
     localStorage.removeItem('ambore_user');
-    window.location.href='index.html?auth=login&redirect=jobs.html&msg=Please+log+in+to+view+job+details';
+    window.location.href='/?auth=login&redirect=/jobs&msg=Please+log+in+to+view+job+details';
   }
 })();
 </script>
@@ -33,10 +33,11 @@ a{text-decoration:none;color:inherit}
 .topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff}
 .topbar .logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
 .topbar .brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
-.nav-links{display:flex;align-items:center;gap:16px;margin-left:20px}
-.nav-links a{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.4);transition:color 0.2s}
+.nav-links{display:flex;align-items:center;gap:10px;margin-left:20px;flex:1}
+.nav-links a{font-size:0.78rem;font-weight:600;color:rgba(255,255,255,0.4);transition:color 0.2s}
 .nav-links a:hover{color:#fff}
 .nav-links a.active{color:var(--accent)}
+.ats-nav-link{background:rgba(245,158,11,0.12)!important;border:1px solid rgba(245,158,11,0.35)!important;color:#fbbf24!important;padding:3px 9px!important;border-radius:7px!important;font-weight:700!important;}
 
 /* Main content */
 .content{max-width:820px;margin:0 auto;padding:24px 24px 100px}
@@ -91,7 +92,7 @@ a{text-decoration:none;color:inherit}
 .loading-spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* Sticky apply bar — always visible at bottom */
+/* Sticky apply bar */
 .apply-sticky{
   position:fixed;bottom:0;left:0;right:0;z-index:200;
   padding:12px 24px;background:rgba(6,6,15,0.95);backdrop-filter:blur(12px);
@@ -131,27 +132,26 @@ a{text-decoration:none;color:inherit}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
-<link rel="stylesheet" href="/theme-light.css"/>
 </head>
 <body>
 
 <div class="topbar">
-  <a href="index.html" class="logo"><div class="logo-icon">A</div>Ambore<span class="brand-tag">Jobs</span></a>
-  <div class="nav-links">
-    <a href="index.html">Home</a>
-    <a href="app.html">Interview</a>
-    <a href="resume.html">Resume</a>
-    <a href="jobs.html" class="active">Jobs</a>
-  </div>
+  <a href="/" class="logo"><div class="logo-icon">A</div>Ambore<span class="brand-tag">Jobs</span></a>
+  <nav class="nav-links">
+    <a href="/">Home</a>
+    <a href="/interview">Interview AI</a>
+    <a href="/resume">Resume</a>
+    <a href="/jobs" class="active">Jobs</a>
+    <a href="/ats-score" class="ats-nav-link">🎯 ATS</a>
+  </nav>
 </div>
 
-
 <div class="content" id="content">
-  <div class="loading"><div class="loading-spinner"></div>Loading job details...
+  <div class="loading"><div class="loading-spinner"></div>Loading job details...</div>
+</div>
 
-
-<!-- Sticky apply bar (shown on all screen sizes) -->
-<div class="apply-sticky" id="apply-sticky">
+<!-- Sticky apply bar -->
+<div class="apply-sticky" id="apply-sticky"></div>
 
 <script>
 const API_BASE = 'https://web-production-d62ab.up.railway.app';
@@ -161,7 +161,7 @@ async function loadJob() {
   const jobId = params.get('id');
 
   if (!jobId) {
-    document.getElementById('content').innerHTML = '<div class="loading"><p>No job ID provided. <a href="jobs.html" style="color:var(--accent)">Browse jobs</a></p></div>';
+    document.getElementById('content').innerHTML = '<div class="loading"><p>No job ID provided. <a href="/jobs" style="color:var(--accent)">Browse jobs</a></p></div>';
     return;
   }
 
@@ -173,12 +173,12 @@ async function loadJob() {
     document.title = `${job.title} at ${job.company} — Ambore Jobs`;
     renderJob(job);
   } catch (e) {
-    document.getElementById('content').innerHTML = `<div class="loading"><p>Job not found or server error.</p><p style="margin-top:8px"><a href="jobs.html" style="color:var(--accent)">Browse all jobs</a></p></div>`;
+    document.getElementById('content').innerHTML = `<div class="loading"><p>Job not found or server error.</p><p style="margin-top:8px"><a href="/jobs" style="color:var(--accent)">Browse all jobs</a></p></div>`;
   }
 }
 
 function renderJob(job) {
-  const location = [job.location_city, job.location_state].filter(Boolean).join(', ') || 'USA';
+  const location = [job.location_city, job.location_state].filter(Boolean).join(', ') || job.location || 'USA';
 
   let salaryStr = '';
   if (job.salary_min || job.salary_max) {
@@ -188,8 +188,8 @@ function renderJob(job) {
   }
 
   const logo = job.company_logo
-    ? `<img src="${job.company_logo}" alt="" onerror="this.parentElement.innerHTML='${esc(job.company.charAt(0))}'">`
-    : esc(job.company.charAt(0));
+    ? `<img src="${job.company_logo}" alt="" onerror="this.style.display='none'">`
+    : esc(job.company ? job.company.charAt(0) : '?');
 
   const workTypeClass = job.work_type === 'remote' ? 'remote' : job.work_type === 'hybrid' ? 'hybrid' : '';
 
@@ -197,7 +197,6 @@ function renderJob(job) {
     ? `<div class="skills-wrap">${job.skills.map(s => `<span class="skill-chip">${esc(s)}</span>`).join('')}</div>`
     : '';
 
-  // Format description paragraphs
   let descHtml = esc(job.description || 'No description available.');
   descHtml = descHtml.replace(/\n\n+/g, '</p><p>').replace(/\n/g, '<br>');
   descHtml = `<p>${descHtml}</p>`;
@@ -205,59 +204,58 @@ function renderJob(job) {
   const postedDate = job.posted_at ? new Date(job.posted_at).toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' }) : '';
 
   document.getElementById('content').innerHTML = `
-    <a href="jobs.html" class="back-link">&larr; Back to Jobs</a>
+    <a href="/jobs" class="back-link">&larr; Back to Jobs</a>
 
     <div class="job-header">
-      <div class="jh-logo">${logo}
+      <div class="jh-logo">${logo}</div>
       <div class="jh-info">
         <h1 class="jh-title">${esc(job.title)}</h1>
-        <div class="jh-company">${esc(job.company)} &middot; ${esc(location)}
+        <div class="jh-company">${esc(job.company)} &middot; ${esc(location)}</div>
         <div class="jh-tags">
           ${job.work_type ? `<span class="jh-tag ${workTypeClass}">${esc(job.work_type)}</span>` : ''}
           ${salaryStr ? `<span class="jh-tag salary">${salaryStr}/yr</span>` : ''}
           ${job.experience_level ? `<span class="jh-tag">${esc(job.experience_level)}</span>` : ''}
           ${job.category ? `<span class="jh-tag">${esc(job.category)}</span>` : ''}
-        
-      
-    
+        </div>
+      </div>
+    </div>
 
     <div class="info-grid">
-      <div class="info-item"><div class="info-label">Location</div><div class="info-value">${esc(location)}</div>
-      <div class="info-item"><div class="info-label">Work Type</div><div class="info-value">${esc(job.work_type || 'On-site')}</div>
+      <div class="info-item"><div class="info-label">Location</div><div class="info-value">${esc(location)}</div></div>
+      <div class="info-item"><div class="info-label">Work Type</div><div class="info-value">${esc(job.work_type || 'On-site')}</div></div>
       ${salaryStr ? `<div class="info-item"><div class="info-label">Salary</div><div class="info-value">${salaryStr}/yr</div></div>` : ''}
-      <div class="info-item"><div class="info-label">Experience</div><div class="info-value">${esc(job.experience_level || 'Not specified')}</div>
+      <div class="info-item"><div class="info-label">Experience</div><div class="info-value">${esc(job.experience_level || 'Not specified')}</div></div>
       ${postedDate ? `<div class="info-item"><div class="info-label">Posted</div><div class="info-value">${postedDate}</div></div>` : ''}
-      <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source)}</div>
-    
+      <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source || job.ats || '')}</div></div>
+    </div>
 
     <a href="${getApplyUrl(job)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>
 
     ${skillsHtml}
 
     <div class="desc-card">
-      <div class="desc-title">Job Description
-      <div class="desc-body">${descHtml}
-    
+      <div class="desc-title">Job Description</div>
+      <div class="desc-body">${descHtml}</div>
+    </div>
 
-    <div class="source-badge">Source: ${esc(job.source)} &middot; Job ID: ${job.id}
+    <div class="source-badge">Source: ${esc(job.source || job.ats || '')} &middot; Job ID: ${job.id}</div>
   `;
 
-  // Populate sticky apply bar — always show
+  // Populate sticky apply bar
   const stickyBar = document.getElementById('apply-sticky');
   stickyBar.innerHTML = `
     <div class="apply-sticky-inner">
       <div class="apply-sticky-info">
-        <div class="apply-sticky-title">${esc(job.title)}
-        <div class="apply-sticky-company">${esc(job.company)}
-      
+        <div class="apply-sticky-title">${esc(job.title)}</div>
+        <div class="apply-sticky-company">${esc(job.company)}</div>
+      </div>
       <a href="${getApplyUrl(job)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
     </div>`;
   stickyBar.classList.add('visible');
 }
 
 function getApplyUrl(job) {
-  if (job.apply_url) return esc(job.apply_url);
-  // No direct apply link — generate a Google search to find the application page
+  if (job.apply_url) return job.apply_url;
   const query = encodeURIComponent(`${job.title} ${job.company} apply`);
   return `https://www.google.com/search?q=${query}`;
 }
