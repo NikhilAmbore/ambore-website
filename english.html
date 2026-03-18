@@ -82,13 +82,14 @@ a{text-decoration:none;color:inherit}
 .nav-links a{font-size:0.73rem;font-weight:600;color:rgba(255,255,255,0.4);transition:color 0.2s;white-space:nowrap}
 .nav-links a:hover{color:#fff}
 .nav-links a.active{color:var(--accent)}
+.ats-nav-link{background:rgba(245,158,11,0.12)!important;border:1px solid rgba(245,158,11,0.35)!important;color:#fbbf24!important;padding:3px 9px!important;border-radius:7px!important;font-weight:700!important;}
 .user-pill{display:flex;align-items:center;gap:10px;margin-left:auto;flex-shrink:0}
 .user-name{font-size:0.8rem;color:rgba(255,255,255,0.5);font-weight:600;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .logout-btn{padding:6px 14px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;color:rgba(255,255,255,0.6);font-size:0.76rem;font-weight:600;cursor:pointer;transition:all 0.15s}
 .logout-btn:hover{background:rgba(255,255,255,0.1);color:#fff}
 .hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0}
 .hamburger span{width:22px;height:2px;background:rgba(255,255,255,0.6);border-radius:2px;display:block;transition:all 0.2s}
-@media(max-width:1100px){.nav-links{display:none!important}.hamburger{display:flex}}
+@media(max-width:1300px){.nav-links{display:none!important}.hamburger{display:flex}}
 .mobile-nav{position:fixed;inset:0;background:rgba(6,6,15,0.98);backdrop-filter:blur(20px);z-index:999;overflow-y:auto}
 .mobile-nav.hidden{display:none}
 .mobile-nav-inner{display:flex;flex-direction:column;gap:0;padding:72px 24px 32px;min-height:100%}
@@ -249,8 +250,8 @@ a{text-decoration:none;color:inherit}
     <a href="/dashboard">Dashboard</a>
     <a href="/help">Help</a>
     <a href="/feedback">Feedback</a>
+    <a href="/ats-score" class="ats-nav-link">🎯 ATS</a>
   </nav>
-  <a href="/ats-score" class="ats-nav-btn">&#127919; ATS Score</a>
     <div class="user-pill">
     <span class="user-name" id="user-display"></span>
     <button class="logout-btn" onclick="logout()">Log Out</button>
