@@ -327,7 +327,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 .g-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
 /* ── REVEAL ── */
 .rev{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
-.rev.vis{opacity:1;transform:translateY(0)}
+.rev.rev-in{opacity:1;transform:translateY(0)}
 .r1{transition-delay:.1s}.r2{transition-delay:.2s}.r3{transition-delay:.3s}
 @media(max-width:920px){.nav-links{display:none}.ham{display:flex}}
 @media(max-width:600px){.hero-ctas{flex-direction:column;align-items:stretch}.btn-hero-p,.btn-hero-g{width:100%;text-align:center}.foot-inner{flex-direction:column}section{padding:64px 0}.hero{padding:100px 0 48px}}
@@ -863,7 +863,7 @@ function showSlide(){
 function toggleMenu(){
   var m=document.getElementById('mob-menu');
   var open=m.classList.toggle('open');
-  document.querySelector('.hbg').setAttribute('aria-expanded',open);
+  var hbg=document.getElementById('ham');if(hbg)hbg.setAttribute('aria-expanded',open);
 }
 
 // ── Scroll reveal ─────────────────────────────────────────────────────────────
