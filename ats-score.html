@@ -382,8 +382,8 @@ function showToast(msg) {
   const u = Auth.getUser();
   if (u) {
     const name = (u.name || u.email || '').split(' ')[0];
-    document.getElementById('user-display').textContent = name;
-    document.getElementById('mob-user-display').textContent = u.email || '';
+    const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = name;
+    const mobEl=document.getElementById('mob-user-display'); if(mobEl) mobEl.textContent = u.email || '';
   }
 })();
 

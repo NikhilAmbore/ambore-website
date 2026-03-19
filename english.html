@@ -1049,7 +1049,7 @@ function init() {
   const session = getSession();
   if (session && session.name) {
     const first = String(session.name).replace(/[<>"'&]/g,'').split(' ')[0].slice(0,20);
-    document.getElementById('user-display').textContent = first;
+    const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = first;
     try { document.getElementById('mob-user-display').textContent = first; } catch {}
   }
   renderStarters();

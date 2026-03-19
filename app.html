@@ -792,7 +792,7 @@ function showSetup() {
     document.getElementById('auth').classList.remove('hidden');
     return;
   }
-  document.getElementById('user-display').textContent = '👋 ' + user.name.split(' ')[0];
+  const nameEl = document.getElementById('user-display'); if(nameEl) nameEl.textContent = '👋 ' + user.name.split(' ')[0];
   const mobUser=document.getElementById('mob-user-display');if(mobUser)mobUser.textContent=user.name?.split(' ')[0]||'';
   const path=window.location.pathname;document.querySelectorAll('#desktop-nav a,.mobile-nav-inner a').forEach(a=>{if(a.getAttribute('href')===path)a.classList.add('active');});
   document.getElementById('auth').classList.add('hidden');

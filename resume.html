@@ -772,7 +772,7 @@ function logout() {
 function showApp() {
   const user = Auth.getUser();
   if (!user) { logout(); return; }
-  document.getElementById('user-display').textContent = user.name.split(' ')[0];
+  const nameEl = document.getElementById('user-display'); if(nameEl) nameEl.textContent = user.name.split(' ')[0];
   const path = window.location.pathname;
   document.querySelectorAll('#desktop-nav a, .mobile-nav-inner a').forEach(a => {
     if(a.getAttribute('href') === path) a.classList.add('active');

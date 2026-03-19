@@ -412,7 +412,7 @@ function logout(){try{localStorage.removeItem('ambore_user');}catch{}window.loca
 (function init(){
   const u = getUser();
   if(u){
-    document.getElementById('user-display').textContent = u.name || u.email || '';
+    const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = u.name || u.email || '';
     const mob = document.getElementById('mob-user-display');
     if(mob) mob.textContent = u.name || u.email || '';
   }

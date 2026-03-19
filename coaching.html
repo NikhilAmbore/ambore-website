@@ -493,7 +493,7 @@ function logout() {
 (function(){
   const s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
   if (s) {
-    document.getElementById('user-display').textContent = s.name || s.email || '';
+    const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = s.name || s.email || '';
     const m = document.getElementById('mob-user-display');
     if (m) m.textContent = s.name || s.email || '';
   }

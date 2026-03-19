@@ -710,7 +710,7 @@ function resetForm() {
 (function init() {
   const user = Auth.getUser();
   if (!user) return;
-  document.getElementById('user-display').textContent = user.name?.split(' ')[0] || user.email || '';
+  const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = user.name?.split(' ')[0] || user.email || '';
   const mobUser = document.getElementById('mob-user-display');
   if (mobUser) mobUser.textContent = user.name?.split(' ')[0] || '';
   const path = window.location.pathname;

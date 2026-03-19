@@ -2022,8 +2022,8 @@ document.addEventListener('keydown', e => {
   // Set user display
   if (session) {
     const first = (session.name || '').split(' ')[0] || session.email.split('@')[0];
-    document.getElementById('user-display').textContent = first;
-    document.getElementById('greeting').textContent = 'Welcome back, ' + first;
+    const nameEl=document.getElementById('user-display'); if(nameEl) nameEl.textContent = first;
+    const greetEl=document.getElementById('greeting'); if(greetEl) greetEl.textContent = 'Welcome back, ' + first;
     const mobUser=document.getElementById('mob-user-display');if(mobUser)mobUser.textContent=first;
     const path=window.location.pathname;document.querySelectorAll('#desktop-nav a,.mobile-nav-inner a').forEach(a=>{if(a.getAttribute('href')===path)a.classList.add('active');});
   }
