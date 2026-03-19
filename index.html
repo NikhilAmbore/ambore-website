@@ -107,7 +107,7 @@ body::before{
 .wa-banner-close:hover{color:#fff}
 .wa-banner.hidden{display:none}
 nav{
-  position:fixed;top:76px;left:0;right:0;z-index:100;
+  position:fixed;top:0;left:0;right:0;z-index:100;
   padding:16px 0;
   /* Subtle initial background so buttons are always readable */
   background:rgba(3,3,5,0.6);
@@ -796,6 +796,94 @@ footer{
   #how .container > div > div:first-child{position:static!important}
   .demo-panels{grid-template-columns:1fr}
 }
+
+/* ── UPDATED BODY/BG ── */
+body { background: #0A0F1E; }
+
+/* ── SLIDE-IN BANNER ── */
+.slide-banner { position:fixed;bottom:24px;right:24px;width:300px;background:#1F2937;border:1px solid rgba(255,255,255,0.12);border-radius:14px;padding:20px;z-index:1000;box-shadow:0 20px 60px rgba(0,0,0,0.5);transition:transform 0.3s,opacity 0.3s; }
+.slide-banner.hidden { display:none; }
+.slide-banner-close { position:absolute;top:10px;right:12px;background:none;border:none;color:rgba(255,255,255,0.5);cursor:pointer;font-size:1.1rem; }
+.slide-btn { display:inline-block;margin-top:8px;padding:6px 14px;background:#2563EB;color:#fff;border-radius:8px;font-size:0.8rem;font-weight:600;text-decoration:none; }
+.slide-btn-amber { background:#F59E0B;color:#000; }
+@media(max-width:480px){ .slide-banner{right:12px;left:12px;width:auto;bottom:70px;} }
+
+/* ── START HERE ── */
+.start-here { padding:48px 0 32px;border-bottom:1px solid rgba(255,255,255,0.06); }
+.sh-label { text-align:center;font-size:0.78rem;color:rgba(255,255,255,0.4);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:28px; }
+.sh-steps { display:grid;grid-template-columns:repeat(3,1fr);gap:20px; }
+@media(max-width:768px){ .sh-steps{grid-template-columns:1fr;} }
+.sh-step { position:relative;background:#111827;border:1px solid rgba(255,255,255,0.07);border-radius:14px;padding:28px 24px;cursor:pointer;overflow:hidden;transition:transform 0.2s,border-color 0.2s; }
+.sh-step:nth-child(1) { border-left:3px solid #6d5cff; }
+.sh-step:nth-child(2) { border-left:3px solid #2563EB; }
+.sh-step:nth-child(3) { border-left:3px solid #22c55e; }
+.sh-step:hover { transform:translateY(-3px);border-color:rgba(255,255,255,0.15); }
+.sh-num { position:absolute;top:-8px;right:16px;font-size:4.5rem;font-weight:900;color:rgba(255,255,255,0.05);line-height:1;pointer-events:none; }
+.sh-icon { font-size:2rem;margin-bottom:12px;display:block; }
+.sh-step h3 { font-size:1rem;font-weight:700;color:#F9FAFB;margin-bottom:6px; }
+.sh-step p { font-size:0.84rem;color:rgba(255,255,255,0.5);line-height:1.5;margin-bottom:14px; }
+.sh-cta { font-size:0.82rem;font-weight:600;color:#6d5cff; }
+
+/* ── STATS BAR ── */
+.stats-bar { display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:0;border-top:1px solid rgba(255,255,255,0.06);border-bottom:1px solid rgba(255,255,255,0.06);padding:20px 0;margin:0; }
+.stat-item { padding:8px 28px;text-align:center;font-size:0.88rem;font-weight:600;color:rgba(255,255,255,0.7);border-right:1px solid rgba(255,255,255,0.08); }
+.stat-item:last-child { border-right:none; }
+.stat-num { font-size:1.4rem;font-weight:800;color:#F9FAFB;display:block; }
+@media(max-width:600px){ .stat-item{padding:8px 16px;font-size:0.78rem;} .stat-num{font-size:1.1rem;} }
+
+/* ── TOOL GRID (3 columns) ── */
+.tool-grid-3col { display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:32px; }
+@media(max-width:900px){ .tool-grid-3col{grid-template-columns:1fr 1fr;} }
+@media(max-width:600px){ .tool-grid-3col{grid-template-columns:1fr;} }
+.tg-col { background:#111827;border:1px solid rgba(255,255,255,0.07);border-radius:14px;overflow:hidden; }
+.tg-col-header { padding:14px 20px;font-size:0.8rem;font-weight:700;letter-spacing:0.05em;text-transform:uppercase; }
+.tg-col:nth-child(1) .tg-col-header { background:rgba(37,99,235,0.2);color:#93c5fd; }
+.tg-col:nth-child(2) .tg-col-header { background:rgba(20,184,166,0.2);color:#5eead4; }
+.tg-col:nth-child(3) .tg-col-header { background:rgba(109,92,255,0.2);color:#a5b4fc; }
+.tg-item { display:flex;align-items:center;gap:14px;padding:14px 20px;border-bottom:1px solid rgba(255,255,255,0.05);cursor:pointer;transition:background 0.15s;position:relative; }
+.tg-item:last-child { border-bottom:none; }
+.tg-item:hover { background:rgba(255,255,255,0.04); }
+.tg-item-icon { width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1.1rem; }
+.tg-item-info { flex:1;min-width:0; }
+.tg-item-name { font-size:0.88rem;font-weight:600;color:#F9FAFB;display:flex;align-items:center;gap:6px; }
+.tg-item-desc { font-size:0.75rem;color:rgba(255,255,255,0.4);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis; }
+.tg-item-btn { font-size:0.72rem;font-weight:600;color:#6d5cff;white-space:nowrap;flex-shrink:0; }
+.hot-badge { font-size:0.6rem;background:#F59E0B;color:#000;padding:2px 6px;border-radius:20px;font-weight:700; }
+
+/* ── COMPARE TABLE ── */
+.compare-section { padding:80px 0; }
+.compare-wrap { overflow-x:auto;margin-top:32px; }
+.compare-table { width:100%;border-collapse:collapse;min-width:500px; }
+.compare-table th,.compare-table td { padding:14px 20px;text-align:center;font-size:0.88rem;border-bottom:1px solid rgba(255,255,255,0.07); }
+.compare-table th { font-weight:700;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.05em;color:rgba(255,255,255,0.5);background:#111827; }
+.compare-table td:first-child,.compare-table th:first-child { text-align:left;font-weight:600;color:#F9FAFB; }
+.compare-table .highlight { background:rgba(37,99,235,0.1);border-left:2px solid #2563EB;border-right:2px solid #2563EB; }
+.compare-table thead .highlight { color:#93c5fd;background:rgba(37,99,235,0.2);border-top:2px solid #2563EB; }
+.compare-table tbody tr:last-child .highlight { border-bottom:2px solid #2563EB; }
+.compare-table tr:hover td { background:rgba(255,255,255,0.02); }
+
+/* ── MOBILE BOTTOM NAV ── */
+.mobile-bottom-nav { display:none; }
+@media(max-width:767px){
+  .mobile-bottom-nav { display:flex;position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid rgba(255,255,255,0.1);z-index:500;padding:6px 0 env(safe-area-inset-bottom,6px); }
+  .mobile-bottom-nav button { flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,0.7);font-family:inherit;cursor:pointer;padding:6px 0;font-size:0.65rem;font-weight:600; }
+  .mobile-bottom-nav button:active { color:#6d5cff; }
+}
+
+/* ── PRE-FOOTER CTA ── */
+.pre-footer-cta { padding:80px 0;text-align:center;background:linear-gradient(180deg,transparent,rgba(109,92,255,0.06)); }
+.pre-footer-cta h2 { font-size:clamp(1.6rem,3vw,2.4rem);font-weight:800;margin-bottom:12px; }
+.pre-footer-cta p { color:rgba(255,255,255,0.55);margin-bottom:28px; }
+.pre-footer-actions { display:flex;gap:12px;justify-content:center;flex-wrap:wrap; }
+.pre-footer-note { margin-top:16px;font-size:0.78rem;color:rgba(255,255,255,0.3); }
+
+/* ── UPDATED NAV CTA BUTTON ── */
+.btn-cta { background:#2563EB !important;color:#fff !important; }
+.btn-cta:hover { opacity:0.9; }
+
+/* ── SOCIAL PROOF LINE ── */
+.social-proof { font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:16px;text-align:center; }
+.social-proof span { color:rgba(255,255,255,0.6); }
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -809,23 +897,6 @@ footer{
   Runs once per page load for ~1.4 s, then fades out in 300 ms.
   No external requests. JS is inline so it runs before any other content.
 -->
-<!-- WHATSAPP COMMUNITY BANNER -->
-<div class="wa-banner" id="wa-banner">
-  <span>&#128172; Join 1,000+ job seekers in our community — free tips, resume help &amp; support</span>
-  <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" rel="noopener">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-    Join WhatsApp Group
-  </a>
-  <button class="wa-banner-close" onclick="dismissWaBanner()" aria-label="Close">&times;</button>
-</div>
-
-<!-- PROMO BANNER -->
-<div id="promo-banner" style="position:fixed;top:38px;left:0;right:0;z-index:199;background:linear-gradient(90deg,#312e81,#1e3a5f);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;flex-wrap:wrap">
-  <span>&#128640; Struggling to get interviews? Get 1:1 career help &mdash; resume, LinkedIn, interview prep &amp; more</span>
-  <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 14px;white-space:nowrap">Apply Free &rarr;</a>
-  <button onclick="document.getElementById('promo-banner').style.display='none';document.getElementById('navbar').style.top='38px'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px" aria-label="Close">&times;</button>
-</div>
-
 <!-- NAV -->
 <nav id="navbar">
   <div class="container">
@@ -890,12 +961,14 @@ footer{
         <span class="line">Get Hired Faster.</span>
       </h1>
       <p class="hero-sub reveal reveal-d2">
-        Build your resume, practice interviews, find jobs, and write cover letters — all with AI, all completely free. No experience needed. Just start.
+        Pick a tool below — no account needed to start.
       </p>
       <div class="hero-actions reveal reveal-d3">
-        <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Start for Free &rarr;</button>
-        <button class="btn-hero-ghost" onclick="goToFeature('/learn')">📚 Learn AI &rarr;</button>
-        <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
+        <button class="btn-hero" id="hero-cta-primary" onclick="goToFeature('/interview')">🎙 Try Interview AI Free &rarr;</button>
+        <button class="btn-hero-ghost" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs</button>
+      </div>
+      <div class="social-proof reveal reveal-d3">
+        <span>✦ Trusted by 12,000+ job seekers</span> · <span>⭐ 4.9 Rating</span> · <span>🔒 Always 100% Free</span>
       </div>
       <div class="trust-bar reveal reveal-d4">
         <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Always 100% Free</span>
@@ -1025,97 +1098,197 @@ footer{
   </div>
 </div>
 
+<!-- START HERE -->
+<section class="start-here">
+  <div class="container">
+    <div class="sh-label">✨ New here? Start with these 3 steps</div>
+    <div class="sh-steps">
+      <div class="sh-step" onclick="goToFeature('/resume-builder')">
+        <div class="sh-num">01</div>
+        <span class="sh-icon">📄</span>
+        <h3>Build Your Resume</h3>
+        <p>Upload or create your resume in minutes with AI</p>
+        <span class="sh-cta">Start →</span>
+      </div>
+      <div class="sh-step" onclick="goToFeature('/jobs')">
+        <div class="sh-num">02</div>
+        <span class="sh-icon">💼</span>
+        <h3>Find &amp; Apply to Jobs</h3>
+        <p>Browse 50,000+ jobs and get a tailored cover letter</p>
+        <span class="sh-cta">Browse Jobs →</span>
+      </div>
+      <div class="sh-step" onclick="goToFeature('/interview')">
+        <div class="sh-num">03</div>
+        <span class="sh-icon">🎙</span>
+        <h3>Ace Your Interview</h3>
+        <p>Get real-time AI answers during live interviews</p>
+        <span class="sh-cta">Try Interview AI →</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-item"><span class="stat-num" data-target="50000">0</span>+ Jobs</div>
+  <div class="stat-item"><span class="stat-num" data-target="97">0</span> Companies</div>
+  <div class="stat-item"><span class="stat-num" data-target="14">0</span> Free Tools</div>
+  <div class="stat-item"><span class="stat-num" data-target="12000">0</span>+ Job Seekers</div>
+  <div class="stat-item">⭐ 4.9 Rating</div>
+</div>
+
 <!-- FEATURES -->
 <section id="features">
   <div class="container">
     <div class="reveal">
       <div class="section-label">Everything in One Place</div>
-      <h2 class="section-title">All the tools you need<br>to get hired 🚀</h2>
+      <h2 class="section-title">Everything You Need to Get Hired</h2>
       <p class="section-sub">Whether you're just starting your job search or about to interview — Ambore has a free AI tool for every step. No overwhelm. Just results.</p>
     </div>
 
+    <div class="tool-grid-3col reveal">
+
+      <!-- Column 1: Get the Job -->
+      <div class="tg-col">
+        <div class="tg-col-header">📄 Get the Job</div>
+        <div class="tg-item" onclick="goToFeature('/jobs')">
+          <div class="tg-item-icon" style="background:rgba(16,185,129,0.18);color:#34d399"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Job Portal <span class="hot-badge">🔥 Most Used</span></div>
+            <div class="tg-item-desc">50,000+ real jobs, updated hourly</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/resume-builder')">
+          <div class="tg-item-icon" style="background:rgba(99,102,241,0.18);color:#a5b4fc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">AI Resume Builder <span class="hot-badge">🔥 Most Used</span></div>
+            <div class="tg-item-desc">Tailor your resume to any job</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/cover-letter')">
+          <div class="tg-item-icon" style="background:rgba(236,72,153,0.18);color:#f9a8d4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Cover Letter</div>
+            <div class="tg-item-desc">Personalized cover letters in seconds</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/email')">
+          <div class="tg-item-icon" style="background:rgba(14,165,233,0.18);color:#38bdf8"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Email Generator</div>
+            <div class="tg-item-desc">Job emails that get replies</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+      </div>
+
+      <!-- Column 2: Build Your Brand -->
+      <div class="tg-col">
+        <div class="tg-col-header">🌐 Build Your Brand</div>
+        <div class="tg-item" onclick="goToFeature('/linkedin')">
+          <div class="tg-item-icon" style="background:rgba(10,102,194,0.18);color:#5ba4e0"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">LinkedIn Optimizer</div>
+            <div class="tg-item-desc">Make recruiters find you first</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/portfolio')">
+          <div class="tg-item-icon" style="background:rgba(20,184,166,0.18);color:#2dd4bf"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Portfolio Builder</div>
+            <div class="tg-item-desc">Showcase your work beautifully</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/certifications')">
+          <div class="tg-item-icon" style="background:rgba(234,179,8,0.18);color:#fbbf24"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Certifications</div>
+            <div class="tg-item-desc">118 free certs from Google, AWS &amp; more</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/project')">
+          <div class="tg-item-icon" style="background:rgba(249,115,22,0.18);color:#fb923c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Build Project</div>
+            <div class="tg-item-desc">Turn ideas into real projects</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+      </div>
+
+      <!-- Column 3: Win the Interview -->
+      <div class="tg-col">
+        <div class="tg-col-header">🎯 Win the Interview</div>
+        <div class="tg-item" onclick="goToFeature('/interview')">
+          <div class="tg-item-icon" style="background:rgba(139,92,246,0.18);color:#a78bfa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Interview AI <span class="hot-badge">🔥 Most Used</span></div>
+            <div class="tg-item-desc">Real-time answers during live interviews</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/ats-score')">
+          <div class="tg-item-icon" style="background:rgba(245,158,11,0.18);color:#fbbf24"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">ATS Score Checker</div>
+            <div class="tg-item-desc">Check if your resume passes ATS</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/learn')">
+          <div class="tg-item-icon" style="background:rgba(109,92,255,0.18);color:#a5b4fc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Learn AI</div>
+            <div class="tg-item-desc">AI tutor across 12 tech domains</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/dashboard')">
+          <div class="tg-item-icon" style="background:rgba(234,179,8,0.18);color:#facc15"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+          <div class="tg-item-info">
+            <div class="tg-item-name">Dashboard</div>
+            <div class="tg-item-desc">Track your job search progress</div>
+          </div>
+          <span class="tg-item-btn">Try it →</span>
+        </div>
+      </div>
+
     </div>
+  </div>
+</section>
 
-    <!-- SECONDARY TOOLS ROW 1: Career Writing -->
-    <div class="tools-section-label reveal">More Free Tools to Help You</div>
-    <div class="tools-row">
-      <div class="tool-card reveal" style="--accent:#818CF8;--accent-bg:rgba(129,140,248,0.1);--accent-border:rgba(129,140,248,0.25)">
-        <div class="tool-icon">&#128221;</div>
-        <div class="tool-badge">Cover Letter</div>
-        <h3 class="tool-title">AI Cover Letter Generator</h3>
-        <p class="tool-desc">Upload your resume + paste any job description &rarr; get a tailored, professional cover letter in seconds.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')" class="tool-btn" style="background:rgba(79,70,229,0.8)">Generate Cover Letter &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d1" style="--accent:#fbbf24;--accent-bg:rgba(251,191,36,0.08);--accent-border:rgba(251,191,36,0.2)">
-        <div class="tool-icon">&#9993;&#65039;</div>
-        <div class="tool-badge">Email</div>
-        <h3 class="tool-title">Job Email Generator</h3>
-        <p class="tool-desc">Generate job application emails, cold outreach, follow-ups, thank you notes, and networking emails.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/email')" class="tool-btn" style="background:rgba(251,191,36,0.7);color:#000">Generate Email &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d2" style="--accent:#58a6ff;--accent-bg:rgba(10,102,194,0.1);--accent-border:rgba(10,102,194,0.3)">
-        <div class="tool-icon">&#128188;</div>
-        <div class="tool-badge">LinkedIn</div>
-        <h3 class="tool-title">LinkedIn Profile Optimizer</h3>
-        <p class="tool-desc">AI-generated headline, about section, skills list, and STAR-format experience bullets that attract recruiters.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/linkedin')" class="tool-btn" style="background:rgba(10,102,194,0.8)">Optimize LinkedIn &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d3" style="--accent:#22c55e;--accent-bg:rgba(34,197,94,0.08);--accent-border:rgba(34,197,94,0.2)">
-        <div class="tool-icon">&#127758;</div>
-        <div class="tool-badge">Portfolio</div>
-        <h3 class="tool-title">AI Portfolio Builder</h3>
-        <p class="tool-desc">Fill in your details and projects &rarr; download a complete, beautiful portfolio website as a single HTML file.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/portfolio')" class="tool-btn" style="background:rgba(34,197,94,0.75)">Build Portfolio &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d4" style="--accent:#f59e0b;--accent-bg:rgba(245,158,11,0.08);--accent-border:rgba(245,158,11,0.2)">
-        <div class="tool-icon">&#127919;</div>
-        <div class="tool-badge">ATS Checker</div>
-        <h3 class="tool-title">ATS Score Checker</h3>
-        <p class="tool-desc">Paste your resume + job description &rarr; instantly see your keyword match score, what you have, and what you&rsquo;re missing.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/ats-score')" class="tool-btn" style="background:rgba(245,158,11,0.7);color:#000">Check ATS Score &rarr;</a>
-      </div>
-
-      <div class="tool-card reveal reveal-d5" style="--accent:#a855f7;--accent-bg:rgba(168,85,247,0.08);--accent-border:rgba(168,85,247,0.2)">
-        <div class="tool-icon">🏆</div>
-        <div class="tool-badge">Certifications</div>
-        <h3 class="tool-title">Free Certifications</h3>
-        <p class="tool-desc">Browse 118 free certifications from Google, AWS, freeCodeCamp, Kaggle, DeepLearning.AI and 25+ providers &rarr; all official links, AI advisor included.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/certifications')" class="tool-btn" style="background:rgba(168,85,247,0.8);color:#fff">Browse Certifications &rarr;</a>
-      </div>
-
-      <div class="tool-card reveal reveal-d6" style="--accent:#f97316;--accent-bg:rgba(249,115,22,0.08);--accent-border:rgba(249,115,22,0.2)">
-        <div class="tool-icon">🎓</div>
-        <div class="tool-badge">Live Coaching</div>
-        <h3 class="tool-title">Live Courses &amp; 1:1 Coaching</h3>
-        <p class="tool-desc">Book a personalized 1:1 live session — Data Engineering, Python, SQL, Cloud, IELTS, Interview Prep, and 20+ more courses with expert coaches.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/coaching')" class="tool-btn" style="background:linear-gradient(135deg,#f97316,#ea580c);color:#fff">Book Your Slot &rarr;</a>
-      </div>
-    </div>
-
-    <!-- SECONDARY TOOLS ROW 2: Growth & Productivity -->
-    <div class="tools-section-label reveal">Growth &amp; Productivity</div>
-    <div class="tools-row">
-      <div class="tool-card reveal reveal-d1" style="--accent:#f472b6;--accent-bg:rgba(244,114,182,0.08);--accent-border:rgba(244,114,182,0.25)">
-        <div class="tool-icon">&#128187;</div>
-        <div class="tool-badge">Build Project</div>
-        <h3 class="tool-title">AI Project Builder</h3>
-        <p class="tool-desc">Describe an idea and get a complete project plan, tech stack recommendations, and structured roadmap to build it.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/project')" class="tool-btn" style="background:rgba(244,114,182,0.7);color:#000">Build a Project &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d2" style="--accent:#a78bfa;--accent-bg:rgba(167,139,250,0.08);--accent-border:rgba(167,139,250,0.25)">
-        <div class="tool-icon">&#128202;</div>
-        <div class="tool-badge">Dashboard</div>
-        <h3 class="tool-title">Career Dashboard</h3>
-        <p class="tool-desc">Track all your job applications, store resumes, manage cover letters, and monitor your career progress in one place.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/dashboard')" class="tool-btn" style="background:rgba(167,139,250,0.7);color:#000">Open Dashboard &rarr;</a>
-      </div>
-      <div class="tool-card reveal reveal-d4" style="--accent:#6d5cff;--accent-bg:rgba(109,92,255,0.08);--accent-border:rgba(109,92,255,0.25)">
-        <div class="tool-icon">📚</div>
-        <div class="tool-badge">Learn AI</div>
-        <h3 class="tool-title">Learn Ambore AI</h3>
-        <p class="tool-desc">Interactive AI tutor across 12 tech domains — quizzes, flashcards, roadmaps, interview prep, and a Monaco code editor. Level up your skills with XP &amp; badges.</p>
-        <a href="javascript:void(0)" onclick="goToFeature('/learn')" class="tool-btn" style="background:rgba(109,92,255,0.85);color:#fff">Start Learning &rarr;</a>
-      </div>
+<!-- COMPARISON TABLE -->
+<section class="compare-section">
+  <div class="container">
+    <div class="section-label reveal">Why Ambore?</div>
+    <h2 class="section-title reveal">Better than the alternatives</h2>
+    <div class="compare-wrap reveal">
+      <table class="compare-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="highlight">Ambore ✦</th>
+            <th>ChatGPT</th>
+            <th>Teal</th>
+            <th>LinkedIn</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>100% Free</td><td class="highlight">✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Interview AI</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Job Portal</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Resume Tailor</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+          <tr><td>ATS Checker</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+          <tr><td>Learn AI (Tutor)</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Cover Letter AI</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </section>
@@ -1504,6 +1677,19 @@ footer{
   </div>
 </section>
 
+<!-- PRE-FOOTER CTA -->
+<section class="pre-footer-cta">
+  <div class="container">
+    <h2>Ready to get hired?</h2>
+    <p>Join 12,000+ job seekers using Ambore — completely free, forever.</p>
+    <div class="pre-footer-actions">
+      <button class="btn-hero" onclick="openAuthModal('signup')">Get Started Free →</button>
+      <button class="btn-hero-ghost" onclick="goToFeature('/jobs')">Browse Jobs</button>
+    </div>
+    <p class="pre-footer-note">No credit card · No trial limits · Always free</p>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1626,6 +1812,24 @@ footer{
   </div>
 </div>
 
+<!-- MOBILE BOTTOM NAV -->
+<div class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button onclick="goToFeature('/jobs')">💼<span>Jobs</span></button>
+  <button onclick="goToFeature('/resume')">📄<span>Resume</span></button>
+  <button onclick="goToFeature('/interview')">🎙<span>Interview</span></button>
+</div>
+
+<!-- SLIDE-IN BANNER -->
+<div class="slide-banner hidden" id="slide-banner">
+  <button class="slide-banner-close" onclick="dismissSlideBanner()">✕</button>
+  <div class="slide-banner-content">
+    <div>💬 <strong>Join 1,000+ job seekers</strong> — free tips &amp; resume help</div>
+    <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" class="slide-btn">Join WhatsApp →</a>
+    <div style="margin-top:8px">🚀 <strong>Struggling with interviews?</strong> Get 1:1 career help</div>
+    <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" class="slide-btn slide-btn-amber">Apply Free →</a>
+  </div>
+</div>
+
 <script>
 /* UTILS */
 function escapeHtml(str){
@@ -1638,20 +1842,48 @@ function escapeHtml(str){
 }
 
 
-/* WHATSAPP BANNER */
-function dismissWaBanner(){
-  document.getElementById('wa-banner').classList.add('hidden');
-  const pb=document.getElementById('promo-banner');
-  if(pb&&pb.style.display!=='none'){
-    pb.style.top='0';
-    document.getElementById('navbar').style.top='38px';
-  } else {
-    document.getElementById('navbar').style.top='0';
-  }
-  try{sessionStorage.setItem('wa_banner_dismissed','1')}catch{}
+/* SLIDE BANNER */
+function showSlideBanner() {
+  if (sessionStorage.getItem('slide_banner_dismissed')) return;
+  const el = document.getElementById('slide-banner');
+  if (el) el.classList.remove('hidden');
 }
+function dismissSlideBanner() {
+  const el = document.getElementById('slide-banner');
+  if (el) el.classList.add('hidden');
+  sessionStorage.setItem('slide_banner_dismissed', '1');
+}
+// Show after 60s
+setTimeout(showSlideBanner, 60000);
+// Or after 60% scroll
+window.addEventListener('scroll', function() {
+  if ((window.scrollY / document.body.scrollHeight) > 0.6) showSlideBanner();
+}, { passive: true });
+
+/* STATS BAR COUNT-UP */
 (function(){
-  try{if(sessionStorage.getItem('wa_banner_dismissed')){dismissWaBanner();}}catch{}
+  const statsBarObs = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        entry.target.querySelectorAll('.stat-num[data-target]').forEach(function(el) {
+          const target = parseInt(el.dataset.target, 10);
+          const duration = 1500;
+          const start = performance.now();
+          (function tick(now) {
+            const elapsed = now - start;
+            const progress = Math.min(elapsed / duration, 1);
+            const eased = 1 - Math.pow(1 - progress, 3);
+            const current = Math.round(eased * target);
+            el.textContent = target >= 1000 ? current.toLocaleString() : String(current);
+            if (progress < 1) requestAnimationFrame(tick);
+          })(start);
+        });
+        statsBarObs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  const sb = document.querySelector('.stats-bar');
+  if (sb) statsBarObs.observe(sb);
 })();
 
 /* NAVBAR */
