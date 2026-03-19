@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script>(function(){if(!window.opener)return;var h=window.location.hash;if(!h||h.indexOf('access_token')===-1)return;document.documentElement.style.visibility='hidden';var p=new URLSearchParams(h.slice(1));var t=p.get('access_token'),s=p.get('state');if(t){window.opener.postMessage({type:'_ambore_gauth',token:t,state:s},window.location.origin);window.close();}})()</script>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="preconnect" href="https://accounts.google.com"/>
@@ -1109,28 +1109,27 @@ function handleLogout(){
 }
 
 // ── Google OAuth ──────────────────────────────────────────────────────────────
+// ── Google Identity Services (GIS) ───────────────────────────────────────────
+var _gisClient=null;
+function _getGisClient(){
+  if(_gisClient)return _gisClient;
+  if(!window.google||!google.accounts||!google.accounts.oauth2){return null;}
+  _gisClient=google.accounts.oauth2.initTokenClient({
+    client_id:GOOGLE_CLIENT_ID,
+    scope:'openid email profile',
+    callback:function(resp){
+      if(resp.error){_googleErr('Google sign-in failed: '+resp.error);return;}
+      _fetchGoogleUser(resp.access_token);
+    }
+  });
+  return _gisClient;
+}
 function doGoogle(e){
   e.preventDefault();
-  var state=Math.random().toString(36).slice(2);
-  sessionStorage.setItem('_g_state',state);
-  var params=new URLSearchParams({
-    client_id:GOOGLE_CLIENT_ID,
-    redirect_uri:location.origin+'/auth/google/callback',
-    response_type:'token',
-    scope:'openid email profile',
-    state:state
-  });
-  var popup=window.open('https://accounts.google.com/o/oauth2/v2/auth?'+params,'_blank','width=520,height=600');
-  if(!popup){_googleErr('Popup blocked. Please allow popups.');return;}
+  var cl=_getGisClient();
+  if(!cl){_googleErr('Google sign-in not ready. Try again in a moment.');return;}
+  cl.requestAccessToken({prompt:'select_account'});
 }
-window.addEventListener('message',function(ev){
-  if(ev.data&&ev.data.type==='_ambore_gauth'){
-    var s=sessionStorage.getItem('_g_state');
-    if(!s||ev.data.state!==s){_googleErr('Auth state mismatch.');return;}
-    sessionStorage.removeItem('_g_state');
-    _fetchGoogleUser(ev.data.access_token);
-  }
-});
 function _fetchGoogleUser(token){
   fetch('https://www.googleapis.com/oauth2/v3/userinfo',{
     headers:{Authorization:'Bearer '+token}
@@ -1142,9 +1141,7 @@ function _fetchGoogleUser(token){
       saveUsers(users);
     }
     saveSession({email:u.email,name:u.name||u.email,picture:u.picture||''});
-    closeAuth();
-    updateNavCta();
-    updatePageAuth();
+    closeAuth();updateNavCta();updatePageAuth();
     if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;}
   }).catch(function(){_googleErr('Google sign-in failed. Try again.');});
 }
