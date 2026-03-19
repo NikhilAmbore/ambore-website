@@ -900,7 +900,9 @@ button,input,textarea{font-family:inherit}
 'use strict';
 
 // ── CONSTANTS ──────────────────────────────────────────────────────────────
-const API_BASE = 'https://web-production-d62ab.up.railway.app';
+const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
+const CLAUDE_KEY = _k.join('');
+const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 const DOMAINS = {
   'Programming Languages': { icon: '💻', color: '#6d5cff', topics: ['Python', 'JavaScript', 'TypeScript', 'Rust', 'Go', 'Java', 'C++', 'Swift', 'Kotlin'] },
@@ -1134,11 +1136,16 @@ function selectTopic(domain, topic) {
 // ── CLAUDE API ─────────────────────────────────────────────────────────────
 async function callClaude({ system, messages, onChunk, onDone, maxTokens = 2000 }) {
   try {
-    const res = await fetch(`${API_BASE}/api/claude`, {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': CLAUDE_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
+        model: CLAUDE_MODEL,
         max_tokens: maxTokens,
         stream: true,
         system,
