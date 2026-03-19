@@ -544,8 +544,8 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="container">
     <div class="tc rev">
       <div class="sec-lbl">All Tools</div>
-      <h2 class="sec-h">Everything you need to get hired</h2>
-      <p class="sec-sub">14 free AI tools. No account required to start.</p>
+      <h2 class="sec-h">All 14 tools you need to get hired</h2>
+      <p class="sec-sub">Every tool is free, no account required to start.</p>
     </div>
     <div class="tg-3">
       <div class="tg-col">
@@ -709,7 +709,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="container tc">
     <div class="rev"><div class="sec-lbl">Get Started</div><h2 class="sec-h">Your dream job starts here.</h2><p class="sec-sub" style="margin:0 auto">Join 12,000+ job seekers using Ambore — completely free, forever.</p></div>
     <form class="email-form" onsubmit="handleEmailSub(event)">
-      <input type="email" class="email-in" placeholder="Enter your email address..." required/>
+      <input type="email" id="ec-email" class="email-in" placeholder="Enter your email address..." required/>
       <button type="submit" class="email-sub">Get Started Free →</button>
     </form>
     <p class="email-note">No credit card · No trial limits · 14 free AI tools</p>
@@ -936,12 +936,12 @@ function animateCounter(el){
 
 // ── FAQ accordion ─────────────────────────────────────────────────────────────
 function toggleFaq(btn){
-  var item=btn.closest('.faq-ai');
+  var item=btn.closest('.faq-item');
   var ans=item.querySelector('.faq-a');
   var chev=item.querySelector('.faq-chev');
   var open=item.classList.contains('open');
   // close all
-  document.querySelectorAll('.faq-ai.open').forEach(function(x){
+  document.querySelectorAll('.faq-item.open').forEach(function(x){
     x.classList.remove('open');
     x.querySelector('.faq-a').style.maxHeight='0';
     x.querySelector('.faq-chev').style.transform='';
@@ -972,6 +972,8 @@ function handleEmailSub(e){
   var btn=e.target.querySelector('button');
   if(btn){btn.textContent='Subscribed!';btn.disabled=true;}
   inp.value='';
+  var ok=document.getElementById('email-ok');
+  if(ok)ok.style.display='block';
   try{
     fetch('https://web-production-d62ab.up.railway.app/api/track',{
       method:'POST',headers:{'Content-Type':'application/json'},
