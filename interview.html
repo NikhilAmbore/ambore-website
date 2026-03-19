@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <!-- Performance: preconnect to external origins -->
-<link rel="preconnect" href="https://api.anthropic.com"/>
+
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
@@ -830,8 +830,6 @@ async function processResumeFile(file) {
    SESSION CONFIG
 ═══════════════════════════════════════════ */
 const cfg = { jd:'', resume:'', role:'', company:'', round:'' };
-const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY = _k.join('');
 const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
 let isListening = false, speakerIsIV = true;
 let recognition = null, silenceTimer = null;
@@ -1054,15 +1052,10 @@ async function streamAnswer(question) {
   let fullText = '';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       signal: _ctrl.signal,
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key': CLAUDE_KEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens: maxTok, stream: true,
         system: buildSystemPrompt(),
@@ -1465,15 +1458,10 @@ async function streamCodeAnswer(base64) {
   let fullText = '';
 
   try {
-    const res = await fetch('https://api.anthropic.com/v1/messages', {
+    const res = await fetch('/api/claude', {
       signal: _ctrl2.signal,
       method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':CLAUDE_KEY,
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
+      headers:{'Content-Type':'application/json'},
       body: JSON.stringify({
         model: CLAUDE_MODEL, max_tokens:1200, stream:true,
         messages:[{ role:'user', content:[

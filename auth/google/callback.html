@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8"/>
+<title>Signing in…</title>
+<style>body{margin:0;background:#0A0F1E;display:flex;align-items:center;justify-content:center;height:100vh;font-family:Inter,sans-serif;color:#fff;font-size:.9rem;}</style>
+</head>
+<body>
+<p>Signing you in…</p>
+<script>
+(function(){
+  try {
+    var h = window.location.hash;
+    if (h && h.indexOf('access_token') !== -1) {
+      var p = new URLSearchParams(h.slice(1));
+      var token = p.get('access_token');
+      var state = p.get('state');
+      if (token && window.opener) {
+        window.opener.postMessage(
+          { type: '_ambore_gauth', access_token: token, state: state },
+          window.location.origin
+        );
+        window.close();
+        return;
+      }
+    }
+    // No token — close after brief delay
+    setTimeout(function(){ window.close(); }, 2000);
+  } catch(e) {
+    setTimeout(function(){ window.close(); }, 2000);
+  }
+})();
+</script>
+</body>
+</html>

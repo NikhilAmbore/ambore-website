@@ -81,8 +81,26 @@ function validateMessages(messages) {
     const m = messages[i];
     if (typeof m !== 'object' || m === null)   return `message[${i}] must be an object`;
     if (!VALID_ROLES.has(m.role))              return `message[${i}].role must be "user" or "assistant"`;
-    if (typeof m.content !== 'string')         return `message[${i}].content must be a string`;
-    if (m.content.length > CFG.MAX_MSG_LEN)    return `message[${i}].content too long (max ${CFG.MAX_MSG_LEN} chars)`;
+    // content can be a plain string OR an array of content blocks (text/image)
+    if (typeof m.content === 'string') {
+      if (m.content.length > CFG.MAX_MSG_LEN)  return `message[${i}].content too long (max ${CFG.MAX_MSG_LEN} chars)`;
+    } else if (Array.isArray(m.content)) {
+      const VALID_BLOCK_TYPES = new Set(['text', 'image']);
+      for (let j = 0; j < m.content.length; j++) {
+        const blk = m.content[j];
+        if (typeof blk !== 'object' || blk === null) return `message[${i}].content[${j}] must be an object`;
+        if (!VALID_BLOCK_TYPES.has(blk.type))        return `message[${i}].content[${j}].type must be "text" or "image"`;
+        if (blk.type === 'text') {
+          if (typeof blk.text !== 'string')           return `message[${i}].content[${j}].text must be a string`;
+          if (blk.text.length > CFG.MAX_MSG_LEN)      return `message[${i}].content[${j}].text too long`;
+        }
+        if (blk.type === 'image') {
+          if (!blk.source || typeof blk.source !== 'object') return `message[${i}].content[${j}].source required`;
+        }
+      }
+    } else {
+      return `message[${i}].content must be a string or array`;
+    }
     // Reject any unexpected fields (OWASP A03 — injection hardening)
     for (const k of Object.keys(m)) {
       if (k !== 'role' && k !== 'content')     return `unexpected field in message[${i}]: "${k}"`;

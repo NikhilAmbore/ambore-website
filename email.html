@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Performance: preconnect to external origins -->
-<link rel="preconnect" href="https://api.anthropic.com"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<!-- Performance: preconnect to external origins --><link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
 <link rel="dns-prefetch" href="https://www.google-analytics.com"/>
@@ -309,8 +307,6 @@ button,input,textarea,select{font-family:inherit}
 </div>
 
 <script>
-const _k=['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY=_k.join('');
 const CLAUDE_MODEL='claude-sonnet-4-6';
 
 const Auth={getUser(){return JSON.parse(localStorage.getItem('ambore_user')||'null');}};
@@ -428,10 +424,11 @@ Rules:
   try{
     while(attempt<=MAX_RETRIES){
       try{
-        const res=await fetch('https://api.anthropic.com/v1/messages',{
+        const res=await fetch('/api/claude',{
           signal:_ctrl.signal,
           method:'POST',
-          headers:{'Content-Type':'application/json','x-api-key':CLAUDE_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+          headers:{'Content-Type':'application/json'
+},
           body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:900,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||`Generate a professional ${typeLabel} email.`}]})
         });
         if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}

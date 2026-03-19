@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<!-- Performance: preconnect to external origins -->
-<link rel="preconnect" href="https://api.anthropic.com"/>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<!-- Performance: preconnect to external origins --><link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
 <link rel="dns-prefetch" href="https://www.google-analytics.com"/>
@@ -353,8 +351,6 @@ textarea.code-editor::placeholder{color:rgba(255,255,255,0.2)}
 
 <script>
 /* ── CONFIG ── */
-const _k = ['sk-ant-api','03-gGZ1ElNsam3kdon05h5BXoI29NMh','Y295_H9FtJD4qYpxI-F6MvnNcijD0YMK','PgxqUYvs6vEfowhLcVCO4G_0qw-0wFnmwAA'];
-const CLAUDE_KEY   = _k.join('');
 const CLAUDE_MODEL = 'claude-sonnet-4-6';
 
 /* ── STATE ── */
@@ -520,15 +516,12 @@ async function streamResponse(userMsg){
       try {
         fullText = '';
         bubble.innerHTML = '<span class="cursor"></span>';
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch('/api/claude', {
           signal: ctrl.signal,
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'x-api-key': CLAUDE_KEY,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true'
-          },
+},
           body: JSON.stringify({
             model: attempt >= 1 ? FALLBACK_MODEL : CLAUDE_MODEL,
             max_tokens: 3000,
