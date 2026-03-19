@@ -82,32 +82,29 @@ button,input,textarea{font-family:inherit}
 .nav-logout{background:none;border:none;font-size:.8rem;color:rgba(255,255,255,.3);cursor:pointer;transition:color .2s}
 .nav-logout:hover{color:#ef4444}
 /* ── HERO ── */
-.hero{padding:120px 0 60px;position:relative;overflow:hidden}
-.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.15),transparent 70%);top:-200px;left:50%;transform:translateX(-50%);pointer-events:none}
-.hero-inner{display:grid;grid-template-columns:1fr 420px;gap:48px;align-items:center}
-@media(max-width:900px){.hero-inner{grid-template-columns:1fr}}
-.hero-img{display:flex;align-items:center;justify-content:center}
-.hero-img img{max-width:420px;width:100%;animation:floatY 5s ease-in-out infinite;filter:drop-shadow(0 0 40px rgba(37,99,235,.3))}
-@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);font-size:.78rem;font-weight:600;color:#93c5fd;margin-bottom:20px;letter-spacing:.02em}
+.hero{padding:52px 0 28px;position:relative;overflow:hidden}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.12),transparent 70%);top:-300px;left:50%;transform:translateX(-50%);pointer-events:none}
+.hero-inner{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:680px;margin:0 auto}
+.hero-img{display:none}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);font-size:.78rem;font-weight:600;color:#93c5fd;margin-bottom:18px;letter-spacing:.02em}
 .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(37,99,235,.6)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(37,99,235,0)}}
-.hero h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;margin-bottom:18px;color:#fff}
+.hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;line-height:1.12;letter-spacing:-.03em;margin-bottom:14px;color:#fff}
 .hero h1 .accent{color:var(--blue)}
-.hero-sub{font-size:clamp(.95rem,1.8vw,1.08rem);color:var(--slate);line-height:1.65;max-width:520px;margin-bottom:30px}
-.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.hero-sub{font-size:clamp(.9rem,1.6vw,1rem);color:var(--slate);line-height:1.6;max-width:500px;margin-bottom:24px}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;justify-content:center}
 .btn-hero-p{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(37,99,235,.4)}
 .btn-hero-p:hover{background:var(--blue-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(37,99,235,.5)}
 .btn-hero-g{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:600;color:rgba(255,255,255,.75);background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer;min-height:52px;transition:all .2s}
 .btn-hero-g:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.04)}
 .hero-sp{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:14px}
 .hero-sp span{color:rgba(255,255,255,.7)}
-.hero-trust{display:flex;gap:18px;flex-wrap:wrap}
+.hero-trust{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
 .trust-i{display:flex;align-items:center;gap:6px;font-size:.77rem;color:rgba(255,255,255,.45)}
 .trust-i .ck{color:var(--green);font-size:.9rem}
 .tsep{width:1px;height:13px;background:rgba(255,255,255,.12)}
 /* ── MARQUEE ── */
-.mqstrip{padding:15px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:rgba(255,255,255,.015);margin-top:48px}
+.mqstrip{display:none}
 .mqtrack{display:flex;white-space:nowrap;animation:mq 32s linear infinite}
 .mqtrack:hover{animation-play-state:paused}
 .mqi{display:inline-flex;align-items:center;gap:10px;padding:0 30px;font-size:.77rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
@@ -159,7 +156,7 @@ section{padding:80px 0;position:relative}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
 .demo-cta{text-align:center;margin-top:28px}
 /* ── TOOL GRID ── */
-.tg-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:32px}
+.tg-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
 @media(max-width:900px){.tg-3{grid-template-columns:1fr 1fr}}
 @media(max-width:600px){.tg-3{grid-template-columns:1fr}}
 .tg-col{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden}
@@ -432,83 +429,59 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="hero-glow"></div>
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-text">
-        <div class="hero-badge rev"><span class="badge-dot"></span>✨ 14 Free AI Tools — No Sign-Up Needed</div>
-        <h1 class="rev r1">Your Career, Powered by AI.<br><span class="accent">Get Hired Faster.</span></h1>
-        <p class="hero-sub rev r2">Build your resume, practice interviews, find jobs, and land offers — all with AI, completely free.</p>
-        <div class="hero-ctas rev r2">
-          <button class="btn-hero-p" id="hero-cta" onclick="goToFeature('/interview')">🎙 Try Interview AI Free →</button>
-          <button class="btn-hero-g" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
-        </div>
-        <p class="hero-sp rev r3">Trusted by <span>12,000+</span> job seekers &nbsp;·&nbsp; <span>4.9★</span> rating &nbsp;·&nbsp; Always <span>100% Free</span></p>
-        <div class="hero-trust rev r3">
-          <span class="trust-i"><span class="ck">✓</span> Always 100% Free</span>
-          <span class="tsep"></span>
-          <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
-          <span class="tsep"></span>
-          <span class="trust-i"><span class="ck">✓</span> Data Stays Private</span>
-        </div>
+      <div class="hero-badge"><span class="badge-dot"></span>✨ 14 Free AI Tools — No Sign-Up Needed</div>
+      <h1>Your AI Career Toolkit.<br><span class="accent">Get Hired Faster.</span></h1>
+      <p class="hero-sub">Pick a tool and start in seconds — no account required.</p>
+      <div class="hero-ctas">
+        <button class="btn-hero-p" id="hero-cta" onclick="goToFeature('/interview')">🎙 Try Interview AI Free →</button>
+        <button class="btn-hero-g" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
       </div>
-      <div class="hero-img rev r3">
-        <img src="/img/hero-illustration.svg" alt="Ambore AI Career Platform" loading="lazy" onerror="this.style.display='none'"/>
+      <div class="hero-trust">
+        <span class="trust-i"><span class="ck">✓</span> Always 100% Free</span>
+        <span class="tsep"></span>
+        <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
+        <span class="tsep"></span>
+        <span class="trust-i"><span class="ck">✓</span> Data Stays Private</span>
       </div>
-    </div>
-  </div>
-  <div class="mqstrip">
-    <div class="mqtrack">
-      <span class="mqi"><span class="mqdot"></span>AI Resume Builder</span>
-      <span class="mqi"><span class="mqdot"></span>Interview Co-Pilot</span>
-      <span class="mqi"><span class="mqdot"></span>Job Portal · 50K+</span>
-      <span class="mqi"><span class="mqdot"></span>Cover Letter Generator</span>
-      <span class="mqi"><span class="mqdot"></span>LinkedIn Optimizer</span>
-      <span class="mqi"><span class="mqdot"></span>ATS Score Checker</span>
-      <span class="mqi"><span class="mqdot"></span>Portfolio Builder</span>
-      <span class="mqi"><span class="mqdot"></span>Learn AI · 12 Domains</span>
-      <span class="mqi"><span class="mqdot"></span>AI Resume Builder</span>
-      <span class="mqi"><span class="mqdot"></span>Interview Co-Pilot</span>
-      <span class="mqi"><span class="mqdot"></span>Job Portal · 50K+</span>
-      <span class="mqi"><span class="mqdot"></span>Cover Letter Generator</span>
-      <span class="mqi"><span class="mqdot"></span>LinkedIn Optimizer</span>
-      <span class="mqi"><span class="mqdot"></span>ATS Score Checker</span>
-      <span class="mqi"><span class="mqdot"></span>Portfolio Builder</span>
-      <span class="mqi"><span class="mqdot"></span>Learn AI · 12 Domains</span>
     </div>
   </div>
 </section>
 
-<!-- START HERE -->
-<div class="start-here">
+<!-- TOOL GRID — immediately visible after hero -->
+<section id="features" style="padding-top:28px;padding-bottom:48px">
   <div class="container">
-    <p class="sh-lbl">New here? Follow these 3 steps</p>
-    <div class="sh-row">
-      <div class="sh-card rev" onclick="goToFeature('/resume')">
-        <span class="sh-num">01</span>
-        <span class="sh-ico">📝</span>
-        <h3>Build Your Resume</h3>
-        <p>Create an ATS-optimized resume tailored to any job in minutes.</p>
-        <span class="sh-link">Start →</span>
+    <div class="tc" style="margin-bottom:4px">
+      <p style="font-size:.82rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">Choose a tool to get started</p>
+    </div>
+    <div class="tg-3">
+      <div class="tg-col">
+        <div class="tg-head">📄 Get the Job</div>
+        <div class="tg-item" onclick="goToFeature('/jobs')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">💼</div><div class="tg-info"><div class="tg-name">Job Portal <span class="most-badge">Most Used</span></div><div class="tg-desc">50,000+ live jobs from 97 companies</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/resume')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">📄</div><div class="tg-info"><div class="tg-name">AI Resume Builder <span class="most-badge">Most Used</span></div><div class="tg-desc">ATS-optimized in 60 seconds</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/resume-builder')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✂️</div><div class="tg-info"><div class="tg-name">Resume Tailor</div><div class="tg-desc">Match any JD in one click</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/cover-letter')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✉️</div><div class="tg-info"><div class="tg-name">Cover Letter</div><div class="tg-desc">Tailored in under 2 minutes</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/email')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">📨</div><div class="tg-info"><div class="tg-name">Email Generator</div><div class="tg-desc">Cold outreach that gets replies</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/ats-score')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">🎯</div><div class="tg-info"><div class="tg-name">ATS Score Checker</div><div class="tg-desc">See your resume score instantly</div></div><span class="tg-cta">Try →</span></div>
       </div>
-      <div class="sh-arr">→</div>
-      <div class="sh-card rev r1" onclick="goToFeature('/jobs')">
-        <span class="sh-num">02</span>
-        <span class="sh-ico">💼</span>
-        <h3>Find &amp; Apply to Jobs</h3>
-        <p>Browse 50,000+ fresh jobs from 97 companies, updated hourly.</p>
-        <span class="sh-link">Start →</span>
+      <div class="tg-col">
+        <div class="tg-head">🌐 Build Your Brand</div>
+        <div class="tg-item" onclick="goToFeature('/linkedin')"><div class="tg-ico" style="background:rgba(20,184,166,.15)">🔗</div><div class="tg-info"><div class="tg-name">LinkedIn Optimizer</div><div class="tg-desc">10× more profile views</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/portfolio')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🌐</div><div class="tg-info"><div class="tg-name">Portfolio Builder</div><div class="tg-desc">No-code portfolio in minutes</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/certifications')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🏆</div><div class="tg-info"><div class="tg-name">Certifications</div><div class="tg-desc">Add credentials to your profile</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/coaching')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🎓</div><div class="tg-info"><div class="tg-name">Live Coaching</div><div class="tg-desc">1:1 career coaching sessions</div></div><span class="tg-cta">Try →</span></div>
       </div>
-      <div class="sh-arr">→</div>
-      <div class="sh-card rev r2" onclick="goToFeature('/interview')">
-        <span class="sh-num">03</span>
-        <span class="sh-ico">🎙</span>
-        <h3>Ace the Interview</h3>
-        <p>Practice with AI and get real-time STAR answers during live calls.</p>
-        <span class="sh-link">Start →</span>
+      <div class="tg-col">
+        <div class="tg-head">🎯 Win the Interview</div>
+        <div class="tg-item" onclick="goToFeature('/interview')"><div class="tg-ico" style="background:rgba(139,92,246,.15)">🎙</div><div class="tg-info"><div class="tg-name">Interview AI <span class="most-badge">Most Used</span></div><div class="tg-desc">Real-time STAR answers in &lt;2s</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/learn')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📚</div><div class="tg-info"><div class="tg-name">Learn AI</div><div class="tg-desc">Master 12 AI domains with quizzes</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/project')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">🔨</div><div class="tg-info"><div class="tg-name">Build Project</div><div class="tg-desc">Portfolio-ready projects with AI</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/dashboard')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📊</div><div class="tg-info"><div class="tg-name">Dashboard</div><div class="tg-desc">Track your full job search</div></div><span class="tg-cta">Try →</span></div>
       </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- DEMO -->
+<!-- DEMO — moved here, after tool grid -->
 <div class="demo-sec" id="demo">
   <div class="container">
     <div class="tc rev">
@@ -538,42 +511,6 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
     <div class="demo-cta rev"><a href="javascript:void(0)" onclick="goToFeature('/interview')" class="btn-hero-p" style="display:inline-flex;align-items:center;gap:8px">🎙 Try It Live — It's Free →</a></div>
   </div>
 </div>
-
-<!-- TOOL GRID -->
-<section id="features">
-  <div class="container">
-    <div class="tc rev">
-      <div class="sec-lbl">All Tools</div>
-      <h2 class="sec-h">All 14 tools you need to get hired</h2>
-      <p class="sec-sub">Every tool is free, no account required to start.</p>
-    </div>
-    <div class="tg-3">
-      <div class="tg-col">
-        <div class="tg-head">📄 Get the Job</div>
-        <div class="tg-item" onclick="goToFeature('/jobs')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">💼</div><div class="tg-info"><div class="tg-name">Job Portal <span class="most-badge">Most Used</span></div><div class="tg-desc">50,000+ live jobs from 97 companies</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/resume')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">📄</div><div class="tg-info"><div class="tg-name">AI Resume Builder <span class="most-badge">Most Used</span></div><div class="tg-desc">ATS-optimized in 60 seconds</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/resume-builder')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✂️</div><div class="tg-info"><div class="tg-name">Resume Tailor</div><div class="tg-desc">Match any JD in one click</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/cover-letter')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✉️</div><div class="tg-info"><div class="tg-name">Cover Letter</div><div class="tg-desc">Tailored in under 2 minutes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/email')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">📨</div><div class="tg-info"><div class="tg-name">Email Generator</div><div class="tg-desc">Cold outreach that gets replies</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/ats-score')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">🎯</div><div class="tg-info"><div class="tg-name">ATS Score Checker</div><div class="tg-desc">See your resume score instantly</div></div><span class="tg-cta">Try →</span></div>
-      </div>
-      <div class="tg-col">
-        <div class="tg-head">🌐 Build Your Brand</div>
-        <div class="tg-item" onclick="goToFeature('/linkedin')"><div class="tg-ico" style="background:rgba(20,184,166,.15)">🔗</div><div class="tg-info"><div class="tg-name">LinkedIn Optimizer</div><div class="tg-desc">10× more profile views</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/portfolio')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🌐</div><div class="tg-info"><div class="tg-name">Portfolio Builder</div><div class="tg-desc">No-code portfolio in minutes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/certifications')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🏆</div><div class="tg-info"><div class="tg-name">Certifications</div><div class="tg-desc">Add credentials to your profile</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/coaching')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🎓</div><div class="tg-info"><div class="tg-name">Live Coaching</div><div class="tg-desc">1:1 career coaching sessions</div></div><span class="tg-cta">Try →</span></div>
-      </div>
-      <div class="tg-col">
-        <div class="tg-head">🎯 Win the Interview</div>
-        <div class="tg-item" onclick="goToFeature('/interview')"><div class="tg-ico" style="background:rgba(139,92,246,.15)">🎙</div><div class="tg-info"><div class="tg-name">Interview AI <span class="most-badge">Most Used</span></div><div class="tg-desc">Real-time STAR answers in &lt;2s</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/learn')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📚</div><div class="tg-info"><div class="tg-name">Learn AI</div><div class="tg-desc">Master 12 AI domains with quizzes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/project')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">🔨</div><div class="tg-info"><div class="tg-name">Build Project</div><div class="tg-desc">Portfolio-ready projects with AI</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/dashboard')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📊</div><div class="tg-info"><div class="tg-name">Dashboard</div><div class="tg-desc">Track your full job search</div></div><span class="tg-cta">Try →</span></div>
-      </div>
-    </div>
-  </div>
-</section>
 
 <!-- STATS BAR -->
 <div class="stats-bar" id="stats-bar">
