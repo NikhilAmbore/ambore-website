@@ -894,7 +894,8 @@ footer{
       </p>
       <div class="hero-actions reveal reveal-d3">
         <button class="btn-hero" id="hero-cta-primary" onclick="openAuthModal('signup')">Start for Free &rarr;</button>
-        <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Already have an account? Log In</button>
+        <button class="btn-hero-ghost" onclick="goToFeature('/learn')">📚 Learn AI &rarr;</button>
+        <button class="btn-hero-ghost" id="hero-cta-login" onclick="openAuthModal('login')">Log In</button>
       </div>
       <div class="trust-bar reveal reveal-d4">
         <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Always 100% Free</span>
@@ -1084,6 +1085,22 @@ footer{
           <li>One-click "Tailor Resume" for any listing</li>
         </ul>
         <a href="javascript:void(0)" onclick="goToFeature('/jobs')" class="product-btn" style="background:rgba(34,197,94,0.85)">Browse Jobs &rarr;</a>
+      </div>
+      <div class="product-card reveal reveal-d4" style="--accent:#6d5cff;--accent-bg:rgba(109,92,255,0.1);--accent-border:rgba(109,92,255,0.3)">
+        <div class="product-illus" style="background:linear-gradient(135deg,rgba(109,92,255,0.15),rgba(168,85,247,0.1));border-radius:16px;padding:24px;display:flex;align-items:center;justify-content:center;min-height:160px">
+          <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="rgba(109,92,255,0.8)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        </div>
+        <div class="product-icon">📚</div>
+        <div class="product-badge">Learn AI</div>
+        <h3 class="product-title">Your Personal AI Tutor</h3>
+        <p class="product-desc">Learn any tech skill with an AI tutor that explains, quizzes, and coaches you — across 12 domains and 100+ topics, completely free.</p>
+        <ul class="product-features">
+          <li>12 domains: Python, AI/ML, Cloud, Web Dev &amp; more</li>
+          <li>Quiz engine, flashcards &amp; interview prep</li>
+          <li>Monaco code editor with AI code review</li>
+          <li>XP points, badges &amp; learning streaks</li>
+        </ul>
+        <a href="javascript:void(0)" onclick="goToFeature('/learn')" class="product-btn" style="background:var(--grad)">Start Learning Free &rarr;</a>
       </div>
     </div>
 
