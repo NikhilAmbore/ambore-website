@@ -100,12 +100,16 @@ body::before{
 
 /* ── NAVBAR ── */
 /* WHATSAPP BANNER */
-.wa-banner{position:fixed;top:0;left:0;right:0;z-index:200;background:linear-gradient(90deg,#075e54,#128c7e);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center}
-.wa-banner a{color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 12px;transition:background 0.2s}
+.wa-banner{display:none;background:linear-gradient(90deg,#075e54,#128c7e);padding:12px 16px;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center}
+.wa-banner a{color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:6px 14px;transition:background 0.2s;min-height:44px}
 .wa-banner a:hover{background:rgba(255,255,255,0.28)}
-.wa-banner-close{background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:pointer;line-height:1;padding:0 0 0 8px;flex-shrink:0;transition:color 0.2s}
+.wa-banner-close{background:none;border:none;color:rgba(255,255,255,0.6);font-size:1.1rem;cursor:pointer;line-height:1;padding:6px 8px;flex-shrink:0;transition:color 0.2s;min-height:44px;min-width:44px;display:flex;align-items:center;justify-content:center}
 .wa-banner-close:hover{color:#fff}
-.wa-banner.hidden{display:none}
+.wa-banner.hidden{display:none!important}
+/* PROMO BANNER */
+.promo-banner{display:none;background:linear-gradient(90deg,#1e1b4b,#312e81);padding:12px 16px;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;border-radius:12px;}
+.promo-banner.hidden{display:none!important}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
 nav{
   position:fixed;top:0;left:0;right:0;z-index:100;
   padding:16px 0;
@@ -884,6 +888,84 @@ body { background: #0A0F1E; }
 /* ── SOCIAL PROOF LINE ── */
 .social-proof { font-size:0.82rem;color:rgba(255,255,255,0.45);margin-top:16px;text-align:center; }
 .social-proof span { color:rgba(255,255,255,0.6); }
+.social-proof-line { font-size:0.8rem; color:rgba(255,255,255,0.4); text-align:center; margin-top:14px; }
+
+/* ── NAV DROPDOWN ── */
+.nav-dropdown-wrap { position:relative; }
+.nav-dropdown-trigger { display:flex; align-items:center; gap:5px; cursor:pointer; }
+.nav-dropdown-menu { display:none; position:absolute; top:calc(100% + 12px); left:50%; transform:translateX(-50%); background:#111827; border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px; gap:24px; min-width:520px; z-index:300; box-shadow:0 20px 60px rgba(0,0,0,0.5); }
+.nav-dropdown-wrap:hover .nav-dropdown-menu { display:flex; }
+.nav-dropdown-col { display:flex; flex-direction:column; gap:10px; min-width:150px; }
+.nav-dd-heading { font-size:0.7rem; font-weight:700; text-transform:uppercase; letter-spacing:0.1em; color:rgba(255,255,255,0.35); padding-bottom:6px; border-bottom:1px solid rgba(255,255,255,0.07); margin-bottom:4px; }
+.nav-dropdown-col a { font-size:0.84rem; color:rgba(255,255,255,0.65); cursor:pointer; transition:color 0.15s; }
+.nav-dropdown-col a:hover { color:#fff; }
+
+/* ── START HERE SECTION (new) ── */
+.start-here-section { background:rgba(37,99,235,0.06); border-top:1px solid rgba(37,99,235,0.15); border-bottom:1px solid rgba(37,99,235,0.15); padding:48px 0; }
+.sh-heading { text-align:center; font-size:0.82rem; font-weight:700; color:rgba(255,255,255,0.45); text-transform:uppercase; letter-spacing:0.1em; margin-bottom:32px; }
+.sh-cards { display:flex; align-items:center; gap:16px; justify-content:center; }
+.sh-arrow { font-size:1.5rem; color:rgba(255,255,255,0.2); flex-shrink:0; }
+.sh-card { background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); border-radius:14px; padding:28px 24px; cursor:pointer; flex:1; max-width:280px; position:relative; overflow:hidden; transition:transform 0.2s,border-color 0.2s; }
+.sh-card:hover { transform:translateY(-4px); border-color:rgba(37,99,235,0.5); }
+.sh-step-num { position:absolute; top:8px; right:14px; font-size:3.5rem; font-weight:900; color:rgba(255,255,255,0.04); line-height:1; }
+.sh-card .sh-icon { font-size:2rem; margin-bottom:12px; }
+.sh-card .sh-title { font-size:1rem; font-weight:700; color:#fff; margin-bottom:6px; }
+.sh-card .sh-desc { font-size:0.82rem; color:rgba(255,255,255,0.45); line-height:1.5; margin-bottom:14px; }
+.sh-card .sh-link { font-size:0.82rem; font-weight:600; color:#6d5cff; }
+@media(max-width:768px) {
+  .sh-cards { flex-direction:column; gap:12px; align-items:stretch; }
+  .sh-arrow { transform:rotate(90deg); text-align:center; }
+  .sh-card { max-width:none; }
+}
+
+/* ── DEMO PREVIEW SECTION ── */
+.demo-preview-section { padding:64px 0; border-bottom:1px solid rgba(255,255,255,0.06); }
+.demo-preview-card { max-width:560px; margin:0 auto; background:#0f172a; border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:24px; text-align:left; }
+.demo-chat { display:flex; flex-direction:column; gap:14px; }
+.demo-chat .demo-msg { padding:12px 16px; border-radius:10px; font-size:0.9rem; line-height:1.6; }
+.demo-chat .demo-q { background:rgba(37,99,235,0.15); border:1px solid rgba(37,99,235,0.25); color:#93c5fd; }
+.demo-chat .demo-a { background:rgba(109,92,255,0.1); border:1px solid rgba(109,92,255,0.2); color:rgba(255,255,255,0.8); }
+.demo-typing-cursor { animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+
+/* ── UPDATED TOOL GRID ── */
+.tg-icon { width:36px; height:36px; border-radius:9px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+.tg-info { flex:1; min-width:0; }
+.tg-name { font-size:0.85rem; font-weight:600; color:#F9FAFB; display:flex; align-items:center; gap:5px; }
+.tg-desc { font-size:0.72rem; color:rgba(255,255,255,0.38); margin-top:2px; }
+.tg-btn { font-size:0.72rem; font-weight:600; color:#6d5cff; flex-shrink:0; white-space:nowrap; }
+
+/* ── COMPARE TABLE (updated) ── */
+.compare-scroll { overflow-x:auto; margin-top:32px; border-radius:14px; border:1px solid rgba(255,255,255,0.08); }
+.col-ambore { background:rgba(37,99,235,0.08) !important; color:#93c5fd !important; font-weight:700; border-left:2px solid rgba(37,99,235,0.3); border-right:2px solid rgba(37,99,235,0.3); }
+.compare-table thead .col-ambore { color:#60a5fa !important; background:rgba(37,99,235,0.18) !important; border-top:2px solid #2563EB; }
+.compare-table tbody tr:last-child .col-ambore { border-bottom:2px solid rgba(37,99,235,0.4); }
+
+/* ── MOB BOTTOM NAV (updated) ── */
+.mob-bottom-nav { display:none; }
+@media(max-width:767px){
+  .mob-bottom-nav { display:flex; position:fixed; bottom:0; left:0; right:0; background:#111827; border-top:1px solid rgba(255,255,255,0.1); z-index:600; padding:6px 0 max(env(safe-area-inset-bottom),6px); }
+  .mob-bottom-nav button { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; background:none; border:none; color:rgba(255,255,255,0.65); font-family:inherit; cursor:pointer; padding:4px; font-size:0.62rem; font-weight:600; min-height:44px; }
+  .mob-bottom-nav button:active { color:#2563EB; }
+  body { padding-bottom:64px; }
+}
+
+/* ── TESTIMONIAL FILTERS ── */
+.testimonial-filters { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:28px; justify-content:center; }
+.tf-pill { padding:7px 16px; border-radius:20px; border:1px solid rgba(255,255,255,0.15); background:none; color:rgba(255,255,255,0.55); font-size:0.8rem; font-weight:600; cursor:pointer; transition:all 0.15s; font-family:inherit; }
+.tf-pill:hover { border-color:rgba(255,255,255,0.35); color:#fff; }
+.tf-pill.active { background:#2563EB; border-color:#2563EB; color:#fff; }
+
+/* ── EMAIL CAPTURE ── */
+.email-capture { padding:80px 0; background:linear-gradient(180deg,transparent,rgba(37,99,235,0.06)); border-top:1px solid rgba(255,255,255,0.07); }
+.email-form { display:flex; gap:10px; max-width:480px; margin:0 auto 14px; flex-wrap:wrap; justify-content:center; }
+.email-input { flex:1; min-width:220px; padding:14px 18px; background:#111827; border:1px solid rgba(255,255,255,0.15); border-radius:10px; color:#fff; font-size:0.9rem; font-family:inherit; outline:none; }
+.email-input:focus { border-color:#2563EB; }
+.email-submit { padding:14px 24px; background:#2563EB; color:#fff; border:none; border-radius:10px; font-weight:700; font-size:0.9rem; cursor:pointer; font-family:inherit; white-space:nowrap; }
+.email-submit:hover { opacity:0.9; }
+.email-note { font-size:0.75rem; color:rgba(255,255,255,0.3); }
+.email-success { font-size:0.9rem; color:#22c55e; margin-top:12px; }
+.email-success.hidden { display:none; }
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -905,9 +987,35 @@ body { background: #0A0F1E; }
         <div class="nav-logo-icon">A</div>
         Ambore
       </a>
-      <!-- Desktop: 3 clean anchors + auth CTAs -->
+      <!-- Desktop: dropdown + anchors + auth CTAs -->
       <div class="nav-links">
-        <a href="#features">🛠️ Tools</a>
+        <div class="nav-dropdown-wrap">
+          <a href="#features" class="nav-dropdown-trigger">🛠️ Tools <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></a>
+          <div class="nav-dropdown-menu">
+            <div class="nav-dropdown-col">
+              <div class="nav-dd-heading">📄 Get the Job</div>
+              <a onclick="goToFeature('/jobs')">Job Portal 🔥</a>
+              <a onclick="goToFeature('/resume')">AI Resume Builder</a>
+              <a onclick="goToFeature('/cover-letter')">Cover Letter</a>
+              <a onclick="goToFeature('/email')">Email Generator</a>
+              <a onclick="goToFeature('/coaching')">Live Coaching</a>
+            </div>
+            <div class="nav-dropdown-col">
+              <div class="nav-dd-heading">🌐 Build Your Brand</div>
+              <a onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
+              <a onclick="goToFeature('/portfolio')">Portfolio Builder</a>
+              <a onclick="goToFeature('/certifications')">Certifications</a>
+              <a onclick="goToFeature('/project')">Build Project</a>
+            </div>
+            <div class="nav-dropdown-col">
+              <div class="nav-dd-heading">🎯 Win the Interview</div>
+              <a onclick="goToFeature('/interview')">Interview AI 🔥</a>
+              <a onclick="goToFeature('/ats-score')">ATS Score Checker</a>
+              <a onclick="goToFeature('/learn')">Learn AI</a>
+              <a onclick="goToFeature('/dashboard')">Dashboard</a>
+            </div>
+          </div>
+        </div>
         <a href="#how">⚡ How It Works</a>
         <a href="#faq">💬 FAQ</a>
       </div>
@@ -947,6 +1055,20 @@ body { background: #0A0F1E; }
   </div>
 </div>
 
+<!-- WA BANNER (shown at 60% scroll) -->
+<div class="wa-banner" id="wa-banner">
+  <span>💬 <strong>Join 1,000+ job seekers</strong> — free tips &amp; resume help</span>
+  <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" rel="noopener">Join WhatsApp →</a>
+  <button class="wa-banner-close" onclick="dismissWaBanner()" aria-label="Close">✕</button>
+</div>
+
+<!-- PROMO BANNER (shown 10s after WA banner) -->
+<div class="promo-banner" id="promo-banner">
+  <span>🚀 <strong>Struggling with interviews?</strong> Get 1:1 career help</span>
+  <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener" style="color:#fff;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:6px 14px;min-height:44px;display:inline-flex;align-items:center;">Apply Free →</a>
+  <button class="wa-banner-close" onclick="this.parentElement.style.display='none';sessionStorage.setItem('promo_dismissed','1')" aria-label="Close">✕</button>
+</div>
+
 <!-- HERO -->
 <section class="hero">
   <div class="orb hero-orb-1"></div>
@@ -964,8 +1086,8 @@ body { background: #0A0F1E; }
         Pick a tool below — no account needed to start.
       </p>
       <div class="hero-actions reveal reveal-d3">
-        <button class="btn-hero" id="hero-cta-primary" onclick="goToFeature('/interview')">🎙 Try Interview AI Free &rarr;</button>
-        <button class="btn-hero-ghost" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs</button>
+        <button class="btn-hero" id="hero-cta-primary" onclick="goToFeature('/interview')" style="background:#2563EB;border-color:#2563EB;min-height:48px;font-size:1rem;">🎙 Try Interview AI Free →</button>
+        <button class="btn-hero-ghost" onclick="goToFeature('/jobs')" style="min-height:48px;font-size:1rem;">💼 Browse 50,000+ Jobs →</button>
       </div>
       <div class="social-proof reveal reveal-d3">
         <span>✦ Trusted by 12,000+ job seekers</span> · <span>⭐ 4.9 Rating</span> · <span>🔒 Always 100% Free</span>
@@ -977,6 +1099,7 @@ body { background: #0A0F1E; }
         <span class="trust-sep"></span>
         <span class="trust-item"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg>Your data is private &amp; secure</span>
       </div>
+      <p class="social-proof-line">✦ Trusted by 12,000+ job seekers &nbsp;·&nbsp; ⭐ 4.9 Rating &nbsp;·&nbsp; 🔒 Always 100% Free</p>
 
       <!-- Tool Nav Panel -->
       <div class="hero-tools reveal reveal-d5">
@@ -1065,6 +1188,54 @@ body { background: #0A0F1E; }
   </div>
 </section>
 
+<!-- DEMO PREVIEW -->
+<section class="demo-preview-section">
+  <div class="container" style="text-align:center;">
+    <div class="section-label">See it in action</div>
+    <h2 class="section-title" style="font-size:clamp(1.4rem,3vw,2rem);">Real-Time AI Interview Co-Pilot</h2>
+    <p class="section-sub" style="max-width:500px;margin:0 auto 24px;">Ambore listens to interview questions and gives you the perfect answer in under 2 seconds — live.</p>
+    <div class="demo-preview-card">
+      <div class="demo-chat">
+        <div class="demo-msg demo-q">🎙 "Tell me about a time you led a project under pressure."</div>
+        <div class="demo-msg demo-a"><span class="demo-typing-cursor">▋</span> <span>Generating STAR answer...</span></div>
+      </div>
+    </div>
+    <a href="javascript:void(0)" onclick="goToFeature('/interview')" class="btn-hero" style="display:inline-block;margin-top:24px;background:#2563EB;border-color:#2563EB;">🎙 Try It Live →</a>
+  </div>
+</section>
+
+<!-- START HERE (new 3-step) -->
+<section class="start-here-section" id="start-here">
+  <div class="container">
+    <div class="sh-heading">✨ New here? Start in 3 steps</div>
+    <div class="sh-cards">
+      <div class="sh-card" onclick="goToFeature('/resume-builder')">
+        <div class="sh-step-num">01</div>
+        <div class="sh-icon">📄</div>
+        <div class="sh-title">Build Your Resume</div>
+        <div class="sh-desc">Create an AI-optimized resume in minutes</div>
+        <div class="sh-link">Resume Builder →</div>
+      </div>
+      <div class="sh-arrow">→</div>
+      <div class="sh-card" onclick="goToFeature('/jobs')">
+        <div class="sh-step-num">02</div>
+        <div class="sh-icon">💼</div>
+        <div class="sh-title">Find &amp; Apply to Jobs</div>
+        <div class="sh-desc">Browse 50,000+ jobs with one-click apply</div>
+        <div class="sh-link">Job Portal →</div>
+      </div>
+      <div class="sh-arrow">→</div>
+      <div class="sh-card" onclick="goToFeature('/interview')">
+        <div class="sh-step-num">03</div>
+        <div class="sh-icon">🎙</div>
+        <div class="sh-title">Ace the Interview</div>
+        <div class="sh-desc">Get real-time AI answers during live interviews</div>
+        <div class="sh-link">Interview AI →</div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- MARQUEE -->
 <div class="marquee-strip">
   <div class="marquee-track">
@@ -1098,36 +1269,6 @@ body { background: #0A0F1E; }
   </div>
 </div>
 
-<!-- START HERE -->
-<section class="start-here">
-  <div class="container">
-    <div class="sh-label">✨ New here? Start with these 3 steps</div>
-    <div class="sh-steps">
-      <div class="sh-step" onclick="goToFeature('/resume-builder')">
-        <div class="sh-num">01</div>
-        <span class="sh-icon">📄</span>
-        <h3>Build Your Resume</h3>
-        <p>Upload or create your resume in minutes with AI</p>
-        <span class="sh-cta">Start →</span>
-      </div>
-      <div class="sh-step" onclick="goToFeature('/jobs')">
-        <div class="sh-num">02</div>
-        <span class="sh-icon">💼</span>
-        <h3>Find &amp; Apply to Jobs</h3>
-        <p>Browse 50,000+ jobs and get a tailored cover letter</p>
-        <span class="sh-cta">Browse Jobs →</span>
-      </div>
-      <div class="sh-step" onclick="goToFeature('/interview')">
-        <div class="sh-num">03</div>
-        <span class="sh-icon">🎙</span>
-        <h3>Ace Your Interview</h3>
-        <p>Get real-time AI answers during live interviews</p>
-        <span class="sh-cta">Try Interview AI →</span>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- STATS BAR -->
 <div class="stats-bar">
   <div class="stat-item"><span class="stat-num" data-target="50000">0</span>+ Jobs</div>
@@ -1150,112 +1291,86 @@ body { background: #0A0F1E; }
 
       <!-- Column 1: Get the Job -->
       <div class="tg-col">
-        <div class="tg-col-header">📄 Get the Job</div>
+        <div class="tg-col-header" style="background:rgba(37,99,235,0.15);color:#93c5fd;">📄 Get the Job</div>
         <div class="tg-item" onclick="goToFeature('/jobs')">
-          <div class="tg-item-icon" style="background:rgba(16,185,129,0.18);color:#34d399"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Job Portal <span class="hot-badge">🔥 Most Used</span></div>
-            <div class="tg-item-desc">50,000+ real jobs, updated hourly</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(16,185,129,0.18);color:#34d399;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Job Portal <span class="hot-badge">🔥</span></div><div class="tg-desc">50,000+ real jobs, updated hourly</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
-        <div class="tg-item" onclick="goToFeature('/resume-builder')">
-          <div class="tg-item-icon" style="background:rgba(99,102,241,0.18);color:#a5b4fc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">AI Resume Builder <span class="hot-badge">🔥 Most Used</span></div>
-            <div class="tg-item-desc">Tailor your resume to any job</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+        <div class="tg-item" onclick="goToFeature('/resume')">
+          <div class="tg-icon" style="background:rgba(59,130,246,0.18);color:#60a5fa;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg></div>
+          <div class="tg-info"><div class="tg-name">AI Resume Builder <span class="hot-badge">🔥</span></div><div class="tg-desc">Tailor your resume to any job</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/cover-letter')">
-          <div class="tg-item-icon" style="background:rgba(236,72,153,0.18);color:#f9a8d4"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Cover Letter</div>
-            <div class="tg-item-desc">Personalized cover letters in seconds</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(236,72,153,0.18);color:#f9a8d4;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Cover Letter</div><div class="tg-desc">Personalized letters in seconds</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/email')">
-          <div class="tg-item-icon" style="background:rgba(14,165,233,0.18);color:#38bdf8"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Email Generator</div>
-            <div class="tg-item-desc">Job emails that get replies</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(14,165,233,0.18);color:#38bdf8;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Email Generator</div><div class="tg-desc">Job emails that get replies</div></div>
+          <span class="tg-btn">Try →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/coaching')">
+          <div class="tg-icon" style="background:rgba(249,115,22,0.18);color:#fb923c;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Live Coaching</div><div class="tg-desc">1:1 sessions with career experts</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
       </div>
 
       <!-- Column 2: Build Your Brand -->
       <div class="tg-col">
-        <div class="tg-col-header">🌐 Build Your Brand</div>
+        <div class="tg-col-header" style="background:rgba(20,184,166,0.15);color:#5eead4;">🌐 Build Your Brand</div>
         <div class="tg-item" onclick="goToFeature('/linkedin')">
-          <div class="tg-item-icon" style="background:rgba(10,102,194,0.18);color:#5ba4e0"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">LinkedIn Optimizer</div>
-            <div class="tg-item-desc">Make recruiters find you first</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(10,102,194,0.18);color:#5ba4e0;"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></div>
+          <div class="tg-info"><div class="tg-name">LinkedIn Optimizer</div><div class="tg-desc">Make recruiters find you first</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/portfolio')">
-          <div class="tg-item-icon" style="background:rgba(20,184,166,0.18);color:#2dd4bf"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Portfolio Builder</div>
-            <div class="tg-item-desc">Showcase your work beautifully</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(20,184,166,0.18);color:#2dd4bf;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Portfolio Builder</div><div class="tg-desc">Showcase your work beautifully</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/certifications')">
-          <div class="tg-item-icon" style="background:rgba(234,179,8,0.18);color:#fbbf24"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Certifications</div>
-            <div class="tg-item-desc">118 free certs from Google, AWS &amp; more</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(234,179,8,0.18);color:#fbbf24;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Certifications</div><div class="tg-desc">118 free certs from Google, AWS &amp; more</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/project')">
-          <div class="tg-item-icon" style="background:rgba(249,115,22,0.18);color:#fb923c"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Build Project</div>
-            <div class="tg-item-desc">Turn ideas into real projects</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(249,115,22,0.18);color:#fb923c;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Build Project</div><div class="tg-desc">Turn ideas into real projects</div></div>
+          <span class="tg-btn">Try →</span>
+        </div>
+        <div class="tg-item" onclick="goToFeature('/resume-builder')">
+          <div class="tg-icon" style="background:rgba(99,102,241,0.18);color:#a5b4fc;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Build Resume</div><div class="tg-desc">Build from scratch with AI</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
       </div>
 
       <!-- Column 3: Win the Interview -->
       <div class="tg-col">
-        <div class="tg-col-header">🎯 Win the Interview</div>
+        <div class="tg-col-header" style="background:rgba(109,92,255,0.15);color:#a5b4fc;">🎯 Win the Interview</div>
         <div class="tg-item" onclick="goToFeature('/interview')">
-          <div class="tg-item-icon" style="background:rgba(139,92,246,0.18);color:#a78bfa"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Interview AI <span class="hot-badge">🔥 Most Used</span></div>
-            <div class="tg-item-desc">Real-time answers during live interviews</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(139,92,246,0.18);color:#a78bfa;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Interview AI <span class="hot-badge">🔥</span></div><div class="tg-desc">Real-time answers during interviews</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/ats-score')">
-          <div class="tg-item-icon" style="background:rgba(245,158,11,0.18);color:#fbbf24"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">ATS Score Checker</div>
-            <div class="tg-item-desc">Check if your resume passes ATS</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(245,158,11,0.18);color:#fbbf24;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg></div>
+          <div class="tg-info"><div class="tg-name">ATS Score Checker</div><div class="tg-desc">Check if your resume passes ATS</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/learn')">
-          <div class="tg-item-icon" style="background:rgba(109,92,255,0.18);color:#a5b4fc"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Learn AI</div>
-            <div class="tg-item-desc">AI tutor across 12 tech domains</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(109,92,255,0.18);color:#a5b4fc;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Learn AI</div><div class="tg-desc">AI tutor across 12 tech domains</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
         <div class="tg-item" onclick="goToFeature('/dashboard')">
-          <div class="tg-item-icon" style="background:rgba(234,179,8,0.18);color:#facc15"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
-          <div class="tg-item-info">
-            <div class="tg-item-name">Dashboard</div>
-            <div class="tg-item-desc">Track your job search progress</div>
-          </div>
-          <span class="tg-item-btn">Try it →</span>
+          <div class="tg-icon" style="background:rgba(234,179,8,0.18);color:#facc15;"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg></div>
+          <div class="tg-info"><div class="tg-name">Dashboard</div><div class="tg-desc">Track your job search progress</div></div>
+          <span class="tg-btn">Try →</span>
         </div>
       </div>
 
@@ -1264,31 +1379,35 @@ body { background: #0A0F1E; }
 </section>
 
 <!-- COMPARISON TABLE -->
-<section class="compare-section">
+<section class="compare-section" id="compare">
   <div class="container">
     <div class="section-label reveal">Why Ambore?</div>
     <h2 class="section-title reveal">Better than the alternatives</h2>
-    <div class="compare-wrap reveal">
+    <div class="compare-scroll reveal">
       <table class="compare-table">
         <thead>
           <tr>
             <th>Feature</th>
-            <th class="highlight">Ambore ✦</th>
+            <th class="col-ambore">✦ Ambore</th>
             <th>ChatGPT</th>
             <th>Teal</th>
             <th>LinkedIn</th>
           </tr>
         </thead>
         <tbody>
-          <tr><td>100% Free</td><td class="highlight">✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Interview AI</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Job Portal</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
-          <tr><td>Resume Tailor</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
-          <tr><td>ATS Checker</td><td class="highlight">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
-          <tr><td>Learn AI (Tutor)</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Cover Letter AI</td><td class="highlight">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>100% Free</td><td class="col-ambore">✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Real-Time Interview AI</td><td class="col-ambore">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>50,000+ Job Listings</td><td class="col-ambore">✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+          <tr><td>Resume + ATS Checker</td><td class="col-ambore">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
+          <tr><td>LinkedIn Optimizer</td><td class="col-ambore">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Portfolio Builder</td><td class="col-ambore">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+          <tr><td>Learn AI (12 domains)</td><td class="col-ambore">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
         </tbody>
       </table>
+    </div>
+    <p style="text-align:center;font-size:0.8rem;color:rgba(255,255,255,0.35);margin-top:16px;">All features free. No credit card. No trial.</p>
+    <div style="text-align:center;margin-top:20px;">
+      <button class="btn-cta" onclick="openAuthModal('signup')" style="background:#2563EB;color:#fff;padding:12px 28px;border-radius:10px;font-weight:700;border:none;cursor:pointer;font-size:0.9rem;">Get Started Free →</button>
     </div>
   </div>
 </section>
@@ -1509,9 +1628,18 @@ body { background: #0A0F1E; }
       <p class="section-sub">Join thousands of job seekers who landed interviews and offers using Ambore.</p>
     </div>
 
+    <div class="testimonial-filters">
+      <button class="tf-pill active" data-filter="all" onclick="filterTestimonials('all',this)">All</button>
+      <button class="tf-pill" data-filter="resume" onclick="filterTestimonials('resume',this)">Resume</button>
+      <button class="tf-pill" data-filter="interview" onclick="filterTestimonials('interview',this)">Interview AI</button>
+      <button class="tf-pill" data-filter="jobs" onclick="filterTestimonials('jobs',this)">Job Portal</button>
+      <button class="tf-pill" data-filter="linkedin" onclick="filterTestimonials('linkedin',this)">LinkedIn</button>
+      <button class="tf-pill" data-filter="ats" onclick="filterTestimonials('ats',this)">ATS Score</button>
+    </div>
+
     <div class="testimonials-grid">
 
-      <div class="tcard reveal">
+      <div class="tcard reveal" data-tool="resume">
         <div class="tcard-tag" style="background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25)">✅ Got the job</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"I applied to 12 roles with my old resume and heard nothing. Used Ambore's Resume Tailor + ATS Score checker, rewrote it for each JD — <strong>got 4 interviews in 2 weeks.</strong>"</div>
@@ -1521,7 +1649,7 @@ body { background: #0A0F1E; }
         </div>
       </div>
 
-      <div class="tcard reveal reveal-d1">
+      <div class="tcard reveal reveal-d1" data-tool="interview">
         <div class="tcard-tag" style="background:rgba(139,92,246,0.12);color:#a78bfa;border:1px solid rgba(139,92,246,0.25)">🎙 Interview win</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"The Interview AI is insane. I practiced 3 nights before my Google loop and the real questions were almost identical. <strong>Signed my offer letter yesterday.</strong>"</div>
@@ -1531,7 +1659,7 @@ body { background: #0A0F1E; }
         </div>
       </div>
 
-      <div class="tcard reveal reveal-d2">
+      <div class="tcard reveal reveal-d2" data-tool="ats">
         <div class="tcard-tag" style="background:rgba(245,158,11,0.12);color:#fbbf24;border:1px solid rgba(245,158,11,0.25)">🎯 ATS unlocked</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"My ATS score was 34% before. After adding the missing keywords Ambore flagged, it jumped to 81%. <strong>First recruiter call came 3 days later.</strong>"</div>
@@ -1541,7 +1669,7 @@ body { background: #0A0F1E; }
         </div>
       </div>
 
-      <div class="tcard reveal reveal-d1">
+      <div class="tcard reveal reveal-d1" data-tool="resume">
         <div class="tcard-tag" style="background:rgba(236,72,153,0.12);color:#f9a8d4;border:1px solid rgba(236,72,153,0.25)">📝 Cover letter magic</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"Writing cover letters used to take me an hour each. Now it's 2 minutes. <strong>Recruiters actually comment on how tailored my letters are.</strong> They have no idea 😂"</div>
@@ -1551,7 +1679,7 @@ body { background: #0A0F1E; }
         </div>
       </div>
 
-      <div class="tcard reveal reveal-d2">
+      <div class="tcard reveal reveal-d2" data-tool="jobs">
         <div class="tcard-tag" style="background:rgba(16,185,129,0.12);color:#34d399;border:1px solid rgba(16,185,129,0.25)">💼 Dream job found</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"Found my current role through the Job Portal — it was literally on the front page, 2 hours old. Applied, tailored my resume in Ambore, <strong>hired in 12 days.</strong>"</div>
@@ -1561,7 +1689,7 @@ body { background: #0A0F1E; }
         </div>
       </div>
 
-      <div class="tcard reveal reveal-d3">
+      <div class="tcard reveal reveal-d3" data-tool="linkedin">
         <div class="tcard-tag" style="background:rgba(14,165,233,0.12);color:#38bdf8;border:1px solid rgba(14,165,233,0.25)">🔗 LinkedIn boost</div>
         <div class="tcard-stars">⭐⭐⭐⭐⭐</div>
         <div class="tcard-body">"Rewrote my LinkedIn with the optimizer. Profile views went from ~20/week to <strong>200+ within a month.</strong> Two recruiters reached out with roles I wasn't even applying for."</div>
@@ -1690,6 +1818,20 @@ body { background: #0A0F1E; }
   </div>
 </section>
 
+<!-- EMAIL CAPTURE -->
+<section class="email-capture">
+  <div class="container" style="text-align:center;">
+    <h2 style="font-size:clamp(1.5rem,3vw,2.2rem);font-weight:800;margin-bottom:10px;">Your dream job starts here.</h2>
+    <p style="color:rgba(255,255,255,0.5);margin-bottom:28px;font-size:0.95rem;">Join 12,000+ job seekers using Ambore — completely free, forever.</p>
+    <form class="email-form" onsubmit="handleEmailSignup(event)">
+      <input type="email" class="email-input" placeholder="Enter your email address..." required/>
+      <button type="submit" class="email-submit">Get Started Free →</button>
+    </form>
+    <p class="email-note">No credit card · No trial limits · 14 free AI tools</p>
+    <p class="email-success hidden" id="email-success">✅ You're in! Opening your account now...</p>
+  </div>
+</section>
+
 <!-- FOOTER -->
 <footer>
   <div class="container">
@@ -1813,10 +1955,23 @@ body { background: #0A0F1E; }
 </div>
 
 <!-- MOBILE BOTTOM NAV -->
-<div class="mobile-bottom-nav" id="mobile-bottom-nav">
-  <button onclick="goToFeature('/jobs')">💼<span>Jobs</span></button>
-  <button onclick="goToFeature('/resume')">📄<span>Resume</span></button>
-  <button onclick="goToFeature('/interview')">🎙<span>Interview</span></button>
+<div class="mob-bottom-nav" id="mob-bottom-nav">
+  <button onclick="goToFeature('/jobs')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+    <span>Jobs</span>
+  </button>
+  <button onclick="goToFeature('/resume')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span>Resume</span>
+  </button>
+  <button onclick="goToFeature('/interview')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg>
+    <span>Interview</span>
+  </button>
+  <button onclick="toggleMenu()">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    <span>More</span>
+  </button>
 </div>
 
 <!-- SLIDE-IN BANNER -->
@@ -2248,6 +2403,53 @@ function updatePageForAuthState(){
 }
 updateNavState();
 updatePageForAuthState();
+
+/* ── DELAYED BANNERS (Fix 1) ── */
+let waShown = false, promoShown = false;
+window.addEventListener('scroll', function() {
+  const pct = (window.scrollY + window.innerHeight) / document.body.scrollHeight;
+  if (pct > 0.6 && !waShown && !sessionStorage.getItem('wa_dismissed')) {
+    waShown = true;
+    const el = document.getElementById('wa-banner');
+    if (el) { el.style.cssText = 'display:flex;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:200;width:auto;max-width:600px;border-radius:12px;animation:slideUp 0.4s ease;'; }
+    setTimeout(() => {
+      if (!promoShown && !sessionStorage.getItem('promo_dismissed')) {
+        promoShown = true;
+        const pb = document.getElementById('promo-banner');
+        if (pb) { pb.style.cssText = 'display:flex;position:fixed;bottom:80px;left:50%;transform:translateX(-50%);z-index:199;width:auto;max-width:600px;border-radius:12px;animation:slideUp 0.4s ease;top:auto;'; }
+      }
+    }, 10000);
+  }
+}, { passive: true });
+
+function dismissWaBanner() {
+  sessionStorage.setItem('wa_dismissed', '1');
+  const el = document.getElementById('wa-banner');
+  if (el) el.style.display = 'none';
+}
+
+/* ── TESTIMONIAL FILTER (Fix 9) ── */
+function filterTestimonials(filter, btn) {
+  document.querySelectorAll('.tf-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-tool]').forEach(card => {
+    if (filter === 'all' || card.dataset.tool === filter) {
+      card.style.display = '';
+      card.style.opacity = '1';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+/* ── EMAIL SIGNUP (Fix 10) ── */
+function handleEmailSignup(e) {
+  e.preventDefault();
+  const email = e.target.querySelector('input').value;
+  document.getElementById('email-success').classList.remove('hidden');
+  e.target.style.display = 'none';
+  setTimeout(() => openAuthModal('signup'), 1000);
+}
 </script>
 
 </body>
