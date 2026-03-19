@@ -308,8 +308,8 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 .auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.06)}
 .auth-tab{flex:1;padding:11px;text-align:center;font-size:.84rem;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
 .auth-tab.active{color:#fff;border-bottom-color:var(--blue)}
-.auth-pan{display:none;padding:20px}
-.auth-pan.active{display:block}
+.auth-pan{display:none;padding:20px;flex-direction:column;gap:0}
+.auth-pan.active{display:flex}
 .auth-field{margin-bottom:12px}
 .auth-field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.35);margin-bottom:5px}
 .auth-field input{width:100%;padding:10px 13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:9px;color:#fff;font-size:.87rem;outline:none;transition:border-color .2s}
@@ -1000,19 +1000,24 @@ function escHtml(s){
 
 // ── Auth modal ────────────────────────────────────────────────────────────────
 function openAuth(tab){
-  document.getElementById('auth-ov').style.display='flex';
+  var ov=document.getElementById('auth-ov');
+  ov.classList.add('open');ov.style.display='';
   document.body.style.overflow='hidden';
   switchTab(tab||'login');
 }
 function closeAuth(){
-  document.getElementById('auth-ov').style.display='none';
+  var ov=document.getElementById('auth-ov');
+  ov.classList.remove('open');ov.style.display='';
   document.body.style.overflow='';
   _pendingRedirect=null;
 }
 function switchTab(tab){
   ['login','signup','forgot'].forEach(function(t){
     var p=document.getElementById('pan-'+t);
-    if(p)p.style.display=(t===tab)?'flex':'none';
+    if(p){p.classList.toggle('active',t===tab);p.style.display='';}
+    var tb=document.querySelector('.auth-tab[data-tab="'+t+'"]');
+    if(tb)tb.classList.toggle('active',t===tab);
+    if(t!==tab)setErr('err-'+t,'');
   });
 }
 
@@ -1027,18 +1032,25 @@ document.getElementById('auth-ov').addEventListener('click',function(e){
   if(p==='login'||p==='signup')openAuth(p);
 })();
 
+// ── Error helper ──────────────────────────────────────────────────────────────
+function setErr(id,msg){
+  var el=document.getElementById(id);
+  if(!el)return;
+  el.textContent=msg;
+  el.classList.toggle('show',!!msg);
+}
+
 // ── Login ─────────────────────────────────────────────────────────────────────
 async function doLogin(e){
   e.preventDefault();
-  var err=document.getElementById('err-login');
-  err.textContent='';
+  setErr('err-login','');
   var em=document.getElementById('li-em').value.trim().toLowerCase();
   var pw=document.getElementById('li-pw').value;
-  if(!em||!pw){err.textContent='Please fill in all fields.';return;}
+  if(!em||!pw){setErr('err-login','Please fill in all fields.');return;}
   var users=getUsers();
-  if(!users[em]){err.textContent='No account found. Sign up first.';return;}
+  if(!users[em]){setErr('err-login','No account found. Sign up first.');return;}
   var hash=await hashPwd(pw);
-  if(users[em].hash!==hash){err.textContent='Incorrect password.';return;}
+  if(users[em].hash!==hash){setErr('err-login','Incorrect password.');return;}
   saveSession({email:em,name:users[em].name||em});
   closeAuth();
   updateNavCta();
@@ -1049,18 +1061,17 @@ async function doLogin(e){
 // ── Signup ────────────────────────────────────────────────────────────────────
 async function doSignup(e){
   e.preventDefault();
-  var err=document.getElementById('err-signup');
-  err.textContent='';
+  setErr('err-signup','');
   var nm=document.getElementById('su-nm').value.trim();
   var em=document.getElementById('su-em').value.trim().toLowerCase();
   var pw=document.getElementById('su-pw').value;
   var pw2=document.getElementById('su-pw2').value;
-  if(!nm||!em||!pw||!pw2){err.textContent='Please fill in all fields.';return;}
-  if(!/^[^@]+@[^@]+\.[^@]+$/.test(em)){err.textContent='Invalid email address.';return;}
-  if(pw.length<8){err.textContent='Password must be at least 8 characters.';return;}
-  if(pw!==pw2){err.textContent='Passwords do not match.';return;}
+  if(!nm||!em||!pw||!pw2){setErr('err-signup','Please fill in all fields.');return;}
+  if(!/^[^@]+@[^@]+\.[^@]+$/.test(em)){setErr('err-signup','Invalid email address.');return;}
+  if(pw.length<8){setErr('err-signup','Password must be at least 8 characters.');return;}
+  if(pw!==pw2){setErr('err-signup','Passwords do not match.');return;}
   var users=getUsers();
-  if(users[em]){err.textContent='An account with that email already exists.';return;}
+  if(users[em]){setErr('err-signup','An account with that email already exists.');return;}
   var hash=await hashPwd(pw);
   users[em]={name:nm,hash:hash,created:Date.now()};
   saveUsers(users);
@@ -1074,22 +1085,20 @@ async function doSignup(e){
 // ── Reset password ────────────────────────────────────────────────────────────
 async function doReset(e){
   e.preventDefault();
-  var err=document.getElementById('err-forgot');
-  err.textContent='';
+  setErr('err-forgot','');
   var em=document.getElementById('fp-em').value.trim().toLowerCase();
   var pw=document.getElementById('fp-pw').value;
   var pw2=document.getElementById('fp-pw2').value;
-  if(!em||!pw||!pw2){err.textContent='Please fill in all fields.';return;}
-  if(pw.length<8){err.textContent='Password must be at least 8 characters.';return;}
-  if(pw!==pw2){err.textContent='Passwords do not match.';return;}
+  if(!em||!pw||!pw2){setErr('err-forgot','Please fill in all fields.');return;}
+  if(pw.length<8){setErr('err-signup','Password must be at least 8 characters.');return;}
+  if(pw!==pw2){setErr('err-signup','Passwords do not match.');return;}
   var users=getUsers();
-  if(!users[em]){err.textContent='No account found with that email.';return;}
+  if(!users[em]){setErr('err-forgot','No account found with that email.');return;}
   users[em].hash=await hashPwd(pw);
   saveUsers(users);
-  err.style.color='#22c55e';
-  err.textContent='Password updated. You can now log in.';
+  setErr('err-forgot','Password updated. You can now log in.');document.getElementById('err-forgot').style.color='#22c55e';
   setTimeout(function(){
-    err.style.color='';err.textContent='';switchTab('login');
+    setErr('err-forgot','');document.getElementById('err-forgot').style.color='';switchTab('login');
   },2000);
 }
 
@@ -1141,8 +1150,8 @@ function _fetchGoogleUser(token){
 }
 function _googleErr(msg){
   ['err-login','err-signup'].forEach(function(id){
-    var el=document.getElementById(id);
-    if(el&&el.closest('[style*="flex"]'))el.textContent=msg;
+    var pan=document.getElementById(id.replace('err-','pan-'));
+    if(pan&&pan.classList.contains('active'))setErr(id,msg);
   });
 }
 
