@@ -381,9 +381,16 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
         <a href="#how">How It Works</a>
         <a href="#faq">FAQ</a>
       </div>
-      <div id="nav-cta" class="nav-actions">
-        <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login')">Log In</a>
-        <a href="javascript:void(0)" class="btn-blue" onclick="openAuth('signup')">Get Started Free</a>
+      <div class="nav-actions">
+        <div id="nav-cta-auth" style="display:flex;align-items:center;gap:8px">
+          <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login')">Log In</a>
+          <a href="javascript:void(0)" class="btn-blue" onclick="openAuth('signup')">Get Started Free</a>
+        </div>
+        <div id="nav-cta-user" style="display:none;align-items:center;gap:8px">
+          <span class="nav-uname">Hi, <span id="nav-user-name"></span></span>
+          <a href="/dashboard" class="btn-ghost">Dashboard</a>
+          <button class="nav-logout" onclick="handleLogout()">Log out</button>
+        </div>
       </div>
       <button class="ham" id="ham" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
     </div>
@@ -410,9 +417,13 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <a href="javascript:void(0)" onclick="goToFeature('/learn');toggleMenu()">Learn AI</a>
   <a href="javascript:void(0)" onclick="goToFeature('/project');toggleMenu()">Build Project</a>
   <a href="javascript:void(0)" onclick="goToFeature('/dashboard');toggleMenu()">Dashboard</a>
-  <div class="mob-auth">
+  <div class="mob-auth" id="mob-auth-guest">
     <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login');toggleMenu()">Log In</a>
     <a href="javascript:void(0)" class="btn-blue" onclick="openAuth('signup');toggleMenu()">Get Started Free</a>
+  </div>
+  <div class="mob-auth" id="mob-auth-user" style="display:none;flex-direction:column;gap:8px">
+    <a href="/dashboard" class="btn-blue" onclick="toggleMenu()">Dashboard</a>
+    <button class="btn-ghost" style="width:100%" onclick="handleLogout();toggleMenu()">Log Out</button>
   </div>
 </div>
 
@@ -1157,22 +1168,23 @@ function updateNavCta(){
   var sess=getSession();
   var ctaA=document.getElementById('nav-cta-auth');
   var ctaB=document.getElementById('nav-cta-user');
-  if(!ctaA||!ctaB)return;
-  if(sess){
-    ctaA.style.display='none';
-    ctaB.style.display='flex';
+  var mobG=document.getElementById('mob-auth-guest');
+  var mobU=document.getElementById('mob-auth-user');
+  var loggedIn=!!sess;
+  if(ctaA)ctaA.style.display=loggedIn?'none':'flex';
+  if(ctaB)ctaB.style.display=loggedIn?'flex':'none';
+  if(mobG)mobG.style.display=loggedIn?'none':'flex';
+  if(mobU)mobU.style.display=loggedIn?'flex':'none';
+  if(loggedIn){
     var nm=document.getElementById('nav-user-name');
     if(nm)nm.textContent=sess.user.name.split(' ')[0];
-  } else {
-    ctaA.style.display='flex';
-    ctaB.style.display='none';
   }
 }
 
 // ── Hero CTA state ────────────────────────────────────────────────────────────
 function updatePageAuth(){
   var sess=getSession();
-  var hCta=document.getElementById('hero-cta-main');
+  var hCta=document.getElementById('hero-cta');
   if(hCta){
     if(sess){
       hCta.textContent='Go to Dashboard';
@@ -1186,8 +1198,7 @@ function updatePageAuth(){
 
 // ── goToFeature ───────────────────────────────────────────────────────────────
 function goToFeature(page){
-  if(getSession()){window.location.href=page;return;}
-  _pendingRedirect=page;openAuth('login');
+  window.location.href=page;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
