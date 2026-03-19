@@ -1215,6 +1215,23 @@ function goToFeature(page){
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
+// Backfill ambore_user from existing ambore_db session (for users who logged in
+// before this key was introduced, so tool pages can find their session)
+(function(){
+  try{
+    var existing=localStorage.getItem('ambore_user');
+    if(!existing){
+      var sess=getSession();
+      if(sess&&sess.user&&sess.user.email){
+        var u=sess.user;
+        localStorage.setItem('ambore_user',JSON.stringify({
+          id:u.email, email:u.email, name:u.name||u.email,
+          picture:u.picture||'', expiresAt:sess.expires
+        }));
+      }
+    }
+  }catch(e){}
+})();
 updateNavCta();
 updatePageAuth();
 </script>
