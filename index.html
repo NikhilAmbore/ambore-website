@@ -1642,7 +1642,7 @@ function updatePageAuth(){
   var hCta=document.getElementById('hero-cta');
   if(hCta){
     if(sess){
-      hCta.textContent='✂️ Tailor My Resume →';
+      hCta.textContent='🛠️ AI Resume Builder →';
       hCta.onclick=function(){track('hero_cta_click','index',{cta:'loggedin'});window.location.href='/resume-builder';};
     } else {
       hCta.textContent='🔍 Check My Resume Score →';
