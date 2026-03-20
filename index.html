@@ -203,6 +203,9 @@ section{padding:80px 0;position:relative}
 .tg-desc{font-size:.71rem;color:rgba(255,255,255,.37);margin-top:2px}
 .tg-cta{font-size:.71rem;font-weight:600;color:var(--blue);flex-shrink:0;white-space:nowrap}
 .most-badge{font-size:.56rem;background:var(--amber);color:#000;padding:2px 5px;border-radius:10px;font-weight:800;white-space:nowrap}
+.tg-item.highlighted{background:linear-gradient(90deg,rgba(249,115,22,.10),rgba(249,115,22,.04));border-left:3px solid var(--orange);border-bottom:1px solid rgba(249,115,22,.18);padding-left:14px}
+.tg-item.highlighted:hover{background:linear-gradient(90deg,rgba(249,115,22,.16),rgba(249,115,22,.07))}
+.tg-item.highlighted .tg-cta{color:var(--orange);font-weight:700}
 /* ── STATS BAR ── */
 .stats-bar{display:flex;align-items:stretch;flex-wrap:wrap;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
 .stat-i{padding:22px 28px;text-align:center;flex:1;min-width:130px;border-right:1px solid var(--border)}
@@ -612,7 +615,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       <div class="tg-col">
         <div class="tg-head">📄 Get the Job</div>
         <div class="tg-item" onclick="goToFeature('/jobs')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">💼</div><div class="tg-info"><div class="tg-name">Job Portal <span class="most-badge">Most Used</span></div><div class="tg-desc">50,000+ live jobs from 97 companies</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/resume')"><div class="tg-ico" style="background:rgba(37,99,235,.15)">📄</div><div class="tg-info"><div class="tg-name">AI Resume Tailor <span class="most-badge">Most Used</span></div><div class="tg-desc">Tailor your resume to any job in seconds</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item highlighted" onclick="goToFeature('/resume')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">📄</div><div class="tg-info"><div class="tg-name">AI Resume Tailor <span class="most-badge">Most Used</span></div><div class="tg-desc">Tailor your resume to any job in seconds</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/resume-builder')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✂️</div><div class="tg-info"><div class="tg-name">Resume Builder</div><div class="tg-desc">Build a polished resume from scratch</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/cover-letter')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✉️</div><div class="tg-info"><div class="tg-name">Cover Letter</div><div class="tg-desc">Tailored in under 2 minutes</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/email')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">📨</div><div class="tg-info"><div class="tg-name">Email Generator</div><div class="tg-desc">Cold outreach that gets replies</div></div><span class="tg-cta">Try →</span></div>
