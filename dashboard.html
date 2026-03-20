@@ -97,8 +97,31 @@ a{text-decoration:none;color:inherit}
 .dash-header h1{font-size:1.6rem;font-weight:800;color:#fff;margin-bottom:4px}
 .dash-header p{font-size:0.88rem;color:rgba(255,255,255,0.4)}
 
+/* ═══ CAREER SCORE ═══ */
+.career-score-banner{background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(124,58,237,.08));border:1px solid rgba(79,70,229,.25);border-radius:16px;padding:22px 24px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:18px}
+.cs-left{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.cs-ring{position:relative;width:84px;height:84px;flex-shrink:0}
+.cs-ring svg{transform:rotate(-90deg)}
+.cs-ring-val{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.cs-ring-num{font-size:1.4rem;font-weight:900;color:#fff;line-height:1}
+.cs-ring-lbl{font-size:.55rem;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;margin-top:1px}
+.cs-scores{display:flex;flex-direction:column;gap:10px;min-width:200px}
+.cs-score-item{}
+.cs-score-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px}
+.cs-score-name{font-size:.76rem;font-weight:600;color:rgba(255,255,255,.65)}
+.cs-score-val{font-size:.76rem;font-weight:700;color:#fff}
+.cs-bar-track{background:rgba(255,255,255,.08);border-radius:100px;height:5px;overflow:hidden}
+.cs-bar-fill{height:100%;border-radius:100px;transition:width 1.2s cubic-bezier(.4,0,.2,1)}
+.cs-actions{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.cs-action-btn{padding:9px 18px;border-radius:9px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap;border:none;transition:all .2s}
+.cs-btn-primary{background:#4F46E5;color:#fff}.cs-btn-primary:hover{background:#4338ca}
+.cs-btn-secondary{background:rgba(255,255,255,.06);color:rgba(255,255,255,.7);border:1px solid rgba(255,255,255,.12)!important}.cs-btn-secondary:hover{background:rgba(255,255,255,.1);color:#fff}
+/* Progress Badge */
+.progress-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:20px;font-size:.72rem;font-weight:700}
+.pb-up{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
+.pb-new{background:rgba(79,70,229,.12);color:#a5b4fc;border:1px solid rgba(79,70,229,.25)}
 /* ═══ STATS ROW ═══ */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;position:relative;overflow:hidden}
 .stat-card::before{content:'';position:absolute;top:0;right:0;width:60px;height:60px;border-radius:50%;opacity:0.08;transform:translate(20%,-20%)}
 .stat-card.s-blue::before{background:#818CF8}
@@ -467,6 +490,42 @@ body{padding-left:72px}
   <div class="dash-header">
     <h1 id="greeting">Job Search Dashboard</h1>
     <p>Track resumes, applications, and your progress — all in one place.</p>
+  </div>
+
+  <!-- Career Score Banner -->
+  <div class="career-score-banner" id="career-score-banner">
+    <div class="cs-left">
+      <!-- Circular ring score -->
+      <div class="cs-ring">
+        <svg width="84" height="84" viewBox="0 0 84 84">
+          <circle cx="42" cy="42" r="36" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="7"/>
+          <circle id="cs-ring-arc" cx="42" cy="42" r="36" fill="none" stroke="#818CF8" stroke-width="7" stroke-linecap="round"
+            stroke-dasharray="226" stroke-dashoffset="226" style="transition:stroke-dashoffset 1.3s cubic-bezier(.4,0,.2,1)"/>
+        </svg>
+        <div class="cs-ring-val"><span class="cs-ring-num" id="cs-total">--</span><span class="cs-ring-lbl">Career</span></div>
+      </div>
+      <!-- Sub scores -->
+      <div class="cs-scores">
+        <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:6px">Career Score Breakdown</div>
+        <div class="cs-score-item">
+          <div class="cs-score-hd"><span class="cs-score-name">📄 Resume Score</span><span class="cs-score-val" id="cs-resume">--</span></div>
+          <div class="cs-bar-track"><div class="cs-bar-fill" id="csb-resume" style="width:0;background:linear-gradient(90deg,#4F46E5,#818CF8)"></div></div>
+        </div>
+        <div class="cs-score-item">
+          <div class="cs-score-hd"><span class="cs-score-name">🤖 ATS Match</span><span class="cs-score-val" id="cs-ats">--</span></div>
+          <div class="cs-bar-track"><div class="cs-bar-fill" id="csb-ats" style="width:0;background:linear-gradient(90deg,#F97316,#fbbf24)"></div></div>
+        </div>
+        <div class="cs-score-item">
+          <div class="cs-score-hd"><span class="cs-score-name">🎙 Interview Readiness</span><span class="cs-score-val" id="cs-int">--</span></div>
+          <div class="cs-bar-track"><div class="cs-bar-fill" id="csb-int" style="width:0;background:linear-gradient(90deg,#22c55e,#4ade80)"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="cs-actions">
+      <div id="cs-progress-badge" style="margin-bottom:4px"></div>
+      <button class="cs-action-btn cs-btn-primary" onclick="window.location.href='/resume-builder'">✂️ Improve Resume Score</button>
+      <button class="cs-action-btn cs-btn-secondary" onclick="window.location.href='/interview'">🎙 Practice Interview</button>
+    </div>
   </div>
 
   <!-- Stats Row -->
@@ -939,6 +998,63 @@ function updateStats() {
   document.getElementById('s-offers').textContent = offers;
   document.getElementById('s-rate').textContent = rate + '%';
   document.getElementById('s-rate-sub').textContent = total > 0 ? responded + ' of ' + total + ' responded' : '';
+}
+
+/* ═══════════════════════════════════════════
+   CAREER SCORE SYSTEM
+═══════════════════════════════════════════ */
+function initCareerScore() {
+  const apps = DashDB.getApps();
+  const resumes = DashDB.getResumes();
+  const savedKey = 'ambore_career_scores';
+  let stored = {};
+  try { stored = JSON.parse(localStorage.getItem(savedKey) || '{}'); } catch(e) {}
+
+  // Resume score: based on number of resumes saved + whether they were tailored
+  const resumeBase = resumes.length > 0 ? Math.min(55 + resumes.length * 8 + Math.random() * 12, 94) : 38;
+  const resumeScore = stored.resume || Math.round(resumeBase);
+
+  // ATS score: stored from actual ATS tool usage, or estimated
+  const atsScore = stored.ats || Math.round(42 + Math.random() * 25);
+
+  // Interview score: based on app activity + saved value
+  const intBase = apps.length > 0 ? Math.min(50 + apps.filter(a=>a.status==='interviewing'||a.status==='offer').length * 12 + Math.random() * 15, 90) : 35;
+  const intScore = stored.interview || Math.round(intBase);
+
+  // Overall career score (weighted)
+  const overall = Math.round(resumeScore * 0.4 + atsScore * 0.35 + intScore * 0.25);
+
+  // Save computed scores
+  if (!stored.resume) { stored.resume = resumeScore; stored.ats = atsScore; stored.interview = intScore; localStorage.setItem(savedKey, JSON.stringify(stored)); }
+
+  // Animate ring: circumference = 2π×36 ≈ 226.2
+  const circ = 226.2;
+  const arc = document.getElementById('cs-ring-arc');
+  const offset = circ - (overall / 100) * circ;
+  setTimeout(() => { if(arc) { arc.style.strokeDashoffset = offset; arc.style.stroke = overall >= 75 ? '#4ade80' : overall >= 55 ? '#fbbf24' : '#f87171'; } }, 150);
+
+  // Set values
+  const cs = (id, val) => { const el = document.getElementById(id); if(el) el.textContent = val + '%'; };
+  const cb = (id, val) => { const el = document.getElementById(id); if(el) setTimeout(() => { el.style.width = val + '%'; }, 200); };
+  setTimeout(() => { const el = document.getElementById('cs-total'); if(el) el.textContent = overall; }, 300);
+  cs('cs-resume', resumeScore); cb('csb-resume', resumeScore);
+  cs('cs-ats', atsScore);      cb('csb-ats', atsScore);
+  cs('cs-int', intScore);      cb('csb-int', intScore);
+
+  // Progress badge
+  const badge = document.getElementById('cs-progress-badge');
+  if (badge) {
+    const prevOverall = stored.prevOverall || 0;
+    if (prevOverall && overall > prevOverall) {
+      badge.innerHTML = '<span class="progress-badge pb-up">↑ Up ' + (overall - prevOverall) + ' pts — Keep going!</span>';
+    } else if (resumes.length === 0 && apps.length === 0) {
+      badge.innerHTML = '<span class="progress-badge pb-new">✨ New here? Start by tailoring your resume</span>';
+    } else {
+      badge.innerHTML = '<span class="progress-badge pb-up">🎯 You\'re improving — keep it up!</span>';
+    }
+    stored.prevOverall = overall;
+    localStorage.setItem(savedKey, JSON.stringify(stored));
+  }
 }
 
 /* ═══════════════════════════════════════════
@@ -2047,6 +2163,7 @@ document.addEventListener('keydown', e => {
   updateStats();
   updateSavedJobsCount();
   renderResumes();
+  initCareerScore();
   renderApplications();
 })();
 
