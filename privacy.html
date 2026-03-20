@@ -21,7 +21,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 /* TOPBAR */
 .topbar{display:flex;align-items:center;justify-content:space-between;padding:16px 32px;border-bottom:1px solid var(--border);background:rgba(14,14,29,0.95);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
 .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff;text-decoration:none}
-.logo-icon{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff;flex-shrink:0}
+.logo-icon{width:28px;height:28px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .brand-tag{font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:2px}
 .topbar-links{display:flex;gap:20px;font-size:0.82rem;font-weight:600;color:var(--muted)}
 .topbar-links a{color:var(--muted);transition:color 0.2s}.topbar-links a:hover{color:#fff;text-decoration:none}
@@ -64,6 +64,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .doc-footer a{color:var(--accent)}
 
 @media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
+.logo-img{height:28px;width:auto;display:block;object-fit:contain}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -74,7 +75,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 <!-- TOPBAR -->
 <div class="topbar">
   <a href="/" class="logo">
-    <div class="logo-icon">A</div>
+    <img src="/logo.png" class="logo-img" alt="Ambore">
     Ambore<span class="brand-tag">AI</span>
   </a>
   <div class="topbar-links">

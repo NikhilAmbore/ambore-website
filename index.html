@@ -68,7 +68,7 @@ button,input,textarea{font-family:inherit}
 #nav.scrolled{background:rgba(10,15,30,.95);border-bottom-color:var(--border);padding:9px 0}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.12rem;letter-spacing:-.02em;color:#fff;cursor:pointer}
-.logo-icon{width:30px;height:30px;background:var(--blue);border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:1rem;flex-shrink:0}
+.logo-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .nav-links{display:flex;align-items:center;gap:22px}
 .nav-links>a,.nav-links>button{font-size:.85rem;font-weight:500;color:var(--slate);background:none;border:none;cursor:pointer;transition:color .2s;padding:0;white-space:nowrap}
 .nav-links>a:hover,.nav-links>button:hover{color:#fff}
@@ -332,7 +332,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 .auth-mod{background:#0A0F1E;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:390px;overflow:hidden}
 .auth-head{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
 .auth-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.93rem;color:#fff}
-.auth-logo-i{width:25px;height:25px;border-radius:7px;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:900;color:#fff}
+.auth-logo-i{width:25px;height:25px;display:flex;align-items:center;justify-content:center;
 .auth-x{background:none;border:none;color:rgba(255,255,255,.3);font-size:1.4rem;cursor:pointer;line-height:1;padding:0 4px;transition:color .2s;min-height:30px;min-width:30px}
 .auth-x:hover{color:#fff}
 .auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.06)}
@@ -410,6 +410,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 @media(max-width:640px){.prev-inputs{grid-template-columns:1fr!important}.ba-grid-2{grid-template-columns:1fr!important}.uc-grid-3{grid-template-columns:1fr!important}}
 @media(max-width:920px){.nav-links{display:none}.ham{display:flex}}
 @media(max-width:600px){.hero-ctas{flex-direction:column;align-items:stretch}.btn-hero-p,.btn-hero-g{width:100%;text-align:center}.foot-inner{flex-direction:column}section{padding:64px 0}.hero{padding:100px 0 48px}}
+.logo-img{height:28px;width:auto;display:block;object-fit:contain}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -427,7 +428,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <nav id="nav">
   <div class="container">
     <div class="nav-inner">
-      <a href="javascript:void(0)" class="logo"><div class="logo-icon">A</div>Ambore</a>
+      <a href="javascript:void(0)" class="logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore</a>
       <div class="nav-links">
         <div class="dd-wrap">
           <button class="dd-trig">🛠️ Tools <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
@@ -1075,7 +1076,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="container">
     <div class="foot-inner">
       <div class="foot-brand">
-        <div class="logo"><div class="logo-icon">A</div>Ambore</div>
+        <div class="logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore</div>
         <p>Your all-in-one AI career platform — jobs, resumes, and interview prep, all free.</p>
         <div class="soc-icons">
           <a href="https://www.linkedin.com/in/nikhil-ambore" target="_blank" rel="noopener" style="width:32px;height:32px;border-radius:8px;background:rgba(10,102,194,.15);border:1px solid rgba(10,102,194,.3);display:flex;align-items:center;justify-content:center;color:rgba(88,166,255,.8);transition:all .2s" onmouseover="this.style.background='rgba(10,102,194,.3)'" onmouseout="this.style.background='rgba(10,102,194,.15)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
@@ -1138,7 +1139,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <div class="auth-ov" id="auth-ov">
   <div class="auth-mod">
     <div class="auth-head">
-      <div class="auth-logo"><div class="auth-logo-i">A</div>Ambore</div>
+      <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore</div>
       <button class="auth-x" onclick="closeAuth()">&times;</button>
     </div>
     <div class="auth-tabs" id="auth-tabs">

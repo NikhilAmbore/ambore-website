@@ -87,7 +87,7 @@ button,input,textarea,select{font-family:inherit}
                    radial-gradient(ellipse at 80% 70%,rgba(124,58,237,0.16) 0%,transparent 55%);
 }
 .auth-logo{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:32px}
-.logo-icon{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff}
+.logo-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
 .auth-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .auth-tabs{display:flex;border-bottom:1px solid var(--border)}
 .auth-tab{flex:1;padding:14px;text-align:center;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
@@ -442,6 +442,7 @@ body{padding-left:72px}
   .mob-dock{display:flex}
   body{padding-left:0;padding-bottom:60px}
 }
+.logo-img{height:28px;width:auto;display:block;object-fit:contain}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -520,7 +521,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><div class="logo-icon">A</div>Ambore AI Resume</div>
+  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore AI Resume</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>

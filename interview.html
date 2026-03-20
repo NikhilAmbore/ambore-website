@@ -89,7 +89,7 @@ button,input,textarea,select{font-family:inherit}
                    radial-gradient(ellipse at 80% 70%,rgba(124,58,237,0.16) 0%,transparent 55%);
 }
 .auth-logo{display:flex;align-items:center;gap:10px;font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:32px}
-.logo-icon{width:38px;height:38px;border-radius:11px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:1.1rem;font-weight:900;color:#fff}
+.logo-icon{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
 .auth-card{width:100%;max-width:420px;background:var(--card);border:1px solid var(--border);border-radius:20px;overflow:hidden}
 .auth-tabs{display:flex;border-bottom:1px solid var(--border)}
 .auth-tab{flex:1;padding:14px;text-align:center;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.4);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s}
@@ -173,7 +173,7 @@ button,input,textarea,select{font-family:inherit}
   border-bottom:1px solid var(--border);background:rgba(14,14,29,0.96);flex-shrink:0;
 }
 .sess-logo{display:flex;align-items:center;gap:7px;font-size:0.95rem;font-weight:900;color:#fff}
-.sess-logo-icon{width:26px;height:26px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:900;color:#fff}
+.sess-logo-icon{width:26px;height:26px;display:flex;align-items:center;justify-content:center;
 .sess-meta{display:flex;align-items:center;gap:8px;margin-left:6px}
 .sess-badge{font-size:0.75rem;color:rgba(255,255,255,0.4);background:rgba(255,255,255,0.05);padding:2px 9px;border-radius:20px;border:1px solid var(--border);white-space:nowrap}
 .sess-right{margin-left:auto;display:flex;align-items:center;gap:10px}
@@ -316,7 +316,7 @@ button,input,textarea,select{font-family:inherit}
   /* Session header */
   .sess-header{flex-wrap:wrap;padding:8px 10px;gap:6px}
   .sess-logo{font-size:0.85rem}
-  .sess-logo-icon{width:22px;height:22px;font-size:0.7rem}
+  .sess-logo-icon{width:22px;height:22px;
   .sess-meta{margin-left:0;gap:5px;order:3;width:100%}
   .sess-badge{font-size:0.65rem;padding:2px 6px;overflow:hidden;text-overflow:ellipsis;max-width:45%}
   .sess-right{margin-left:auto;gap:6px;flex-wrap:wrap;order:2;width:auto}
@@ -393,6 +393,7 @@ body{padding-left:72px}
   .mob-dock{display:flex}
   body{padding-left:0;padding-bottom:60px}
 }
+.logo-img{height:28px;width:auto;display:block;object-fit:contain}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -460,7 +461,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><div class="logo-icon">A</div>Ambore</div>
+  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
@@ -558,7 +559,7 @@ body{padding-left:72px}
 ══════════════════════════════════════ -->
 <div id="session" class="sess-shell hidden">
   <div class="sess-header">
-    <div class="sess-logo"><div class="sess-logo-icon">A</div>Ambore</div>
+    <div class="sess-logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore</div>
     <div class="sess-meta">
       <span class="sess-badge" id="sess-round">Interview</span>
       <span class="sess-badge" id="sess-role"></span>
