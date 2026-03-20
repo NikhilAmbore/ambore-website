@@ -107,28 +107,6 @@ button,input,textarea,select{font-family:inherit}
   background-image:radial-gradient(ellipse at 20% 20%,rgba(79,70,229,0.15) 0%,transparent 50%),
                    radial-gradient(ellipse at 80% 80%,rgba(124,58,237,0.12) 0%,transparent 50%);
 }
-.setup-topbar{
-  display:flex;align-items:center;gap:12px;padding:14px 24px;
-  border-bottom:1px solid var(--border);background:rgba(14,14,29,0.9);
-}
-.setup-topbar .logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#fff}
-.setup-topbar .logo-icon-sm{width:28px;height:28px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:0.85rem;font-weight:900;color:#fff}
-.user-pill{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:0.83rem;color:rgba(255,255,255,0.6)}
-.user-name{background:rgba(79,70,229,0.2);color:var(--accent);padding:3px 10px;border-radius:20px;font-weight:700}
-.logout-btn{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;font-size:0.8rem;transition:color 0.2s}
-.logout-btn:hover{color:var(--red)}
-.nav-links{display:flex;align-items:center;gap:6px;margin-left:10px;flex-shrink:1;min-width:0;overflow:hidden}
-.nav-links a{font-size:0.73rem;font-weight:600;color:rgba(255,255,255,0.4);text-decoration:none;transition:color 0.2s}
-.nav-links a:hover,.nav-links a.active{color:#fff}
-.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px;flex-shrink:0}
-.hamburger span{width:22px;height:2px;background:rgba(255,255,255,0.6);border-radius:2px;display:block;transition:all 0.2s}
-@media(max-width:1300px){.nav-links{display:none!important}.hamburger{display:flex}}
-.mobile-nav{position:fixed;inset:0;background:rgba(6,6,15,0.98);backdrop-filter:blur(20px);z-index:9999;overflow-y:auto}
-.mobile-nav.hidden{display:none}
-.mobile-nav-inner{display:flex;flex-direction:column;gap:0;padding:72px 24px 32px;min-height:100%}
-.mobile-nav-inner a{padding:16px 0;font-size:1rem;font-weight:600;color:rgba(255,255,255,0.7);text-decoration:none;border-bottom:1px solid rgba(255,255,255,0.06);transition:color 0.15s}
-.mobile-nav-inner a:hover,.mobile-nav-inner a.active{color:#fff}
-.mob-nav-footer{margin-top:24px;padding-top:20px;border-top:1px solid rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:space-between}
 .setup-content{flex:1;display:flex;flex-direction:column;align-items:center;padding:32px 20px 48px;max-width:880px;margin:0 auto;width:100%}
 .setup-heading{font-size:1.8rem;font-weight:900;color:#fff;margin-bottom:6px}
 .setup-hint{font-size:0.9rem;color:rgba(255,255,255,0.4);margin-bottom:28px}
@@ -313,13 +291,6 @@ button,input,textarea,select{font-family:inherit}
   .auth-heading{font-size:1.05rem}
   .auth-tab{padding:11px;font-size:0.84rem}
 
-  /* Setup topbar */
-  .setup-topbar{padding:10px 14px;gap:8px}
-  .setup-topbar .logo{font-size:0.9rem}
-  .setup-topbar .logo-icon-sm{width:24px;height:24px;font-size:0.75rem}
-  .user-pill{gap:6px;font-size:0.78rem}
-  .user-name{font-size:0.75rem;padding:2px 8px}
-
   /* Setup content */
   .setup-content{padding:20px 14px 36px}
   .setup-heading{font-size:1.3rem}
@@ -385,12 +356,88 @@ button,input,textarea,select{font-family:inherit}
   .auth-body{padding:16px 12px}
   .panel.transcript-panel{height:150px}
 }
+
+/* ══ SIDEBAR ══════════════════════════════════════════════════════════════════ */
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200;overflow:hidden}
+.sb:hover{overflow-y:auto}
+.sb-logo{display:flex;align-items:center;justify-content:center;width:40px;height:40px;border-radius:11px;background:linear-gradient(135deg,#4F46E5,#7C3AED);font-size:1.1rem;font-weight:900;color:#fff;text-decoration:none;margin-bottom:14px;flex-shrink:0}
+.sb-nav{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;width:100%;padding-bottom:6px}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,0.38);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 2px;font-family:inherit}
+.sb-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75)}
+.sb-item.active{background:rgba(79,70,229,0.18);color:#818CF8}
+.sb-item svg{flex-shrink:0}
+.sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;width:100%}
+/* Mobile dock */
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.07);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.mob-dock-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,0.35);text-decoration:none;font-size:0.55rem;font-weight:600;padding:6px 10px;border-radius:10px;transition:color 0.15s;border:none;background:none;cursor:pointer;font-family:inherit}
+.mob-dock-item.active,.mob-dock-item:hover{color:#818CF8}
+.mob-more-drawer{display:none;position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.1);z-index:199;padding:16px;display:none;flex-wrap:wrap;gap:8px;justify-content:center}
+.mob-more-drawer.open{display:flex}
+.mob-more-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.6rem;font-weight:600;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,0.05);min-width:60px;text-align:center}
+.mob-more-item:hover{background:rgba(79,70,229,0.15);color:#818CF8}
+/* ── Page layout shift ───────────────────────────────────────────────────────*/
+body{padding-left:72px}
+@media(max-width:768px){
+  .sb{display:none}
+  .mob-dock{display:flex}
+  body{padding-left:0;padding-bottom:60px}
+}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
 
 </head>
 <body>
+<!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
+<nav class="sb" id="sb">
+  <a href="/" class="sb-logo" title="Ambore Home">A</a>
+  <div class="sb-nav">
+    <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+    <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
+    <a href="/resume-builder" class="sb-item" title="Resume Tailor"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Tailor</span></a>
+    <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
+    <a href="/email" class="sb-item" title="Email Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+    <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+    <a href="/portfolio" class="sb-item" title="Portfolio Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Portfolio</span></a>
+    <a href="/interview" class="sb-item active" title="Interview AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Interview</span></a>
+    <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
+    <a href="/coding" class="sb-item" title="Coding AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
+    <a href="/english" class="sb-item" title="English AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
+    <a href="/project" class="sb-item" title="Build Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+    <a href="/learn" class="sb-item" title="Learn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>Learn</span></a>
+    <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+  </div>
+  <div class="sb-foot">
+    <a href="/help" class="sb-item" title="Help"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
+    <a href="/feedback" class="sb-item" title="Feedback"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Feedback</span></a>
+    <button class="sb-item sb-logout" onclick="logout()" title="Log Out"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Log Out</span></button>
+  </div>
+</nav>
+
+<!-- Mobile dock -->
+<div class="mob-dock" id="mob-dock">
+  <a href="/jobs" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+  <a href="/resume" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
+  <a href="/interview" class="mob-dock-item active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Interview</span></a>
+  <a href="/dashboard" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+  <button class="mob-dock-item" onclick="toggleMobMore()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+</div>
+<div class="mob-more-drawer" id="mob-more-drawer">
+  <a href="/resume-builder" class="mob-more-item"><span>✏️</span>Tailor</a>
+  <a href="/cover-letter" class="mob-more-item"><span>📝</span>Cover</a>
+  <a href="/email" class="mob-more-item"><span>✉️</span>Email</a>
+  <a href="/linkedin" class="mob-more-item"><span>💼</span>LinkedIn</a>
+  <a href="/ats-score" class="mob-more-item"><span>🎯</span>ATS</a>
+  <a href="/coding" class="mob-more-item"><span>💻</span>Coding</a>
+  <a href="/english" class="mob-more-item"><span>📖</span>English</a>
+  <a href="/project" class="mob-more-item"><span>🛠</span>Project</a>
+  <a href="/learn" class="mob-more-item"><span>🎓</span>Learn</a>
+  <a href="/portfolio" class="mob-more-item"><span>🌐</span>Portfolio</a>
+  <a href="/coaching" class="mob-more-item"><span>🏆</span>Coaching</a>
+  <a href="/help" class="mob-more-item"><span>❓</span>Help</a>
+  <a href="/feedback" class="mob-more-item"><span>💬</span>Feedback</a>
+  <button onclick="logout();toggleMobMore()" class="mob-more-item"><span>🚪</span>Log Out</button>
+</div>
 <!-- PROMO BANNER -->
 <div id="promo-banner" style="background:linear-gradient(90deg,#312e81,#1e3a5f);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;flex-wrap:wrap;position:relative">
   <span>&#128640; Struggling to get interviews? Get 1:1 career help &mdash; resume, LinkedIn, interview prep &amp; more</span>
@@ -439,57 +486,6 @@ button,input,textarea,select{font-family:inherit}
      SETUP SCREEN
 ══════════════════════════════════════ -->
 <div id="setup" class="setup-shell hidden">
-  <div class="setup-topbar">
-    <a href="/" class="logo" style="text-decoration:none;color:#fff"><div class="logo-icon-sm">A</div>Ambore<span style="font-size:0.7rem;font-weight:700;color:var(--accent);background:rgba(79,70,229,0.15);padding:2px 8px;border-radius:6px;margin-left:4px">AI</span></a>
-    <nav class="nav-links" id="desktop-nav">
-      <a href="/jobs">Jobs</a>
-      <a href="/resume">Resume</a>
-      <a href="/cover-letter">Cover Letter</a>
-      <a href="/email">Email</a>
-      <a href="/linkedin">LinkedIn</a>
-      <a href="/portfolio">Portfolio</a>
-      <a href="/interview">Interview AI</a>
-    <a href="/english">English AI</a>
-    <a href="/coding">Coding AI</a>
-      <a href="/project">Build Project</a>
-    <a href="/dashboard">Dashboard</a>
-    <a href="/help">Help</a>
-    <a href="/feedback">Feedback</a>
-      <a href="/certifications">Certifications</a>
-    <a href="/coaching">Coaching</a>
-    <a href="/ats-score" class="ats-nav-link">🎯 ATS</a>
-  </nav>
-        <div class="user-pill">
-      <span class="user-name" id="user-display"></span>
-      <button class="logout-btn" onclick="logout()">Log Out</button>
-    </div>
-    <button class="hamburger" id="hamburger" onclick="toggleMobileNav()" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-
-  <div class="mobile-nav hidden" id="mobile-nav">
-    <div class="mobile-nav-inner">
-      <a href="/jobs" onclick="closeMobileNav()">💼 Jobs</a>
-      <a href="/resume" onclick="closeMobileNav()">📄 Resume</a>
-      <a href="/cover-letter" onclick="closeMobileNav()">📝 Cover Letter</a>
-      <a href="/email" onclick="closeMobileNav()">✉️ Email</a>
-      <a href="/linkedin" onclick="closeMobileNav()">💼 LinkedIn</a>
-      <a href="/portfolio" onclick="closeMobileNav()">🌐 Portfolio</a>
-      <a href="/interview" onclick="closeMobileNav()">🎙 Interview AI</a>
-    <a href="/english" onclick="closeMobileNav()">🇬🇧 English AI</a>
-    <a href="/coding" onclick="closeMobileNav()">🖥 Coding AI</a>
-      <a href="/project" onclick="closeMobileNav()">🛠 Build Project</a>
-    <a href="/dashboard" onclick="closeMobileNav()">📊 Dashboard</a>
-    <a href="/help" onclick="closeMobileNav()">❓ Help</a>
-    <a href="/ats-score" onclick="closeMobileNav()">&#127919; ATS Score</a>
-      <a href="/feedback" onclick="closeMobileNav()">💬 Feedback</a>
-      <div class="mob-nav-footer">
-        <span id="mob-user-display" style="font-size:0.85rem;color:rgba(255,255,255,0.5)"></span>
-        <button onclick="logout()" style="background:none;border:1px solid rgba(255,255,255,0.15);border-radius:7px;color:rgba(255,255,255,0.4);font-size:0.8rem;padding:6px 12px;cursor:pointer;">Log Out</button>
-      </div>
-    </div>
-  </div>
   <div class="setup-content">
     <h1 class="setup-heading">Start your interview prep journey</h1>
     <p class="setup-hint">Upload your resume, job description, and target company — Ambore will coach you from prep to offer letter.</p>
@@ -731,8 +727,6 @@ function handleSignup() {
     successEl.style.borderColor = '';
   }, 1500);
 }
-function toggleMobileNav(){const nav=document.getElementById('mobile-nav');nav.classList.toggle('hidden');document.body.style.overflow=nav.classList.contains('hidden')?'':'hidden';}
-function closeMobileNav(){document.getElementById('mobile-nav').classList.add('hidden');document.body.style.overflow='';}
 function logout() {
   Auth.logout();
   // Redirect to login page
@@ -759,9 +753,7 @@ function showSetup() {
     document.getElementById('auth').classList.remove('hidden');
     return;
   }
-  document.getElementById('user-display').textContent = '👋 ' + user.name.split(' ')[0];
-  const mobUser=document.getElementById('mob-user-display');if(mobUser)mobUser.textContent=user.name?.split(' ')[0]||'';
-  const path=window.location.pathname;document.querySelectorAll('#desktop-nav a,.mobile-nav-inner a').forEach(a=>{if(a.getAttribute('href')===path)a.classList.add('active');});
+  const nameEl = document.getElementById('user-display'); if(nameEl) nameEl.textContent = '👋 ' + user.name.split(' ')[0];
   document.getElementById('auth').classList.add('hidden');
   document.getElementById('session').classList.add('hidden');
   document.getElementById('setup').classList.remove('hidden');
@@ -1765,6 +1757,9 @@ function showToast(msg){
   t.textContent=msg; document.body.appendChild(t);
   setTimeout(()=>t.remove(),5000);
 }
+
+function toggleMobMore(){const d=document.getElementById('mob-more-drawer');d.classList.toggle('open');}
+document.addEventListener('click',function(e){const d=document.getElementById('mob-more-drawer');if(d&&d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.mob-dock')){d.classList.remove('open');}});
 
 /* ═══════════════════════════════════════════
    BOOT — runs immediately (script is at end of body, DOM is ready)
