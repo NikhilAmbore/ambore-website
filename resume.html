@@ -34,6 +34,17 @@ window.onerror = (msg, src, line, col, err) => {
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<!-- SEO + OG -->
+<link rel="canonical" href="https://ambore.org/resume"/>
+<meta property="og:type" content="website"/>
+<meta property="og:url" content="https://ambore.org/resume"/>
+<meta property="og:title" content="Ambore — AI Resume Tailor | ATS-Optimized in Seconds"/>
+<meta property="og:description" content="Upload your resume and paste any job description. Ambore AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
+<meta property="og:image" content="https://ambore.org/og-image.png"/>
+<meta property="og:site_name" content="Ambore"/>
+<meta name="twitter:card" content="summary_large_image"/>
+<meta name="twitter:title" content="Ambore — AI Resume Tailor | ATS-Optimized in Seconds"/>
+<meta name="twitter:description" content="Upload your resume and paste any job description. Ambore AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
 <title>Ambore — AI Resume Tailor | ATS-Optimized in Seconds</title>
 <meta name="description" content="Upload your resume and paste any job description. Ambore AI tailors your resume to match keywords, beat ATS, and land more interviews — free."/>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
@@ -281,6 +292,18 @@ button,input,textarea,select{font-family:inherit}
 .gen-status{font-size:0.72rem;padding:3px 10px;border-radius:10px;font-weight:600}
 .gen-status.thinking{color:var(--yellow);background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2)}
 .gen-status.done{color:var(--green);background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2)}
+
+/* Step progress bar */
+.gen-steps{display:flex;align-items:center;gap:0;padding:12px 20px;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.06);overflow-x:auto}
+.gen-steps.hidden{display:none}
+.gen-step{display:flex;align-items:center;gap:6px;font-size:0.72rem;font-weight:600;color:rgba(255,255,255,0.25);white-space:nowrap;transition:color .3s}
+.gen-step .step-dot{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);display:flex;align-items:center;justify-content:center;font-size:0.6rem;transition:all .3s;flex-shrink:0}
+.gen-step.active{color:rgba(251,191,36,0.9)}
+.gen-step.active .step-dot{border-color:rgba(251,191,36,0.7);background:rgba(251,191,36,0.1);animation:pulse-dot 1.2s ease-in-out infinite}
+.gen-step.done{color:rgba(34,197,94,0.8)}
+.gen-step.done .step-dot{border-color:rgba(34,197,94,0.7);background:rgba(34,197,94,0.15);color:rgba(34,197,94,0.9)}
+.gen-step-sep{width:28px;height:1px;background:rgba(255,255,255,0.1);flex-shrink:0;margin:0 4px}
+@keyframes pulse-dot{0%,100%{box-shadow:0 0 0 0 rgba(251,191,36,0.3)}50%{box-shadow:0 0 0 4px rgba(251,191,36,0)}}
 
 /* Print styles for PDF export — clean, no browser headers/footers */
 @page{
@@ -672,6 +695,17 @@ body{padding-left:72px}
       </div>
     </div>
 
+
+    <!-- Step progress (shown during generation) -->
+    <div class="gen-steps hidden" id="gen-steps">
+      <div class="gen-step" id="gstep-0"><div class="step-dot">1</div>Parsing resume</div>
+      <div class="gen-step-sep"></div>
+      <div class="gen-step" id="gstep-1"><div class="step-dot">2</div>Matching to job</div>
+      <div class="gen-step-sep"></div>
+      <div class="gen-step" id="gstep-2"><div class="step-dot">3</div>Optimizing keywords</div>
+      <div class="gen-step-sep"></div>
+      <div class="gen-step" id="gstep-3"><div class="step-dot">✓</div>Writing resume</div>
+    </div>
 
     <div class="resume-preview tpl-classic" id="resume-output"></div>
   </div>
@@ -1232,6 +1266,7 @@ async function generateResume() {
   const output = document.getElementById('resume-output');
   output.innerHTML = '<span class="cursor"></span>';
   setGenStatus('thinking', generateMode === 'transform' ? 'Transforming your resume...' : 'Analyzing resume & JD...');
+  showGenSteps();
 
   const _ctrl = new AbortController();
   const _ctrlTimer = setTimeout(() => _ctrl.abort(), 90000);
@@ -1271,6 +1306,7 @@ async function generateResume() {
         }
 
         setGenStatus('thinking', 'Writing tailored resume...');
+        advanceToWritingStep();
         const reader = res.body.getReader();
         const decoder = new TextDecoder();
         let buf = '';
@@ -1299,8 +1335,9 @@ async function generateResume() {
 
         // Final render without cursor
         output.innerHTML = renderMarkdown(generatedMarkdown);
+        hideGenSteps();
         setGenStatus('done', 'Complete');
-        setTimeout(() => setGenStatus('', ''), 4000);
+        setTimeout(() => { setGenStatus('', ''); hideGenSteps(); }, 4000);
 
         break; // success — exit retry loop
 
@@ -1322,6 +1359,7 @@ async function generateResume() {
   } catch (err) {
     output.innerHTML = `<p style="color:var(--red);padding:20px">Error: ${err.message}<br><br><small style="opacity:0.6">Check your internet connection and try again.</small></p>`;
     setGenStatus('', '');
+    hideGenSteps();
     showToast('Generation failed: ' + err.message);
   } finally {
     clearTimeout(_ctrlTimer);
@@ -1425,6 +1463,57 @@ function setGenStatus(type, text) {
   if (!type) { el.className = 'gen-status'; el.textContent = ''; return; }
   el.className = 'gen-status ' + type;
   el.textContent = text;
+}
+
+/* ═══════════════════════════════════════════
+   STEP PROGRESS
+═══════════════════════════════════════════ */
+let _stepTimer = null;
+function showGenSteps() {
+  const bar = document.getElementById('gen-steps');
+  if (!bar) return;
+  bar.classList.remove('hidden');
+  for (let i = 0; i < 4; i++) {
+    const s = document.getElementById('gstep-' + i);
+    if (s) { s.className = 'gen-step'; s.querySelector('.step-dot').textContent = i === 3 ? '✓' : i + 1; }
+  }
+  _advanceStep(0);
+}
+function _advanceStep(idx) {
+  if (idx >= 4) return;
+  const s = document.getElementById('gstep-' + idx);
+  if (!s) return;
+  s.classList.add('active');
+  // Mark previous steps done
+  for (let i = 0; i < idx; i++) {
+    const prev = document.getElementById('gstep-' + i);
+    if (prev) { prev.className = 'gen-step done'; prev.querySelector('.step-dot').textContent = '✓'; }
+  }
+  // Auto-advance through first 3 steps on a timer; step 3 advances when streaming starts
+  const delays = [900, 1400, 1600];
+  if (idx < 3) {
+    _stepTimer = setTimeout(() => _advanceStep(idx + 1), delays[idx]);
+  }
+}
+function advanceToWritingStep() {
+  // Called when SSE streaming starts — mark steps 0-2 done, activate step 3
+  clearTimeout(_stepTimer);
+  for (let i = 0; i < 3; i++) {
+    const s = document.getElementById('gstep-' + i);
+    if (s) { s.className = 'gen-step done'; s.querySelector('.step-dot').textContent = '✓'; }
+  }
+  const s3 = document.getElementById('gstep-3');
+  if (s3) s3.classList.add('active');
+}
+function hideGenSteps() {
+  clearTimeout(_stepTimer);
+  const bar = document.getElementById('gen-steps');
+  if (bar) bar.classList.add('hidden');
+  // Mark all done briefly
+  for (let i = 0; i < 4; i++) {
+    const s = document.getElementById('gstep-' + i);
+    if (s) { s.className = 'gen-step done'; s.querySelector('.step-dot').textContent = '✓'; }
+  }
 }
 
 /* ═══════════════════════════════════════════
