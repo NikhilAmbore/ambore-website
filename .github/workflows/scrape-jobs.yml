@@ -34,7 +34,7 @@ jobs:
   scrape:
     name: Scrape & Publish Jobs
     runs-on: ubuntu-latest
-    timeout-minutes: 90   # Raised from 55 — scraper takes ~55min, needs buffer for push
+    timeout-minutes: 180  # Raised to 180 — full run takes ~2h with Workday/Himalayas
 
     steps:
       - name: Checkout repository
@@ -77,7 +77,7 @@ jobs:
           # (now-stale) local jobs.json — we do a proper merge below.
           python backend/job_scraper.py \
             --output /tmp/fresh_jobs.json \
-            --skip-ats apify,adzuna,serpapi \
+            --skip-ats apify,adzuna,serpapi,dice,himalayas,arbeitnow \
             $VERBOSE_FLAG $SINCE_FLAG
 
           echo "=== Fresh jobs scraped this run ==="
