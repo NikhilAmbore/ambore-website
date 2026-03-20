@@ -542,17 +542,17 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       <p class="sec-sub" style="margin:0 auto">Paste a job description below. See exactly where your resume stands — before you even create an account.</p>
     </div>
     <div class="prev-card rev r1">
-      <div class="prev-inputs" id="prev-inputs">
+      <div id="prev-inputs" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
         <div>
           <label class="prev-lbl">📋 Job Description <span style="font-weight:400;color:rgba(255,255,255,.25)">(required)</span></label>
-          <textarea id="prev-jd" class="prev-ta" rows="5" placeholder="Paste the full job description here. The more detail, the better the analysis..."></textarea>
+          <textarea id="prev-jd" class="prev-ta" rows="5" placeholder="Paste the full job description here. The more detail, the better the analysis..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.85rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"></textarea>
         </div>
         <div>
           <label class="prev-lbl">📄 Your Resume Text <span style="font-weight:400;color:rgba(255,255,255,.25)">(optional — for accuracy)</span></label>
-          <textarea id="prev-resume" class="prev-ta" rows="5" placeholder="Paste your resume text here to see exactly what's missing and what matches..."></textarea>
+          <textarea id="prev-resume" class="prev-ta" rows="5" placeholder="Paste your resume text here to see exactly what's missing and what matches..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.85rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"></textarea>
         </div>
       </div>
-      <button id="prev-btn" class="prev-btn" onclick="runFreePreview()">🔍 Analyze My Resume Score — Free →</button>
+      <button id="prev-btn" class="prev-btn" onclick="runFreePreview()" style="width:100%;padding:14px;background:#f97316;color:#fff;border:none;border-radius:10px;font-size:.96rem;font-weight:700;cursor:pointer;min-height:50px">🔍 Analyze My Resume Score — Free →</button>
       <!-- Loading -->
       <div id="prev-loading" style="display:none;text-align:center;padding:36px 0">
         <div class="prev-spinner"></div>
