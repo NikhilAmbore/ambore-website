@@ -577,10 +577,10 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
           <!-- Visible insights (2) -->
           <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:10px">Key Findings</div>
           <div id="prev-vis"></div>
-          <!-- Blurred locked insights -->
-          <div style="position:relative;margin-top:4px">
+          <!-- Blurred locked insights (hidden for logged-in users via JS) -->
+          <div style="position:relative;margin-top:4px" id="prev-lock-wrap">
             <div style="filter:blur(5px);pointer-events:none;user-select:none" id="prev-blr"></div>
-            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,transparent 0%,rgba(17,24,39,.97) 40%);border-radius:12px;padding:24px 20px">
+            <div id="prev-lock" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,transparent 0%,rgba(17,24,39,.97) 40%);border-radius:12px;padding:24px 20px">
               <div style="font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:6px;text-align:center">🔒 Unlock Your Full Analysis</div>
               <p style="font-size:.82rem;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;max-width:340px;line-height:1.6">See all insights, missing keywords list, ATS fix checklist, and your personalised improvement plan — <strong style="color:#fff">completely free</strong>.</p>
               <button onclick="openAuth('signup')" style="padding:13px 30px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(249,115,22,.4);transition:all .2s" onmouseover="this.style.background='#ea580c'" onmouseout="this.style.background='var(--orange)'">Create Free Account → See Full Results</button>
@@ -1242,8 +1242,29 @@ function _showPreviewResults(jd,resume){
   all.push(ins('info','💡','<strong>Summary section can be stronger.</strong> A role-specific professional summary increases recruiter engagement by 3×. Yours appears generic or missing.'));
   all.push(ins('good','📈','<strong>Full optimisation plan ready.</strong> Ambore AI will rewrite your resume for this exact role — adding all missing keywords, rewriting bullets with impact, and formatting for ATS pass-through.'));
   var vis=document.getElementById('prev-vis'),blr=document.getElementById('prev-blr');
-  vis.innerHTML=all.slice(0,2).join('');
-  blr.innerHTML=all.slice(2).join('');
+  var loggedIn=!!getSession();
+  if(loggedIn){
+    // User is already logged in — show all insights unblurred, replace lock with CTA to the tool
+    vis.innerHTML=all.join('');
+    blr.innerHTML='';
+    var lock=document.getElementById('prev-lock');
+    if(lock)lock.style.display='none';
+    var wrap=document.getElementById('prev-lock-wrap');
+    if(wrap)wrap.style.display='none';
+    // Show a direct CTA to the full tool instead
+    var prevRes=document.getElementById('prev-results');
+    var existing=document.getElementById('prev-logged-cta');
+    if(!existing){
+      var cta=document.createElement('div');
+      cta.id='prev-logged-cta';
+      cta.style.cssText='text-align:center;margin-top:20px;padding-top:16px;border-top:1px solid rgba(255,255,255,.08)';
+      cta.innerHTML='<a href="/resume" style="display:inline-flex;align-items:center;gap:8px;padding:13px 30px;background:var(--orange);color:#fff;border-radius:10px;font-size:.92rem;font-weight:700;text-decoration:none;box-shadow:0 4px 24px rgba(249,115,22,.4)">✂️ Tailor My Resume for This Job →</a><p style="font-size:.72rem;color:rgba(255,255,255,.28);margin-top:9px">Full AI rewrite · ATS keywords · Free</p>';
+      prevRes.querySelector('div').appendChild(cta);
+    }
+  } else {
+    vis.innerHTML=all.slice(0,2).join('');
+    blr.innerHTML=all.slice(2).join('');
+  }
   document.getElementById('prev-results').style.display='block';
   document.getElementById('prev-results').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
