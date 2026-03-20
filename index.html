@@ -1464,6 +1464,10 @@ function escHtml(s){
 
 // ── Auth modal ────────────────────────────────────────────────────────────────
 function openAuth(tab){
+  // Already logged in — signup CTAs go straight to the tool instead of modal
+  if((tab==='signup'||tab==='register')&&getSession()){
+    window.location.href='/resume';return;
+  }
   var ov=document.getElementById('auth-ov');
   ov.classList.add('open');ov.style.display='';
   document.body.style.overflow='hidden';
