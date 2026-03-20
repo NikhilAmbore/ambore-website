@@ -924,7 +924,7 @@ function renderExec(d) {
 }
 
 /* ── AI CALLS ── */
-async function callAI(prompt) {
+async function callAI(prompt, onChunk) {
   const s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
   const headers = { 'Content-Type': 'application/json' };
   if (s?.id) headers['X-User-ID'] = s.id;
@@ -934,13 +934,33 @@ async function callAI(prompt) {
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 600,
+      stream: true,
       messages: [{ role: 'user', content: prompt }],
       system: 'You are a professional resume writer. Be concise, use strong action verbs, and focus on measurable impact. Output only the requested text — no explanation, no preamble.'
     })
   });
   if (!res.ok) throw new Error('AI error ' + res.status);
-  const json = await res.json();
-  return json.content?.[0]?.text?.trim() || '';
+  const reader = res.body.getReader();
+  const dec = new TextDecoder();
+  let buf = '', full = '';
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buf += dec.decode(value, { stream: true });
+    const lines = buf.split('\n');
+    buf = lines.pop();
+    for (const line of lines) {
+      if (!line.startsWith('data:')) continue;
+      const data = line.slice(5).trim();
+      if (data === '[DONE]') break;
+      try {
+        const ev = JSON.parse(data);
+        const txt = ev.delta?.text || ev.content?.[0]?.text || '';
+        if (txt) { full += txt; if (onChunk) onChunk(full); }
+      } catch {}
+    }
+  }
+  return full.trim();
 }
 
 async function generateSummary() {
@@ -956,8 +976,8 @@ async function generateSummary() {
   btn.disabled = true;
   btn.textContent = '⏳ Generating…';
   try {
-    const result = await callAI(`Write a 3-sentence professional resume summary for this person:\n${context}\n\nOutput only the summary paragraph.`);
-    document.getElementById('f-summary').value = result;
+    const ta = document.getElementById('f-summary');
+    await callAI(`Write a 3-sentence professional resume summary for this person:\n${context}\n\nOutput only the summary paragraph.`, t => { ta.value = t; liveUpdate(); });
     liveUpdate();
     showToast('Summary generated!');
   } catch (err) {
@@ -977,8 +997,8 @@ async function enhanceBullets(id) {
   btn.disabled = true;
   btn.textContent = '⏳ Enhancing…';
   try {
-    const result = await callAI(`Rewrite these job bullet points for a ${title || 'professional'} at ${company || 'a company'} to be more impactful. Use strong action verbs, add metrics where reasonable, keep each bullet under 20 words. Output ONLY the bullets, one per line, starting with "- ":\n\n${rawBullets}`);
-    document.getElementById('exp-bullets-' + id).value = result;
+    const ta = document.getElementById('exp-bullets-' + id);
+    await callAI(`Rewrite these job bullet points for a ${title || 'professional'} at ${company || 'a company'} to be more impactful. Use strong action verbs, add metrics where reasonable, keep each bullet under 20 words. Output ONLY the bullets, one per line, starting with "- ":\n\n${rawBullets}`, t => { ta.value = t; liveUpdate(); });
     liveUpdate();
     showToast('Bullets enhanced!');
   } catch (err) {
