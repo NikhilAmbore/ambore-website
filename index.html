@@ -666,7 +666,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
         <div class="star-row" id="sr4"><div class="star-lbl">Result</div><div class="star-txt">We shipped on time with zero incidents. Latency dropped 40% and the migration became the template for two subsequent upgrades.<span class="cur"></span></div></div>
       </div>
     </div>
-    <div class="demo-cta rev"><a href="javascript:void(0)" onclick="openAuth('signup')" class="btn-orange" style="display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:14px 32px;font-size:.95rem">🚀 Start Free — No Credit Card →</a></div>
+    <div class="demo-cta rev"><a href="javascript:void(0)" onclick="ctaAction()" class="btn-orange" id="demo-cta-btn" style="display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:14px 32px;font-size:.95rem">🚀 Start Free — No Credit Card →</a></div>
   </div>
 </div>
 
@@ -721,7 +721,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       </div>
     </div>
     <div style="text-align:center;margin-top:36px" class="rev">
-      <button class="btn-orange" onclick="openAuth('signup')" style="min-height:50px;padding:14px 36px;font-size:.96rem">🚀 Try It Free — No Credit Card →</button>
+      <button class="btn-orange" onclick="ctaAction()" id="howitworks-cta-btn" style="min-height:50px;padding:14px 36px;font-size:.96rem">🚀 Try It Free — No Credit Card →</button>
     </div>
   </div>
 </section>
@@ -993,7 +993,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px">Free — Forever</div>
         <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$0</div>
         <div style="font-size:.82rem;color:rgba(255,255,255,.35);margin-bottom:24px">No credit card · No trial</div>
-        <button class="btn-orange" onclick="openAuth('signup')" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px">Start Free →</button>
+        <button class="btn-orange" onclick="ctaAction()" id="pricing-cta-btn" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px">Start Free →</button>
         <div style="display:flex;flex-direction:column;gap:10px">
           <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:4px">What's included</div>
           <div class="price-feat">✅ AI Resume Tailor (unlimited)</div>
@@ -1640,6 +1640,10 @@ function updateNavCta(){
 }
 
 // ── Hero CTA state ────────────────────────────────────────────────────────────
+function ctaAction(){
+  if(getSession()){track('hero_cta_click','index',{cta:'loggedin'});window.location.href='/resume';}
+  else{track('hero_cta_click','index',{cta:'primary'});openAuth('signup');}
+}
 function updatePageAuth(){
   var sess=getSession();
   var hCta=document.getElementById('hero-cta');
@@ -1652,6 +1656,13 @@ function updatePageAuth(){
       hCta.onclick=function(){track('hero_cta_click','index',{cta:'primary'});openAuth('signup');};
     }
   }
+  // Update all secondary CTAs
+  ['demo-cta-btn','howitworks-cta-btn','pricing-cta-btn'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    if(sess){el.textContent='✂️ AI Resume Tailor →';}
+    else{el.textContent=el.id==='pricing-cta-btn'?'Start Free →':'🚀 Start Free — No Credit Card →';}
+  });
 }
 
 // After signup/login redirect to resume optimizer
