@@ -461,7 +461,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       <div class="nav-actions">
         <div id="nav-cta-auth" style="display:flex;align-items:center;gap:8px">
           <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login')">Log In</a>
-          <a href="javascript:void(0)" class="btn-blue" onclick="openAuth('signup')">Get Started Free</a>
+          <a href="javascript:void(0)" class="btn-blue" onclick="track('hero_cta_click','index',{cta:'nav'});openAuth('signup')">Get Started Free</a>
         </div>
         <div id="nav-cta-user" style="display:none;align-items:center;gap:8px">
           <span class="nav-uname">Hi, <span id="nav-user-name"></span></span>
@@ -511,10 +511,10 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
     <div class="hero-inner">
       <div class="hero-badge"><span class="badge-dot"></span>✨ Free AI Resume Optimizer — Trusted by 12,000+ Job Seekers</div>
       <h1>Free AI Resume Optimizer<br><span class="accent">No Credit Card Required</span></h1>
-      <p class="hero-sub">Tailor your resume to any job in seconds using AI. Get more interviews, faster.</p>
+      <p class="hero-sub">Paste any job description → get your ATS match score, missing keywords, and an interview-ready resume. Free, no sign-up to preview, results in 60 seconds.</p>
       <div class="hero-ctas">
-        <button class="btn-hero-p" id="hero-cta" onclick="openAuth('signup')">🚀 Start Free →</button>
-        <button class="btn-hero-g" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
+        <button class="btn-hero-p" id="hero-cta" onclick="track('hero_cta_click','index',{cta:'primary'});openAuth('signup')">🔍 Check My Resume Score →</button>
+        <button class="btn-hero-g" onclick="track('hero_cta_click','index',{cta:'jobs'});goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
       </div>
       <div class="hero-trust">
         <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
@@ -1622,10 +1622,10 @@ function updatePageAuth(){
   if(hCta){
     if(sess){
       hCta.textContent='✂️ Tailor My Resume →';
-      hCta.onclick=function(){window.location.href='/resume-builder';};
+      hCta.onclick=function(){track('hero_cta_click','index',{cta:'loggedin'});window.location.href='/resume-builder';};
     } else {
-      hCta.textContent='🚀 Start Free →';
-      hCta.onclick=function(){openAuth('signup');};
+      hCta.textContent='🔍 Check My Resume Score →';
+      hCta.onclick=function(){track('hero_cta_click','index',{cta:'primary'});openAuth('signup');};
     }
   }
 }

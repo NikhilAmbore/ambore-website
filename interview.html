@@ -48,7 +48,7 @@ window.onerror = (msg, src, line, col, err) => {
 <meta name="twitter:title" content="Ambore — AI Mock Interview Practice | Free Interview Prep"/>
 <meta name="twitter:description" content="Practice behavioral, technical, and HR interviews with AI. Get STAR-format answers instantly. For practice purposes only — completely free."/>
 <meta name="description" content="Practice interviews with AI. Real-time voice Q&amp;A, STAR method coaching, coding interview help, and instant feedback to ace your next job interview."/>
-<title>Ambore — AI Interview Assistant</title>
+<title>Ambore — AI Mock Interview Practice | Free Interview Prep</title>
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'><stop offset='0%25' stop-color='%234F46E5'/><stop offset='100%25' stop-color='%237C3AED'/></linearGradient></defs><rect width='100' height='100' rx='22' fill='url(%23g)'/><text x='50' y='72' font-size='62' font-family='Arial,sans-serif' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -498,8 +498,8 @@ body{padding-left:72px}
 ══════════════════════════════════════ -->
 <div id="setup" class="setup-shell hidden">
   <div class="setup-content">
-    <h1 class="setup-heading">Start your interview prep journey</h1>
-    <p class="setup-hint">Upload your resume, job description, and target company — Ambore will coach you from prep to offer letter.</p>
+    <h1 class="setup-heading">Practice Your Interview with AI</h1>
+    <p class="setup-hint">Choose a role, add your resume and job description — Ambore generates realistic questions and STAR-format model answers. For practice only, not real-time assistance.</p>
 
     <div class="setup-row">
       <div class="setup-field"><label>Job Role</label><input type="text" id="s-role" placeholder="e.g. Software Engineer"/></div>
@@ -562,6 +562,7 @@ body{padding-left:72px}
     <div class="sess-meta">
       <span class="sess-badge" id="sess-round">Interview</span>
       <span class="sess-badge" id="sess-role"></span>
+      <span class="sess-badge" style="color:#fbbf24;border-color:rgba(251,191,36,0.3);background:rgba(251,191,36,0.08)" title="This tool is for interview practice only, not real-time exam assistance">🎓 Practice Mode</span>
     </div>
     <div class="sess-right">
       <div class="countdown" id="countdown" title="Elapsed time — no limit">00:00</div>
@@ -569,9 +570,9 @@ body{padding-left:72px}
         <div class="mic-dot" id="mic-dot"></div>
       </div>
       <button class="btn-listen" id="btn-listen" onclick="toggleListen()">● Start Listening</button>
-      <button class="btn-screen" id="btn-screen" onclick="captureScreen()">📸 Analyze Screen</button>
+      <button class="btn-screen" id="btn-screen" onclick="captureScreen()" title="Capture your screen to give AI more context for coaching">📸 Add Context</button>
       <div class="screen-dot" id="screen-dot" title="System audio activity"></div>
-      <button class="btn-share" id="btn-share" onclick="toggleScreenShare()">🖥 Share Screen</button>
+      <button class="btn-share" id="btn-share" onclick="toggleScreenShare()" title="Share your screen so AI can see the question and give better practice feedback">🖥 Share Screen</button>
       <button class="btn-end" onclick="endSession(false)">End Session</button>
     </div>
   </div>
@@ -1352,7 +1353,7 @@ async function startScreenShare() {
     // Auto-stop if user dismisses browser share UI
     screenStream.getVideoTracks()[0]?.addEventListener('ended', stopScreenShare);
 
-    showToast('🖥 Screen sharing active — AI sees your screen on every answer');
+    showToast('🖥 Screen sharing active — AI uses your screen for practice coaching context');
 
     // Optional: visualise system audio activity in the screen-dot
     const audioTracks = screenStream.getAudioTracks();

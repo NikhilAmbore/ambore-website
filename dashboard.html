@@ -162,6 +162,8 @@ a{text-decoration:none;color:inherit}
 .empty-icon{font-size:2.5rem;margin-bottom:12px;opacity:0.4}
 .empty-state h3{font-size:1rem;font-weight:700;color:rgba(255,255,255,0.5);margin-bottom:6px}
 .empty-state p{font-size:0.85rem;line-height:1.6}
+.empty-cta{display:inline-flex;align-items:center;gap:6px;margin-top:16px;padding:9px 20px;border-radius:8px;background:var(--grad);color:#fff;font-size:0.82rem;font-weight:700;text-decoration:none;transition:opacity .2s}
+.empty-cta:hover{opacity:.85}
 
 /* ═══ RESUME CARDS ═══ */
 .resume-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
@@ -609,7 +611,8 @@ body{padding-left:72px}
     <div id="app-empty" class="empty-state hidden">
       <div class="empty-icon">📋</div>
       <h3>No applications yet</h3>
-      <p>Start logging your job applications to track your progress.</p>
+      <p>Log jobs you've applied to and track where each one stands.</p>
+      <a href="/jobs" class="empty-cta">Browse Jobs → Start Applying</a>
     </div>
   </div>
 
@@ -1088,7 +1091,8 @@ function renderResumes() {
     grid.innerHTML = `<div class="empty-state" style="grid-column:1/-1">
       <div class="empty-icon">📄</div>
       <h3>No resumes yet</h3>
-      <p>Drop a PDF/DOCX above to upload, or click "+ Add Resume" to paste content manually.</p>
+      <p>Upload a resume to track your versions and compare ATS scores over time.</p>
+      <a href="/resume" class="empty-cta">✨ Tailor My Resume Now</a>
     </div>`;
     return;
   }
@@ -1565,7 +1569,11 @@ function renderAnalytics() {
     container.innerHTML = `<div class="empty-state">
       <div class="empty-icon">📊</div>
       <h3>No data yet</h3>
-      <p>Add resumes and applications to see your analytics.</p>
+      <p>Your analytics will appear once you add resumes and log applications.</p>
+      <div style="display:flex;gap:10px;justify-content:center;margin-top:16px">
+        <a href="/resume" class="empty-cta">✨ Analyze Resume</a>
+        <a href="/jobs" class="empty-cta" style="background:rgba(79,70,229,0.3);box-shadow:none">💼 Find Jobs</a>
+      </div>
     </div>`;
     return;
   }
@@ -2000,7 +2008,8 @@ function renderSavedJobs() {
     list.innerHTML = `<div class="empty-state">
       <div class="empty-icon">🔖</div>
       <h3>${sjFilter !== 'all' ? 'No ' + sjFilter.replace('-',' ') + ' jobs' : 'No saved jobs yet'}</h3>
-      <p>Browse jobs and click ⊕ Save to track them here.</p>
+      <p>Save jobs while browsing so you can track and apply from one place.</p>
+      <a href="/jobs" class="empty-cta">💼 Browse 50,000+ Jobs</a>
     </div>`;
     return;
   }
