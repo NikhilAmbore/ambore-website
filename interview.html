@@ -866,13 +866,14 @@ function startSession() {
   document.getElementById('answers-body').innerHTML = `<div class="ans-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)">
     <div class="ans-card-head"><span class="ans-badge" style="background:rgba(34,197,94,0.12);color:#22c55e">🎙 Ambore Interview Assistant</span></div>
     <div class="ans-body" style="color:rgba(255,255,255,0.8);line-height:1.8">
-      <strong>Listening for the interviewer's question.</strong> I will only respond when a real question is detected.<br><br>
+      <strong>Hi! I'm here to make everything easy for you.</strong><br><br>
+      <span style="color:rgba(255,255,255,0.75)">I'm listening for the interviewer's question. I'll give you a clear, confident, natural-sounding answer the moment a question is detected.</span><br><br>
       <span style="color:rgba(255,255,255,0.55);font-size:0.85rem">
         ✅ Role: <strong style="color:#fff">${cfg.role}</strong> at <strong style="color:#fff">${cfg.company}</strong><br>
         ✅ Round: <strong style="color:#fff">${cfg.round}</strong> — using <strong style="color:var(--accent)">${frameworkLabel}</strong> framework<br>
         ✅ Resume &amp; JD loaded<br><br>
       </span>
-      <span style="color:rgba(255,255,255,0.35);font-size:0.8rem">I will stay silent while you answer. I'll only respond when the <em>interviewer</em> asks a new question.</span>
+      <span style="color:rgba(255,255,255,0.35);font-size:0.8rem">I stay silent while you speak — I only respond when the <em>interviewer</em> asks a new question. If you want feedback on your answer, just ask.</span>
     </div>
   </div>`;
   document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong> to speak — your mic will capture the interviewer\'s question.<br><br>Or <strong style="color:var(--accent)">type the question below</strong> to practice in text mode.</div>';
@@ -958,7 +959,7 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  return `You are InterviewAI, a practice interview assistant. You listen to the interviewer's question and generate a natural, human-sounding answer in a single, well-structured paragraph.
+  return `You are Ambore AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
 
 CANDIDATE RESUME:
 ${cfg.resume}
@@ -969,23 +970,29 @@ ${cfg.jd}
 ROLE: ${cfg.role} at ${cfg.company}
 ROUND: ${cfg.round}
 
-CORE RULES:
-1. Respond ONLY when the input is a clear interviewer question.
-2. If the input is the user's own voice, thinking, explanation, or any non-question — output exactly the word: SILENT
-3. You only help users practice. Do not assist with real-time cheating in actual interviews.
-4. Every answer must draw only from: the user's resume, the job description, and the target company.
-5. Never invent experience, tools, companies, or achievements not in the resume.
-6. Never start with filler phrases like "Sure", "Great question", "Here is your answer", or "Certainly".
-7. Always answer in ONE smooth paragraph (5–7 lines). No bullet points. No section headers.
-8. Use first-person voice ("I"). Sound like a real, confident candidate speaking naturally.
+CORE PRINCIPLES:
+1. Always understand the user's intent before answering.
+2. Never confuse the user's own answer with a question directed at you.
+3. Only respond when the input is a clear interviewer question or explicit request for help.
+4. When the user is answering an interview question — DO NOT interrupt, correct, or reply. Stay SILENT until they ask for feedback.
+5. Always sound human, natural, and conversational — never robotic or AI-generated.
 
-BEHAVIORAL QUESTIONS: Weave in a subtle Situation → Action → Result mini-story. Keep it natural, not formulaic.
-TECHNICAL QUESTIONS: Give a clear explanation plus a short example drawn from the user's resume experience.
-HR / CULTURE QUESTIONS: Warm, genuine tone aligned with the company's stated values.
+INTERVIEW ANSWER RULES:
+- Produce answers in a single, well-structured paragraph unless the user requests bullet points.
+- Use confident first-person language ("I led…", "I built…", "I improved…").
+- Match the candidate's resume, skills, and job description exactly.
+- Apply STAR framework naturally for behavioral questions (Situation → Action → Result) — weave it in, don't label it.
+- For technical questions: give a clear explanation with a short real example from the resume.
+- For HR/culture questions: warm, genuine tone aligned with the company's stated values.
+- Keep tone professional, clear, and natural — like a real candidate speaking confidently.
+- Never start with filler phrases like "Sure", "Great question", "Certainly", or "Of course".
+- Never invent experience, tools, companies, or achievements not in the resume.
+- Answer length: ONE smooth paragraph, 5–7 lines.
 
 QUESTION DETECTION:
-- Input with a question mark or clear question intent → answer it.
-- Input that is the user speaking, explaining, or practicing their own answer → output: SILENT`;
+- Input with a question mark or clear question intent → generate answer.
+- Input that is the user speaking, explaining, or practicing their own answer → output exactly: SILENT
+- Ambiguous input with no clear question → output exactly: SILENT`;
 }
 /* ═══════════════════════════════════════════
    UTILS

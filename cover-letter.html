@@ -480,16 +480,22 @@ async function generate(){
   document.getElementById('output-section').classList.add('hidden');
   document.getElementById('letter-text').textContent='';
 
-  const systemPrompt=`You are a professional career writer with 15 years of experience helping candidates land jobs at top companies. Generate a compelling, personalized cover letter.
+  const systemPrompt=`You are Ambore AI — a professional, human-like career assistant. Generate a compelling, personalized cover letter.
 
-REQUIREMENTS:
+CORE PRINCIPLES:
+- Sound human, natural, and conversational — never robotic or AI-generated.
+- Rewrite content in clean, ATS-friendly language.
+- Never invent fake experience or unrealistic claims — only use what is provided.
+- Keep responses accurate, helpful, and humanized.
+
+COVER LETTER REQUIREMENTS:
 - Professional, engaging opening paragraph that hooks the reader and mentions the specific role
-- 2-3 body paragraphs connecting the candidate's experience to the specific job requirements — use concrete examples and metrics
-- Mirror key phrases and requirements from the job description naturally (for ATS compatibility)
+- 2-3 body paragraphs connecting the candidate's experience to the job requirements — use concrete examples and real metrics
+- Mirror key phrases from the job description naturally (for ATS compatibility)
 - Strong closing paragraph with confidence and a clear call to action
-- Appropriate length: 3-4 paragraphs, 280-380 words total
-- Authentic, confident tone — conversational yet professional, not robotic
-- Do NOT include address blocks, date, or email signature — output only the letter body paragraphs
+- Length: 3-4 paragraphs, 280-380 words
+- Confident, natural tone — like a real person writing, not a template
+- Do NOT include address blocks, date, or signature — output the letter body only
 ${recipientName?`- Address the letter to: ${recipientName}`:'- Use "Dear Hiring Manager,"'}
 ${companyName?`- The company is: ${companyName}`:''}
 

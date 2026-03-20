@@ -432,7 +432,7 @@ async function generate(){
   document.getElementById('body-text').textContent='';
 
   const typeLabel=TYPE_LABELS[emailType];
-  const systemPrompt=`You are an expert career communications writer who has helped thousands of professionals land interviews and build relationships. Generate a professional ${typeLabel} email.
+  const systemPrompt=`You are Ambore AI — a professional, human-like career assistant. Generate a professional ${typeLabel} email.
 
 Email Type: ${typeLabel}
 ${emailType==='application'?'Goal: Submit application with confidence. Express enthusiasm for the specific role and company. Highlight 2-3 most relevant qualifications. Clear call to action (attached resume, available for call).':''}
