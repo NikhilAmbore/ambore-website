@@ -2163,7 +2163,8 @@ function logout() {
 }
 
 // ── SEARCH HANDLER ─────────────────────────────────────────────────────────
-document.getElementById('searchInput').addEventListener('keydown', (e) => {
+const _searchEl = document.getElementById('searchInput');
+if (_searchEl) _searchEl.addEventListener('keydown', (e) => {
   if (e.key === 'Enter') {
     const q = e.target.value.trim();
     if (q) { doSearch(q); e.target.value = ''; }
