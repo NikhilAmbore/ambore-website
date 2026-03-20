@@ -28,7 +28,7 @@
 <meta name="twitter:image" content="https://ambore.org/og-image.png"/>
 <!-- Structured Data -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ambore","url":"https://ambore.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 14 tools, no credit card.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563EB'/><text x='50' y='72' font-size='62' font-family='Arial' font-weight='900' fill='white' text-anchor='middle'>A</text></svg>"/>
+<link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <script>
 // ── Analytics: dual-track (Railway + GA4) ─────────────────────────────────
@@ -1674,7 +1674,7 @@ function updatePageAuth(){
 // After signup/login redirect to resume optimizer
 function postLoginRedirect(){
   if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;return;}
-  window.location.href='/resume-builder';
+  window.location.href='/resume';
 }
 
 // ── goToFeature ───────────────────────────────────────────────────────────────
