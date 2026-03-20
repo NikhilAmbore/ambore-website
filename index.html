@@ -28,7 +28,7 @@ button,input,textarea{font-family:inherit}
   --blue:#2563EB;--blue-d:#1D4ED8;--navy:#0A0F1E;--white:#fff;
   --slate:#94A3B8;--amber:#F59E0B;--card:#111827;--card2:#0F172A;
   --border:rgba(255,255,255,0.08);--border-b:rgba(37,99,235,0.3);
-  --green:#22c55e;
+  --green:#22c55e;--orange:#F97316;--orange-d:#EA580C;
 }
 .container{max-width:1200px;margin:0 auto;padding:0 24px}
 /* ── ANNOUNCE BAR ── */
@@ -93,8 +93,12 @@ button,input,textarea{font-family:inherit}
 .hero h1 .accent{color:var(--blue)}
 .hero-sub{font-size:clamp(.9rem,1.6vw,1rem);color:var(--slate);line-height:1.6;max-width:500px;margin-bottom:24px}
 .hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;justify-content:center}
-.btn-hero-p{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(37,99,235,.4)}
-.btn-hero-p:hover{background:var(--blue-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(37,99,235,.5)}
+.btn-hero-p{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(249,115,22,.4)}
+.btn-hero-p:hover{background:var(--orange-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(249,115,22,.5)}
+.btn-orange{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(249,115,22,.35)}
+.btn-orange:hover{background:var(--orange-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(249,115,22,.5)}
+.btn-orange-sm{padding:11px 22px;border-radius:9px;font-size:.88rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:42px;transition:all .2s}
+.btn-orange-sm:hover{background:var(--orange-d)}
 .btn-hero-g{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:600;color:rgba(255,255,255,.75);background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer;min-height:52px;transition:all .2s}
 .btn-hero-g:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.04)}
 .hero-sp{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:14px}
@@ -260,8 +264,8 @@ section{padding:80px 0;position:relative}
 .email-in{flex:1;min-width:190px;padding:13px 17px;background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:.88rem;outline:none;transition:border-color .2s;min-height:48px}
 .email-in:focus{border-color:var(--blue)}
 .email-in::placeholder{color:rgba(255,255,255,.3)}
-.email-sub{padding:13px 22px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s;white-space:nowrap;min-height:48px}
-.email-sub:hover{background:var(--blue-d)}
+.email-sub{padding:13px 22px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s;white-space:nowrap;min-height:48px}
+.email-sub:hover{background:var(--orange-d)}
 .email-note{font-size:.73rem;color:rgba(255,255,255,.3);text-align:center}
 .email-ok{font-size:.87rem;color:var(--green);margin-top:11px;text-align:center;display:none}
 /* ── FOOTER ── */
@@ -368,7 +372,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
             </div>
             <div class="dd-col">
               <div class="dd-head">🎯 Win the Interview</div>
-              <a href="javascript:void(0)" onclick="goToFeature('/interview')">Interview AI 🔥</a>
+              <a href="javascript:void(0)" onclick="goToFeature('/interview')">AI Mock Interview Practice 🎙</a>
               <a href="javascript:void(0)" onclick="goToFeature('/learn')">Learn AI</a>
               <a href="javascript:void(0)" onclick="goToFeature('/project')">Build Project</a>
               <a href="javascript:void(0)" onclick="goToFeature('/dashboard')">Dashboard</a>
@@ -410,7 +414,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <a href="javascript:void(0)" onclick="goToFeature('/certifications');toggleMenu()">Certifications</a>
   <a href="javascript:void(0)" onclick="goToFeature('/coaching');toggleMenu()">Live Coaching</a>
   <div class="mob-sec">🎯 Win the Interview</div>
-  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()">Interview AI 🔥</a>
+  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()">AI Mock Interview Practice 🎙</a>
   <a href="javascript:void(0)" onclick="goToFeature('/learn');toggleMenu()">Learn AI</a>
   <a href="javascript:void(0)" onclick="goToFeature('/project');toggleMenu()">Build Project</a>
   <a href="javascript:void(0)" onclick="goToFeature('/dashboard');toggleMenu()">Dashboard</a>
@@ -429,19 +433,21 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="hero-glow"></div>
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-badge"><span class="badge-dot"></span>✨ 14 Free AI Tools — No Sign-Up Needed</div>
-      <h1>Your AI Career Toolkit.<br><span class="accent">Get Hired Faster.</span></h1>
-      <p class="hero-sub">Pick a tool and start in seconds — no account required.</p>
+      <div class="hero-badge"><span class="badge-dot"></span>✨ Free AI Resume Optimizer — Trusted by 12,000+ Job Seekers</div>
+      <h1>Free AI Resume Optimizer<br><span class="accent">No Credit Card Required</span></h1>
+      <p class="hero-sub">Tailor your resume to any job in seconds using AI. Get more interviews, faster.</p>
       <div class="hero-ctas">
-        <button class="btn-hero-p" id="hero-cta" onclick="goToFeature('/interview')">🎙 Try Interview AI Free →</button>
+        <button class="btn-hero-p" id="hero-cta" onclick="openAuth('signup')">🚀 Start Free →</button>
         <button class="btn-hero-g" onclick="goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
       </div>
       <div class="hero-trust">
-        <span class="trust-i"><span class="ck">✓</span> Always 100% Free</span>
-        <span class="tsep"></span>
         <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
         <span class="tsep"></span>
+        <span class="trust-i"><span class="ck">✓</span> Always 100% Free</span>
+        <span class="tsep"></span>
         <span class="trust-i"><span class="ck">✓</span> Data Stays Private</span>
+        <span class="tsep"></span>
+        <span class="trust-i"><span class="ck">✓</span> Ready in 60 Seconds</span>
       </div>
     </div>
   </div>
@@ -450,8 +456,17 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <!-- TOOL GRID — immediately visible after hero -->
 <section id="features" style="padding-top:28px;padding-bottom:48px">
   <div class="container">
+    <!-- FEATURED RESUME OPTIMIZER CARD -->
+    <div style="background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(37,99,235,.1));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px" class="rev">
+      <div>
+        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:20px;padding:4px 12px;font-size:.7rem;font-weight:700;color:#fb923c;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase">⭐ Most Popular</div>
+        <h3 style="font-size:1.12rem;font-weight:800;color:#fff;margin-bottom:6px">AI Resume Optimizer</h3>
+        <p style="font-size:.86rem;color:var(--slate);line-height:1.55;max-width:480px">Upload your resume + paste any job description → AI rewrites your resume to match keywords, beat ATS, and land more interviews. <strong style="color:#fff">87% of users get an interview in 2 weeks.</strong></p>
+      </div>
+      <button class="btn-orange" onclick="goToFeature('/resume-builder')" style="min-height:46px;padding:12px 28px;font-size:.92rem;white-space:nowrap;flex-shrink:0">✂️ Tailor My Resume Free →</button>
+    </div>
     <div class="tc" style="margin-bottom:4px">
-      <p style="font-size:.82rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">Choose a tool to get started</p>
+      <p style="font-size:.82rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">Explore all 14 free tools</p>
     </div>
     <div class="tg-3">
       <div class="tg-col">
@@ -472,7 +487,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       </div>
       <div class="tg-col">
         <div class="tg-head">🎯 Win the Interview</div>
-        <div class="tg-item" onclick="goToFeature('/interview')"><div class="tg-ico" style="background:rgba(139,92,246,.15)">🎙</div><div class="tg-info"><div class="tg-name">Interview AI <span class="most-badge">Most Used</span></div><div class="tg-desc">Real-time STAR answers in &lt;2s</div></div><span class="tg-cta">Try →</span></div>
+        <div class="tg-item" onclick="goToFeature('/interview')"><div class="tg-ico" style="background:rgba(139,92,246,.15)">🎙</div><div class="tg-info"><div class="tg-name">AI Mock Interview Practice <span class="most-badge">Popular</span></div><div class="tg-desc">Practice STAR answers — for practice only</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/learn')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📚</div><div class="tg-info"><div class="tg-name">Learn AI</div><div class="tg-desc">Master 12 AI domains with quizzes</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/project')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">🔨</div><div class="tg-info"><div class="tg-name">Build Project</div><div class="tg-desc">Portfolio-ready projects with AI</div></div><span class="tg-cta">Try →</span></div>
         <div class="tg-item" onclick="goToFeature('/dashboard')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📊</div><div class="tg-info"><div class="tg-name">Dashboard</div><div class="tg-desc">Track your full job search</div></div><span class="tg-cta">Try →</span></div>
@@ -508,7 +523,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
         <div class="star-row" id="sr4"><div class="star-lbl">Result</div><div class="star-txt">We shipped on time with zero incidents. Latency dropped 40% and the migration became the template for two subsequent upgrades.<span class="cur"></span></div></div>
       </div>
     </div>
-    <div class="demo-cta rev"><a href="javascript:void(0)" onclick="goToFeature('/interview')" class="btn-hero-p" style="display:inline-flex;align-items:center;gap:8px">🎙 Try It Live — It's Free →</a></div>
+    <div class="demo-cta rev"><a href="javascript:void(0)" onclick="openAuth('signup')" class="btn-orange" style="display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:14px 32px;font-size:.95rem">🚀 Start Free — No Credit Card →</a></div>
   </div>
 </div>
 
@@ -532,23 +547,74 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <!-- HOW IT WORKS -->
 <section id="how" class="how-sec">
   <div class="container">
-    <div class="how-grid">
-      <div class="how-sticky rev">
-        <div class="sec-lbl">How It Works</div>
-        <h2 class="sec-h">Your complete<br>career toolkit</h2>
-        <p class="sec-sub">Sign up once, access all 14 tools. Find jobs, build your application, boost your presence, ace the interview.</p>
-        <button class="btn-hero-p" onclick="openAuth('signup')" style="margin-top:24px;min-height:44px;padding:12px 28px;font-size:.92rem">Get Started Free →</button>
+    <div class="tc rev" style="max-width:600px;margin:0 auto 48px">
+      <div class="sec-lbl">How It Works</div>
+      <h2 class="sec-h">Tailored resume in<br>3 simple steps</h2>
+      <p class="sec-sub">No templates. No guessing. AI reads the job description and rewrites your resume to match — ATS-optimized in under 60 seconds.</p>
+    </div>
+    <div class="sh-row rev" style="gap:0;max-width:900px;margin:0 auto">
+      <div class="sh-card" onclick="openAuth('signup')">
+        <div class="sh-num">1</div>
+        <span class="sh-ico">📄</span>
+        <h3>Upload Your Resume</h3>
+        <p>Paste your existing resume or start from scratch. No special format required.</p>
+        <span class="sh-link">→ Takes 30 seconds</span>
       </div>
-      <div class="steps">
-        <div class="step rev"><div class="step-n">01</div><div><h3>Create your free account</h3><p>Sign up in seconds. Your account unlocks all 14 tools — Interview AI, Resume Builder, Job Portal, Cover Letter, Email Generator, LinkedIn Optimizer, and Portfolio Builder.</p></div></div>
-        <div class="step rev r1"><div class="step-n">02</div><div><h3>Find the right job</h3><p>Browse 50,000+ tech jobs scraped hourly from LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive, and more. Filter, save, and click "Tailor Resume" on any listing.</p></div></div>
-        <div class="step rev r2"><div class="step-n">03</div><div><h3>Build your application</h3><p>Use the Resume Builder, Cover Letter Generator, and Email Generator to create a complete, tailored application package — all AI-powered, all in minutes.</p></div></div>
-        <div class="step rev r3"><div class="step-n">04</div><div><h3>Boost your online presence</h3><p>Optimize your LinkedIn profile for recruiter searches and build a portfolio website from your projects — no coding needed.</p></div></div>
-        <div class="step rev"><div class="step-n">05</div><div><h3>Ace the interview</h3><p>Use the AI Interview Co-Pilot during your call. It listens in real time and delivers STAR-format answers in under 2 seconds — covering 8 round types.</p></div></div>
+      <div class="sh-arr">→</div>
+      <div class="sh-card" onclick="openAuth('signup')">
+        <div class="sh-num">2</div>
+        <span class="sh-ico">📋</span>
+        <h3>Paste the Job Description</h3>
+        <p>Copy any job posting from LinkedIn, Indeed, or company sites and paste it in.</p>
+        <span class="sh-link">→ Works with any JD</span>
       </div>
+      <div class="sh-arr">→</div>
+      <div class="sh-card" onclick="openAuth('signup')">
+        <div class="sh-num">3</div>
+        <span class="sh-ico">✅</span>
+        <h3>Get Your Optimized Resume</h3>
+        <p>AI rewrites your resume to match the JD keywords, structure, and ATS requirements.</p>
+        <span class="sh-link">→ Ready in 60 seconds</span>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:36px" class="rev">
+      <button class="btn-orange" onclick="openAuth('signup')" style="min-height:50px;padding:14px 36px;font-size:.96rem">🚀 Try It Free — No Credit Card →</button>
     </div>
   </div>
 </section>
+
+<!-- WHY CREATE AN ACCOUNT -->
+<section style="padding:72px 0;border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="tc rev" style="max-width:560px;margin:0 auto 40px">
+      <div class="sec-lbl">Your Free Account</div>
+      <h2 class="sec-h">Why create a free account?</h2>
+      <p class="sec-sub">Signing up is free and unlocks everything. Here's what you get.</p>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:860px;margin:0 auto" class="why-acct-grid">
+      <div class="why-card rev">
+        <div class="why-ico">💾</div>
+        <div class="why-t">Save Your Resumes</div>
+        <p class="why-d">All your tailored resumes are saved to your account. Access them anytime, on any device.</p>
+      </div>
+      <div class="why-card rev r1">
+        <div class="why-ico">📊</div>
+        <div class="why-t">Track Applications</div>
+        <p class="why-d">Keep a full list of jobs you applied to, with resume versions and notes in one dashboard.</p>
+      </div>
+      <div class="why-card rev r2">
+        <div class="why-ico">🎯</div>
+        <div class="why-t">Personalized Suggestions</div>
+        <p class="why-d">The AI learns from your profile and gets smarter with each resume you generate.</p>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:32px" class="rev">
+      <button class="btn-orange-sm" onclick="openAuth('signup')">Create Free Account →</button>
+      <p style="margin-top:10px;font-size:.76rem;color:rgba(255,255,255,.3)">No credit card · No spam · Unsubscribe anytime</p>
+    </div>
+  </div>
+</section>
+<style>@media(max-width:700px){.why-acct-grid{grid-template-columns:1fr!important}}</style>
 
 <!-- WHY AMBORE -->
 <section>
@@ -591,7 +657,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       </table>
     </div>
     <p class="cmp-cap">All 14 features. Always free. No credit card.</p>
-    <div style="text-align:center;margin-top:18px"><button class="btn-hero-p" onclick="openAuth('signup')" style="min-height:44px;padding:12px 28px;font-size:.92rem">Get Started Free →</button></div>
+    <div style="text-align:center;margin-top:18px"><button class="btn-orange" onclick="openAuth('signup')" style="min-height:44px;padding:12px 28px;font-size:.92rem">Get Started Free →</button></div>
   </div>
 </section>
 
@@ -644,7 +710,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <!-- EMAIL CAPTURE -->
 <section class="email-sec">
   <div class="container tc">
-    <div class="rev"><div class="sec-lbl">Get Started</div><h2 class="sec-h">Your dream job starts here.</h2><p class="sec-sub" style="margin:0 auto">Join 12,000+ job seekers using Ambore — completely free, forever.</p></div>
+    <div class="rev"><div class="sec-lbl">Get Started Free</div><h2 class="sec-h">Your optimized resume<br>is one click away.</h2><p class="sec-sub" style="margin:0 auto">Join 12,000+ job seekers — free AI resume optimizer, no credit card required.</p></div>
     <form class="email-form" onsubmit="handleEmailSub(event)">
       <input type="email" id="ec-email" class="email-in" placeholder="Enter your email address..." required/>
       <button type="submit" class="email-sub">Get Started Free →</button>
@@ -676,7 +742,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
           <a href="javascript:void(0)" onclick="goToFeature('/email')">Email Generator</a>
           <a href="javascript:void(0)" onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
           <a href="javascript:void(0)" onclick="goToFeature('/portfolio')">Portfolio Builder</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/interview')">Interview AI</a>
+          <a href="javascript:void(0)" onclick="goToFeature('/interview')">AI Mock Interview Practice</a>
           <a href="javascript:void(0)" onclick="goToFeature('/ats-score')">ATS Score</a>
           <a href="javascript:void(0)" onclick="goToFeature('/learn')">Learn AI</a>
           <a href="javascript:void(0)" onclick="goToFeature('/dashboard')">Dashboard</a>
@@ -705,7 +771,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <div class="mob-bnav">
   <button onclick="goToFeature('/jobs')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></button>
   <button onclick="goToFeature('/resume')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></button>
-  <button onclick="goToFeature('/interview')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg><span>Interview</span></button>
+  <button onclick="goToFeature('/resume-builder')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Optimize</span></button>
   <button onclick="toggleMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>More</span></button>
 </div>
 
@@ -742,14 +808,20 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
     </div>
     <!-- Signup -->
     <div class="auth-pan" id="pan-signup">
+      <div style="text-align:center;margin-bottom:14px">
+        <p style="font-size:.84rem;font-weight:700;color:#fff;margin-bottom:3px">Create your free account</p>
+        <p style="font-size:.75rem;color:rgba(255,255,255,.4)">No credit card required · Takes 30 seconds</p>
+      </div>
       <div class="auth-err" id="err-signup"></div>
+      <div class="auth-div" style="margin-top:0">continue with</div>
+      <button class="g-btn" onclick="doGoogle(event)" type="button" style="margin-bottom:8px"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/></svg>Sign up with Google</button>
+      <div class="auth-div">or sign up with email</div>
       <div class="auth-field"><label>Full Name</label><input type="text" id="su-nm" placeholder="Your name" maxlength="80" autocomplete="name"/></div>
       <div class="auth-field"><label>Email</label><input type="email" id="su-em" placeholder="you@example.com" maxlength="254" autocomplete="email"/></div>
-      <div class="auth-field"><label>Password</label><input type="password" id="su-pw" placeholder="Min 6 characters" maxlength="128" autocomplete="new-password"/></div>
+      <div class="auth-field"><label>Password</label><input type="password" id="su-pw" placeholder="Min 8 characters" maxlength="128" autocomplete="new-password"/></div>
       <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pw2" placeholder="Repeat password" maxlength="128" autocomplete="new-password"/></div>
-      <button class="auth-sub" onclick="doSignup(event)">Create Account →</button>
-      <div class="auth-div">or</div>
-      <button class="g-btn" onclick="doGoogle(event)" type="button"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/></svg>Sign up with Google</button>
+      <button class="auth-sub" onclick="doSignup(event)" style="background:var(--orange)">Create Free Account →</button>
+      <p style="text-align:center;font-size:.72rem;color:rgba(255,255,255,.3);margin-top:10px">🔒 We never sell your data. Ever.</p>
       <div class="auth-sw">Already have account? <a onclick="switchTab('login')">Log in</a></div>
     </div>
     <!-- Forgot -->
@@ -801,7 +873,8 @@ function showSlide(){
 
 // ── Navbar scroll ─────────────────────────────────────────────────────────────
 (function(){
-  var nav=document.getElementById('navbar');
+  var nav=document.getElementById('nav');
+  if(!nav)return;
   window.addEventListener('scroll',function(){
     nav.classList.toggle('scrolled',window.scrollY>40);
   });
@@ -892,7 +965,7 @@ function toggleFaq(btn){
 
 // ── Testimonial filter ────────────────────────────────────────────────────────
 function filterT(filter,btn){
-  document.querySelectorAll('.tc-btn').forEach(function(b){b.classList.remove('active');});
+  document.querySelectorAll('.tf-pill').forEach(function(b){b.classList.remove('active');});
   btn.classList.add('active');
   document.querySelectorAll('.tc-card').forEach(function(c){
     c.style.display=(filter==='all'||c.getAttribute('data-tool')===filter)?'':'none';
@@ -1015,7 +1088,7 @@ async function doLogin(e){
   closeAuth();
   updateNavCta();
   updatePageAuth();
-  if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;}
+  postLoginRedirect();
 }
 
 // ── Signup ────────────────────────────────────────────────────────────────────
@@ -1039,7 +1112,7 @@ async function doSignup(e){
   closeAuth();
   updateNavCta();
   updatePageAuth();
-  if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;}
+  postLoginRedirect();
 }
 
 // ── Reset password ────────────────────────────────────────────────────────────
@@ -1103,7 +1176,7 @@ function _fetchGoogleUser(token){
     }
     saveSession({email:u.email,name:u.name||u.email,picture:u.picture||''});
     closeAuth();updateNavCta();updatePageAuth();
-    if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;}
+    postLoginRedirect();
   }).catch(function(){_googleErr('Google sign-in failed. Try again.');});
 }
 function _googleErr(msg){
@@ -1137,13 +1210,19 @@ function updatePageAuth(){
   var hCta=document.getElementById('hero-cta');
   if(hCta){
     if(sess){
-      hCta.textContent='Go to Dashboard';
-      hCta.onclick=function(){window.location.href='/dashboard';};
+      hCta.textContent='✂️ Tailor My Resume →';
+      hCta.onclick=function(){window.location.href='/resume-builder';};
     } else {
-      hCta.textContent='Get Started Free';
+      hCta.textContent='🚀 Start Free →';
       hCta.onclick=function(){openAuth('signup');};
     }
   }
+}
+
+// After signup/login redirect to resume optimizer
+function postLoginRedirect(){
+  if(_pendingRedirect){var r=_pendingRedirect;_pendingRedirect=null;window.location.href=r;return;}
+  window.location.href='/resume-builder';
 }
 
 // ── goToFeature ───────────────────────────────────────────────────────────────
