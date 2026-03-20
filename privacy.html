@@ -64,7 +64,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 .doc-footer a{color:var(--accent)}
 
 @media(max-width:600px){.doc-title{font-size:1.6rem}.topbar{padding:14px 16px}.topbar-links{gap:12px}.page-wrap{padding:36px 16px 80px}}
-.logo-img{height:28px;width:auto;display:block;object-fit:contain}
+.logo-img{height:28px!important;width:28px!important;max-height:28px!important;max-width:28px!important;object-fit:contain;display:block;flex-shrink:0}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -75,7 +75,7 @@ a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
 <!-- TOPBAR -->
 <div class="topbar">
   <a href="/" class="logo">
-    <img src="/logo.png" class="logo-img" alt="Ambore">
+    <img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">
     Ambore<span class="brand-tag">AI</span>
   </a>
   <div class="topbar-links">

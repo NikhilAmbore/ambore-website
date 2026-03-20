@@ -442,7 +442,7 @@ body{padding-left:72px}
   .mob-dock{display:flex}
   body{padding-left:0;padding-bottom:60px}
 }
-.logo-img{height:28px;width:auto;display:block;object-fit:contain}
+.logo-img{height:28px!important;width:28px!important;max-height:28px!important;max-width:28px!important;object-fit:contain;display:block;flex-shrink:0}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -521,7 +521,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore">Ambore AI Resume</div>
+  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore AI Resume</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
