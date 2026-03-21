@@ -1530,6 +1530,7 @@ async function doLogin(e){
   saveSession({email:em,name:users[em].name||em});
   closeAuth();updateNavCta();updatePageAuth();
   track('login_completed','index',{method:'email'});
+  if(window.AmborDB)AmborDB.onLogin({email:em,name:users[em].name||em});
   postLoginRedirect();
 }
 
@@ -1553,6 +1554,7 @@ async function doSignup(e){
   saveSession({email:em,name:nm});
   closeAuth();updateNavCta();updatePageAuth();
   track('signup_completed','index',{method:'email'});
+  if(window.AmborDB)AmborDB.onLogin({email:em,name:nm});
   postLoginRedirect();
 }
 
@@ -1618,6 +1620,7 @@ function _fetchGoogleUser(token){
     saveSession({email:u.email,name:u.name||u.email,picture:u.picture||''});
     closeAuth();updateNavCta();updatePageAuth();
     track('signup_completed','index',{method:'google'});
+    if(window.AmborDB)AmborDB.onLogin({email:u.email,name:u.name||u.email,picture:u.picture||''});
     postLoginRedirect();
   }).catch(function(){_googleErr('Google sign-in failed. Try again.');});
 }

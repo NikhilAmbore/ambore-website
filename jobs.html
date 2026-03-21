@@ -226,6 +226,9 @@ a{text-decoration:none;color:inherit}
   cursor:pointer;text-decoration:none;transition:opacity 0.15s;white-space:nowrap;
 }
 .btn-apply:hover{opacity:0.85}
+.btn-track{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:8px;font-size:0.76rem;font-weight:700;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);cursor:pointer;transition:all .15s;white-space:nowrap}
+.btn-track:hover{background:rgba(79,70,229,.2);border-color:rgba(79,70,229,.4);color:#a5b4fc}
+.btn-track.tracked{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80}
 
 /* Pagination */
 .pagination{display:flex;gap:6px;justify-content:center;margin-top:24px;flex-wrap:wrap}
@@ -343,6 +346,7 @@ body{padding-left:72px}
   <a href="/" class="sb-logo" title="Ambore Home"><img src="/logo.png" alt="Ambore" style="width:36px;height:36px;object-fit:contain"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+    <a href="/applications" class="sb-item" title="My Applications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg><span>Applied</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
     <a href="/resume-builder" class="sb-item" title="Resume Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
     <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
@@ -368,6 +372,7 @@ body{padding-left:72px}
 <!-- ── Mobile bottom dock ────────────────────────────────────────────────────── -->
 <nav class="mob-dock" id="mob-dock">
   <a href="/jobs" class="md-item" title="Jobs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+  <a href="/applications" class="md-item" title="Applications"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg><span>Applied</span></a>
   <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
   <a href="/interview" class="md-item" title="Interview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg><span>Interview</span></a>
   <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
@@ -557,6 +562,7 @@ async function loadJobsData() {
     list.innerHTML = `<div class="empty-state"><p>Could not load jobs.json — ${e.message}</p></div>`;
     return false;
   }
+  window._jobsData = _allJobs; // expose for tracking
   return true;
 }
 
@@ -829,7 +835,8 @@ function renderJobCard(job) {
       </div>
       <div class="job-card-actions">
         <button class="btn-tailor" onclick="tailorResume('${jid}')">✨ Build Resume</button>
-        <a class="btn-apply" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer">Apply →</a>
+        <button class="btn-track" id="track-${jid}" onclick="trackApplication('${jid}')">📌 Track</button>
+        <a class="btn-apply" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" onclick="markApplied('${jid}')">Apply →</a>
       </div>
     </div>`;
 }
@@ -1070,5 +1077,56 @@ document.addEventListener('click',function(e){
   }
 });
 
+// ── Application tracking ──────────────────────────────────────────────────────
+var _trackedJobs = {};
+try { _trackedJobs = JSON.parse(localStorage.getItem('ambore_tracked_jobs') || '{}'); } catch(e){}
+
+function trackApplication(jid) {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!u) { if(window.location) window.location.href='/?auth=login&redirect=/jobs'; return; }
+  var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
+  if (!job) return;
+  _trackedJobs[jid] = { status: 'tracking', savedAt: new Date().toISOString() };
+  localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
+  var btn = document.getElementById('track-' + jid);
+  if (btn) { btn.textContent = '✅ Tracked'; btn.classList.add('tracked'); }
+  if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'tracking');
+  showToast('Job saved to your tracker!');
+}
+
+function markApplied(jid) {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!u) return;
+  var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
+  if (!job) return;
+  setTimeout(function() {
+    if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'applied');
+    _trackedJobs[jid] = { status: 'applied', appliedAt: new Date().toISOString() };
+    localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
+    var btn = document.getElementById('track-' + jid);
+    if (btn) { btn.textContent = '✅ Applied'; btn.classList.add('tracked'); }
+  }, 500);
+}
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.textContent = msg;
+  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a30;border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 20px;border-radius:10px;font-size:.85rem;z-index:9999;transition:opacity .3s';
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 400); }, 2500);
+}
+
+// Restore tracked state on render
+var _origBuildCard = typeof buildJobCard !== 'undefined' ? buildJobCard : null;
+window.addEventListener('load', function() {
+  Object.keys(_trackedJobs).forEach(function(jid) {
+    var btn = document.getElementById('track-' + jid);
+    if (btn) {
+      var st = _trackedJobs[jid].status;
+      btn.textContent = st === 'applied' ? '✅ Applied' : '✅ Tracked';
+      btn.classList.add('tracked');
+    }
+  });
+});
 </script></body>
 </html>

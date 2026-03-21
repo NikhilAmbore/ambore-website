@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Ambore — My Applications</title>
+<link rel="icon" href="/logo.png"/>
+<script src="/supabase-sync.js"></script>
+<style>
+:root{--bg:#07070f;--card:#0f0f1e;--border:rgba(255,255,255,.08);--blue:#2563EB;--grad:linear-gradient(135deg,#4F46E5,#7C3AED);--orange:#f97316;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--slate:rgba(255,255,255,.5)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif;min-height:100vh;display:flex}
+
+/* Sidebar (same as tool pages) */
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200}
+.sb-logo{width:42px;height:42px;background:transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity .15s}
+.sb-logo:hover{opacity:.85}
+.sb-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 8px}
+.sb-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;text-decoration:none;color:rgba(255,255,255,.4);font-size:.58rem;font-weight:600;cursor:pointer;border:none;background:none;width:100%;transition:all .15s;text-align:center;line-height:1.2}
+.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.sb-item.active{background:rgba(79,70,229,.15);color:#818CF8}
+.sb-item svg{flex-shrink:0}
+.sb-logout{color:rgba(239,68,68,.6)!important}
+.sb-logout:hover{background:rgba(239,68,68,.08)!important;color:#ef4444!important}
+.sb-bottom{margin-top:auto;padding:0 8px;width:100%;display:flex;flex-direction:column;gap:4px}
+
+/* Main */
+.main{margin-left:72px;flex:1;padding:28px 32px;max-width:1100px}
+.page-header{margin-bottom:28px}
+.page-title{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:4px}
+.page-sub{font-size:.85rem;color:var(--slate)}
+
+/* Stats row */
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px}
+.stat-num{font-size:1.8rem;font-weight:900;color:#fff;line-height:1}
+.stat-lbl{font-size:.72rem;color:var(--slate);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+
+/* Pipeline columns */
+.pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
+.col-header{padding:10px 14px;border-radius:10px 10px 0 0;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between}
+.col-body{background:rgba(255,255,255,.02);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;min-height:200px;padding:10px}
+.col-tracking .col-header{background:rgba(79,70,229,.15);color:#a5b4fc}
+.col-applied .col-header{background:rgba(37,99,235,.15);color:#60a5fa}
+.col-interview .col-header{background:rgba(245,158,11,.15);color:#fbbf24}
+.col-offer .col-header{background:rgba(34,197,94,.15);color:#4ade80}
+
+/* Job cards */
+.app-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
+.app-card:hover{border-color:rgba(255,255,255,.18)}
+.app-role{font-size:.84rem;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-company{font-size:.72rem;color:var(--slate);margin-bottom:8px}
+.app-date{font-size:.68rem;color:rgba(255,255,255,.25)}
+.app-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.app-btn{padding:3px 10px;border-radius:6px;font-size:.67rem;font-weight:700;cursor:pointer;border:1px solid;transition:all .15s}
+.btn-move{background:rgba(79,70,229,.1);border-color:rgba(79,70,229,.3);color:#a5b4fc}
+.btn-move:hover{background:rgba(79,70,229,.25)}
+.btn-reject{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#f87171}
+.btn-reject:hover{background:rgba(239,68,68,.18)}
+.btn-open{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
+.btn-open:hover{background:rgba(255,255,255,.1)}
+.empty-col{text-align:center;padding:28px 12px;color:rgba(255,255,255,.2);font-size:.78rem}
+
+/* Mobile dock */
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid var(--border);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.4);font-size:.58rem;font-weight:600;background:none;border:none;cursor:pointer;min-width:44px;transition:color .15s}
+.md-item:hover,.md-item.active{color:#818CF8}
+@media(max-width:768px){
+  .sb{display:none}
+  .main{margin-left:0;padding:16px;padding-bottom:80px}
+  .mob-dock{display:flex}
+  .pipeline{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<nav class="sb">
+  <a href="/" class="sb-logo"><img src="/logo.png" alt="Ambore" style="width:36px;height:36px;object-fit:contain"></a>
+  <div class="sb-nav">
+    <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>Jobs</a>
+    <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Resume</a>
+    <a href="/applications" class="sb-item active" title="Applications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Applied</a>
+    <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+  </div>
+  <div class="sb-bottom">
+    <button class="sb-item sb-logout" onclick="logout()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Log Out</button>
+  </div>
+</nav>
+
+<!-- Main content -->
+<main class="main">
+  <div class="page-header">
+    <h1 class="page-title">📋 My Applications</h1>
+    <p class="page-sub">Track every job from saved → applied → interview → offer</p>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num" id="stat-total">0</div><div class="stat-lbl">Total Tracked</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-applied" style="color:#60a5fa">0</div><div class="stat-lbl">Applied</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-interview" style="color:#fbbf24">0</div><div class="stat-lbl">Interviewing</div></div>
+    <div class="stat-card"><div class="stat-num" id="stat-offer" style="color:#4ade80">0</div><div class="stat-lbl">Offers</div></div>
+  </div>
+
+  <!-- Pipeline -->
+  <div class="pipeline">
+    <div>
+      <div class="col-header col-tracking">Saved <span id="cnt-tracking">0</span></div>
+      <div class="col-body" id="col-tracking"></div>
+    </div>
+    <div>
+      <div class="col-header col-applied">Applied <span id="cnt-applied">0</span></div>
+      <div class="col-body" id="col-applied"></div>
+    </div>
+    <div>
+      <div class="col-header col-interview">Interviewing <span id="cnt-interview">0</span></div>
+      <div class="col-body" id="col-interview"></div>
+    </div>
+    <div>
+      <div class="col-header col-offer">Offer / Done <span id="cnt-offer">0</span></div>
+      <div class="col-body" id="col-offer"></div>
+    </div>
+  </div>
+</main>
+
+<!-- Mobile dock -->
+<nav class="mob-dock">
+  <a href="/jobs" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>Jobs</a>
+  <a href="/resume" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Resume</a>
+  <a href="/applications" class="md-item active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>Applied</a>
+  <a href="/dashboard" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Dashboard</a>
+</nav>
+
+<script>
+// Auth guard
+(function(){
+  var u=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!u||!u.email||(u.expiresAt&&Date.now()>u.expiresAt)){
+    window.location.href='/?auth=login&redirect=/applications';
+  }
+})();
+
+function logout(){localStorage.removeItem('ambore_user');window.location.href='/';}
+
+var SUPA_URL='https://mqonctgrvppdbjcuawue.supabase.co';
+var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xb25jdGdydnBwZGJqY3Vhd3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNTUwMzMsImV4cCI6MjA4OTYzMTAzM30.xc47ksXn5lLzF9w70U5BpCI86yzivsjbHUsJCk2ZseU';
+
+function supaFetch(path,opts){
+  return fetch(SUPA_URL+'/rest/v1/'+path,Object.assign({headers:{'apikey':SUPA_KEY,'Authorization':'Bearer '+SUPA_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'}},opts));
+}
+
+var _apps=[];
+var _userId='';
+
+function timeAgo(iso){
+  var d=new Date(iso),n=Date.now(),s=Math.floor((n-d)/1000);
+  if(s<60)return 'just now';
+  if(s<3600)return Math.floor(s/60)+'m ago';
+  if(s<86400)return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
+}
+
+function buildCard(app){
+  var j=app.job_data||{};
+  var role=j.title||j.role||'Unknown Role';
+  var company=j.company||j.company_name||'Unknown';
+  var url=j.url||j.apply_url||'#';
+  var date=timeAgo(app.applied_at||app.updated_at);
+  var nextStatus={'tracking':'applied','applied':'interviewing','interviewing':'offer'};
+  var nextLabel={'tracking':'Mark Applied','applied':'Got Interview','interviewing':'Got Offer'};
+  var next=nextStatus[app.status];
+  return '<div class="app-card" id="app-'+app.id+'">'
+    +'<div class="app-role" title="'+escH(role)+'">'+escH(role)+'</div>'
+    +'<div class="app-company">'+escH(company)+'</div>'
+    +'<div class="app-date">'+date+'</div>'
+    +'<div class="app-actions">'
+    +(next?'<button class="app-btn btn-move" onclick="moveApp(\''+app.id+'\',\''+next+'\')">'+nextLabel[app.status]+' →</button>':'')
+    +'<a class="app-btn btn-open" href="'+escH(url)+'" target="_blank">Open →</a>'
+    +'<button class="app-btn btn-reject" onclick="moveApp(\''+app.id+'\',\'rejected\')">✕</button>'
+    +'</div></div>';
+}
+
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
+function renderAll(){
+  var cols={tracking:[],applied:[],interviewing:[],offer:[]};
+  _apps.forEach(function(a){
+    var st=a.status==='offer'||a.status==='rejected'?'offer':a.status;
+    if(cols[st])cols[st].push(a);
+  });
+  ['tracking','applied','interviewing','offer'].forEach(function(st){
+    var el=document.getElementById('col-'+st);
+    var cnt=document.getElementById('cnt-'+st);
+    if(!cols[st].length){el.innerHTML='<div class="empty-col">No jobs here yet</div>';cnt.textContent=0;return;}
+    el.innerHTML=cols[st].map(buildCard).join('');
+    cnt.textContent=cols[st].length;
+  });
+  document.getElementById('stat-total').textContent=_apps.length;
+  document.getElementById('stat-applied').textContent=_apps.filter(function(a){return a.status==='applied'||a.status==='interviewing'||a.status==='offer';}).length;
+  document.getElementById('stat-interview').textContent=_apps.filter(function(a){return a.status==='interviewing';}).length;
+  document.getElementById('stat-offer').textContent=_apps.filter(function(a){return a.status==='offer';}).length;
+}
+
+function moveApp(id,newStatus){
+  var idx=_apps.findIndex(function(a){return a.id===id;});
+  if(idx===-1)return;
+  _apps[idx].status=newStatus;
+  renderAll();
+  supaFetch('applications?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:newStatus,updated_at:new Date().toISOString()})});
+}
+
+function loadFromLocal(){
+  try{
+    var tracked=JSON.parse(localStorage.getItem('ambore_tracked_jobs')||'{}');
+    return Object.keys(tracked).map(function(jid,i){
+      return {id:'local-'+i,job_data:{title:jid,company:''},status:tracked[jid].status||'tracking',applied_at:tracked[jid].savedAt||tracked[jid].appliedAt||new Date().toISOString()};
+    });
+  }catch(e){return [];}
+}
+
+// Load from Supabase, fallback to localStorage
+document.addEventListener('DOMContentLoaded',function(){
+  var u=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!u)return;
+  _userId=u.email;
+  supaFetch('applications?user_id=eq.'+encodeURIComponent(u.email)+'&order=applied_at.desc')
+    .then(function(r){return r.json();})
+    .then(function(data){
+      _apps=Array.isArray(data)&&data.length?data:loadFromLocal();
+      renderAll();
+    })
+    .catch(function(){
+      _apps=loadFromLocal();
+      renderAll();
+    });
+});
+</script>
+</body>
+</html>
