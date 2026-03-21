@@ -250,12 +250,21 @@ a{text-decoration:none;color:inherit}
 .oca-pre{white-space:pre-wrap;font-family:inherit;font-size:0.8rem;line-height:1.6;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;max-height:280px;overflow-y:auto;margin:0}
 .oca-panel.hidden{display:none}
 /* Footer */
-.oca-footer{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.oca-clipboard-banner{display:none;align-items:flex-start;gap:10px;background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.25);border-radius:10px;padding:12px 14px;margin-top:14px}
+.oca-clipboard-banner.show{display:flex}
+.oca-clipboard-icon{font-size:1.3rem;flex-shrink:0;line-height:1.2}
+.oca-clipboard-text{font-size:0.8rem;color:rgba(255,255,255,0.7);line-height:1.5}
+.oca-clipboard-text strong{color:#4ade80;display:block;margin-bottom:3px;font-size:0.85rem}
+.oca-clipboard-steps{list-style:none;padding:0;margin:5px 0 0;display:flex;flex-direction:column;gap:3px}
+.oca-clipboard-steps li{display:flex;align-items:center;gap:6px;font-size:0.78rem;color:rgba(255,255,255,0.55)}
+.oca-clipboard-steps li span{width:18px;height:18px;border-radius:50%;background:rgba(34,197,94,0.2);color:#4ade80;font-size:0.65rem;font-weight:700;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0}
+.oca-footer{display:flex;align-items:center;gap:8px;margin-top:14px;padding-top:14px;border-top:1px solid rgba(255,255,255,0.07);flex-wrap:wrap}
 .oca-footer.hidden{display:none}
-.btn-oca-copy{padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s}
+.btn-oca-copy{padding:7px 13px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.55);cursor:pointer;transition:all 0.15s;white-space:nowrap}
 .btn-oca-copy:hover{background:rgba(255,255,255,0.1);color:#fff}
-.btn-oca-apply{margin-left:auto;padding:10px 22px;border-radius:10px;font-size:0.88rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 12px rgba(79,70,229,0.4)}
+.btn-oca-apply{margin-left:auto;padding:10px 20px;border-radius:10px;font-size:0.86rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 12px rgba(79,70,229,0.4);white-space:nowrap}
 .btn-oca-apply:hover{opacity:0.88}
+.btn-oca-apply.applied{background:rgba(34,197,94,0.15);border:1px solid rgba(34,197,94,0.3);color:#4ade80;box-shadow:none}
 .btn-apply{
   margin-left:auto;
   display:inline-flex;align-items:center;gap:4px;
@@ -1571,6 +1580,9 @@ function oneClickApply(jid) {
   document.getElementById('oca-no-resume').classList.add('hidden');
   document.getElementById('oca-results').classList.add('hidden');
   document.getElementById('oca-footer').classList.add('hidden');
+  document.getElementById('oca-clipboard-banner').classList.remove('show');
+  var applyBtn = document.getElementById('oca-apply-btn');
+  if (applyBtn) { applyBtn.textContent = '⚡ Apply Now →'; applyBtn.classList.remove('applied'); }
   document.getElementById('oca-steps').classList.remove('hidden');
   setStep(1, 'pending'); setStep(2, 'pending'); setStep(3, 'pending');
 
@@ -1686,14 +1698,47 @@ function showOCATab(tab) {
   }
 }
 
-function copyOCAContent() {
-  var txt = document.getElementById('oca-resume-panel').classList.contains('hidden')
-    ? document.getElementById('oca-cover-text').textContent
-    : document.getElementById('oca-resume-text').textContent;
+function copyResume() {
+  var txt = document.getElementById('oca-resume-text').textContent;
   navigator.clipboard.writeText(txt).then(function(){
-    var btn = document.querySelector('.btn-oca-copy');
-    if (btn) { var o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = o; }, 1600); }
+    var btn = document.getElementById('oca-copy-resume-btn');
+    if (btn) { var o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = o; }, 1800); }
   }).catch(function(){});
+}
+
+function copyCoverLetter() {
+  var txt = document.getElementById('oca-cover-text').textContent;
+  navigator.clipboard.writeText(txt).then(function(){
+    var btns = document.querySelectorAll('.btn-oca-copy');
+    var btn = btns[1];
+    if (btn) { var o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = o; }, 1800); }
+    // Switch tab to show cover letter
+    showOCATab('cover');
+  }).catch(function(){});
+}
+
+function applyNow() {
+  // 1. Auto-copy resume to clipboard
+  var resumeTxt = document.getElementById('oca-resume-text').textContent;
+  navigator.clipboard.writeText(resumeTxt).catch(function(){});
+
+  // 2. Show clipboard guide
+  var banner = document.getElementById('oca-clipboard-banner');
+  if (banner) banner.classList.add('show');
+
+  // 3. Update Apply button state
+  var applyBtn = document.getElementById('oca-apply-btn');
+  if (applyBtn) {
+    applyBtn.textContent = '✓ Applied';
+    applyBtn.classList.add('applied');
+    // Open URL manually since we're in onclick (href still does the navigation)
+  }
+
+  // 4. Mark as applied
+  if (_ocaJob) markApplied(String(_ocaJob.id));
+
+  // 5. Scroll clipboard banner into view
+  if (banner) setTimeout(function(){ banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }, 100);
 }
 
 function closeOCA(e) {
@@ -1856,12 +1901,26 @@ document.addEventListener('keydown', function(e){
       <div id="oca-cover-panel" class="oca-panel hidden">
         <pre id="oca-cover-text" class="oca-pre"></pre>
       </div>
+
+      <!-- Clipboard guide — shown after Apply Now is clicked -->
+      <div class="oca-clipboard-banner" id="oca-clipboard-banner">
+        <div class="oca-clipboard-icon">📋</div>
+        <div class="oca-clipboard-text">
+          <strong>Resume copied to clipboard!</strong>
+          <ul class="oca-clipboard-steps">
+            <li><span>1</span> The job site just opened in a new tab</li>
+            <li><span>2</span> Paste your resume when asked (Ctrl+V / ⌘V)</li>
+            <li><span>3</span> Come back here to copy your cover letter too</li>
+          </ul>
+        </div>
+      </div>
     </div>
 
     <!-- Footer -->
     <div id="oca-footer" class="oca-footer hidden">
-      <button class="btn-oca-copy" onclick="copyOCAContent()">Copy</button>
-      <a id="oca-apply-btn" class="btn-oca-apply" target="_blank" rel="noopener noreferrer" onclick="markApplied(String(_ocaJob&&_ocaJob.id))">⚡ Apply Now →</a>
+      <button class="btn-oca-copy" id="oca-copy-resume-btn" onclick="copyResume()">📋 Copy Resume</button>
+      <button class="btn-oca-copy" onclick="copyCoverLetter()">✉️ Copy Cover Letter</button>
+      <a id="oca-apply-btn" class="btn-oca-apply" target="_blank" rel="noopener noreferrer" onclick="applyNow()">⚡ Apply Now →</a>
     </div>
   </div>
 </div>
