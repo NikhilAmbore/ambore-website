@@ -82,7 +82,7 @@ jobs:
           from pathlib import Path
           from collections import Counter
 
-          EXPIRE_DAYS   = 14
+          EXPIRE_DAYS   = 20
           now_utc       = datetime.now(timezone.utc)
           expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
           now_iso       = now_utc.isoformat()
