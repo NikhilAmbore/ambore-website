@@ -2,12 +2,8 @@ name: Hourly Job Scraper
 
 on:
   schedule:
-    # Runs every hour at :00  (free for public repos — unlimited Actions minutes)
-    # To reduce frequency, change to:
-    #   Every 6h:  '0 */6 * * *'
-    #   Every 12h: '0 */12 * * *'
-    #   Daily:     '0 6 * * *'
-    - cron: '0 * * * *'
+    # Every 6 hours — scraper takes ~2h so hourly runs pile up and get cancelled
+    - cron: '0 */6 * * *'
 
   workflow_dispatch:
     # Manual trigger — available from GitHub Actions UI
@@ -28,13 +24,13 @@ permissions:
 # If a new run is triggered while one is in progress, the new one waits in queue.
 concurrency:
   group: hourly-scrape
-  cancel-in-progress: false
+  cancel-in-progress: true   # cancel stuck old run when a new one fires
 
 jobs:
   scrape:
     name: Scrape & Publish Jobs
     runs-on: ubuntu-latest
-    timeout-minutes: 180  # Raised to 180 — full run takes ~2h with Workday/Himalayas
+    timeout-minutes: 110  # Kill hung runs before next 6h window
 
     steps:
       - name: Checkout repository
@@ -107,7 +103,7 @@ jobs:
           from pathlib import Path
           from collections import Counter
 
-          EXPIRE_DAYS   = 45
+          EXPIRE_DAYS   = 14   # reduced from 45 — keeps file under GitHub's 100 MB limit
           now_utc       = datetime.now(timezone.utc)
           expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
           now_iso       = now_utc.isoformat()
@@ -164,8 +160,13 @@ jobs:
           merged  = [j for j in fresh if not_expired(j)]
           expired = before - len(merged)
 
+          # Truncate description field to keep file under GitHub 100 MB limit
+          for j in merged:
+              if j.get('description') and len(j['description']) > 1500:
+                  j['description'] = j['description'][:1500]
+
           Path('backend/jobs.json').write_text(
-              json.dumps(merged, indent=2, ensure_ascii=False),
+              json.dumps(merged, ensure_ascii=False),   # no indent — saves ~20% space
               encoding='utf-8'
           )
 

@@ -902,11 +902,57 @@ const DashDB = {
   addResume(r)    { const rs = this.getResumes(); rs.unshift(r); this.saveResumes(rs); },
   deleteResume(id){ this.saveResumes(this.getResumes().filter(r => r.id !== id)); },
   updateResume(r) { this.saveResumes(this.getResumes().map(x => x.id === r.id ? r : x)); },
-  getApps()       { return JSON.parse(localStorage.getItem(this._ak) || '[]'); },
+  getApps() {
+    // Read user-scoped apps (added via dashboard)
+    const own = JSON.parse(localStorage.getItem(this._ak) || '[]');
+    const seen = new Set(own.map(a => String(a.id)));
+    // Merge apps saved by jobs.html (uses 'ambore_applications' key, different schema)
+    let merged = [];
+    try {
+      const jobApps = JSON.parse(localStorage.getItem('ambore_applications') || '[]');
+      jobApps.forEach(a => {
+        if (!a || !a.job_id) return;
+        const normId = String(a.id || ('local-' + a.job_id));
+        if (seen.has(normId)) return;
+        seen.add(normId);
+        const jd = a.job_data || {};
+        merged.push({
+          id: normId,
+          company: jd.company || '',
+          jobTitle: jd.title || '',
+          jobUrl: jd.url || '',
+          location: jd.location || '',
+          status: a.status === 'tracking' ? 'applied' : (a.status || 'applied'),
+          appliedDate: (a.applied_at || a.updated_at || new Date().toISOString()).slice(0, 10),
+          resumeId: null,
+          followUpDate: null,
+          notes: '',
+        });
+      });
+    } catch(e) {}
+    return [...own, ...merged];
+  },
   saveApps(a)     { localStorage.setItem(this._ak, JSON.stringify(a)); },
-  addApp(a)       { const as = this.getApps(); as.unshift(a); this.saveApps(as); },
-  deleteApp(id)   { this.saveApps(this.getApps().filter(a => a.id !== id)); },
-  updateApp(a)    { this.saveApps(this.getApps().map(x => x.id === a.id ? a : x)); },
+  addApp(a)       { const as = JSON.parse(localStorage.getItem(this._ak) || '[]'); as.unshift(a); this.saveApps(as); },
+  deleteApp(id)   {
+    // Remove from own store
+    this.saveApps(JSON.parse(localStorage.getItem(this._ak) || '[]').filter(a => a.id !== id));
+    // Also remove from ambore_applications if it came from there
+    try {
+      const jobApps = JSON.parse(localStorage.getItem('ambore_applications') || '[]');
+      const filtered = jobApps.filter(a => String(a.id || ('local-' + a.job_id)) !== String(id));
+      if (filtered.length !== jobApps.length) localStorage.setItem('ambore_applications', JSON.stringify(filtered));
+    } catch(e) {}
+  },
+  updateApp(a)    {
+    // Try to update in own store first
+    const own = JSON.parse(localStorage.getItem(this._ak) || '[]');
+    const idx = own.findIndex(x => x.id === a.id);
+    if (idx >= 0) { own[idx] = a; this.saveApps(own); return; }
+    // If it came from ambore_applications, save updated copy into own store
+    own.unshift(a);
+    this.saveApps(own);
+  },
   getSavedJobs()    { return JSON.parse(localStorage.getItem(this._jk) || '[]'); },
   saveSavedJobs(j)  { localStorage.setItem(this._jk, JSON.stringify(j)); },
   addSavedJob(j)    { const js = this.getSavedJobs(); if (!js.some(x=>x.id===j.id)) { js.unshift(j); this.saveSavedJobs(js); } },

@@ -1243,13 +1243,6 @@ function markApplied(jid) {
   if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'applied');
 }
 
-function showToast(msg) {
-  var t = document.createElement('div');
-  t.textContent = msg;
-  t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:#1a1a30;border:1px solid rgba(255,255,255,.15);color:#fff;padding:10px 20px;border-radius:10px;font-size:.85rem;z-index:9999;transition:opacity .3s';
-  document.body.appendChild(t);
-  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 400); }, 2500);
-}
 
 // Restore tracked state on render
 var _origBuildCard = typeof buildJobCard !== 'undefined' ? buildJobCard : null;
@@ -1581,11 +1574,14 @@ function oneClickApply(jid) {
   var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
   if (!u) { window.location.href = '/?auth=login&redirect=/jobs'; return; }
 
-  var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
-  if (!job) return;
+  var job = _jobsMap[jid] || (window._jobsData && window._jobsData.find(function(j){ return String(j.id) === String(jid); }));
+  if (!job) { showToast('Job not found — try refreshing the page.'); return; }
   _ocaJob = job;
   _ocaResume = null;
   _ocaCoverLetter = null;
+
+  // Save immediately so it always appears in the dashboard
+  _saveAppLocal(job, 'tracking');
 
   // Show modal
   document.getElementById('oca-overlay').classList.remove('hidden');
@@ -1648,7 +1644,9 @@ async function runOCAFlow(job, profile, user) {
     setStep(1, 'done');
   } catch(e) {
     document.getElementById('oca-step-label-1').textContent = 'Failed — ' + (e.message || 'try again');
-    setStep(1, 'active'); return;
+    setStep(1, 'active');
+    showToast('AI error: ' + (e.message || 'Could not generate resume. Check your internet connection.'));
+    return;
   }
 
   // STEP 2 — Cover Letter
@@ -1661,7 +1659,9 @@ async function runOCAFlow(job, profile, user) {
     setStep(2, 'done');
   } catch(e) {
     document.getElementById('oca-step-label-2').textContent = 'Failed — ' + (e.message || 'try again');
-    setStep(2, 'active'); return;
+    setStep(2, 'active');
+    showToast('AI error: ' + (e.message || 'Could not generate cover letter. Check your internet connection.'));
+    return;
   }
 
   // STEP 3 — Save to dashboard
@@ -1687,9 +1687,17 @@ async function runOCAFlow(job, profile, user) {
 }
 
 async function callClaudeOCA(systemPrompt, userMessage) {
+  // Check client-side rate limit
+  if (window.AmboreSecurity) {
+    var rl = AmboreSecurity.checkRateLimit('ai');
+    if (!rl.allowed) {
+      throw new Error('Rate limit reached — please wait an hour before making more AI requests.');
+    }
+  }
+  var headers = window.AmboreSecurity ? AmboreSecurity.proxyHeaders() : { 'Content-Type': 'application/json' };
   var res = await fetch('/api/claude', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: headers,
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       max_tokens: 2000,
@@ -1700,7 +1708,7 @@ async function callClaudeOCA(systemPrompt, userMessage) {
   });
   if (!res.ok) {
     var err = await res.json().catch(function(){ return {}; });
-    throw new Error(err.error || ('API error ' + res.status));
+    throw new Error(err.error || ('API error ' + res.status + ' — check that your API key is configured in Netlify'));
   }
   var data = await res.json();
   return (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
@@ -1942,6 +1950,7 @@ document.addEventListener('keydown', function(e){
       <button class="btn-oca-copy" id="oca-copy-resume-btn" onclick="copyResume()">📋 Copy Resume</button>
       <button class="btn-oca-copy" onclick="copyCoverLetter()">✉️ Copy Cover Letter</button>
       <a id="oca-apply-btn" class="btn-oca-apply" target="_blank" rel="noopener noreferrer" onclick="applyNow()">⚡ Apply Now →</a>
+      <a href="/dashboard?tab=applications" class="btn-oca-copy" style="text-decoration:none;margin-left:auto">📊 View in Dashboard</a>
     </div>
   </div>
 </div>

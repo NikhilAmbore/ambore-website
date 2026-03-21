@@ -82,7 +82,7 @@ jobs:
           from pathlib import Path
           from collections import Counter
 
-          EXPIRE_DAYS   = 45
+          EXPIRE_DAYS   = 14
           now_utc       = datetime.now(timezone.utc)
           expire_cutoff = now_utc - timedelta(days=EXPIRE_DAYS)
           now_iso       = now_utc.isoformat()
@@ -146,8 +146,12 @@ jobs:
           merged = [j for j in apify if not_expired(j)]
           expired = before - len(merged)
 
+          # Truncate descriptions + no indent to stay under GitHub 100 MB limit
+          for j in merged:
+              if j.get('description') and len(j['description']) > 1500:
+                  j['description'] = j['description'][:1500]
           Path('backend/jobs.json').write_text(
-              json.dumps(merged, indent=2, ensure_ascii=False),
+              json.dumps(merged, ensure_ascii=False),
               encoding='utf-8'
           )
           atses = Counter(j['ats'] for j in merged)
