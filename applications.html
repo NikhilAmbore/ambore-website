@@ -92,9 +92,15 @@ body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif
 
 <!-- Main content -->
 <main class="main">
-  <div class="page-header">
-    <h1 class="page-title">📋 My Applications</h1>
-    <p class="page-sub">Track every job from saved → applied → interview → offer</p>
+  <div class="page-header" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <h1 class="page-title">📋 My Applications</h1>
+      <p class="page-sub">Track every job from saved → applied → interview → offer</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="data-source" style="font-size:.7rem;color:rgba(255,255,255,.25)"></span>
+      <a href="/jobs" style="padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;text-decoration:none">+ Apply Jobs</a>
+    </div>
   </div>
 
   <!-- Stats -->
@@ -263,33 +269,17 @@ function loadFromLocal(){
   return result;
 }
 
-function isValidSupaRow(row){
-  return row && typeof row==='object' && row.user_id && row.job_id;
-}
-
 document.addEventListener('DOMContentLoaded',function(){
   var u=JSON.parse(localStorage.getItem('ambore_user')||'null');
   if(!u) return;
   _userId=u.email;
 
-  // Render local data immediately
   _apps=loadFromLocal();
-  renderAll();
 
-  // Then fetch from Supabase and merge
-  supaFetch('applications?user_id=eq.'+encodeURIComponent(u.email)+'&order=applied_at.desc')
-    .then(function(r){return r.json();})
-    .then(function(data){
-      if(!Array.isArray(data)) return; // error response — keep local
-      var validRows=data.filter(isValidSupaRow);
-      if(!validRows.length) return; // empty or all errors — keep local
-      // Merge: Supabase rows win, append local-only extras
-      var supaIds=new Set(validRows.map(function(a){return String(a.job_id);}));
-      var localOnly=loadFromLocal().filter(function(a){return !supaIds.has(String(a.job_id));});
-      _apps=validRows.concat(localOnly);
-      renderAll();
-    })
-    .catch(function(){}); // keep local data on network error
+  var src=document.getElementById('data-source');
+  if(src) src.textContent=_apps.length ? _apps.length+' application'+ (_apps.length===1?'':'s')+' loaded' : '';
+
+  renderAll();
 });
 </script>
 </body>
