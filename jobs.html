@@ -1668,6 +1668,20 @@ async function runOCAFlow(job, profile, user) {
   setStep(3, 'active');
   var appName = (job.company || 'Company') + ' — ' + (job.title || 'Role');
   _saveAppLocal(job, 'applied');
+
+  // Attach tailored resume + cover letter to the saved application
+  try {
+    var apps = JSON.parse(localStorage.getItem('ambore_applications') || '[]');
+    var idx = apps.findIndex(function(a){ return a.job_id === String(job.id); });
+    if (idx >= 0) {
+      apps[idx].tailored_resume  = _ocaResume;
+      apps[idx].cover_letter     = _ocaCoverLetter;
+      apps[idx].status           = 'applied';
+      apps[idx].updated_at       = new Date().toISOString();
+      localStorage.setItem('ambore_applications', JSON.stringify(apps));
+    }
+  } catch(e) {}
+
   _trackedJobs[String(job.id)] = { status: 'applied', appliedAt: new Date().toISOString() };
   localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
   if (window.AmborDB) {
