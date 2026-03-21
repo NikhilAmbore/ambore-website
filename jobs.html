@@ -198,6 +198,7 @@ a{text-decoration:none;color:inherit}
 .job-tag.remote{color:var(--green);border-color:rgba(34,197,94,0.25);background:rgba(34,197,94,0.08)}
 .job-tag.hybrid{color:var(--yellow);border-color:rgba(251,191,36,0.25);background:rgba(251,191,36,0.08)}
 .job-tag.salary{color:var(--accent);border-color:rgba(79,70,229,0.25);background:rgba(79,70,229,0.08)}
+.job-tag.visa{color:#34d399;border-color:rgba(52,211,153,0.3);background:rgba(52,211,153,0.07);font-weight:700}
 .job-time{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-left:auto}
 /* Level badges */
 .level-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:0.65rem;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;vertical-align:middle}
@@ -603,6 +604,12 @@ body{padding-left:72px}
       </select>
     </div>
 
+    <div class="filter-card">
+      <div class="filter-title">Visa Sponsorship</div>
+      <label class="filter-option"><input type="checkbox" id="filter-visa-h1b" onchange="applyFilters()"/> 🇺🇸 H-1B Sponsor <span class="count" id="count-h1b"></span></label>
+      <label class="filter-option"><input type="checkbox" id="filter-visa-opt" onchange="applyFilters()"/> 🎓 OPT / STEM OPT <span class="count" id="count-opt"></span></label>
+    </div>
+
     <button class="clear-filters" onclick="clearAllFilters()">Clear All Filters</button>
   </div>
 
@@ -698,6 +705,12 @@ function computeStats() {
   document.getElementById('count-entry').textContent   = lc.entry      ? `(${lc.entry.toLocaleString()})` : '';
   document.getElementById('count-mid').textContent     = lc.mid        ? `(${lc.mid.toLocaleString()})` : '';
   document.getElementById('count-senior').textContent  = lc.senior     ? `(${lc.senior.toLocaleString()})` : '';
+
+  // Visa sponsorship counts
+  const h1bCount = _allJobs.filter(isVisaSponsored).length;
+  const optCount = _allJobs.filter(isOptFriendly).length;
+  document.getElementById('count-h1b').textContent = h1bCount ? `(${h1bCount.toLocaleString()})` : '';
+  document.getElementById('count-opt').textContent = optCount ? `(${optCount.toLocaleString()})` : '';
 }
 
 function buildCategoryPills() {
@@ -780,6 +793,23 @@ function inferLevel(title) {
 }
 
 /* ═══════════════════════════════════════════
+   VISA SPONSORSHIP DETECTION
+═══════════════════════════════════════════ */
+const VISA_SPONSOR_POS = /\b(sponsor|sponsoring|sponsorship|h[-\s]?1b|h1b|opt\s+eligible|stem\s+opt|work\s+authoriz|visa\s+support|support.*visa|will\s+sponsor)\b/i;
+const VISA_SPONSOR_NEG = /\b(no\s+sponsor|not\s+sponsor|unable\s+to\s+sponsor|cannot\s+sponsor|can'?t\s+sponsor|do\s+not\s+sponsor|does\s+not\s+sponsor|sponsorship\s+not|not\s+available\s+for.*visa|citizen.*only|us\s+citizen.*only|must\s+be.*citizen|must.*be.*authorized.*without)\b/i;
+
+function isVisaSponsored(job) {
+  const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
+  return VISA_SPONSOR_POS.test(text) && !VISA_SPONSOR_NEG.test(text);
+}
+
+function isOptFriendly(job) {
+  const text = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
+  return /\b(opt|stem\s*opt|f[-\s]?1|cpt|work\s+authoriz|authorized\s+to\s+work|all.*work.*status|any\s+work\s+authorization)\b/i.test(text)
+    && !VISA_SPONSOR_NEG.test(text);
+}
+
+/* ═══════════════════════════════════════════
    CLIENT-SIDE FILTER + SORT + PAGINATE
 ═══════════════════════════════════════════ */
 const DATE_MS = { '1d': 864e5, '3d': 2592e5, '7d': 6048e5, '14d': 1209.6e6, '30d': 2592e6 };
@@ -805,6 +835,9 @@ function applyAndRender() {
     '.sidebar input[type=checkbox][value="mid"],' +
     '.sidebar input[type=checkbox][value="senior"]'
   )].filter(cb => cb.checked).map(cb => cb.value);
+
+  const filterH1B = document.getElementById('filter-visa-h1b')?.checked;
+  const filterOPT = document.getElementById('filter-visa-opt')?.checked;
 
   const now = Date.now();
 
@@ -841,6 +874,9 @@ function applyAndRender() {
       const lvl = (j.level && j.level !== 'unknown') ? j.level : inferLevel(j.title);
       if (!expLevels.includes(lvl)) return false;
     }
+    // ── Visa sponsorship
+    if (filterH1B && !isVisaSponsored(j)) return false;
+    if (filterOPT && !isOptFriendly(j))   return false;
     return true;
   });
 
@@ -919,6 +955,12 @@ function renderJobCard(job) {
     ? `<span class="job-tag">${escapeHtml(job.department)}</span>`
     : '';
 
+  // Visa sponsorship badge
+  const visaTags = [
+    isVisaSponsored(job) ? `<span class="job-tag visa" title="Mentions H-1B sponsorship">🇺🇸 H-1B</span>` : '',
+    isOptFriendly(job)   ? `<span class="job-tag visa" title="OPT / STEM OPT friendly">🎓 OPT</span>` : '',
+  ].join('');
+
   // Level badge (use scraped level if set, fall back to title inference)
   const lvl = (job.level && job.level !== 'unknown') ? job.level : inferLevel(job.title);
   const lvlLabels = { internship: 'Intern', entry: 'Entry', mid: 'Mid', senior: 'Senior' };
@@ -943,7 +985,7 @@ function renderJobCard(job) {
           <div class="job-title">${escapeHtml(job.title)}</div>
           <div class="job-company">${escapeHtml(job.company)} &middot; ${escapeHtml(location)}</div>
           <div class="job-meta">
-            ${levelBadge}${workTypeTag}${salaryTag}${deptTag}${atsTag}
+            ${levelBadge}${workTypeTag}${salaryTag}${deptTag}${visaTags}${atsTag}
             <span class="job-time">${timeStr}</span>
           </div>
         </div>
