@@ -412,6 +412,24 @@ body{padding-left:72px}
 .ps-save{padding:9px 24px;border-radius:9px;font-size:0.88rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;box-shadow:0 2px 10px rgba(79,70,229,0.35)}
 .ps-save:hover{opacity:0.88}
 @media(max-width:520px){.ps-grid{grid-template-columns:1fr}.ps-modal{padding:20px 16px 28px}}
+/* ── Resume Import Box ──────────────────────────────────────────── */
+.ps-import-box{background:rgba(79,70,229,0.07);border:1.5px dashed rgba(79,70,229,0.35);border-radius:12px;padding:16px 18px;margin-bottom:22px}
+.ps-import-title{font-size:0.8rem;font-weight:700;color:#a5b4fc;margin-bottom:10px;display:flex;align-items:center;gap:7px}
+.ps-import-row{display:flex;gap:10px;align-items:flex-start;flex-wrap:wrap}
+.ps-file-label{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;font-size:0.8rem;font-weight:600;background:rgba(79,70,229,0.15);border:1px solid rgba(79,70,229,0.3);color:#a5b4fc;cursor:pointer;transition:all 0.15s;white-space:nowrap;flex-shrink:0}
+.ps-file-label:hover{background:rgba(79,70,229,0.25);color:#fff}
+.ps-import-or{font-size:0.75rem;color:rgba(255,255,255,0.25);align-self:center;flex-shrink:0}
+.ps-paste-wrap{flex:1;min-width:160px}
+.ps-paste-input{width:100%;box-sizing:border-box;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.78rem;padding:8px 10px;outline:none;resize:none;font-family:inherit;line-height:1.4;min-height:40px}
+.ps-paste-input:focus{border-color:rgba(79,70,229,0.45)}
+.ps-paste-input::placeholder{color:rgba(255,255,255,0.2)}
+.ps-import-btn{display:flex;align-items:center;gap:6px;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;white-space:nowrap;transition:opacity 0.15s;margin-top:10px;width:100%;justify-content:center}
+.ps-import-btn:hover{opacity:0.88}
+.ps-import-btn:disabled{opacity:0.5;cursor:not-allowed}
+.ps-import-status{font-size:0.75rem;margin-top:8px;color:rgba(255,255,255,0.4);min-height:16px}
+.ps-import-status.ok{color:#4ade80}
+.ps-import-status.err{color:#f87171}
+.ps-import-status.loading{color:#a5b4fc}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -1271,6 +1289,14 @@ function openProfileSetup() {
   if (exps.length === 0) exps = [{}]; // start with one empty entry
   exps.forEach(function(exp) { addExpEntry(exp); });
 
+  // Reset import section
+  _importResumeText = '';
+  document.getElementById('ps-resume-paste').value = '';
+  var fi = document.getElementById('ps-resume-file');
+  if (fi) fi.value = '';
+  document.getElementById('ps-import-status').className = 'ps-import-status';
+  document.getElementById('ps-import-status').textContent = 'Supports .txt and .docx — or paste any resume text';
+
   document.getElementById('ps-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 }
@@ -1306,6 +1332,141 @@ function addExpEntry(data) {
 function removeExpEntry(id) {
   var el = document.getElementById('ps-exp-' + id);
   if (el) el.remove();
+}
+
+// ── Resume Import ─────────────────────────────────────────────────────────────
+var _importResumeText = '';
+
+function handleResumeFile(input) {
+  var file = input.files && input.files[0];
+  if (!file) return;
+  var status = document.getElementById('ps-import-status');
+  var ext = file.name.split('.').pop().toLowerCase();
+
+  if (ext === 'txt') {
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      _importResumeText = e.target.result || '';
+      status.className = 'ps-import-status ok';
+      status.textContent = '✓ ' + file.name + ' loaded — click Extract to fill the form';
+    };
+    reader.readAsText(file);
+    return;
+  }
+
+  if (ext === 'docx') {
+    status.className = 'ps-import-status loading';
+    status.textContent = 'Reading DOCX...';
+    // Load mammoth lazily
+    if (typeof mammoth === 'undefined') {
+      var s = document.createElement('script');
+      s.src = 'https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js';
+      s.onload = function() { readDocx(file); };
+      s.onerror = function() {
+        status.className = 'ps-import-status err';
+        status.textContent = 'Could not load DOCX reader — paste your resume text instead';
+      };
+      document.head.appendChild(s);
+    } else {
+      readDocx(file);
+    }
+    return;
+  }
+
+  status.className = 'ps-import-status err';
+  status.textContent = 'Unsupported format. Use .txt or .docx — or paste your resume text';
+}
+
+function readDocx(file) {
+  var status = document.getElementById('ps-import-status');
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    mammoth.extractRawText({ arrayBuffer: e.target.result })
+      .then(function(result) {
+        _importResumeText = result.value || '';
+        status.className = 'ps-import-status ok';
+        status.textContent = '✓ ' + file.name + ' loaded — click Extract to fill the form';
+      })
+      .catch(function() {
+        status.className = 'ps-import-status err';
+        status.textContent = 'Could not read DOCX — try pasting the text instead';
+      });
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+async function extractProfileFromResume() {
+  var pasteText = (document.getElementById('ps-resume-paste').value || '').trim();
+  var resumeText = pasteText || _importResumeText;
+  var status = document.getElementById('ps-import-status');
+  var btn = document.getElementById('ps-import-btn');
+
+  if (!resumeText || resumeText.length < 30) {
+    status.className = 'ps-import-status err';
+    status.textContent = 'Please upload a file or paste your resume text first';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 0.8s linear infinite"><path d="M21 12a9 9 0 1 1-6.22-8.56"/></svg> Extracting details...';
+  status.className = 'ps-import-status loading';
+  status.textContent = 'AI is reading your resume and filling the form...';
+
+  try {
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        stream: false,
+        system: 'You are a resume parser. Extract structured data from the resume text and return ONLY a valid JSON object with exactly these fields (use empty string "" if not found):\n{\n  "name": "",\n  "phone": "",\n  "location": "",\n  "linkedin": "",\n  "portfolio": "",\n  "summary": "",\n  "experience": [\n    {"company":"","title":"","duration":"","loc":"","bullets":""}\n  ],\n  "degree": "",\n  "school": "",\n  "gradyear": "",\n  "gpa": "",\n  "skills": "",\n  "soft": "",\n  "certs": ""\n}\nFor "bullets" in each experience entry, join all bullet points with newline characters. For "skills" and "soft", join with comma and space. For "certs", join with newline. Return ONLY the JSON — no markdown, no explanation.',
+        messages: [{ role: 'user', content: 'RESUME:\n' + resumeText.slice(0, 6000) }]
+      })
+    });
+
+    if (!res.ok) throw new Error('API error ' + res.status);
+    var data = await res.json();
+    var rawText = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : '';
+
+    // Strip markdown code fences if present
+    rawText = rawText.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim();
+    var parsed = JSON.parse(rawText);
+    populateProfileForm(parsed);
+
+    status.className = 'ps-import-status ok';
+    status.textContent = '✓ Profile filled from your resume — review and save';
+  } catch(e) {
+    status.className = 'ps-import-status err';
+    status.textContent = 'Could not parse resume — please fill the form manually';
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg> Extract & Fill Profile';
+}
+
+function populateProfileForm(p) {
+  if (!p) return;
+  if (p.name)      document.getElementById('ps-name').value      = p.name;
+  if (p.phone)     document.getElementById('ps-phone').value     = p.phone;
+  if (p.location)  document.getElementById('ps-location').value  = p.location;
+  if (p.linkedin)  document.getElementById('ps-linkedin').value  = p.linkedin;
+  if (p.portfolio) document.getElementById('ps-portfolio').value = p.portfolio;
+  if (p.summary)   document.getElementById('ps-summary').value   = p.summary;
+  if (p.degree)    document.getElementById('ps-degree').value    = p.degree;
+  if (p.school)    document.getElementById('ps-school').value    = p.school;
+  if (p.gradyear)  document.getElementById('ps-gradyear').value  = p.gradyear;
+  if (p.gpa)       document.getElementById('ps-gpa').value       = p.gpa;
+  if (p.skills)    document.getElementById('ps-skills').value    = p.skills;
+  if (p.soft)      document.getElementById('ps-soft').value      = p.soft;
+  if (p.certs)     document.getElementById('ps-certs').value     = p.certs;
+
+  // Rebuild experience entries
+  if (p.experience && p.experience.length) {
+    _expCount = 0;
+    document.getElementById('ps-exp-list').innerHTML = '';
+    p.experience.forEach(function(exp) { addExpEntry(exp); });
+  }
 }
 
 function saveProfile() {
@@ -1561,6 +1722,30 @@ document.addEventListener('keydown', function(e){
         <div class="ps-subtitle">Fill in once — used for every 1-Click Apply</div>
       </div>
       <button class="ps-close" onclick="closeProfileSetup()">✕</button>
+    </div>
+
+    <!-- Resume Import -->
+    <div class="ps-import-box">
+      <div class="ps-import-title">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        Auto-fill from existing resume
+      </div>
+      <div class="ps-import-row">
+        <label class="ps-file-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Upload file
+          <input type="file" id="ps-resume-file" accept=".txt,.docx" style="display:none" onchange="handleResumeFile(this)"/>
+        </label>
+        <span class="ps-import-or">or</span>
+        <div class="ps-paste-wrap">
+          <textarea class="ps-paste-input" id="ps-resume-paste" rows="2" placeholder="Paste your resume text here..."></textarea>
+        </div>
+      </div>
+      <button class="ps-import-btn" id="ps-import-btn" onclick="extractProfileFromResume()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+        Extract & Fill Profile
+      </button>
+      <div class="ps-import-status" id="ps-import-status">Supports .txt and .docx — or paste any resume text</div>
     </div>
 
     <!-- Personal Info -->
