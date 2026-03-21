@@ -974,13 +974,15 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
+  const resume = (cfg.resume || '').slice(0, 4000);
+  const jd     = (cfg.jd     || '').slice(0, 3000);
   return `You are Ambore AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
 
 CANDIDATE RESUME:
-${cfg.resume}
+${resume}
 
 JOB DESCRIPTION:
-${cfg.jd}
+${jd}
 
 ROLE: ${cfg.role} at ${cfg.company}
 ROUND: ${cfg.round}
