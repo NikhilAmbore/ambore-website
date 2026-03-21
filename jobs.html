@@ -372,6 +372,46 @@ body{padding-left:72px}
   .mob-dock{display:flex}
   body{padding-left:0;padding-bottom:60px}
 }
+/* ── Profile Banner ─────────────────────────────────────────────── */
+.profile-banner{display:flex;align-items:center;gap:12px;background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(124,58,237,0.08));border:1px solid rgba(79,70,229,0.3);border-radius:12px;padding:14px 16px;margin-bottom:14px}
+.profile-banner.hidden{display:none}
+.profile-banner-icon{font-size:1.4rem;flex-shrink:0}
+.profile-banner-text{flex:1;font-size:0.83rem;color:rgba(255,255,255,0.7)}
+.profile-banner-text strong{color:#fff;display:block;font-size:0.88rem;margin-bottom:2px}
+.profile-banner-btn{flex-shrink:0;padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;white-space:nowrap}
+.profile-banner-btn:hover{opacity:0.88}
+.profile-edit-link{font-size:0.75rem;color:rgba(129,140,248,0.7);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;margin-left:8px}
+.profile-edit-link:hover{color:#a5b4fc}
+/* ── Profile Setup Modal ────────────────────────────────────────── */
+.ps-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.75);backdrop-filter:blur(4px);z-index:9100;display:flex;align-items:center;justify-content:center;padding:16px}
+.ps-overlay.hidden{display:none}
+.ps-modal{background:#0f0f22;border:1px solid rgba(255,255,255,0.1);border-radius:18px;width:100%;max-width:620px;max-height:90vh;overflow-y:auto;padding:28px 28px 32px;position:relative}
+.ps-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px}
+.ps-title{font-size:1.15rem;font-weight:800;color:#fff}
+.ps-subtitle{font-size:0.8rem;color:rgba(255,255,255,0.4);margin-top:3px}
+.ps-close{background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);width:30px;height:30px;border-radius:50%;cursor:pointer;font-size:1.1rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ps-close:hover{color:#fff;background:rgba(255,255,255,0.12)}
+.ps-section{margin-bottom:20px}
+.ps-section-title{font-size:0.75rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:rgba(129,140,248,0.8);margin-bottom:10px}
+.ps-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ps-field{display:flex;flex-direction:column;gap:5px}
+.ps-field.full{grid-column:1/-1}
+.ps-label{font-size:0.75rem;color:rgba(255,255,255,0.45);font-weight:600}
+.ps-input,.ps-textarea,.ps-select{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:#fff;font-size:0.83rem;padding:9px 12px;outline:none;width:100%;box-sizing:border-box;font-family:inherit;transition:border-color 0.15s}
+.ps-input:focus,.ps-textarea:focus{border-color:rgba(79,70,229,0.5);background:rgba(79,70,229,0.06)}
+.ps-input::placeholder,.ps-textarea::placeholder{color:rgba(255,255,255,0.2)}
+.ps-textarea{resize:vertical;min-height:70px;line-height:1.5}
+.ps-exp-card{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;margin-bottom:10px;position:relative}
+.ps-exp-remove{position:absolute;top:10px;right:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);color:rgba(239,68,68,0.7);border-radius:6px;width:24px;height:24px;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;line-height:1}
+.ps-exp-remove:hover{background:rgba(239,68,68,0.2);color:#f87171}
+.ps-add-btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;border-radius:8px;font-size:0.78rem;font-weight:600;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);cursor:pointer;transition:all 0.15s}
+.ps-add-btn:hover{background:rgba(79,70,229,0.1);border-color:rgba(79,70,229,0.3);color:#a5b4fc}
+.ps-footer{display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.07);margin-top:4px}
+.ps-cancel{padding:9px 18px;border-radius:9px;font-size:0.83rem;font-weight:600;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);cursor:pointer}
+.ps-cancel:hover{background:rgba(255,255,255,0.08);color:#fff}
+.ps-save{padding:9px 24px;border-radius:9px;font-size:0.88rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;box-shadow:0 2px 10px rgba(79,70,229,0.35)}
+.ps-save:hover{opacity:0.88}
+@media(max-width:520px){.ps-grid{grid-template-columns:1fr}.ps-modal{padding:20px 16px 28px}}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -549,6 +589,16 @@ body{padding-left:72px}
         <option value="level">By Level</option>
       </select>
     </div>
+    <!-- Profile setup banner -->
+    <div id="profile-banner" class="profile-banner hidden">
+      <div class="profile-banner-icon">⚡</div>
+      <div class="profile-banner-text">
+        <strong>Set up your profile to enable 1-Click Apply</strong>
+        Enter your details once — Ambore AI will tailor your resume and write a cover letter for every job automatically.
+      </div>
+      <button class="profile-banner-btn" onclick="openProfileSetup()">Set Up Profile →</button>
+    </div>
+
     <div id="jobs-list">
       <div class="loading"><div class="loading-spinner"></div>Loading jobs...</div>
     </div>
@@ -1091,6 +1141,7 @@ window.addEventListener('load', async () => {
   buildCategoryPills();
   buildStateDropdown();
   applyAndRender();
+  showProfileBanner();
 });
 
 // ── Sidebar active state ──────────────────────────────────────────────────────
@@ -1168,6 +1219,169 @@ window.addEventListener('load', function() {
 });
 
 // ══════════════════════════════════════════
+// PROFILE MANAGEMENT
+// ══════════════════════════════════════════
+var _profile = null;
+var _expCount = 0;
+
+function loadProfile() {
+  try { _profile = JSON.parse(localStorage.getItem('ambore_profile') || 'null'); } catch(e) { _profile = null; }
+  return _profile;
+}
+
+function showProfileBanner() {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!u) return;
+  var p = loadProfile();
+  var banner = document.getElementById('profile-banner');
+  if (!banner) return;
+  if (!p || !p.name) {
+    banner.classList.remove('hidden');
+  } else {
+    banner.innerHTML = '<div class="profile-banner-icon">✅</div>'
+      + '<div class="profile-banner-text"><strong>Profile ready — ' + escapeHtml(p.name) + '</strong>Click ⚡ 1-Click Apply on any job to auto-tailor your resume and cover letter.</div>'
+      + '<button class="profile-banner-btn" style="background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.6)" onclick="openProfileSetup()">Edit Profile</button>';
+    banner.classList.remove('hidden');
+  }
+}
+
+function openProfileSetup() {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!u) { window.location.href = '/?auth=login&redirect=/jobs'; return; }
+  var p = loadProfile() || {};
+  // Pre-fill from auth + existing profile
+  document.getElementById('ps-name').value      = p.name     || u.name  || '';
+  document.getElementById('ps-phone').value     = p.phone    || '';
+  document.getElementById('ps-location').value  = p.location || '';
+  document.getElementById('ps-linkedin').value  = p.linkedin || '';
+  document.getElementById('ps-portfolio').value = p.portfolio|| '';
+  document.getElementById('ps-summary').value   = p.summary  || '';
+  document.getElementById('ps-degree').value    = p.degree   || '';
+  document.getElementById('ps-school').value    = p.school   || '';
+  document.getElementById('ps-gradyear').value  = p.gradyear || '';
+  document.getElementById('ps-gpa').value       = p.gpa      || '';
+  document.getElementById('ps-skills').value    = p.skills   || '';
+  document.getElementById('ps-soft').value      = p.soft     || '';
+  document.getElementById('ps-certs').value     = p.certs    || '';
+
+  // Render experience entries
+  _expCount = 0;
+  document.getElementById('ps-exp-list').innerHTML = '';
+  var exps = p.experience || [];
+  if (exps.length === 0) exps = [{}]; // start with one empty entry
+  exps.forEach(function(exp) { addExpEntry(exp); });
+
+  document.getElementById('ps-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeProfileSetup() {
+  document.getElementById('ps-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+}
+
+function closePSOverlay(e) {
+  if (e && e.target === document.getElementById('ps-overlay')) closeProfileSetup();
+}
+
+function addExpEntry(data) {
+  data = data || {};
+  var id = _expCount++;
+  var list = document.getElementById('ps-exp-list');
+  var div = document.createElement('div');
+  div.className = 'ps-exp-card';
+  div.id = 'ps-exp-' + id;
+  div.innerHTML = '<button class="ps-exp-remove" onclick="removeExpEntry(' + id + ')" title="Remove">✕</button>'
+    + '<div class="ps-grid" style="margin-bottom:8px">'
+    + '<div class="ps-field"><label class="ps-label">Company</label><input class="ps-input ps-exp-company" value="' + escapeHtml(data.company||'') + '" placeholder="Google"/></div>'
+    + '<div class="ps-field"><label class="ps-label">Job Title</label><input class="ps-input ps-exp-title" value="' + escapeHtml(data.title||'') + '" placeholder="Software Engineer"/></div>'
+    + '<div class="ps-field"><label class="ps-label">Duration</label><input class="ps-input ps-exp-duration" value="' + escapeHtml(data.duration||'') + '" placeholder="Jan 2022 – Present"/></div>'
+    + '<div class="ps-field"><label class="ps-label">Location</label><input class="ps-input ps-exp-loc" value="' + escapeHtml(data.loc||'') + '" placeholder="Austin, TX"/></div>'
+    + '</div>'
+    + '<div class="ps-field"><label class="ps-label">Key achievements & responsibilities (one per line)</label>'
+    + '<textarea class="ps-textarea ps-exp-bullets" rows="3" placeholder="• Built scalable REST API serving 2M requests/day&#10;• Led team of 4 engineers to deliver feature on time&#10;• Reduced load time by 40% through caching">' + escapeHtml(data.bullets||'') + '</textarea></div>';
+  list.appendChild(div);
+}
+
+function removeExpEntry(id) {
+  var el = document.getElementById('ps-exp-' + id);
+  if (el) el.remove();
+}
+
+function saveProfile() {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  // Collect experience entries
+  var exps = [];
+  document.querySelectorAll('#ps-exp-list .ps-exp-card').forEach(function(card) {
+    var company  = card.querySelector('.ps-exp-company').value.trim();
+    var title    = card.querySelector('.ps-exp-title').value.trim();
+    var duration = card.querySelector('.ps-exp-duration').value.trim();
+    var loc      = card.querySelector('.ps-exp-loc').value.trim();
+    var bullets  = card.querySelector('.ps-exp-bullets').value.trim();
+    if (company || title) exps.push({ company: company, title: title, duration: duration, loc: loc, bullets: bullets });
+  });
+
+  var profile = {
+    name:       document.getElementById('ps-name').value.trim(),
+    phone:      document.getElementById('ps-phone').value.trim(),
+    location:   document.getElementById('ps-location').value.trim(),
+    linkedin:   document.getElementById('ps-linkedin').value.trim(),
+    portfolio:  document.getElementById('ps-portfolio').value.trim(),
+    summary:    document.getElementById('ps-summary').value.trim(),
+    experience: exps,
+    degree:     document.getElementById('ps-degree').value.trim(),
+    school:     document.getElementById('ps-school').value.trim(),
+    gradyear:   document.getElementById('ps-gradyear').value.trim(),
+    gpa:        document.getElementById('ps-gpa').value.trim(),
+    skills:     document.getElementById('ps-skills').value.trim(),
+    soft:       document.getElementById('ps-soft').value.trim(),
+    certs:      document.getElementById('ps-certs').value.trim(),
+  };
+
+  if (!profile.name) { alert('Please enter your full name.'); return; }
+  if (!profile.summary && exps.length === 0) { alert('Please add at least a professional summary or one work experience entry.'); return; }
+
+  localStorage.setItem('ambore_profile', JSON.stringify(profile));
+  _profile = profile;
+
+  // Also save resume text to ambore_resume_text for other tools
+  var resumeText = buildResumeText(profile);
+  localStorage.setItem('ambore_resume_text', resumeText);
+
+  // Sync to Supabase if logged in
+  if (window.AmborDB && u) AmborDB.saveResume(u.email, resumeText, 'profile-resume.txt', 0);
+
+  closeProfileSetup();
+  showProfileBanner();
+  showToast('Profile saved!');
+}
+
+function buildResumeText(p) {
+  var lines = [];
+  lines.push(p.name);
+  var contact = [p.phone, p.location, p.linkedin, p.portfolio].filter(Boolean).join(' | ');
+  if (contact) lines.push(contact);
+  lines.push('');
+  if (p.summary) { lines.push('PROFESSIONAL SUMMARY'); lines.push(p.summary); lines.push(''); }
+  if (p.experience && p.experience.length) {
+    lines.push('WORK EXPERIENCE');
+    p.experience.forEach(function(e) {
+      lines.push((e.title||'') + (e.company ? ' — ' + e.company : '') + (e.duration ? '  (' + e.duration + ')' : '') + (e.loc ? '  ' + e.loc : ''));
+      if (e.bullets) { e.bullets.split('\n').forEach(function(b){ if(b.trim()) lines.push(b.trim()); }); }
+      lines.push('');
+    });
+  }
+  lines.push('EDUCATION');
+  var edu = [p.degree, p.school, p.gradyear, p.gpa ? 'GPA: ' + p.gpa : ''].filter(Boolean).join(' | ');
+  if (edu) lines.push(edu);
+  lines.push('');
+  if (p.skills) { lines.push('TECHNICAL SKILLS'); lines.push(p.skills); lines.push(''); }
+  if (p.soft)   { lines.push('SOFT SKILLS'); lines.push(p.soft); lines.push(''); }
+  if (p.certs)  { lines.push('CERTIFICATIONS'); lines.push(p.certs); lines.push(''); }
+  return lines.join('\n');
+}
+
+// ══════════════════════════════════════════
 // 1-CLICK APPLY
 // ══════════════════════════════════════════
 var _ocaJob = null;
@@ -1185,8 +1399,7 @@ function oneClickApply(jid) {
   _ocaCoverLetter = null;
 
   // Show modal
-  var ov = document.getElementById('oca-overlay');
-  ov.classList.remove('hidden');
+  document.getElementById('oca-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
 
   // Set job info
@@ -1200,16 +1413,15 @@ function oneClickApply(jid) {
   document.getElementById('oca-steps').classList.remove('hidden');
   setStep(1, 'pending'); setStep(2, 'pending'); setStep(3, 'pending');
 
-  // Get stored resume
-  var storedResume = localStorage.getItem('ambore_resume_text') || '';
-  if (!storedResume || storedResume.length < 50) {
+  // Check profile
+  var profile = loadProfile();
+  if (!profile || !profile.name) {
     document.getElementById('oca-steps').classList.add('hidden');
     document.getElementById('oca-no-resume').classList.remove('hidden');
     return;
   }
 
-  // Start generation
-  runOCAFlow(job, storedResume, u);
+  runOCAFlow(job, profile, u);
 }
 
 function setStep(n, state) {
@@ -1222,8 +1434,10 @@ function setStep(n, state) {
   if (num) num.textContent = state === 'done' ? '✓' : n;
 }
 
-async function runOCAFlow(job, resume, user) {
-  // Build job description string
+async function runOCAFlow(job, profile, user) {
+  var baseResume = buildResumeText(profile);
+
+  // Build job description
   var jd = 'Job Title: ' + (job.title||'') + '\nCompany: ' + (job.company||'') + '\nLocation: ' + (job.location||'');
   if (job.salary_min || job.salary_max) {
     var lo = job.salary_min ? '$' + Math.round(job.salary_min/1000) + 'k' : '';
@@ -1235,40 +1449,37 @@ async function runOCAFlow(job, resume, user) {
   // STEP 1 — Tailored Resume
   setStep(1, 'active');
   try {
-    var tailoredResume = await callClaudeOCA(
-      'You are an expert resume writer. The user will give you their existing resume and a job description. Rewrite their resume to be optimally tailored for that specific job. Keep all true facts from their resume — do not invent anything. Reorder sections, adjust bullet points, and emphasise relevant skills and keywords from the job description. Output only the final resume text, no explanations.',
-      'MY RESUME:\n' + resume + '\n\n' + jd
+    _ocaResume = await callClaudeOCA(
+      'You are an expert resume writer. You will receive a candidate\'s profile/resume and a job description. Rewrite the resume to be perfectly tailored for that role: emphasise matching skills and keywords, reorder and sharpen bullet points, and make it ATS-friendly. Keep all facts true — never invent experience. Output a clean, professional resume in plain text format ready to copy and paste. No explanations or commentary.',
+      'CANDIDATE PROFILE:\n' + baseResume + '\n\n' + jd
     );
-    _ocaResume = tailoredResume;
     setStep(1, 'done');
   } catch(e) {
-    document.getElementById('oca-step-label-1').textContent = 'Resume generation failed — try again';
-    setStep(1, 'active');
-    return;
+    document.getElementById('oca-step-label-1').textContent = 'Failed — ' + (e.message || 'try again');
+    setStep(1, 'active'); return;
   }
 
   // STEP 2 — Cover Letter
   setStep(2, 'active');
   try {
-    var coverLetter = await callClaudeOCA(
-      'You are an expert career coach. Write a compelling, personalised cover letter for the applicant based on their resume and the job description. Keep it under 300 words, professional but warm, and highlight 2-3 specific achievements from the resume that directly match the role. Output only the cover letter text, no explanations.',
-      'MY RESUME:\n' + resume + '\n\n' + jd
+    _ocaCoverLetter = await callClaudeOCA(
+      'You are an expert career coach. Write a compelling, personalised cover letter for the candidate based on their profile and the job description. Keep it under 300 words, professional but warm. Open with a strong hook, highlight 2–3 specific achievements that match the role, and close with a confident call to action. Use the candidate\'s actual name. Output only the cover letter text — no subject line, no explanations.',
+      'CANDIDATE PROFILE:\n' + baseResume + '\n\n' + jd
     );
-    _ocaCoverLetter = coverLetter;
     setStep(2, 'done');
   } catch(e) {
-    document.getElementById('oca-step-label-2').textContent = 'Cover letter generation failed — try again';
-    setStep(2, 'active');
-    return;
+    document.getElementById('oca-step-label-2').textContent = 'Failed — ' + (e.message || 'try again');
+    setStep(2, 'active'); return;
   }
 
-  // STEP 3 — Save & show
+  // STEP 3 — Save to dashboard
   setStep(3, 'active');
-  // Save application to Supabase + localStorage
+  var appName = (job.company || 'Company') + ' — ' + (job.title || 'Role');
   trackApplication(String(job.id));
-  if (window.AmborDB) AmborDB.saveApplication(user.email, job, 'applied');
-  // Save tailored resume to Supabase
-  if (window.AmborDB) AmborDB.saveResume(user.email, _ocaResume, (job.company||'') + ' — ' + (job.title||'') + '.txt', 0);
+  if (window.AmborDB) {
+    AmborDB.saveApplication(user.email, Object.assign({}, job, { appName: appName }), 'applied');
+    AmborDB.saveResume(user.email, _ocaResume, appName + '.txt', 0);
+  }
   setStep(3, 'done');
 
   // Show results
@@ -1276,8 +1487,7 @@ async function runOCAFlow(job, resume, user) {
   document.getElementById('oca-resume-text').textContent = _ocaResume;
   document.getElementById('oca-cover-text').textContent = _ocaCoverLetter;
   document.getElementById('oca-results').classList.remove('hidden');
-  var applyBtn = document.getElementById('oca-apply-btn');
-  applyBtn.href = job.url || '#';
+  document.getElementById('oca-apply-btn').href = job.url || '#';
   document.getElementById('oca-footer').classList.remove('hidden');
   showOCATab('resume');
 }
@@ -1294,49 +1504,130 @@ async function callClaudeOCA(systemPrompt, userMessage) {
       messages: [{ role: 'user', content: userMessage }]
     })
   });
-  if (!res.ok) throw new Error('API error ' + res.status);
+  if (!res.ok) {
+    var err = await res.json().catch(function(){ return {}; });
+    throw new Error(err.error || ('API error ' + res.status));
+  }
   var data = await res.json();
-  return data.content && data.content[0] && data.content[0].text
-    ? data.content[0].text
-    : (data.choices && data.choices[0] ? data.choices[0].message.content : '');
+  return (data.content && data.content[0] && data.content[0].text) ? data.content[0].text : '';
 }
 
 function showOCATab(tab) {
-  var resumePanel = document.getElementById('oca-resume-panel');
-  var coverPanel  = document.getElementById('oca-cover-panel');
+  var rp = document.getElementById('oca-resume-panel');
+  var cp = document.getElementById('oca-cover-panel');
   var tabs = document.querySelectorAll('.oca-tab');
   if (tab === 'resume') {
-    resumePanel.classList.remove('hidden'); coverPanel.classList.add('hidden');
+    rp.classList.remove('hidden'); cp.classList.add('hidden');
     tabs[0].classList.add('active'); tabs[1].classList.remove('active');
   } else {
-    coverPanel.classList.remove('hidden'); resumePanel.classList.add('hidden');
+    cp.classList.remove('hidden'); rp.classList.add('hidden');
     tabs[1].classList.add('active'); tabs[0].classList.remove('active');
   }
 }
 
 function copyOCAContent() {
-  var activePanel = document.getElementById('oca-resume-panel').classList.contains('hidden')
+  var txt = document.getElementById('oca-resume-panel').classList.contains('hidden')
     ? document.getElementById('oca-cover-text').textContent
     : document.getElementById('oca-resume-text').textContent;
-  navigator.clipboard.writeText(activePanel).then(function(){
+  navigator.clipboard.writeText(txt).then(function(){
     var btn = document.querySelector('.btn-oca-copy');
-    if (btn) { var orig = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = orig; }, 1500); }
+    if (btn) { var o = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = o; }, 1600); }
   }).catch(function(){});
 }
 
 function closeOCA(e) {
   if (e && e.target !== document.getElementById('oca-overlay')) return;
-  document.getElementById('oca-overlay').classList.add('hidden');
-  document.body.style.overflow = '';
-  _ocaJob = null;
+  closeOCABtn();
 }
 function closeOCABtn() {
   document.getElementById('oca-overlay').classList.add('hidden');
   document.body.style.overflow = '';
   _ocaJob = null;
 }
-document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeOCABtn(); });
+document.addEventListener('keydown', function(e){
+  if (e.key === 'Escape') {
+    closeOCABtn();
+    closeProfileSetup();
+  }
+});
 </script>
+
+<!-- Profile Setup Modal -->
+<div id="ps-overlay" class="ps-overlay hidden" onclick="closePSOverlay(event)">
+  <div class="ps-modal" onclick="event.stopPropagation()">
+    <div class="ps-header">
+      <div>
+        <div class="ps-title">Your Profile</div>
+        <div class="ps-subtitle">Fill in once — used for every 1-Click Apply</div>
+      </div>
+      <button class="ps-close" onclick="closeProfileSetup()">✕</button>
+    </div>
+
+    <!-- Personal Info -->
+    <div class="ps-section">
+      <div class="ps-section-title">Personal Info</div>
+      <div class="ps-grid">
+        <div class="ps-field"><label class="ps-label">Full Name</label><input class="ps-input" id="ps-name" placeholder="Jane Smith"/></div>
+        <div class="ps-field"><label class="ps-label">Phone</label><input class="ps-input" id="ps-phone" placeholder="+1 (555) 000-0000"/></div>
+        <div class="ps-field"><label class="ps-label">Location</label><input class="ps-input" id="ps-location" placeholder="Austin, TX"/></div>
+        <div class="ps-field"><label class="ps-label">LinkedIn URL</label><input class="ps-input" id="ps-linkedin" placeholder="linkedin.com/in/yourname"/></div>
+        <div class="ps-field full"><label class="ps-label">Portfolio / GitHub URL</label><input class="ps-input" id="ps-portfolio" placeholder="github.com/yourname or yoursite.com"/></div>
+      </div>
+    </div>
+
+    <!-- Professional Summary -->
+    <div class="ps-section">
+      <div class="ps-section-title">Professional Summary</div>
+      <div class="ps-field">
+        <textarea class="ps-textarea" id="ps-summary" rows="3" placeholder="e.g. Full-stack engineer with 4 years of experience building SaaS products. Skilled in React, Node.js, and AWS. Passionate about developer tools and performance optimisation."></textarea>
+      </div>
+    </div>
+
+    <!-- Work Experience -->
+    <div class="ps-section">
+      <div class="ps-section-title">Work Experience <span style="color:rgba(255,255,255,0.3);font-weight:400;text-transform:none;font-size:0.72rem;letter-spacing:0">(most recent first)</span></div>
+      <div id="ps-exp-list"></div>
+      <button class="ps-add-btn" id="ps-add-exp" onclick="addExpEntry()">+ Add Experience</button>
+    </div>
+
+    <!-- Education -->
+    <div class="ps-section">
+      <div class="ps-section-title">Education</div>
+      <div class="ps-grid">
+        <div class="ps-field"><label class="ps-label">Degree / Certificate</label><input class="ps-input" id="ps-degree" placeholder="B.S. Computer Science"/></div>
+        <div class="ps-field"><label class="ps-label">School</label><input class="ps-input" id="ps-school" placeholder="University of Texas"/></div>
+        <div class="ps-field"><label class="ps-label">Year</label><input class="ps-input" id="ps-gradyear" placeholder="2021"/></div>
+        <div class="ps-field"><label class="ps-label">GPA (optional)</label><input class="ps-input" id="ps-gpa" placeholder="3.8 / 4.0"/></div>
+      </div>
+    </div>
+
+    <!-- Skills -->
+    <div class="ps-section">
+      <div class="ps-section-title">Skills</div>
+      <div class="ps-field">
+        <label class="ps-label">Technical Skills (comma separated)</label>
+        <textarea class="ps-textarea" id="ps-skills" rows="2" placeholder="JavaScript, React, Node.js, Python, AWS, Docker, PostgreSQL, Git"></textarea>
+      </div>
+      <div class="ps-field" style="margin-top:8px">
+        <label class="ps-label">Soft Skills (comma separated)</label>
+        <input class="ps-input" id="ps-soft" placeholder="Leadership, Communication, Problem-solving, Agile"/>
+      </div>
+    </div>
+
+    <!-- Certifications -->
+    <div class="ps-section">
+      <div class="ps-section-title">Certifications <span style="color:rgba(255,255,255,0.3);font-weight:400;text-transform:none;font-size:0.72rem;letter-spacing:0">(optional)</span></div>
+      <div class="ps-field">
+        <textarea class="ps-textarea" id="ps-certs" rows="2" placeholder="AWS Certified Solutions Architect — 2023&#10;Google Cloud Professional — 2022"></textarea>
+      </div>
+    </div>
+
+    <div class="ps-footer">
+      <button class="ps-cancel" onclick="closeProfileSetup()">Cancel</button>
+      <button class="ps-save" onclick="saveProfile()">Save Profile →</button>
+    </div>
+  </div>
+</div>
 
 <!-- 1-Click Apply Modal -->
 <div id="oca-overlay" class="oca-overlay hidden" onclick="closeOCA(event)">
@@ -1361,11 +1652,11 @@ document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeOCAB
       </div>
     </div>
 
-    <!-- No resume -->
+    <!-- No profile -->
     <div id="oca-no-resume" class="oca-no-resume hidden">
-      <strong>No resume found</strong>
-      <p>Upload your resume once — Ambore will auto-tailor it for every job you apply to.</p>
-      <a href="/resume" class="btn-oca-apply" style="display:inline-flex;text-decoration:none">Upload Resume →</a>
+      <strong>Profile not set up yet</strong>
+      <p>Fill in your details once — Ambore will auto-tailor your resume and write a cover letter for every job you apply to.</p>
+      <button class="btn-oca-apply" onclick="closeOCABtn();openProfileSetup()">Set Up Profile →</button>
     </div>
 
     <!-- Results -->
