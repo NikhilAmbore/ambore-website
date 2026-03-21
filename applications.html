@@ -163,38 +163,50 @@ function timeAgo(iso){
   return Math.floor(s/86400)+'d ago';
 }
 
+function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+
 function buildCard(app){
   var j=app.job_data||{};
-  var role=j.title||j.role||'Unknown Role';
-  var company=j.company||j.company_name||'Unknown';
+  var role=j.title||j.role||app.job_id||'Unknown Role';
+  var company=j.company||j.company_name||'';
   var url=j.url||j.apply_url||'#';
-  var date=timeAgo(app.applied_at||app.updated_at);
-  var nextStatus={'tracking':'applied','applied':'interviewing','interviewing':'offer'};
-  var nextLabel={'tracking':'Mark Applied','applied':'Got Interview','interviewing':'Got Offer'};
+  var date=timeAgo(app.applied_at||app.updated_at||new Date().toISOString());
+  var nextStatus={tracking:'applied',applied:'interviewing',interviewing:'offer'};
+  var nextLabel={tracking:'Mark Applied',applied:'Got Interview',interviewing:'Got Offer'};
   var next=nextStatus[app.status];
-  return '<div class="app-card" id="app-'+app.id+'">'
+  var safeId=escH(String(app.id));
+  var safeNext=escH(next||'');
+  return '<div class="app-card" id="app-'+safeId+'">'
     +'<div class="app-role" title="'+escH(role)+'">'+escH(role)+'</div>'
-    +'<div class="app-company">'+escH(company)+'</div>'
+    +(company?'<div class="app-company">'+escH(company)+'</div>':'')
     +'<div class="app-date">'+date+'</div>'
     +'<div class="app-actions">'
-    +(next?'<button class="app-btn btn-move" onclick="moveApp(\''+app.id+'\',\''+next+'\')">'+nextLabel[app.status]+' →</button>':'')
-    +'<a class="app-btn btn-open" href="'+escH(url)+'" target="_blank">Open →</a>'
-    +'<button class="app-btn btn-reject" onclick="moveApp(\''+app.id+'\',\'rejected\')">✕</button>'
+    +(next?'<button class="app-btn btn-move" onclick="moveApp(\''+safeId+'\',\''+safeNext+'\')">'+escH(nextLabel[app.status])+' →</button>':'')
+    +(url&&url!=='#'?'<a class="app-btn btn-open" href="'+escH(url)+'" target="_blank" rel="noopener">Open →</a>':'')
+    +'<button class="app-btn btn-reject" onclick="moveApp(\''+safeId+'\',\'rejected\')">✕</button>'
     +'</div></div>';
 }
-
-function escH(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
 function renderAll(){
   var cols={tracking:[],applied:[],interviewing:[],offer:[]};
   _apps.forEach(function(a){
-    var st=a.status==='offer'||a.status==='rejected'?'offer':a.status;
-    if(cols[st])cols[st].push(a);
+    if(!a||!a.status) return;
+    var st=(a.status==='offer'||a.status==='rejected')?'offer':a.status;
+    if(cols[st]) cols[st].push(a);
+    else cols.tracking.push(a); // unknown status → tracking
   });
+  var emptyAll = _apps.length===0;
   ['tracking','applied','interviewing','offer'].forEach(function(st){
     var el=document.getElementById('col-'+st);
     var cnt=document.getElementById('cnt-'+st);
-    if(!cols[st].length){el.innerHTML='<div class="empty-col">No jobs here yet</div>';cnt.textContent=0;return;}
+    if(!el) return;
+    if(!cols[st].length){
+      el.innerHTML = emptyAll && st==='applied'
+        ? '<div class="empty-col" style="padding:32px 12px"><div style="font-size:1.5rem;margin-bottom:8px">📋</div>No applications yet<br><a href="/jobs" style="color:#818cf8;font-size:.75rem;margin-top:8px;display:inline-block">Browse jobs →</a></div>'
+        : '<div class="empty-col">Empty</div>';
+      cnt.textContent=0;
+      return;
+    }
     el.innerHTML=cols[st].map(buildCard).join('');
     cnt.textContent=cols[st].length;
   });
@@ -205,63 +217,79 @@ function renderAll(){
 }
 
 function moveApp(id,newStatus){
-  var idx=_apps.findIndex(function(a){return a.id===id;});
-  if(idx===-1)return;
+  var idx=_apps.findIndex(function(a){return String(a.id)===String(id);});
+  if(idx===-1) return;
   _apps[idx].status=newStatus;
   renderAll();
-  supaFetch('applications?id=eq.'+id,{method:'PATCH',body:JSON.stringify({status:newStatus,updated_at:new Date().toISOString()})});
+  // Update localStorage
+  try{
+    var stored=JSON.parse(localStorage.getItem('ambore_applications')||'[]');
+    var li=stored.findIndex(function(a){return String(a.id)===String(id)||String(a.job_id)===String(_apps[idx].job_id);});
+    if(li>=0){stored[li].status=newStatus;localStorage.setItem('ambore_applications',JSON.stringify(stored));}
+  }catch(e){}
+  // Update Supabase (only for real UUIDs, not local- prefixed)
+  if(String(id).indexOf('local-')!==0){
+    supaFetch('applications?id=eq.'+encodeURIComponent(id),{method:'PATCH',body:JSON.stringify({status:newStatus,updated_at:new Date().toISOString()})}).catch(function(){});
+  }
 }
 
 function loadFromLocal(){
+  var result=[];
+  var seen=new Set();
+  // Source 1: ambore_applications (new format with full job data)
   try{
-    // Primary: ambore_applications (full job data stored by jobs.html)
     var apps=JSON.parse(localStorage.getItem('ambore_applications')||'[]');
-    if(apps.length) return apps;
-    // Fallback: ambore_tracked_jobs (older format, less data)
+    apps.forEach(function(a){
+      if(!a||!a.job_id) return;
+      seen.add(String(a.job_id));
+      result.push(a);
+    });
+  }catch(e){}
+  // Source 2: ambore_tracked_jobs (older format, fill gaps)
+  try{
     var tracked=JSON.parse(localStorage.getItem('ambore_tracked_jobs')||'{}');
-    return Object.keys(tracked).map(function(jid){
+    Object.keys(tracked).forEach(function(jid){
+      if(seen.has(String(jid))) return;
       var entry=tracked[jid];
-      return {
+      result.push({
         id:'local-'+jid,
         job_id:jid,
-        job_data: entry.job || {title:'Job #'+jid,company:'',url:''},
+        job_data:entry.job||{title:'Job '+jid,company:'',url:''},
         status:entry.status||'tracking',
         applied_at:entry.appliedAt||entry.savedAt||new Date().toISOString()
-      };
+      });
     });
-  }catch(e){return [];}
+  }catch(e){}
+  return result;
 }
 
-function mergeWithLocal(supaData){
-  // Merge Supabase rows with local-only entries (not yet synced)
-  var localApps = loadFromLocal();
-  var supaIds = new Set(supaData.map(function(a){ return a.job_id; }));
-  var localOnly = localApps.filter(function(a){ return !supaIds.has(a.job_id); });
-  return supaData.concat(localOnly);
+function isValidSupaRow(row){
+  return row && typeof row==='object' && row.user_id && row.job_id;
 }
 
-// Load from Supabase, always merge with localStorage
 document.addEventListener('DOMContentLoaded',function(){
   var u=JSON.parse(localStorage.getItem('ambore_user')||'null');
-  if(!u)return;
+  if(!u) return;
   _userId=u.email;
 
-  // Show local data immediately while Supabase loads
-  _apps = loadFromLocal();
-  if(_apps.length) renderAll();
+  // Render local data immediately
+  _apps=loadFromLocal();
+  renderAll();
 
+  // Then fetch from Supabase and merge
   supaFetch('applications?user_id=eq.'+encodeURIComponent(u.email)+'&order=applied_at.desc')
     .then(function(r){return r.json();})
     .then(function(data){
-      if(Array.isArray(data)){
-        _apps = data.length ? mergeWithLocal(data) : loadFromLocal();
-      }
+      if(!Array.isArray(data)) return; // error response — keep local
+      var validRows=data.filter(isValidSupaRow);
+      if(!validRows.length) return; // empty or all errors — keep local
+      // Merge: Supabase rows win, append local-only extras
+      var supaIds=new Set(validRows.map(function(a){return String(a.job_id);}));
+      var localOnly=loadFromLocal().filter(function(a){return !supaIds.has(String(a.job_id));});
+      _apps=validRows.concat(localOnly);
       renderAll();
     })
-    .catch(function(){
-      _apps=loadFromLocal();
-      renderAll();
-    });
+    .catch(function(){}); // keep local data on network error
 });
 </script>
 </body>
