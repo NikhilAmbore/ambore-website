@@ -211,13 +211,51 @@ a{text-decoration:none;color:inherit}
   display:flex;align-items:center;gap:8px;margin-top:12px;
   padding-top:11px;border-top:1px solid var(--border);
 }
-.btn-tailor{
+.btn-oca{
   display:inline-flex;align-items:center;gap:5px;
-  padding:6px 13px;border-radius:8px;font-size:0.76rem;font-weight:700;
-  background:rgba(79,70,229,0.12);border:1px solid rgba(79,70,229,0.3);
-  color:var(--accent);cursor:pointer;transition:all 0.15s;white-space:nowrap;
+  padding:6px 14px;border-radius:8px;font-size:0.76rem;font-weight:700;
+  background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;
+  color:#fff;cursor:pointer;transition:all 0.15s;white-space:nowrap;
+  box-shadow:0 2px 8px rgba(79,70,229,0.35);
 }
-.btn-tailor:hover{background:rgba(79,70,229,0.22);border-color:rgba(129,140,248,0.5);color:#fff}
+.btn-oca:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 4px 14px rgba(79,70,229,0.5)}
+.btn-oca:active{transform:translateY(0)}
+/* 1-Click Apply Modal */
+.oca-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);z-index:9000;display:flex;align-items:flex-end;justify-content:center;padding:0}
+.oca-overlay.hidden{display:none}
+.oca-modal{background:#12122a;border:1px solid rgba(255,255,255,0.1);border-radius:20px 20px 0 0;width:100%;max-width:680px;max-height:90vh;overflow-y:auto;padding:24px 24px 32px;position:relative;animation:slideUp 0.25s ease}
+@keyframes slideUp{from{transform:translateY(60px);opacity:0}to{transform:translateY(0);opacity:1}}
+.oca-close{position:absolute;top:14px;right:16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:1rem;line-height:1;display:flex;align-items:center;justify-content:center}
+.oca-close:hover{background:rgba(255,255,255,0.12);color:#fff}
+.oca-job-title{font-size:1.05rem;font-weight:700;color:#fff;margin-bottom:2px}
+.oca-job-company{font-size:0.82rem;color:rgba(255,255,255,0.45);margin-bottom:20px}
+/* Steps */
+.oca-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:20px}
+.oca-step{display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,0.07);background:rgba(255,255,255,0.03);color:rgba(255,255,255,0.35);font-size:0.85rem;transition:all 0.3s}
+.oca-step.active{border-color:rgba(79,70,229,0.4);background:rgba(79,70,229,0.08);color:#fff}
+.oca-step.done{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.06);color:#4ade80}
+.oca-step-num{width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.07);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:700;flex-shrink:0}
+.oca-step.active .oca-step-num{background:rgba(79,70,229,0.5);animation:pulse 1.2s infinite}
+.oca-step.done .oca-step-num{background:rgba(34,197,94,0.3)}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+/* No resume state */
+.oca-no-resume{text-align:center;padding:32px 20px;color:rgba(255,255,255,0.5)}
+.oca-no-resume p{margin-bottom:16px;font-size:0.92rem}
+.oca-no-resume strong{color:#fff;display:block;font-size:1.05rem;margin-bottom:8px}
+/* Tabs */
+.oca-tabs{display:flex;gap:8px;margin-bottom:14px}
+.oca-tab{padding:7px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);transition:all 0.15s}
+.oca-tab.active{background:rgba(79,70,229,0.2);border-color:rgba(79,70,229,0.4);color:#a5b4fc}
+/* Content panel */
+.oca-pre{white-space:pre-wrap;font-family:inherit;font-size:0.8rem;line-height:1.6;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:10px;padding:14px;max-height:280px;overflow-y:auto;margin:0}
+.oca-panel.hidden{display:none}
+/* Footer */
+.oca-footer{display:flex;align-items:center;gap:10px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.07)}
+.oca-footer.hidden{display:none}
+.btn-oca-copy{padding:8px 16px;border-radius:8px;font-size:0.8rem;font-weight:600;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);cursor:pointer;transition:all 0.15s}
+.btn-oca-copy:hover{background:rgba(255,255,255,0.1);color:#fff}
+.btn-oca-apply{margin-left:auto;padding:10px 22px;border-radius:10px;font-size:0.88rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);border:none;color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 2px 12px rgba(79,70,229,0.4)}
+.btn-oca-apply:hover{opacity:0.88}
 .btn-apply{
   margin-left:auto;
   display:inline-flex;align-items:center;gap:4px;
@@ -834,7 +872,7 @@ function renderJobCard(job) {
         </div>
       </div>
       <div class="job-card-actions">
-        <button class="btn-tailor" onclick="tailorResume('${jid}')">✨ Build Resume</button>
+        <button class="btn-oca" onclick="oneClickApply('${jid}')">⚡ 1-Click Apply</button>
         <button class="btn-track" id="track-${jid}" onclick="trackApplication('${jid}')">📌 Track</button>
         <a class="btn-apply" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" onclick="markApplied('${jid}')">Apply →</a>
       </div>
@@ -1128,5 +1166,229 @@ window.addEventListener('load', function() {
     }
   });
 });
-</script></body>
+
+// ══════════════════════════════════════════
+// 1-CLICK APPLY
+// ══════════════════════════════════════════
+var _ocaJob = null;
+var _ocaResume = null;
+var _ocaCoverLetter = null;
+
+function oneClickApply(jid) {
+  var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!u) { window.location.href = '/?auth=login&redirect=/jobs'; return; }
+
+  var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
+  if (!job) return;
+  _ocaJob = job;
+  _ocaResume = null;
+  _ocaCoverLetter = null;
+
+  // Show modal
+  var ov = document.getElementById('oca-overlay');
+  ov.classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+
+  // Set job info
+  document.getElementById('oca-job-title').textContent = job.title || 'Job';
+  document.getElementById('oca-job-company').textContent = (job.company || '') + (job.location ? ' · ' + job.location : '');
+
+  // Reset state
+  document.getElementById('oca-no-resume').classList.add('hidden');
+  document.getElementById('oca-results').classList.add('hidden');
+  document.getElementById('oca-footer').classList.add('hidden');
+  document.getElementById('oca-steps').classList.remove('hidden');
+  setStep(1, 'pending'); setStep(2, 'pending'); setStep(3, 'pending');
+
+  // Get stored resume
+  var storedResume = localStorage.getItem('ambore_resume_text') || '';
+  if (!storedResume || storedResume.length < 50) {
+    document.getElementById('oca-steps').classList.add('hidden');
+    document.getElementById('oca-no-resume').classList.remove('hidden');
+    return;
+  }
+
+  // Start generation
+  runOCAFlow(job, storedResume, u);
+}
+
+function setStep(n, state) {
+  var el = document.getElementById('oca-s' + n);
+  if (!el) return;
+  el.classList.remove('active','done');
+  if (state === 'active') el.classList.add('active');
+  if (state === 'done')   el.classList.add('done');
+  var num = el.querySelector('.oca-step-num');
+  if (num) num.textContent = state === 'done' ? '✓' : n;
+}
+
+async function runOCAFlow(job, resume, user) {
+  // Build job description string
+  var jd = 'Job Title: ' + (job.title||'') + '\nCompany: ' + (job.company||'') + '\nLocation: ' + (job.location||'');
+  if (job.salary_min || job.salary_max) {
+    var lo = job.salary_min ? '$' + Math.round(job.salary_min/1000) + 'k' : '';
+    var hi = job.salary_max ? '$' + Math.round(job.salary_max/1000) + 'k' : '';
+    jd += '\nSalary: ' + (lo && hi ? lo+'–'+hi : hi||lo);
+  }
+  if (job.description) jd += '\n\nJob Description:\n' + job.description.slice(0, 4000);
+
+  // STEP 1 — Tailored Resume
+  setStep(1, 'active');
+  try {
+    var tailoredResume = await callClaudeOCA(
+      'You are an expert resume writer. The user will give you their existing resume and a job description. Rewrite their resume to be optimally tailored for that specific job. Keep all true facts from their resume — do not invent anything. Reorder sections, adjust bullet points, and emphasise relevant skills and keywords from the job description. Output only the final resume text, no explanations.',
+      'MY RESUME:\n' + resume + '\n\n' + jd
+    );
+    _ocaResume = tailoredResume;
+    setStep(1, 'done');
+  } catch(e) {
+    document.getElementById('oca-step-label-1').textContent = 'Resume generation failed — try again';
+    setStep(1, 'active');
+    return;
+  }
+
+  // STEP 2 — Cover Letter
+  setStep(2, 'active');
+  try {
+    var coverLetter = await callClaudeOCA(
+      'You are an expert career coach. Write a compelling, personalised cover letter for the applicant based on their resume and the job description. Keep it under 300 words, professional but warm, and highlight 2-3 specific achievements from the resume that directly match the role. Output only the cover letter text, no explanations.',
+      'MY RESUME:\n' + resume + '\n\n' + jd
+    );
+    _ocaCoverLetter = coverLetter;
+    setStep(2, 'done');
+  } catch(e) {
+    document.getElementById('oca-step-label-2').textContent = 'Cover letter generation failed — try again';
+    setStep(2, 'active');
+    return;
+  }
+
+  // STEP 3 — Save & show
+  setStep(3, 'active');
+  // Save application to Supabase + localStorage
+  trackApplication(String(job.id));
+  if (window.AmborDB) AmborDB.saveApplication(user.email, job, 'applied');
+  // Save tailored resume to Supabase
+  if (window.AmborDB) AmborDB.saveResume(user.email, _ocaResume, (job.company||'') + ' — ' + (job.title||'') + '.txt', 0);
+  setStep(3, 'done');
+
+  // Show results
+  document.getElementById('oca-steps').classList.add('hidden');
+  document.getElementById('oca-resume-text').textContent = _ocaResume;
+  document.getElementById('oca-cover-text').textContent = _ocaCoverLetter;
+  document.getElementById('oca-results').classList.remove('hidden');
+  var applyBtn = document.getElementById('oca-apply-btn');
+  applyBtn.href = job.url || '#';
+  document.getElementById('oca-footer').classList.remove('hidden');
+  showOCATab('resume');
+}
+
+async function callClaudeOCA(systemPrompt, userMessage) {
+  var res = await fetch('/api/claude', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      max_tokens: 2000,
+      stream: false,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }]
+    })
+  });
+  if (!res.ok) throw new Error('API error ' + res.status);
+  var data = await res.json();
+  return data.content && data.content[0] && data.content[0].text
+    ? data.content[0].text
+    : (data.choices && data.choices[0] ? data.choices[0].message.content : '');
+}
+
+function showOCATab(tab) {
+  var resumePanel = document.getElementById('oca-resume-panel');
+  var coverPanel  = document.getElementById('oca-cover-panel');
+  var tabs = document.querySelectorAll('.oca-tab');
+  if (tab === 'resume') {
+    resumePanel.classList.remove('hidden'); coverPanel.classList.add('hidden');
+    tabs[0].classList.add('active'); tabs[1].classList.remove('active');
+  } else {
+    coverPanel.classList.remove('hidden'); resumePanel.classList.add('hidden');
+    tabs[1].classList.add('active'); tabs[0].classList.remove('active');
+  }
+}
+
+function copyOCAContent() {
+  var activePanel = document.getElementById('oca-resume-panel').classList.contains('hidden')
+    ? document.getElementById('oca-cover-text').textContent
+    : document.getElementById('oca-resume-text').textContent;
+  navigator.clipboard.writeText(activePanel).then(function(){
+    var btn = document.querySelector('.btn-oca-copy');
+    if (btn) { var orig = btn.textContent; btn.textContent = '✓ Copied!'; setTimeout(function(){ btn.textContent = orig; }, 1500); }
+  }).catch(function(){});
+}
+
+function closeOCA(e) {
+  if (e && e.target !== document.getElementById('oca-overlay')) return;
+  document.getElementById('oca-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  _ocaJob = null;
+}
+function closeOCABtn() {
+  document.getElementById('oca-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  _ocaJob = null;
+}
+document.addEventListener('keydown', function(e){ if(e.key==='Escape') closeOCABtn(); });
+</script>
+
+<!-- 1-Click Apply Modal -->
+<div id="oca-overlay" class="oca-overlay hidden" onclick="closeOCA(event)">
+  <div class="oca-modal" onclick="event.stopPropagation()">
+    <button class="oca-close" onclick="closeOCABtn()">✕</button>
+    <div class="oca-job-title" id="oca-job-title"></div>
+    <div class="oca-job-company" id="oca-job-company"></div>
+
+    <!-- Steps progress -->
+    <div id="oca-steps" class="oca-steps">
+      <div class="oca-step" id="oca-s1">
+        <div class="oca-step-num">1</div>
+        <span id="oca-step-label-1">Tailoring resume to this job description...</span>
+      </div>
+      <div class="oca-step" id="oca-s2">
+        <div class="oca-step-num">2</div>
+        <span id="oca-step-label-2">Writing personalised cover letter...</span>
+      </div>
+      <div class="oca-step" id="oca-s3">
+        <div class="oca-step-num">3</div>
+        <span>Saving application to your dashboard...</span>
+      </div>
+    </div>
+
+    <!-- No resume -->
+    <div id="oca-no-resume" class="oca-no-resume hidden">
+      <strong>No resume found</strong>
+      <p>Upload your resume once — Ambore will auto-tailor it for every job you apply to.</p>
+      <a href="/resume" class="btn-oca-apply" style="display:inline-flex;text-decoration:none">Upload Resume →</a>
+    </div>
+
+    <!-- Results -->
+    <div id="oca-results" class="hidden">
+      <div class="oca-tabs">
+        <button class="oca-tab active" onclick="showOCATab('resume')">📄 Tailored Resume</button>
+        <button class="oca-tab" onclick="showOCATab('cover')">✉️ Cover Letter</button>
+      </div>
+      <div id="oca-resume-panel" class="oca-panel">
+        <pre id="oca-resume-text" class="oca-pre"></pre>
+      </div>
+      <div id="oca-cover-panel" class="oca-panel hidden">
+        <pre id="oca-cover-text" class="oca-pre"></pre>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div id="oca-footer" class="oca-footer hidden">
+      <button class="btn-oca-copy" onclick="copyOCAContent()">Copy</button>
+      <a id="oca-apply-btn" class="btn-oca-apply" target="_blank" rel="noopener noreferrer" onclick="markApplied(String(_ocaJob&&_ocaJob.id))">⚡ Apply Now →</a>
+    </div>
+  </div>
+</div>
+
+</body>
 </html>

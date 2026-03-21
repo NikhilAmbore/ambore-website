@@ -886,6 +886,7 @@ async function processResumeFile(file) {
       throw new Error('Unsupported format. Use PDF, DOCX or TXT.');
     }
     resumeText = text.trim();
+    localStorage.setItem('ambore_resume_text', resumeText);
     statusEl.className = 'file-status ok';
     statusEl.textContent = `${file.name} — ${resumeText.length} characters read`;
   } catch (err) {
@@ -1079,6 +1080,7 @@ let achMarkdown = '';
 
 async function generateAchievements() {
   const resume = resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText;
+  if (resumeMode === 'paste' && resume) localStorage.setItem('ambore_resume_text', resume);
   const jd = document.getElementById('jd-text').value.trim();
   if (!resume) { showToast('No resume found. Please go back and upload/paste your resume.'); return; }
   if (!generatedMarkdown && !jd) { showToast('Generate your resume first, or paste a job description.'); return; }
