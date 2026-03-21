@@ -3991,6 +3991,187 @@ class JobspressoScraper(BaseScraper):
 
 
 # ─────────────────────────────────────────────────────────────────────────────
+# AI Jobs  (aijobs.net — free public JSON API, no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class AIJobsScraper(BaseScraper):
+    """
+    aijobs.net free public JSON API — no authentication required.
+
+    Endpoint: GET https://aijobs.net/jobs.json
+    Returns a JSON array of AI/ML job listings worldwide.
+    We filter to US-based and remote roles.
+    """
+
+    ATS_NAME  = "aijobs"
+    _BASE_URL = "https://aijobs.net/jobs.json"
+
+    def fetch_jobs(self) -> list[Job]:
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        try:
+            resp  = self.client.get(self._BASE_URL)
+            items = _safe_json(resp)
+            if not isinstance(items, list):
+                items = (items or {}).get("jobs") or []
+        except Exception as exc:
+            log.warning("[AIJobs] fetch failed — %s", exc)
+            return jobs
+
+        for raw in items:
+            url = (raw.get("url") or raw.get("apply_url") or "").strip()
+            if not url:
+                slug = raw.get("slug") or raw.get("id") or ""
+                url = f"https://aijobs.net/job/{slug}" if slug else ""
+            if not url or url in seen:
+                continue
+            seen.add(url)
+
+            title    = (raw.get("title")    or "").strip()
+            company  = (raw.get("company")  or raw.get("company_name") or "").strip()
+            location = (raw.get("location") or "").strip()
+            remote   = bool(raw.get("remote") or raw.get("is_remote"))
+            desc     = _strip_html(raw.get("description") or raw.get("content") or "")
+            posted   = raw.get("date_posted") or raw.get("published_at") or raw.get("created_at")
+            posted_at = str(posted) if posted else None
+            salary   = raw.get("salary") or raw.get("salary_range") or ""
+
+            if not title:
+                continue
+
+            if not location and remote:
+                location = "Remote"
+
+            job = self._make_job(
+                title=title,
+                location=location or "United States",
+                url=url,
+                description=desc,
+                posted_at=posted_at,
+                salary_text=str(salary) if salary else None,
+                company_override=company or None,
+                force_usa=remote,
+            )
+            if job:
+                jobs.append(job)
+
+        log.info("[AIJobs] Total: %d US/remote jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# SimplyHired  (public RSS feeds — no auth required)
+# ─────────────────────────────────────────────────────────────────────────────
+
+class SimplyHiredScraper(BaseScraper):
+    """
+    SimplyHired public RSS/XML job feeds — no authentication required.
+
+    Endpoint: https://www.simplyhired.com/search?q={keyword}&l=united+states&feed=rss
+    Returns up to 20 jobs per request.
+    """
+
+    ATS_NAME   = "simplyhired"
+    _BASE_URL  = "https://www.simplyhired.com/search"
+    _MAX_PAGES = 5  # 20 jobs × 5 pages = 100 per keyword
+
+    _KEYWORDS: list[str] = [
+        "software engineer", "data scientist", "product manager",
+        "data engineer", "machine learning engineer", "devops engineer",
+        "backend engineer", "frontend engineer", "full stack developer",
+        "cloud engineer", "security engineer", "python developer",
+        "java developer", "solutions architect", "technical program manager",
+        "engineering manager", "qa engineer", "data analyst",
+        "business analyst", "site reliability engineer",
+        "cybersecurity analyst", "network engineer", "systems administrator",
+        "mobile engineer", "ai engineer", "automation engineer",
+    ]
+
+    _HEADERS: dict[str, str] = {
+        **DEFAULT_HEADERS,
+        "Accept": "application/rss+xml, application/xml, text/xml, */*",
+    }
+
+    def fetch_jobs(self) -> list[Job]:
+        from email.utils import parsedate_to_datetime as _pdt
+
+        jobs: list[Job] = []
+        seen: set[str]  = set()
+
+        for kw in self._KEYWORDS:
+            if len(jobs) >= MAX_JOBS_PER_SRC:
+                break
+            for page in range(self._MAX_PAGES):
+                params = {
+                    "q":    kw,
+                    "l":    "united states",
+                    "feed": "rss",
+                    "pn":   str(page + 1),
+                }
+                try:
+                    resp = self.client.get(self._BASE_URL, params=params, headers=self._HEADERS)
+                    root = ET.fromstring(resp.content)
+                    channel = root.find("channel")
+                    if channel is None:
+                        break
+                    items = channel.findall("item")
+                    if not items:
+                        break
+
+                    for item in items:
+                        link    = (item.findtext("link")        or "").strip()
+                        guid    = (item.findtext("guid")        or "").strip()
+                        job_url = link or guid
+                        if not job_url or job_url in seen:
+                            continue
+                        seen.add(job_url)
+
+                        title    = (item.findtext("title")       or "").strip()
+                        desc_raw = (item.findtext("description") or "").strip()
+                        pub_str  = (item.findtext("pubDate")     or "").strip()
+
+                        # SimplyHired title format: "Job Title - Company - Location"
+                        company  = ""
+                        location = ""
+                        if " - " in title:
+                            parts = title.split(" - ")
+                            title = parts[0].strip()
+                            if len(parts) >= 2:
+                                company = parts[1].strip()
+                            if len(parts) >= 3:
+                                location = parts[2].strip()
+
+                        posted_at: str | None = None
+                        if pub_str:
+                            try:
+                                posted_at = _pdt(pub_str).isoformat()
+                            except Exception:
+                                pass
+
+                        job = self._make_job(
+                            title=title,
+                            location=location or "United States",
+                            url=job_url,
+                            description=_strip_html(desc_raw),
+                            posted_at=posted_at,
+                            company_override=company or None,
+                        )
+                        if job:
+                            jobs.append(job)
+
+                    if len(items) < 15:
+                        break  # last page
+
+                except Exception as exc:
+                    log.warning("[SimplyHired] kw=%r page=%d — %s", kw, page, exc)
+                    break
+
+        log.info("[SimplyHired] Total: %d US jobs", len(jobs))
+        return jobs[:MAX_JOBS_PER_SRC]
+
+
+# ─────────────────────────────────────────────────────────────────────────────
 # Scraper registry
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -4027,6 +4208,8 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "workingnomads":   WorkingNomadsScraper, # RSS feeds — no key needed
     "authenticjobs":   AuthenticJobsScraper, # RSS feed — no key needed
     "jobspresso":      JobspressoScraper,    # RSS feed — no key needed
+    "aijobs":          AIJobsScraper,        # aijobs.net free JSON API — no key needed
+    "simplyhired":     SimplyHiredScraper,   # SimplyHired RSS feeds — no key needed
     # ── Generic fallbacks ──────────────────────────────────────────────────
     "html":            GenericHTMLScraper,
     "playwright":      PlaywrightScraper,
@@ -4669,6 +4852,12 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
 
     # ── Jobspresso RSS (remote tech jobs — no key needed) ────────────────────
     {"ats": "jobspresso", "company": "jobspresso-aggregator", "company_name": "Jobspresso"},
+
+    # ── AI Jobs (aijobs.net free JSON API — AI/ML roles worldwide) ───────────
+    {"ats": "aijobs", "company": "aijobs-aggregator", "company_name": "AI Jobs"},
+
+    # ── SimplyHired RSS (US jobs, no auth) ────────────────────────────────────
+    {"ats": "simplyhired", "company": "simplyhired-aggregator", "company_name": "SimplyHired"},
 
     # ── Workday (POST /wday/cxs/{tenant}/{site}/jobs — CSRF via session warmup)
     # The scraper GETs the careers page first to capture the CALYPSO_CSRF_TOKEN
