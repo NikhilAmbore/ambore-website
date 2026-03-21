@@ -1197,13 +1197,33 @@ document.addEventListener('click',function(e){
 var _trackedJobs = {};
 try { _trackedJobs = JSON.parse(localStorage.getItem('ambore_tracked_jobs') || '{}'); } catch(e){}
 
+function _saveAppLocal(job, status) {
+  try {
+    var apps = JSON.parse(localStorage.getItem('ambore_applications') || '[]');
+    var jid = String(job.id);
+    var idx = apps.findIndex(function(a){ return a.job_id === jid; });
+    var entry = {
+      id: 'local-' + jid,
+      job_id: jid,
+      job_data: { id: job.id, title: job.title || '', company: job.company || '', url: job.url || '', location: job.location || '' },
+      status: status,
+      applied_at: new Date().toISOString(),
+      updated_at: new Date().toISOString()
+    };
+    if (idx >= 0) { apps[idx] = Object.assign({}, apps[idx], entry); }
+    else { apps.unshift(entry); }
+    localStorage.setItem('ambore_applications', JSON.stringify(apps));
+  } catch(e) {}
+}
+
 function trackApplication(jid) {
   var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
-  if (!u) { if(window.location) window.location.href='/?auth=login&redirect=/jobs'; return; }
+  if (!u) { window.location.href = '/?auth=login&redirect=/jobs'; return; }
   var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
   if (!job) return;
   _trackedJobs[jid] = { status: 'tracking', savedAt: new Date().toISOString() };
   localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
+  _saveAppLocal(job, 'tracking');
   var btn = document.getElementById('track-' + jid);
   if (btn) { btn.textContent = '✅ Tracked'; btn.classList.add('tracked'); }
   if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'tracking');
@@ -1215,13 +1235,12 @@ function markApplied(jid) {
   if (!u) return;
   var job = window._jobsData && window._jobsData.find(function(j){ return String(j.id) === jid; });
   if (!job) return;
-  setTimeout(function() {
-    if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'applied');
-    _trackedJobs[jid] = { status: 'applied', appliedAt: new Date().toISOString() };
-    localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
-    var btn = document.getElementById('track-' + jid);
-    if (btn) { btn.textContent = '✅ Applied'; btn.classList.add('tracked'); }
-  }, 500);
+  _trackedJobs[jid] = { status: 'applied', appliedAt: new Date().toISOString() };
+  localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
+  _saveAppLocal(job, 'applied');
+  var btn = document.getElementById('track-' + jid);
+  if (btn) { btn.textContent = '✅ Applied'; btn.classList.add('tracked'); }
+  if (window.AmborDB) AmborDB.saveApplication(u.email, job, 'applied');
 }
 
 function showToast(msg) {
@@ -1648,9 +1667,11 @@ async function runOCAFlow(job, profile, user) {
   // STEP 3 — Save to dashboard
   setStep(3, 'active');
   var appName = (job.company || 'Company') + ' — ' + (job.title || 'Role');
-  trackApplication(String(job.id));
+  _saveAppLocal(job, 'applied');
+  _trackedJobs[String(job.id)] = { status: 'applied', appliedAt: new Date().toISOString() };
+  localStorage.setItem('ambore_tracked_jobs', JSON.stringify(_trackedJobs));
   if (window.AmborDB) {
-    AmborDB.saveApplication(user.email, Object.assign({}, job, { appName: appName }), 'applied');
+    AmborDB.saveApplication(user.email, job, 'applied');
     AmborDB.saveResume(user.email, _ocaResume, appName + '.txt', 0);
   }
   setStep(3, 'done');
