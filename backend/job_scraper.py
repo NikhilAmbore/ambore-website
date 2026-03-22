@@ -156,7 +156,7 @@ REQUEST_TIMEOUT   = 20      # seconds per request
 MAX_RETRIES       = 3       # attempts before giving up
 RETRY_BACKOFF     = 2.0     # exponential base in seconds  (2^n seconds sleep)
 DOMAIN_DELAY      = 1.5     # minimum seconds between requests to same domain
-MAX_JOBS_PER_SRC  = 999_999_999   # no cap — collect all available jobs per source
+MAX_JOBS_PER_SRC  = 400   # per-scraper-instance cap — keeps total runtime < 60 min
 
 # ─── US geography ─────────────────────────────────────────────────────────────
 
@@ -596,7 +596,7 @@ class PoliteClient:
 
     # Domain suffix → delay (for services where each company has its own subdomain)
     _API_DOMAIN_SUFFIXES: dict[str, float] = {
-        "myworkdayjobs.com": 0.5,  # Workday per-company subdomains
+        "myworkdayjobs.com": 0.25,  # Workday per-company subdomains
         "indeed.com":        0.5,  # Indeed RSS (www.indeed.com covered above too)
     }
 
