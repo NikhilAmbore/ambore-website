@@ -72,7 +72,7 @@ jobs:
           # (now-stale) local jobs.json — we do a proper merge below.
           python backend/job_scraper.py \
             --output /tmp/fresh_jobs.json \
-            --skip-ats apify,adzuna,serpapi \
+            --skip-ats apify,adzuna,serpapi,dice,himalayas,arbeitnow \
             $VERBOSE_FLAG $SINCE_FLAG
 
           echo "=== Fresh jobs scraped this run ==="
@@ -159,10 +159,16 @@ jobs:
           merged  = [j for j in fresh if not_expired(j)]
           expired = before - len(merged)
 
-          # Truncate description field to keep file under GitHub 100 MB limit
+          # Sort newest-first then hard-cap at 50 000 to stay under GitHub 100 MB
+          MAX_JOBS = 50_000
+          merged.sort(key=lambda j: j.get('first_seen_at') or j.get('scraped_at') or '', reverse=True)
+          capped = max(0, len(merged) - MAX_JOBS)
+          merged = merged[:MAX_JOBS]
+
+          # Truncate descriptions — keep file well under 100 MB
           for j in merged:
-              if j.get('description') and len(j['description']) > 1500:
-                  j['description'] = j['description'][:1500]
+              if j.get('description') and len(j['description']) > 900:
+                  j['description'] = j['description'][:900]
 
           Path('backend/jobs.json').write_text(
               json.dumps(merged, ensure_ascii=False),   # no indent — saves ~20% space
@@ -172,7 +178,7 @@ jobs:
           atses = Counter(j['ats'] for j in merged)
           print(
               f'Merge done — {len(merged)} total '
-              f'({carried} carried over, {expired} expired)'
+              f'({carried} carried over, {expired} expired, {capped} capped)'
           )
           for ats, cnt in sorted(atses.items(), key=lambda x: -x[1]):
               print(f'  {ats}: {cnt}')
@@ -190,9 +196,16 @@ jobs:
             git commit -m "chore: refresh jobs.json — ${TOTAL} US jobs ($(date -u '+%Y-%m-%d'))"
             # We already merged against the remote HEAD above, so any remaining
             # conflict is a tiny window (seconds).  -X ours is safe here.
+            PUSHED=0
             for attempt in 1 2 3; do
-              git pull --rebase -X ours origin main && git push && break
+              if git pull --rebase -X ours origin main && git push; then
+                PUSHED=1; break
+              fi
               echo "Push attempt $attempt failed — retrying in 10s..."
               sleep 10
             done
+            if [ "$PUSHED" -eq 0 ]; then
+              echo "ERROR: all push attempts failed — jobs.json NOT updated"
+              exit 1
+            fi
           fi
