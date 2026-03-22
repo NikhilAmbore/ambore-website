@@ -1238,7 +1238,11 @@ class WorkdayScraper(BaseScraper):
 
             for raw in postings:
                 ext_path  = raw.get("externalPath", "")
-                job_url   = self._JOB_TPL.format(tenant=tenant, instance=instance, path=ext_path)
+                # Some Workday tenants include the site in externalPath already;
+                # others return just /job/... — normalise to always include site.
+                if ext_path and not ext_path.startswith(f'/{site}'):
+                    ext_path = f'/{site}{ext_path}'
+                job_url = f'https://{tenant}.{instance}.myworkdayjobs.com{ext_path}'
                 location  = raw.get("locationsText", "")
 
                 # Workday may expose a remoteType string ("Fully Remote", etc.)
