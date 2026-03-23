@@ -147,7 +147,7 @@ jobs:
           expired = before - len(merged)
 
           # Sort newest-first then hard-cap at 50 000 to stay under GitHub 100 MB
-          MAX_JOBS = 50_000
+          MAX_JOBS = 80_000
           merged.sort(key=lambda j: j.get('first_seen_at') or j.get('scraped_at') or '', reverse=True)
           capped = max(0, len(merged) - MAX_JOBS)
           merged = merged[:MAX_JOBS]

@@ -156,7 +156,7 @@ REQUEST_TIMEOUT   = 20      # seconds per request
 MAX_RETRIES       = 3       # attempts before giving up
 RETRY_BACKOFF     = 2.0     # exponential base in seconds  (2^n seconds sleep)
 DOMAIN_DELAY      = 1.5     # minimum seconds between requests to same domain
-MAX_JOBS_PER_SRC  = 400   # per-scraper-instance cap — keeps total runtime < 60 min
+MAX_JOBS_PER_SRC  = 1000  # per-scraper-instance cap — keeps total runtime ~45 min
 
 # ─── US geography ─────────────────────────────────────────────────────────────
 
