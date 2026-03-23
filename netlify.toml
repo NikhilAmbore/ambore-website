@@ -9,6 +9,10 @@
   path     = "/api/claude"
   function = "claude-proxy"
 
+[[edge_functions]]
+  path     = "/api/community-upload"
+  function = "community-upload"
+
 # ── Auto-minify CSS, JS, HTML ────────────────────────────────────────────────
 [build.processing]
   skip_processing = false
@@ -33,7 +37,7 @@
     Referrer-Policy           = "strict-origin-when-cross-origin"
     Permissions-Policy        = "camera=(), microphone=(self), geolocation=(), payment=()"
     Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://accounts.google.com; worker-src blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://api.anthropic.com https://mqonctgrvppdbjcuawue.supabase.co https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://www.googleapis.com https://accounts.google.com https://ingesteer.services-prod.nsvcs.net https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://www.google-analytics.com https://lh3.googleusercontent.com; frame-src blob: https://accounts.google.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
+    Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://accounts.google.com; worker-src blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://api.anthropic.com https://mqonctgrvppdbjcuawue.supabase.co https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://www.googleapis.com https://accounts.google.com https://ingesteer.services-prod.nsvcs.net https://cdn.jsdelivr.net https://api.github.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://www.google-analytics.com https://lh3.googleusercontent.com; frame-src blob: https://accounts.google.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
     Vary                      = "Accept-Encoding"
 
 # ── HTML pages: aggressive edge caching ──────────────────────────────────────
@@ -75,6 +79,13 @@
   for = "*.js"
   [headers.values]
     Cache-Control = "public, max-age=2592000, immutable"
+
+# ── Community PDFs: serve with correct content-type, short cache ──────────────
+[[headers]]
+  for = "/community-docs/*.pdf"
+  [headers.values]
+    Content-Type  = "application/pdf"
+    Cache-Control = "public, max-age=300, s-maxage=300"
 
 # ── Images: cache 7 days ──────────────────────────────────────────────────────
 [[headers]]

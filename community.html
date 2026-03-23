@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- Performance: preconnect to external origins --><link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
+<!-- Google Analytics GA4 -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-F3S7FLQRSM', { anonymize_ip: true, cookie_flags: 'SameSite=None;Secure', cookie_expires: 0 });
+</script>
+<script>
+window.addEventListener('unhandledrejection', e => {
+  if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
+  console.error('[Ambore] Unhandled rejection:', e.reason);
+  e.preventDefault();
+});
+window.onerror = (msg, src, line, col, err) => {
+  if (err?.name === 'AbortError') return true;
+  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  return true;
+};
+</script>
+
+<meta charset="UTF-8"/>
+<meta name="description" content="Ambore Community — browse career resources, guides and documents shared by the Ambore team."/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Ambore — Community Resources</title>
+<link rel="icon" href="/logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+
+<!-- Auth guard — redirect to login if not signed in -->
+<script>
+(function(){
+  var s = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+  if (!s || (s.expiresAt && Date.now() > s.expiresAt)) {
+    localStorage.removeItem('ambore_user');
+    window.location.href = '/?auth=login&redirect=/community&msg=Please+log+in+to+access+the+community';
+  }
+})();
+</script>
+
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:#06060f;color:#e2e8f0;min-height:100vh}
+:root{
+  --grad:linear-gradient(135deg,#4F46E5,#7C3AED);
+  --card:#0e0e1d;--card2:#13132a;
+  --border:rgba(255,255,255,0.08);
+  --accent:#818CF8;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;--orange:#f97316;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
+button,input,textarea,select{font-family:inherit}
+a{text-decoration:none;color:inherit}
+.hidden{display:none!important}
+
+/* ══ SIDEBAR ══════════════════════════════════════════════════════════════════ */
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200;overflow:hidden}
+.sb:hover{overflow-y:auto}
+.sb-logo{width:42px;height:42px;background:transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity 0.15s}
+.sb-logo:hover{opacity:0.85}
+.sb-nav{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;width:100%;padding-bottom:6px}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,0.38);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 2px;font-family:inherit}
+.sb-item:hover{background:rgba(255,255,255,0.07);color:rgba(255,255,255,0.75)}
+.sb-item.active{background:rgba(79,70,229,0.18);color:#818CF8}
+.sb-item svg{flex-shrink:0}
+.sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.07);flex-shrink:0;width:100%}
+.sb-logout{color:rgba(239,68,68,0.6)!important}
+.sb-logout:hover{background:rgba(239,68,68,0.08)!important;color:#ef4444!important}
+
+/* ── Mobile dock ─────────────────────────────────────────────────────────────*/
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.4);text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
+.md-item.active{color:#818CF8}
+.md-item:hover{color:rgba(255,255,255,0.75)}
+.mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:199;max-height:70vh;overflow-y:auto}
+.mob-more-drawer.hidden{display:none}
+.mob-drawer-inner{padding:16px}
+.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mdg-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:10px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.62rem;font-weight:600;text-align:center;transition:background 0.15s,color 0.15s}
+.mdg-item:hover{background:rgba(255,255,255,0.08);color:#fff}
+body{padding-left:72px}
+@media(max-width:768px){.sb{display:none}.mob-dock{display:flex}body{padding-left:0;padding-bottom:60px}}
+
+/* ══ PAGE ════════════════════════════════════════════════════════════════════ */
+.page{max-width:1200px;margin:0 auto;padding:32px 24px 60px}
+
+/* ══ HERO HEADER ═════════════════════════════════════════════════════════════ */
+.comm-hero{background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(124,58,237,.08));border:1px solid rgba(79,70,229,.25);border-radius:20px;padding:32px 32px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.comm-hero-left h1{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:6px}
+.comm-hero-left p{font-size:0.88rem;color:rgba(255,255,255,0.45);max-width:480px;line-height:1.6}
+.comm-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(79,70,229,.18);border:1px solid rgba(79,70,229,.3);color:var(--accent);padding:5px 13px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-bottom:10px}
+.upload-hero-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:11px;background:var(--grad);color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;flex-shrink:0}
+.upload-hero-btn:hover{opacity:.85}
+
+/* ══ FILTER BAR ══════════════════════════════════════════════════════════════ */
+.filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
+.filter-bar .search-box{flex:1;min-width:200px;max-width:340px;position:relative}
+.search-box input{width:100%;padding:9px 13px 9px 36px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:#fff;font-size:0.83rem;outline:none;transition:border-color .2s}
+.search-box input:focus{border-color:rgba(79,70,229,.4)}
+.search-box input::placeholder{color:rgba(255,255,255,.25)}
+.search-box svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:rgba(255,255,255,.3);pointer-events:none}
+.cat-pills{display:flex;gap:6px;flex-wrap:wrap}
+.cat-pill{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,.4);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.cat-pill:hover{border-color:rgba(255,255,255,.2);color:#fff}
+.cat-pill.active{background:rgba(79,70,229,.18);border-color:rgba(79,70,229,.35);color:var(--accent)}
+
+/* ══ DOCS GRID ═══════════════════════════════════════════════════════════════ */
+.docs-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.doc-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:12px;transition:border-color .2s,transform .15s;cursor:pointer}
+.doc-card:hover{border-color:rgba(79,70,229,.35);transform:translateY(-2px)}
+.dc-top{display:flex;align-items:flex-start;gap:12px}
+.dc-icon{width:44px;height:44px;border-radius:10px;background:rgba(79,70,229,.15);border:1px solid rgba(79,70,229,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.dc-info{flex:1;min-width:0}
+.dc-title{font-size:0.92rem;font-weight:700;color:#fff;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dc-cat{display:inline-block;margin-top:5px;padding:2px 9px;border-radius:10px;background:rgba(129,140,248,.1);color:var(--accent);font-size:0.68rem;font-weight:700}
+.dc-desc{font-size:0.78rem;color:rgba(255,255,255,.38);line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.dc-footer{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:auto}
+.dc-meta{font-size:0.7rem;color:rgba(255,255,255,.28)}
+.dc-btn{display:flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);font-size:0.73rem;font-weight:600;cursor:pointer;transition:all .15s}
+.dc-btn:hover{background:rgba(79,70,229,.15);border-color:rgba(79,70,229,.3);color:var(--accent)}
+.dc-btn-primary{background:var(--grad);border-color:transparent;color:#fff}
+.dc-btn-primary:hover{opacity:.85;background:var(--grad)}
+
+/* ══ EMPTY STATE ══════════════════════════════════════════════════════════════ */
+.empty-state{text-align:center;padding:72px 20px;color:rgba(255,255,255,.25)}
+.empty-icon{font-size:3rem;margin-bottom:14px;opacity:.35}
+.empty-state h3{font-size:1.05rem;font-weight:700;color:rgba(255,255,255,.5);margin-bottom:7px}
+.empty-state p{font-size:0.84rem;line-height:1.6}
+
+/* ══ LOADING ══════════════════════════════════════════════════════════════════ */
+.loading-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.skel-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;height:160px;animation:shimmer 1.4s infinite linear}
+@keyframes shimmer{0%{opacity:.5}50%{opacity:1}100%{opacity:.5}}
+
+/* ══ PDF VIEWER MODAL ═════════════════════════════════════════════════════════ */
+.pdf-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px}
+.pdf-modal{background:#0d0d1e;border:1px solid rgba(79,70,229,.3);border-radius:18px;width:100%;max-width:900px;height:90vh;display:flex;flex-direction:column;overflow:hidden}
+.pdf-modal-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0}
+.pdf-modal-title{font-size:0.95rem;font-weight:700;color:#fff;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pdf-modal-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.pdf-action-btn{display:flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all .15s}
+.pdf-action-btn:hover{background:rgba(79,70,229,.15);border-color:rgba(79,70,229,.3);color:var(--accent)}
+.pdf-close-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:rgba(255,255,255,.5);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;transition:all .15s}
+.pdf-close-btn:hover{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.3);color:#ef4444}
+.pdf-iframe-wrap{flex:1;overflow:hidden;background:#1a1a2e}
+.pdf-iframe-wrap iframe{width:100%;height:100%;border:none}
+
+/* ══ UPLOAD MODAL ════════════════════════════════════════════════════════════ */
+.upload-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px}
+.upload-modal{background:#0d0d1e;border:1px solid rgba(79,70,229,.3);border-radius:18px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;padding:28px}
+.upload-modal h2{font-size:1.15rem;font-weight:800;color:#fff;margin-bottom:6px}
+.upload-modal .subtitle{font-size:0.8rem;color:rgba(255,255,255,.35);margin-bottom:22px}
+.u-field{margin-bottom:16px}
+.u-label{display:block;font-size:0.75rem;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px;text-transform:uppercase;letter-spacing:.04em}
+.u-input,.u-select,.u-textarea{width:100%;padding:10px 13px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:#fff;font-size:0.84rem;outline:none;transition:border-color .2s}
+.u-input:focus,.u-select:focus,.u-textarea:focus{border-color:rgba(79,70,229,.45)}
+.u-input::placeholder,.u-textarea::placeholder{color:rgba(255,255,255,.22)}
+.u-select option{background:#0d0d1e;color:#e2e8f0}
+.u-textarea{resize:vertical;min-height:72px}
+.u-file-zone{border:2px dashed rgba(79,70,229,.3);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;position:relative}
+.u-file-zone:hover,.u-file-zone.drag{border-color:rgba(79,70,229,.6);background:rgba(79,70,229,.05)}
+.u-file-zone input{position:absolute;inset:0;opacity:0;cursor:pointer}
+.u-file-icon{font-size:2rem;margin-bottom:8px;opacity:.5}
+.u-file-txt{font-size:0.8rem;color:rgba(255,255,255,.4);line-height:1.5}
+.u-file-name{font-size:0.82rem;color:var(--accent);font-weight:600;margin-top:6px}
+.u-secret-note{font-size:0.72rem;color:rgba(255,255,255,.25);margin-top:5px}
+.u-btn-row{display:flex;gap:10px;margin-top:22px}
+.u-btn{flex:1;padding:11px;border-radius:10px;font-size:0.85rem;font-weight:700;cursor:pointer;border:none;transition:all .2s}
+.u-btn-cancel{background:rgba(255,255,255,.06);color:rgba(255,255,255,.55);border:1px solid var(--border)!important}
+.u-btn-cancel:hover{background:rgba(255,255,255,.1);color:#fff}
+.u-btn-submit{background:var(--grad);color:#fff}
+.u-btn-submit:hover{opacity:.85}
+.u-btn-submit:disabled{opacity:.45;cursor:not-allowed}
+.u-status{margin-top:12px;font-size:0.8rem;text-align:center;min-height:18px}
+.u-status.ok{color:#4ade80}.u-status.err{color:#f87171}
+
+/* ══ TOAST ════════════════════════════════════════════════════════════════════ */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e3a;border:1px solid rgba(129,140,248,.25);color:#a5b4fc;padding:10px 22px;border-radius:12px;font-size:0.82rem;font-weight:600;z-index:2000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ══ RESPONSIVE ═══════════════════════════════════════════════════════════════ */
+@media(max-width:600px){
+  .page{padding:20px 14px 70px}
+  .comm-hero{padding:22px 18px}
+  .comm-hero-left h1{font-size:1.35rem}
+  .docs-grid,.loading-grid{grid-template-columns:1fr}
+  .pdf-modal{height:95vh}
+}
+</style>
+<script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<script src="/supabase-sync.js"></script>
+</head>
+<body>
+
+<!-- ── Sidebar ─────────────────────────────────────────────────────────────── -->
+<nav class="sb" id="sb">
+  <a href="/" class="sb-logo" title="Ambore Home"><img src="/logo.png" alt="Ambore" style="width:36px;height:36px;object-fit:contain"></a>
+  <div class="sb-nav">
+    <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+    <a href="/applications" class="sb-item" title="My Applications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg><span>Applied</span></a>
+    <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Resume</span></a>
+    <a href="/resume-builder" class="sb-item" title="Resume Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
+    <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
+    <a href="/email" class="sb-item" title="Email Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+    <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+    <a href="/portfolio" class="sb-item" title="Portfolio Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Portfolio</span></a>
+    <a href="/interview" class="sb-item" title="Interview AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Interview</span></a>
+    <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
+    <a href="/coding" class="sb-item" title="Coding AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
+    <a href="/english" class="sb-item" title="English AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
+    <a href="/project" class="sb-item" title="Build Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+    <a href="/learn" class="sb-item" title="Learn AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Learn</span></a>
+    <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+    <a href="/coaching" class="sb-item" title="Coaching"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg><span>Coaching</span></a>
+    <a href="/community" class="sb-item active" title="Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Community</span></a>
+  </div>
+  <div class="sb-foot">
+    <a href="/help" class="sb-item" title="Help"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
+    <a href="/feedback" class="sb-item" title="Feedback"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Feedback</span></a>
+    <button class="sb-item sb-logout" onclick="typeof logout!=='undefined'?logout():window.location.href='/'" title="Log Out"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Log Out</span></button>
+  </div>
+</nav>
+
+<!-- ── Mobile bottom dock ──────────────────────────────────────────────────── -->
+<nav class="mob-dock" id="mob-dock">
+  <a href="/jobs" class="md-item" title="Jobs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+  <a href="/applications" class="md-item" title="Applications"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1" ry="1"/></svg><span>Applied</span></a>
+  <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
+  <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+  <a href="/community" class="md-item active" title="Community"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Community</span></a>
+</nav>
+
+<!-- ── Main page ────────────────────────────────────────────────────────────── -->
+<main class="page">
+
+  <!-- Hero header -->
+  <div class="comm-hero">
+    <div class="comm-hero-left">
+      <div class="comm-badge">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        Community Resources
+      </div>
+      <h1>Career Documents &amp; Guides</h1>
+      <p>Handpicked resources shared by the Ambore team — resume templates, interview guides, visa tips, and more to accelerate your job search.</p>
+    </div>
+    <button class="upload-hero-btn hidden" id="admin-upload-btn" onclick="openUploadModal()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Upload Document
+    </button>
+  </div>
+
+  <!-- Filter bar -->
+  <div class="filter-bar">
+    <div class="search-box">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="search-input" placeholder="Search documents…" oninput="renderDocs()"/>
+    </div>
+    <div class="cat-pills" id="cat-pills">
+      <button class="cat-pill active" data-cat="All" onclick="selectCat(this)">All</button>
+      <button class="cat-pill" data-cat="Resume Tips" onclick="selectCat(this)">Resume Tips</button>
+      <button class="cat-pill" data-cat="Interview Prep" onclick="selectCat(this)">Interview Prep</button>
+      <button class="cat-pill" data-cat="Job Search" onclick="selectCat(this)">Job Search</button>
+      <button class="cat-pill" data-cat="Visa & Immigration" onclick="selectCat(this)">Visa &amp; Immigration</button>
+      <button class="cat-pill" data-cat="Salary & Negotiation" onclick="selectCat(this)">Salary &amp; Negotiation</button>
+      <button class="cat-pill" data-cat="Tech Skills" onclick="selectCat(this)">Tech Skills</button>
+      <button class="cat-pill" data-cat="Career Growth" onclick="selectCat(this)">Career Growth</button>
+      <button class="cat-pill" data-cat="General" onclick="selectCat(this)">General</button>
+    </div>
+  </div>
+
+  <!-- Document count -->
+  <div style="font-size:0.8rem;color:rgba(255,255,255,.3);margin-bottom:16px" id="doc-count"></div>
+
+  <!-- Loading skeleton -->
+  <div class="loading-grid" id="loading-grid">
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+    <div class="skel-card"></div>
+  </div>
+
+  <!-- Docs grid -->
+  <div class="docs-grid hidden" id="docs-grid"></div>
+
+  <!-- Empty state -->
+  <div class="empty-state hidden" id="empty-state">
+    <div class="empty-icon">📄</div>
+    <h3>No documents yet</h3>
+    <p>The Ambore team will be uploading career resources here soon.<br>Check back shortly!</p>
+  </div>
+
+</main>
+
+<!-- ── PDF Viewer Modal ──────────────────────────────────────────────────────── -->
+<div class="pdf-overlay hidden" id="pdf-overlay" onclick="closePdfOverlay(event)">
+  <div class="pdf-modal" onclick="event.stopPropagation()">
+    <div class="pdf-modal-header">
+      <div class="pdf-modal-title" id="pdf-modal-title"></div>
+      <div class="pdf-modal-actions">
+        <button class="pdf-action-btn" id="pdf-download-btn" onclick="downloadCurrentPdf()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download
+        </button>
+        <button class="pdf-action-btn" onclick="openPdfNewTab()">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open Tab
+        </button>
+        <button class="pdf-close-btn" onclick="closePdf()">✕</button>
+      </div>
+    </div>
+    <div class="pdf-iframe-wrap">
+      <iframe id="pdf-iframe" title="PDF Viewer" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+
+<!-- ── Upload Modal (admin only) ────────────────────────────────────────────── -->
+<div class="upload-overlay hidden" id="upload-overlay" onclick="closeUploadOverlay(event)">
+  <div class="upload-modal" onclick="event.stopPropagation()">
+    <h2>Upload Document</h2>
+    <p class="subtitle">PDF only · max 10 MB · visible to all community members</p>
+
+    <div class="u-field">
+      <label class="u-label">Title *</label>
+      <input class="u-input" id="u-title" placeholder="e.g. H1B Visa Guide 2025" maxlength="120"/>
+    </div>
+
+    <div class="u-field">
+      <label class="u-label">Category *</label>
+      <select class="u-select" id="u-category">
+        <option value="">Select category…</option>
+        <option>Resume Tips</option>
+        <option>Interview Prep</option>
+        <option>Job Search</option>
+        <option>Visa &amp; Immigration</option>
+        <option>Salary &amp; Negotiation</option>
+        <option>Tech Skills</option>
+        <option>Career Growth</option>
+        <option>General</option>
+      </select>
+    </div>
+
+    <div class="u-field">
+      <label class="u-label">Description</label>
+      <textarea class="u-textarea" id="u-description" rows="2" placeholder="Brief description of the document…" maxlength="500"></textarea>
+    </div>
+
+    <div class="u-field">
+      <label class="u-label">PDF File *</label>
+      <div class="u-file-zone" id="u-file-zone">
+        <input type="file" id="u-file-input" accept=".pdf,application/pdf" onchange="handleFileSelect(this)"/>
+        <div class="u-file-icon">📎</div>
+        <div class="u-file-txt">Click to select or drag &amp; drop a PDF<br><span style="font-size:.7rem;opacity:.6">Max 10 MB</span></div>
+        <div class="u-file-name hidden" id="u-file-name"></div>
+      </div>
+    </div>
+
+    <div class="u-field">
+      <label class="u-label">Admin Secret *</label>
+      <input class="u-input" id="u-secret" type="password" placeholder="Enter admin password…"/>
+      <div class="u-secret-note">Required — only the founder can upload documents.</div>
+    </div>
+
+    <div class="u-btn-row">
+      <button class="u-btn u-btn-cancel" onclick="closeUploadModal()">Cancel</button>
+      <button class="u-btn u-btn-submit" id="u-submit-btn" onclick="submitUpload()">
+        <span id="u-submit-txt">Upload</span>
+      </button>
+    </div>
+    <div class="u-status" id="u-status"></div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ── State ───────────────────────────────────────────────────────────────────────
+let _allDocs   = [];
+let _activeCat = 'All';
+let _currentPdfUrl  = '';
+let _currentPdfTitle = '';
+
+// ── Admin detection ─────────────────────────────────────────────────────────────
+// Show upload button to users who have previously uploaded successfully,
+// or who are identified as admin via localStorage flag set after first successful upload.
+function isAdmin() {
+  return localStorage.getItem('ambore_community_admin') === '1';
+}
+function checkAdminUI() {
+  if (isAdmin()) {
+    document.getElementById('admin-upload-btn').classList.remove('hidden');
+  }
+}
+
+// ── Load manifest ───────────────────────────────────────────────────────────────
+async function loadManifest() {
+  try {
+    const resp = await fetch('/community-docs/manifest.json?v=' + Date.now());
+    if (!resp.ok) throw new Error('manifest not found');
+    const data = await resp.json();
+    _allDocs = Array.isArray(data.documents) ? data.documents : [];
+  } catch(e) {
+    console.warn('[community] Failed to load manifest:', e);
+    _allDocs = [];
+  }
+  document.getElementById('loading-grid').classList.add('hidden');
+  renderDocs();
+}
+
+// ── Render document grid ────────────────────────────────────────────────────────
+function renderDocs() {
+  const q     = (document.getElementById('search-input').value || '').toLowerCase().trim();
+  const grid  = document.getElementById('docs-grid');
+  const empty = document.getElementById('empty-state');
+  const cnt   = document.getElementById('doc-count');
+
+  let docs = _allDocs;
+  if (_activeCat !== 'All') {
+    docs = docs.filter(d => d.category === _activeCat);
+  }
+  if (q) {
+    docs = docs.filter(d =>
+      (d.title || '').toLowerCase().includes(q) ||
+      (d.description || '').toLowerCase().includes(q) ||
+      (d.category || '').toLowerCase().includes(q)
+    );
+  }
+
+  if (docs.length === 0) {
+    grid.classList.add('hidden');
+    empty.classList.remove('hidden');
+    cnt.textContent = '';
+    return;
+  }
+
+  grid.classList.remove('hidden');
+  empty.classList.add('hidden');
+  cnt.textContent = docs.length + ' document' + (docs.length !== 1 ? 's' : '');
+
+  grid.innerHTML = docs.map(doc => {
+    const sizeKB  = doc.size_bytes ? Math.round(doc.size_bytes / 1024) : null;
+    const sizeStr = sizeKB ? (sizeKB >= 1024 ? (sizeKB/1024).toFixed(1) + ' MB' : sizeKB + ' KB') : '';
+    const dateStr = doc.uploaded_at
+      ? new Date(doc.uploaded_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+      : '';
+    return `
+<div class="doc-card" onclick="openPdf('${esc(doc.path)}','${esc(doc.title)}')">
+  <div class="dc-top">
+    <div class="dc-icon">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+    </div>
+    <div class="dc-info">
+      <div class="dc-title">${escHtml(doc.title)}</div>
+      <span class="dc-cat">${escHtml(doc.category || 'General')}</span>
+    </div>
+  </div>
+  ${doc.description ? `<div class="dc-desc">${escHtml(doc.description)}</div>` : ''}
+  <div class="dc-footer">
+    <div class="dc-meta">${[sizeStr, dateStr].filter(Boolean).join(' · ')}</div>
+    <div style="display:flex;gap:6px">
+      <button class="dc-btn" onclick="event.stopPropagation();downloadDoc('${esc(doc.path)}','${esc(doc.title)}')">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download
+      </button>
+      <button class="dc-btn dc-btn-primary" onclick="event.stopPropagation();openPdf('${esc(doc.path)}','${esc(doc.title)}')">
+        View
+      </button>
+    </div>
+  </div>
+</div>`;
+  }).join('');
+}
+
+function esc(s) {
+  return (s||'').replace(/'/g, "\\'");
+}
+function escHtml(s) {
+  return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Category filter ─────────────────────────────────────────────────────────────
+function selectCat(btn) {
+  _activeCat = btn.dataset.cat;
+  document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  renderDocs();
+}
+
+// ── PDF viewer ──────────────────────────────────────────────────────────────────
+function openPdf(path, title) {
+  _currentPdfUrl   = path;
+  _currentPdfTitle = title;
+  document.getElementById('pdf-modal-title').textContent = title;
+  document.getElementById('pdf-iframe').src = path;
+  document.getElementById('pdf-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closePdf() {
+  document.getElementById('pdf-overlay').classList.add('hidden');
+  document.getElementById('pdf-iframe').src = '';
+  document.body.style.overflow = '';
+}
+function closePdfOverlay(e) {
+  if (e.target === document.getElementById('pdf-overlay')) closePdf();
+}
+function downloadCurrentPdf() {
+  if (!_currentPdfUrl) return;
+  downloadDoc(_currentPdfUrl, _currentPdfTitle);
+}
+function openPdfNewTab() {
+  if (_currentPdfUrl) window.open(_currentPdfUrl, '_blank', 'noopener');
+}
+function downloadDoc(path, title) {
+  const a = document.createElement('a');
+  a.href = path;
+  a.download = (title || 'document').replace(/[^a-z0-9 ._-]/gi, '_') + '.pdf';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+// ── Upload modal ────────────────────────────────────────────────────────────────
+function openUploadModal() {
+  document.getElementById('upload-overlay').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+function closeUploadModal() {
+  document.getElementById('upload-overlay').classList.add('hidden');
+  document.body.style.overflow = '';
+  document.getElementById('u-status').textContent = '';
+  document.getElementById('u-status').className = 'u-status';
+}
+function closeUploadOverlay(e) {
+  if (e.target === document.getElementById('upload-overlay')) closeUploadModal();
+}
+
+function handleFileSelect(input) {
+  const file = input.files[0];
+  const nameEl = document.getElementById('u-file-name');
+  if (file) {
+    const sizeKB = Math.round(file.size / 1024);
+    const sizeStr = sizeKB >= 1024 ? (sizeKB/1024).toFixed(1) + ' MB' : sizeKB + ' KB';
+    nameEl.textContent = file.name + ' (' + sizeStr + ')';
+    nameEl.classList.remove('hidden');
+  } else {
+    nameEl.classList.add('hidden');
+  }
+}
+
+// Drag-and-drop on file zone
+(function() {
+  document.addEventListener('DOMContentLoaded', function() {
+    var zone = document.getElementById('u-file-zone');
+    if (!zone) return;
+    zone.addEventListener('dragover', function(e) { e.preventDefault(); zone.classList.add('drag'); });
+    zone.addEventListener('dragleave', function() { zone.classList.remove('drag'); });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('drag');
+      var files = e.dataTransfer.files;
+      if (files.length) {
+        document.getElementById('u-file-input').files = files;
+        handleFileSelect(document.getElementById('u-file-input'));
+      }
+    });
+  });
+})();
+
+async function submitUpload() {
+  var btn    = document.getElementById('u-submit-btn');
+  var txtEl  = document.getElementById('u-submit-txt');
+  var status = document.getElementById('u-status');
+
+  var title    = document.getElementById('u-title').value.trim();
+  var category = document.getElementById('u-category').value;
+  var desc     = document.getElementById('u-description').value.trim();
+  var secret   = document.getElementById('u-secret').value;
+  var fileInput = document.getElementById('u-file-input');
+  var file     = fileInput.files[0];
+
+  status.textContent = '';
+  status.className   = 'u-status';
+
+  if (!title)    { status.textContent = 'Title is required.'; status.className = 'u-status err'; return; }
+  if (!category) { status.textContent = 'Select a category.'; status.className = 'u-status err'; return; }
+  if (!file)     { status.textContent = 'Select a PDF file.'; status.className = 'u-status err'; return; }
+  if (!secret)   { status.textContent = 'Admin secret is required.'; status.className = 'u-status err'; return; }
+
+  btn.disabled = true;
+  txtEl.textContent = 'Uploading…';
+
+  try {
+    var fd = new FormData();
+    fd.append('title', title);
+    fd.append('category', category === 'Visa &amp; Immigration' ? 'Visa & Immigration' : category === 'Salary &amp; Negotiation' ? 'Salary & Negotiation' : category);
+    fd.append('description', desc);
+    fd.append('adminSecret', secret);
+    fd.append('file', file);
+
+    var resp = await fetch('/api/community-upload', { method: 'POST', body: fd });
+    var data = await resp.json();
+
+    if (resp.ok && data.success) {
+      status.textContent = 'Uploaded successfully! Refresh to see it.';
+      status.className = 'u-status ok';
+      // Flag as admin so button stays visible
+      localStorage.setItem('ambore_community_admin', '1');
+      document.getElementById('admin-upload-btn').classList.remove('hidden');
+      // Reload manifest after short delay
+      setTimeout(function() { loadManifest(); closeUploadModal(); }, 1500);
+    } else {
+      status.textContent = data.error || 'Upload failed. Check your admin secret.';
+      status.className = 'u-status err';
+    }
+  } catch(e) {
+    status.textContent = 'Network error — please try again.';
+    status.className = 'u-status err';
+  } finally {
+    btn.disabled = false;
+    txtEl.textContent = 'Upload';
+  }
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  var t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(function() { t.classList.remove('show'); }, 2600);
+}
+
+// ── Keyboard close ───────────────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') { closePdf(); closeUploadModal(); }
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────────
+checkAdminUI();
+loadManifest();
+</script>
+</body>
+</html>
