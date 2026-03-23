@@ -37,7 +37,10 @@ const CFG = {
   ]),
 
   ALLOWED_CATEGORIES: new Set([
-    'Resume Tips', 'Interview Prep', 'Job Search', 'Visa & Immigration',
+    // Visa-specific
+    'F1 Student', 'OPT', 'STEM OPT', 'H1B', 'CPT',
+    // Career resources
+    'Resume Tips', 'Interview Prep', 'Job Search',
     'Salary & Negotiation', 'Career Growth', 'Tech Skills', 'General',
   ]),
 };
@@ -217,7 +220,7 @@ export default async function handler(req, context) {
   manifestDocs.unshift(newDoc); // newest first
 
   const newManifest = JSON.stringify({ version: 1, documents: manifestDocs }, null, 2);
-  const b64Manifest = btoa(unescape(encodeURIComponent(newManifest)));
+  const b64Manifest = btoa(String.fromCharCode(...new TextEncoder().encode(newManifest)));
 
   // ── Update manifest in GitHub ─────────────────────────────────────────────────
   const manifestBody = {

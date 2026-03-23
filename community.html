@@ -26,9 +26,9 @@ window.onerror = (msg, src, line, col, err) => {
 </script>
 
 <meta charset="UTF-8"/>
-<meta name="description" content="Ambore Community — browse career resources, guides and documents shared by the Ambore team."/>
+<meta name="description" content="Ambore Community — F1, OPT, STEM OPT, H1B, CPT resources, guides and documents for international students in the US job market."/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Ambore — Community Resources</title>
+<title>Ambore — International Student Community Resources</title>
 <link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 
@@ -89,10 +89,40 @@ body{padding-left:72px}
 .page{max-width:1200px;margin:0 auto;padding:32px 24px 60px}
 
 /* ══ HERO HEADER ═════════════════════════════════════════════════════════════ */
-.comm-hero{background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(124,58,237,.08));border:1px solid rgba(79,70,229,.25);border-radius:20px;padding:32px 32px 28px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.comm-hero{background:linear-gradient(135deg,rgba(79,70,229,.14),rgba(124,58,237,.09));border:1px solid rgba(79,70,229,.28);border-radius:20px;padding:32px 32px 28px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
 .comm-hero-left h1{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:6px}
-.comm-hero-left p{font-size:0.88rem;color:rgba(255,255,255,0.45);max-width:480px;line-height:1.6}
+.comm-hero-left p{font-size:0.88rem;color:rgba(255,255,255,0.45);max-width:520px;line-height:1.6}
 .comm-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(79,70,229,.18);border:1px solid rgba(79,70,229,.3);color:var(--accent);padding:5px 13px;border-radius:20px;font-size:0.72rem;font-weight:700;margin-bottom:10px}
+.visa-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:14px}
+.visa-tag{padding:4px 12px;border-radius:20px;font-size:0.72rem;font-weight:700;border:1px solid}
+.visa-tag.f1{background:rgba(249,115,22,.1);border-color:rgba(249,115,22,.3);color:#fb923c}
+.visa-tag.opt{background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:#4ade80}
+.visa-tag.stem{background:rgba(59,130,246,.1);border-color:rgba(59,130,246,.3);color:#60a5fa}
+.visa-tag.h1b{background:rgba(168,85,247,.1);border-color:rgba(168,85,247,.3);color:#c084fc}
+.visa-tag.cpt{background:rgba(236,72,153,.1);border-color:rgba(236,72,153,.3);color:#f472b6}
+
+/* ══ VISA INFO CARDS ══════════════════════════════════════════════════════════ */
+.visa-section{margin-bottom:26px}
+.visa-section-title{font-size:0.72rem;font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px}
+.visa-cards{display:grid;grid-template-columns:repeat(5,1fr);gap:10px}
+.visa-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px 16px;cursor:pointer;transition:border-color .2s,transform .15s}
+.visa-card:hover{transform:translateY(-2px)}
+.visa-card.vc-f1{border-top:2px solid #fb923c}.visa-card.vc-f1:hover{border-color:#fb923c}
+.visa-card.vc-opt{border-top:2px solid #4ade80}.visa-card.vc-opt:hover{border-color:#4ade80}
+.visa-card.vc-stem{border-top:2px solid #60a5fa}.visa-card.vc-stem:hover{border-color:#60a5fa}
+.visa-card.vc-h1b{border-top:2px solid #c084fc}.visa-card.vc-h1b:hover{border-color:#c084fc}
+.visa-card.vc-cpt{border-top:2px solid #f472b6}.visa-card.vc-cpt:hover{border-color:#f472b6}
+.vc-name{font-size:0.88rem;font-weight:800;color:#fff;margin-bottom:4px}
+.vc-full{font-size:0.7rem;color:rgba(255,255,255,.35);margin-bottom:8px;line-height:1.3}
+.vc-facts{display:flex;flex-direction:column;gap:4px}
+.vc-fact{font-size:0.7rem;color:rgba(255,255,255,.5);display:flex;gap:5px;line-height:1.4}
+.vc-fact::before{content:"•";flex-shrink:0}
+.vc-pill{display:inline-block;margin-top:8px;padding:3px 9px;border-radius:10px;font-size:0.65rem;font-weight:700;cursor:pointer}
+.vc-pill-f1{background:rgba(249,115,22,.15);color:#fb923c}
+.vc-pill-opt{background:rgba(34,197,94,.15);color:#4ade80}
+.vc-pill-stem{background:rgba(59,130,246,.15);color:#60a5fa}
+.vc-pill-h1b{background:rgba(168,85,247,.15);color:#c084fc}
+.vc-pill-cpt{background:rgba(236,72,153,.15);color:#f472b6}
 .upload-hero-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:11px;background:var(--grad);color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;flex-shrink:0}
 .upload-hero-btn:hover{opacity:.85}
 
@@ -183,12 +213,16 @@ body{padding-left:72px}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
 /* ══ RESPONSIVE ═══════════════════════════════════════════════════════════════ */
+@media(max-width:900px){
+  .visa-cards{grid-template-columns:repeat(3,1fr)}
+}
 @media(max-width:600px){
   .page{padding:20px 14px 70px}
   .comm-hero{padding:22px 18px}
   .comm-hero-left h1{font-size:1.35rem}
   .docs-grid,.loading-grid{grid-template-columns:1fr}
   .pdf-modal{height:95vh}
+  .visa-cards{grid-template-columns:repeat(2,1fr)}
 }
 </style>
 <script src="/protect.js"></script>
@@ -243,15 +277,84 @@ body{padding-left:72px}
     <div class="comm-hero-left">
       <div class="comm-badge">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        Community Resources
+        International Student Community
       </div>
-      <h1>Career Documents &amp; Guides</h1>
-      <p>Handpicked resources shared by the Ambore team — resume templates, interview guides, visa tips, and more to accelerate your job search.</p>
+      <h1>Resources for International Students</h1>
+      <p>Guides, PDFs, and career documents built specifically for international students navigating the US job market — visa timelines, OPT strategies, H1B sponsorship lists, CPT tips, and more.</p>
+      <div class="visa-tags">
+        <span class="visa-tag f1">F1 Visa</span>
+        <span class="visa-tag opt">OPT</span>
+        <span class="visa-tag stem">STEM OPT</span>
+        <span class="visa-tag h1b">H1B</span>
+        <span class="visa-tag cpt">CPT</span>
+      </div>
     </div>
     <button class="upload-hero-btn hidden" id="admin-upload-btn" onclick="openUploadModal()">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
       Upload Document
     </button>
+  </div>
+
+  <!-- Visa quick-reference cards -->
+  <div class="visa-section">
+    <div class="visa-section-title">Visa Status Quick Reference — click to filter documents</div>
+    <div class="visa-cards">
+      <div class="visa-card vc-f1" onclick="filterByVisa('F1 Student')">
+        <div class="vc-name">F1</div>
+        <div class="vc-full">Student Visa</div>
+        <div class="vc-facts">
+          <div class="vc-fact">Full-time study required</div>
+          <div class="vc-fact">On-campus work: 20 hrs/wk</div>
+          <div class="vc-fact">Off-campus only via CPT/OPT</div>
+          <div class="vc-fact">Maintained by your DSO</div>
+        </div>
+        <span class="vc-pill vc-pill-f1">Filter docs →</span>
+      </div>
+      <div class="visa-card vc-opt" onclick="filterByVisa('OPT')">
+        <div class="vc-name">OPT</div>
+        <div class="vc-full">Optional Practical Training</div>
+        <div class="vc-facts">
+          <div class="vc-fact">12 months after graduation</div>
+          <div class="vc-fact">Must be job-related to degree</div>
+          <div class="vc-fact">Apply 90 days before end date</div>
+          <div class="vc-fact">Unemployment cap: 90 days</div>
+        </div>
+        <span class="vc-pill vc-pill-opt">Filter docs →</span>
+      </div>
+      <div class="visa-card vc-stem" onclick="filterByVisa('STEM OPT')">
+        <div class="vc-name">STEM OPT</div>
+        <div class="vc-full">24-Month Extension</div>
+        <div class="vc-facts">
+          <div class="vc-fact">+24 months for STEM degrees</div>
+          <div class="vc-fact">Employer must be E-Verify</div>
+          <div class="vc-fact">Training plan (Form I-983)</div>
+          <div class="vc-fact">Apply 90 days before OPT ends</div>
+        </div>
+        <span class="vc-pill vc-pill-stem">Filter docs →</span>
+      </div>
+      <div class="visa-card vc-h1b" onclick="filterByVisa('H1B')">
+        <div class="vc-name">H1B</div>
+        <div class="vc-full">Specialty Occupation Visa</div>
+        <div class="vc-facts">
+          <div class="vc-fact">Employer-sponsored only</div>
+          <div class="vc-fact">Annual lottery (April)</div>
+          <div class="vc-fact">Initial 3 yrs, extendable 3</div>
+          <div class="vc-fact">Cap: 65k + 20k master's</div>
+        </div>
+        <span class="vc-pill vc-pill-h1b">Filter docs →</span>
+      </div>
+      <div class="visa-card vc-cpt" onclick="filterByVisa('CPT')">
+        <div class="vc-name">CPT</div>
+        <div class="vc-full">Curricular Practical Training</div>
+        <div class="vc-facts">
+          <div class="vc-fact">Must be tied to curriculum</div>
+          <div class="vc-fact">Authorized per semester</div>
+          <div class="vc-fact">12+ months full-time = no OPT</div>
+          <div class="vc-fact">Approved by DSO + school</div>
+        </div>
+        <span class="vc-pill vc-pill-cpt">Filter docs →</span>
+      </div>
+    </div>
   </div>
 
   <!-- Filter bar -->
@@ -262,13 +365,15 @@ body{padding-left:72px}
     </div>
     <div class="cat-pills" id="cat-pills">
       <button class="cat-pill active" data-cat="All" onclick="selectCat(this)">All</button>
+      <button class="cat-pill" data-cat="F1 Student" onclick="selectCat(this)">F1 Student</button>
+      <button class="cat-pill" data-cat="OPT" onclick="selectCat(this)">OPT</button>
+      <button class="cat-pill" data-cat="STEM OPT" onclick="selectCat(this)">STEM OPT</button>
+      <button class="cat-pill" data-cat="H1B" onclick="selectCat(this)">H1B</button>
+      <button class="cat-pill" data-cat="CPT" onclick="selectCat(this)">CPT</button>
       <button class="cat-pill" data-cat="Resume Tips" onclick="selectCat(this)">Resume Tips</button>
       <button class="cat-pill" data-cat="Interview Prep" onclick="selectCat(this)">Interview Prep</button>
       <button class="cat-pill" data-cat="Job Search" onclick="selectCat(this)">Job Search</button>
-      <button class="cat-pill" data-cat="Visa & Immigration" onclick="selectCat(this)">Visa &amp; Immigration</button>
       <button class="cat-pill" data-cat="Salary & Negotiation" onclick="selectCat(this)">Salary &amp; Negotiation</button>
-      <button class="cat-pill" data-cat="Tech Skills" onclick="selectCat(this)">Tech Skills</button>
-      <button class="cat-pill" data-cat="Career Growth" onclick="selectCat(this)">Career Growth</button>
       <button class="cat-pill" data-cat="General" onclick="selectCat(this)">General</button>
     </div>
   </div>
@@ -289,8 +394,8 @@ body{padding-left:72px}
   <!-- Empty state -->
   <div class="empty-state hidden" id="empty-state">
     <div class="empty-icon">📄</div>
-    <h3>No documents yet</h3>
-    <p>The Ambore team will be uploading career resources here soon.<br>Check back shortly!</p>
+    <h3>No documents in this category yet</h3>
+    <p>The Ambore team is uploading F1 / OPT / STEM OPT / H1B / CPT guides.<br>Check back shortly — or try a different category.</p>
   </div>
 
 </main>
@@ -333,14 +438,22 @@ body{padding-left:72px}
       <label class="u-label">Category *</label>
       <select class="u-select" id="u-category">
         <option value="">Select category…</option>
-        <option>Resume Tips</option>
-        <option>Interview Prep</option>
-        <option>Job Search</option>
-        <option>Visa &amp; Immigration</option>
-        <option>Salary &amp; Negotiation</option>
-        <option>Tech Skills</option>
-        <option>Career Growth</option>
-        <option>General</option>
+        <optgroup label="── Visa &amp; Status ──">
+          <option>F1 Student</option>
+          <option>OPT</option>
+          <option>STEM OPT</option>
+          <option>H1B</option>
+          <option>CPT</option>
+        </optgroup>
+        <optgroup label="── Career Resources ──">
+          <option>Resume Tips</option>
+          <option>Interview Prep</option>
+          <option>Job Search</option>
+          <option>Salary &amp; Negotiation</option>
+          <option>Tech Skills</option>
+          <option>Career Growth</option>
+          <option>General</option>
+        </optgroup>
       </select>
     </div>
 
@@ -488,6 +601,16 @@ function selectCat(btn) {
   _activeCat = btn.dataset.cat;
   document.querySelectorAll('.cat-pill').forEach(p => p.classList.remove('active'));
   btn.classList.add('active');
+  renderDocs();
+}
+
+// Filter by visa type (called from visa quick-reference cards)
+function filterByVisa(cat) {
+  _activeCat = cat;
+  document.querySelectorAll('.cat-pill').forEach(p => {
+    p.classList.toggle('active', p.dataset.cat === cat);
+  });
+  document.getElementById('docs-grid').scrollIntoView({ behavior: 'smooth', block: 'start' });
   renderDocs();
 }
 
