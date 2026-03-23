@@ -235,6 +235,38 @@ body{padding-left:72px}
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1e1e3a;border:1px solid rgba(129,140,248,.25);color:#a5b4fc;padding:10px 22px;border-radius:12px;font-size:0.82rem;font-weight:600;z-index:2000;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
+/* ══ ROADMAP ═════════════════════════════════════════════════════════════════ */
+.roadmap-section{margin-bottom:28px}
+.roadmap-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.roadmap-hd h2{font-size:1rem;font-weight:800;color:#fff}
+.roadmap-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:#fb923c;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:700}
+.rm-phases{display:flex;flex-direction:column;gap:10px}
+.rm-phase{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.rm-phase-hd{display:flex;align-items:center;gap:14px;padding:15px 20px;cursor:pointer;user-select:none;transition:background .15s}
+.rm-phase-hd:hover{background:rgba(255,255,255,.03)}
+.rm-num{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:900;flex-shrink:0}
+.rm-phase-title{font-size:0.92rem;font-weight:800;color:#fff;flex:1}
+.rm-time{font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:10px;background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);white-space:nowrap}
+.rm-chevron{color:rgba(255,255,255,.22);transition:transform .25s;flex-shrink:0}
+.rm-phase.open .rm-chevron{transform:rotate(180deg)}
+.rm-body{display:none;padding:0 20px 18px;border-top:1px solid var(--border)}
+.rm-phase.open .rm-body{display:block}
+.rm-steps{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px;margin-top:14px}
+.rm-step{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:13px 15px}
+.rm-step-title{font-size:0.8rem;font-weight:800;color:#fff;margin-bottom:7px}
+.rm-item{font-size:0.76rem;color:rgba(255,255,255,.52);line-height:1.55;display:flex;gap:6px;margin-bottom:4px}
+.rm-item::before{content:"→";flex-shrink:0;opacity:.45}
+.rm-warn{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);border-radius:10px;padding:10px 13px;margin-top:10px;font-size:0.75rem;color:#fca5a5;line-height:1.55;display:flex;gap:7px}
+.rm-tip{background:rgba(34,197,94,.07);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:10px 13px;margin-top:8px;font-size:0.75rem;color:#86efac;line-height:1.55;display:flex;gap:7px}
+.rm-info{background:rgba(59,130,246,.07);border:1px solid rgba(59,130,246,.2);border-radius:10px;padding:10px 13px;margin-top:8px;font-size:0.75rem;color:#93c5fd;line-height:1.55;display:flex;gap:7px}
+.rm-p1 .rm-phase-hd{border-left:3px solid #fb923c}.rm-num-p1{background:rgba(249,115,22,.18);color:#fb923c}
+.rm-p2 .rm-phase-hd{border-left:3px solid #f472b6}.rm-num-p2{background:rgba(236,72,153,.18);color:#f472b6}
+.rm-p3 .rm-phase-hd{border-left:3px solid #4ade80}.rm-num-p3{background:rgba(34,197,94,.18);color:#4ade80}
+.rm-p4 .rm-phase-hd{border-left:3px solid #60a5fa}.rm-num-p4{background:rgba(59,130,246,.18);color:#60a5fa}
+.rm-p5 .rm-phase-hd{border-left:3px solid #c084fc}.rm-num-p5{background:rgba(168,85,247,.18);color:#c084fc}
+.rm-p6 .rm-phase-hd{border-left:3px solid #fbbf24}.rm-num-p6{background:rgba(251,191,36,.18);color:#fbbf24}
+.rm-p7 .rm-phase-hd{border-left:3px solid #818CF8}.rm-num-p7{background:rgba(79,70,229,.18);color:#818CF8}
+
 /* ══ RESPONSIVE ═══════════════════════════════════════════════════════════════ */
 @media(max-width:900px){
   .visa-cards{grid-template-columns:repeat(3,1fr)}
@@ -377,6 +409,331 @@ body{padding-left:72px}
         </div>
         <span class="vc-pill vc-pill-cpt">Filter docs →</span>
       </div>
+    </div>
+  </div>
+
+  <!-- Complete Roadmap: F1 → Green Card → Citizenship -->
+  <div class="roadmap-section">
+    <div class="roadmap-hd">
+      <h2>Complete Roadmap: F1 → Green Card → Citizenship</h2>
+      <span class="roadmap-badge">🗺️ Step-by-Step</span>
+    </div>
+    <p style="font-size:0.81rem;color:rgba(255,255,255,.35);margin-bottom:14px;line-height:1.65">Everything from landing in the US on an F-1 to getting a green card and beyond — spoon-fed, step by step. Click any phase to expand.</p>
+    <div class="rm-phases">
+
+      <!-- Phase 1 -->
+      <div class="rm-phase rm-p1 open" id="rm-1">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-1')">
+          <div class="rm-num rm-num-p1">1</div>
+          <div class="rm-phase-title">Arriving on F-1 — Your First Steps in the US</div>
+          <span class="rm-time">Day 1–30</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span>Enter the US no more than <strong>30 days before</strong> your program start date on your I-20. Entering too early violates F-1 status.</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">📋 Documents to Have Ready</div>
+              <div class="rm-item">Valid passport (6+ months beyond stay)</div>
+              <div class="rm-item">F-1 visa stamp in passport</div>
+              <div class="rm-item">Original I-20 signed by your DSO</div>
+              <div class="rm-item">SEVIS fee receipt (I-901)</div>
+              <div class="rm-item">Acceptance letter from your university</div>
+              <div class="rm-item">Proof of financial support</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">🏫 First Week on Campus</div>
+              <div class="rm-item">Attend international student orientation — mandatory</div>
+              <div class="rm-item">Register with your DSO / International Students Office (ISO)</div>
+              <div class="rm-item">Confirm your SEVIS record is active</div>
+              <div class="rm-item">Enroll in full-time courses (12+ credits undergrad, 9+ grad)</div>
+              <div class="rm-item">Get student ID, university email, and health insurance</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">💳 Practical Setup</div>
+              <div class="rm-item">Open a US bank account (bring I-20, passport, I-94)</div>
+              <div class="rm-item">Get a US phone number and state ID / driver's license</div>
+              <div class="rm-item">Apply for SSN only after getting work authorization</div>
+              <div class="rm-item">File taxes every year (Form 8843 + 1040-NR if applicable)</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📅 Maintain Your F-1 Status</div>
+              <div class="rm-item">Stay enrolled full-time every semester</div>
+              <div class="rm-item">Keep your I-20 current — renew before it expires</div>
+              <div class="rm-item">Report address changes to DSO within 10 days</div>
+              <div class="rm-item">On-campus work: max 20 hrs/week during school</div>
+              <div class="rm-item">Never work off-campus without CPT or OPT authorization</div>
+            </div>
+          </div>
+          <div class="rm-tip">💡 <span>Travel outside the US requires a valid visa stamp + updated I-20 travel signature. If your F-1 stamp expires while abroad, get a new stamp at a US consulate before re-entering.</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 2 -->
+      <div class="rm-phase rm-p2" id="rm-2">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-2')">
+          <div class="rm-num rm-num-p2">2</div>
+          <div class="rm-phase-title">CPT — Work While You Study</div>
+          <span class="rm-time">During Degree</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span><strong>12+ months of full-time CPT = zero OPT eligibility.</strong> Use CPT strategically. Part-time CPT (≤20 hrs/wk) does NOT affect OPT at all.</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">✅ CPT Eligibility</div>
+              <div class="rm-item">Must be enrolled for at least 1 academic year</div>
+              <div class="rm-item">Job must be an integral part of your curriculum</div>
+              <div class="rm-item">Must be tied to a specific course (for credit or required)</div>
+              <div class="rm-item">Authorized semester-by-semester by your DSO</div>
+              <div class="rm-item">Your I-20 is your work authorization — no EAD needed</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📋 How to Get CPT Authorized</div>
+              <div class="rm-item">Get an internship offer letter</div>
+              <div class="rm-item">Register for the co-op/internship course with your advisor</div>
+              <div class="rm-item">Submit CPT request to DSO with offer letter and course info</div>
+              <div class="rm-item">DSO issues updated I-20 with CPT authorization</div>
+              <div class="rm-item">Do NOT start work before the I-20 CPT start date</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">💼 CPT Strategy</div>
+              <div class="rm-item">Keep total full-time CPT under 12 months</div>
+              <div class="rm-item">Part-time CPT every semester is fine</div>
+              <div class="rm-item">Great for internships at startups that don't sponsor H-1B</div>
+              <div class="rm-item">New I-20 needed for each new employer / semester</div>
+            </div>
+          </div>
+          <div class="rm-tip">💡 <span>CPT is FREE — no USCIS filing, no fees. Just paperwork with your DSO. Turn-around is usually 1–5 business days. Always get it before your start date!</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 3 -->
+      <div class="rm-phase rm-p3" id="rm-3">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-3')">
+          <div class="rm-num rm-num-p3">3</div>
+          <div class="rm-phase-title">OPT — Work After Graduation (12 Months)</div>
+          <span class="rm-time">Post-Graduation</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span>Apply up to <strong>90 days before</strong> your program end date. Processing takes 3–5 months. Do NOT wait until graduation — start the process the semester before!</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">📋 OPT Application Steps</div>
+              <div class="rm-item">Request OPT DSO recommendation in your school's portal</div>
+              <div class="rm-item">DSO issues updated I-20 with OPT recommendation</div>
+              <div class="rm-item">File Form I-765 online at myaccount.uscis.gov</div>
+              <div class="rm-item">Pay the $520 USCIS filing fee</div>
+              <div class="rm-item">Wait for EAD card — do NOT start work before it arrives</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">💼 Employment Rules</div>
+              <div class="rm-item">Job must be directly related to your degree field</div>
+              <div class="rm-item">Can work for multiple employers (same field)</div>
+              <div class="rm-item">Minimum 20 hrs/week to count as "employed"</div>
+              <div class="rm-item">Can be W-2 employee or 1099 contractor</div>
+              <div class="rm-item">Remote work is allowed</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📊 Reporting Requirements</div>
+              <div class="rm-item">Report new employer to DSO within 10 days</div>
+              <div class="rm-item">Report unemployment periods to your DSO</div>
+              <div class="rm-item">Report address changes within 10 days</div>
+              <div class="rm-item">Unemployment cap: <strong>90 days total</strong> — exceeding this terminates OPT</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">⏰ Key Timing</div>
+              <div class="rm-item">Apply 90 days before program end date</div>
+              <div class="rm-item">OPT start date: up to 60 days after graduation</div>
+              <div class="rm-item">Days waiting for EAD count against the 90-day unemployment cap</div>
+              <div class="rm-item">Apply for STEM OPT extension 90 days before OPT expires</div>
+            </div>
+          </div>
+          <div class="rm-tip">💡 <span>While waiting for your EAD: secure your job offer, sign the contract, and prepare onboarding docs. Some employers let you sign before EAD arrives — just don't physically start until it's in hand.</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 4 -->
+      <div class="rm-phase rm-p4" id="rm-4">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-4')">
+          <div class="rm-num rm-num-p4">4</div>
+          <div class="rm-phase-title">STEM OPT — 24-Month Extension</div>
+          <span class="rm-time">During OPT Year 1</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span>Apply <strong>90 days before OPT expires</strong>. If timely filed, USCIS grants a 180-day automatic extension so you never have a gap in work authorization.</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">✅ STEM OPT Eligibility</div>
+              <div class="rm-item">Degree must be on DHS's STEM Designated Degree Program list</div>
+              <div class="rm-item">Employer MUST be enrolled in E-Verify (verify at e-verify.gov)</div>
+              <div class="rm-item">Currently on valid OPT EAD</div>
+              <div class="rm-item">No previous STEM OPT extension used for same degree</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📋 Application Steps</div>
+              <div class="rm-item">Employer completes Form I-983 (Training Plan) with you</div>
+              <div class="rm-item">Submit I-983 to DSO for recommendation</div>
+              <div class="rm-item">DSO issues new I-20 with STEM OPT recommendation</div>
+              <div class="rm-item">File Form I-765 online — reference category (c)(3)(C)</div>
+              <div class="rm-item">Pay $520 filing fee</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📊 Ongoing Compliance</div>
+              <div class="rm-item">Self-evaluate + employer evaluates every 6 months via I-983</div>
+              <div class="rm-item">Submit evaluations to your DSO (not USCIS)</div>
+              <div class="rm-item">Report employer change to DSO within 10 days; new I-983 required</div>
+              <div class="rm-item">Unemployment cap: <strong>150 days total</strong> during STEM OPT period</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">🎯 STEM OPT Strategy</div>
+              <div class="rm-item">You get up to 3 H-1B lottery chances during OPT + STEM OPT</div>
+              <div class="rm-item">Target companies with high H-1B approval rates</div>
+              <div class="rm-item">Build strong performance record for H-1B petition support</div>
+              <div class="rm-item">File H-1B petition before STEM OPT expires — don't miss the deadline</div>
+            </div>
+          </div>
+          <div class="rm-info">ℹ️ <span>Total work authorization: 1 yr OPT + 2 yr STEM OPT = <strong>3 years</strong>, covering up to 3 H-1B lottery rounds (April each year).</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 5 -->
+      <div class="rm-phase rm-p5" id="rm-5">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-5')">
+          <div class="rm-num rm-num-p5">5</div>
+          <div class="rm-phase-title">H-1B — Specialty Occupation Work Visa</div>
+          <span class="rm-time">March Lottery → Oct 1</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span>H-1B requires an employer sponsor and winning the annual lottery. Cap: 65,000 + 20,000 US master's. Historical selection odds vary (roughly 25–40%). Target H-1B-sponsoring companies early!</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">📅 Annual H-1B Timeline</div>
+              <div class="rm-item"><strong>Jan–Feb:</strong> Confirm employer will sponsor and register you</div>
+              <div class="rm-item"><strong>Mar 1–18:</strong> Employer registers you in the H-1B lottery (myUSCIS)</div>
+              <div class="rm-item"><strong>Late Mar:</strong> USCIS announces lottery selections</div>
+              <div class="rm-item"><strong>Apr 1 – Jun 30:</strong> Employer files I-129 petition if selected</div>
+              <div class="rm-item"><strong>Oct 1:</strong> H-1B status begins (earliest possible start date)</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">💼 Eligibility</div>
+              <div class="rm-item">Bachelor's degree (or equivalent) in a specialty field</div>
+              <div class="rm-item">Job must require that specific degree (specialty occupation)</div>
+              <div class="rm-item">Employer pays prevailing wage (verified via DOL LCA)</div>
+              <div class="rm-item">Initial period: 3 years, renewable 3 more = 6 years total</div>
+              <div class="rm-item">H-1B holders can change employers — file I-129 transfer</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">🛡️ Cap-Gap: OPT → H-1B Bridge</div>
+              <div class="rm-item">If H-1B petition filed before OPT/STEM OPT expires</div>
+              <div class="rm-item">Automatic cap-gap extension covers you through Sep 30</div>
+              <div class="rm-item">Get updated I-20 from DSO showing cap-gap dates</div>
+              <div class="rm-item">Keep working normally at the same employer during this period</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">🎯 Job Search Tips</div>
+              <div class="rm-item">Target companies with high H-1B approval rates (DOL Employer Hub)</div>
+              <div class="rm-item">Large tech, consulting, and financial firms sponsor most H-1Bs</div>
+              <div class="rm-item">Ask in interviews: "Does your company sponsor H-1B?"</div>
+              <div class="rm-item">Secure offers by Jan/Feb to ensure March registration deadline</div>
+              <div class="rm-item">Plan B if not selected: more STEM OPT time or cap-exempt jobs</div>
+            </div>
+          </div>
+          <div class="rm-tip">💡 <span>Cap-exempt jobs (universities, nonprofits, govt research) don't require the lottery — you can start H-1B any time. Great backup if the lottery doesn't work out.</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 6 -->
+      <div class="rm-phase rm-p6" id="rm-6">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-6')">
+          <div class="rm-num rm-num-p6">6</div>
+          <div class="rm-phase-title">Green Card — Permanent Residency (EB Path)</div>
+          <span class="rm-time">Years 2–30+ (varies by country)</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-warn">⚠️ <span>For Indian and Chinese nationals, EB-2/EB-3 backlogs can be <strong>10–30+ years</strong> due to per-country limits. Start PERM as early as possible — even year 1 of H-1B. Your priority date is everything.</span></div>
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">📋 Step 1: PERM Labor Certification</div>
+              <div class="rm-item">Employer files PERM with DOL — proves no qualified US workers</div>
+              <div class="rm-item">Employer conducts required recruitment (job ads, interviews)</div>
+              <div class="rm-item">DOL approval takes 6–18 months</div>
+              <div class="rm-item">Approval date becomes your <strong>priority date</strong> — earlier = better</div>
+              <div class="rm-item">Required for EB-2 and EB-3 (not EB-1)</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📋 Step 2: I-140 Immigrant Petition</div>
+              <div class="rm-item">Filed by employer after PERM approval</div>
+              <div class="rm-item">Establishes preference category (EB-1 / EB-2 / EB-3)</div>
+              <div class="rm-item">Standard processing: 6–12 months; Premium: 15 business days</div>
+              <div class="rm-item">Once approved 180+ days, priority date is portable to new employer</div>
+              <div class="rm-item">EB-1A / EB-1B: no PERM required — self-petition or employer</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📅 Step 3: Wait for Priority Date</div>
+              <div class="rm-item">Check the DOS Visa Bulletin every month</div>
+              <div class="rm-item">When your priority date is "current" — file I-485 or Consular Processing</div>
+              <div class="rm-item">EB-1: often current for all countries (1–3 year wait)</div>
+              <div class="rm-item">EB-2/EB-3 India: typically 10–30+ year backlog</div>
+              <div class="rm-item">Under AC21: can change to same/similar job without losing priority date</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">✅ Step 4: Adjustment of Status (I-485)</div>
+              <div class="rm-item">File I-485 when priority date is current</div>
+              <div class="rm-item">File I-131 (Advance Parole travel doc) concurrently</div>
+              <div class="rm-item">File I-765 (EAD) — allows work while I-485 is pending</div>
+              <div class="rm-item">Biometrics appointment at local USCIS office</div>
+              <div class="rm-item">Approval = green card (I-551) mailed to you</div>
+            </div>
+          </div>
+          <div class="rm-info">ℹ️ <span>EB-1A (Extraordinary Ability) and EB-1B (Outstanding Researcher) are often current for all nationalities — no PERM required. If you have publications, patents, or recognition in your field, consult an immigration attorney about EB-1.</span></div>
+          <div class="rm-tip">💡 <span>Under AC21 (portability), once your I-140 has been approved for 180+ days, you can change employers for a same or similar role without losing your priority date.</span></div>
+        </div>
+      </div>
+
+      <!-- Phase 7 -->
+      <div class="rm-phase rm-p7" id="rm-7">
+        <div class="rm-phase-hd" onclick="togglePhase('rm-7')">
+          <div class="rm-num rm-num-p7">7</div>
+          <div class="rm-phase-title">US Citizenship — Naturalization</div>
+          <span class="rm-time">5 Years After Green Card</span>
+          <svg class="rm-chevron" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+        <div class="rm-body">
+          <div class="rm-steps">
+            <div class="rm-step">
+              <div class="rm-step-title">✅ Eligibility Requirements</div>
+              <div class="rm-item">Hold green card for 5 years (3 if married to US citizen)</div>
+              <div class="rm-item">Age 18+</div>
+              <div class="rm-item">Continuous US residence — no trips of 6+ months abroad</div>
+              <div class="rm-item">Physical presence: 30 months out of last 60</div>
+              <div class="rm-item">Good moral character during the 5-year period</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">📋 Application Process</div>
+              <div class="rm-item">File Form N-400 at myaccount.uscis.gov — $725 fee</div>
+              <div class="rm-item">Biometrics appointment (fingerprints, photo)</div>
+              <div class="rm-item">Civics interview + English test at your local USCIS office</div>
+              <div class="rm-item">Study 100 official civics questions (USCIS study materials are free)</div>
+              <div class="rm-item">Oath of Allegiance ceremony → Certificate of Naturalization</div>
+            </div>
+            <div class="rm-step">
+              <div class="rm-step-title">🎉 After Citizenship</div>
+              <div class="rm-item">Apply for US passport (Form DS-11 at post office) — travel to 185+ countries</div>
+              <div class="rm-item">Vote in all federal, state, and local elections</div>
+              <div class="rm-item">Sponsor immediate family members for green cards</div>
+              <div class="rm-item">No more H-1B renewals, OPT deadlines, or visa worries</div>
+              <div class="rm-item">Surrender green card (I-551) after passport is issued</div>
+            </div>
+          </div>
+          <div class="rm-tip">💡 <span>The full journey from F-1 arrival to US citizenship is typically <strong>10–35 years</strong> — depending on your birth country, visa category, and H-1B lottery luck. Start each phase as early as possible to protect your timeline.</span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 
@@ -966,6 +1323,12 @@ function showToast(msg) {
 document.addEventListener('keydown', function(e) {
   if (e.key === 'Escape') { closePdf(); closeUploadModal(); }
 });
+
+// ── Roadmap phase toggle ─────────────────────────────────────────────────────────
+function togglePhase(id) {
+  var el = document.getElementById(id);
+  if (el) el.classList.toggle('open');
+}
 
 // ── Init ─────────────────────────────────────────────────────────────────────────
 checkAdminUI();
