@@ -126,6 +126,29 @@ body{padding-left:72px}
 .upload-hero-btn{display:flex;align-items:center;gap:8px;padding:11px 22px;border-radius:11px;background:var(--grad);color:#fff;font-size:0.85rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;flex-shrink:0}
 .upload-hero-btn:hover{opacity:.85}
 
+/* ══ VERIFIED OFFICIAL RESOURCES ════════════════════════════════════════════ */
+.official-section{margin-bottom:28px}
+.official-section-hd{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+.official-section-hd h2{font-size:1rem;font-weight:800;color:#fff}
+.verified-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.3);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:0.68rem;font-weight:700}
+.official-tabs{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:14px}
+.otab{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:rgba(255,255,255,.4);font-size:0.75rem;font-weight:600;cursor:pointer;transition:all .15s}
+.otab:hover{color:#fff;border-color:rgba(255,255,255,.2)}
+.otab.active{background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.3);color:#4ade80}
+.official-pane{display:none}.official-pane.active{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.offic-card{background:var(--card);border:1px solid rgba(34,197,94,.15);border-radius:14px;padding:16px 18px;display:flex;flex-direction:column;gap:8px;transition:border-color .2s,transform .15s}
+.offic-card:hover{border-color:rgba(34,197,94,.35);transform:translateY(-2px)}
+.offic-top{display:flex;align-items:flex-start;gap:10px}
+.offic-src{font-size:0.62rem;font-weight:700;color:#4ade80;text-transform:uppercase;letter-spacing:.06em;margin-bottom:3px}
+.offic-title{font-size:0.88rem;font-weight:700;color:#fff;line-height:1.35}
+.offic-desc{font-size:0.75rem;color:rgba(255,255,255,.4);line-height:1.5}
+.offic-footer{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:4px}
+.offic-tags{display:flex;gap:5px;flex-wrap:wrap}
+.offic-tag{padding:2px 8px;border-radius:8px;font-size:0.62rem;font-weight:700;background:rgba(255,255,255,.05);color:rgba(255,255,255,.35)}
+.offic-link{display:flex;align-items:center;gap:4px;padding:5px 12px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:#4ade80;font-size:0.72rem;font-weight:700;text-decoration:none;transition:all .15s;white-space:nowrap;flex-shrink:0}
+.offic-link:hover{background:rgba(34,197,94,.2)}
+.offic-icon{width:34px;height:34px;border-radius:9px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:1rem}
+
 /* ══ FILTER BAR ══════════════════════════════════════════════════════════════ */
 .filter-bar{display:flex;align-items:center;gap:10px;margin-bottom:22px;flex-wrap:wrap}
 .filter-bar .search-box{flex:1;min-width:200px;max-width:340px;position:relative}
@@ -353,6 +376,180 @@ body{padding-left:72px}
           <div class="vc-fact">Approved by DSO + school</div>
         </div>
         <span class="vc-pill vc-pill-cpt">Filter docs →</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verified Official Resources -->
+  <div class="official-section">
+    <div class="official-section-hd">
+      <h2>Official Government Resources</h2>
+      <span class="verified-badge">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        Verified &amp; Official
+      </span>
+    </div>
+    <!-- Tabs -->
+    <div class="official-tabs">
+      <button class="otab active" onclick="switchOTab(this,'ot-f1')">F1 Visa</button>
+      <button class="otab" onclick="switchOTab(this,'ot-opt')">OPT</button>
+      <button class="otab" onclick="switchOTab(this,'ot-stem')">STEM OPT</button>
+      <button class="otab" onclick="switchOTab(this,'ot-h1b')">H1B</button>
+      <button class="otab" onclick="switchOTab(this,'ot-cpt')">CPT</button>
+      <button class="otab" onclick="switchOTab(this,'ot-forms')">Key Forms</button>
+    </div>
+
+    <!-- F1 Pane -->
+    <div class="official-pane active" id="ot-f1">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🏛️</div><div><div class="offic-src">USCIS</div><div class="offic-title">F-1 Students — Working in the US</div></div></div>
+        <div class="offic-desc">Official USCIS page covering F-1 student employment rules, on-campus vs off-campus authorization, and transitions to OPT/CPT.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">F1</span><span class="offic-tag">Employment</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/students-and-employment" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📚</div><div><div class="offic-src">DHS — Study in the States</div><div class="offic-title">F-1 International Student Guide</div></div></div>
+        <div class="offic-desc">DHS's official resource portal for international students — maintaining F-1 status, working regulations, DSO responsibilities.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">F1</span><span class="offic-tag">Status</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">SEVIS — DHS</div><div class="offic-title">SEVIS I-20 — Student Status Record</div></div></div>
+        <div class="offic-desc">Your I-20 is issued by your DSO via SEVIS. Keep it valid at all times — needed for visa stamps, re-entry, and all work authorization applications.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">F1</span><span class="offic-tag">I-20</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/sevis-help-hub/student-records/fm-student-records/what-is-the-i-20" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">⚖️</div><div><div class="offic-src">IRS</div><div class="offic-title">Tax Guide for F-1 International Students</div></div></div>
+        <div class="offic-desc">IRS guidance on tax filing requirements for F-1 students — Form 8843, 1040-NR, treaty benefits, and FICA exemptions.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">F1</span><span class="offic-tag">Taxes</span></div><a class="offic-link" href="https://www.irs.gov/individuals/international-taxpayers/foreign-student-liability-for-fica-and-futa-taxes" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+    </div>
+
+    <!-- OPT Pane -->
+    <div class="official-pane" id="ot-opt">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🏛️</div><div><div class="offic-src">USCIS</div><div class="offic-title">Optional Practical Training (OPT) — Official Page</div></div></div>
+        <div class="offic-desc">USCIS official guide to OPT — eligibility, pre-completion vs post-completion OPT, how to apply, EAD card, and reporting requirements.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">OPT</span><span class="offic-tag">EAD</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-opt-for-f-1-students" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📚</div><div><div class="offic-src">DHS — Study in the States</div><div class="offic-title">OPT Overview &amp; Timeline</div></div></div>
+        <div class="offic-desc">Step-by-step OPT process — when to apply, DSO recommendation, USCIS filing, 90-day unemployment rule, and what to do while waiting for EAD.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">OPT</span><span class="offic-tag">Timeline</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students/opt" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">USCIS</div><div class="offic-title">Form I-765 — Employment Authorization</div></div></div>
+        <div class="offic-desc">Form I-765 is used to apply for your EAD (work permit) under OPT. File with category (c)(3)(A) for pre-completion or (c)(3)(B) for post-completion.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">OPT</span><span class="offic-tag">I-765</span></div><a class="offic-link" href="https://www.uscis.gov/i-765" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">⏱️</div><div><div class="offic-src">DHS — Study in the States</div><div class="offic-title">OPT Reporting Requirements</div></div></div>
+        <div class="offic-desc">You must report employment, unemployment, address changes, and employer changes to your DSO within 10 days. Failure to report can jeopardize your status.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">OPT</span><span class="offic-tag">Compliance</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students/opt/opt-reporting-requirements" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+    </div>
+
+    <!-- STEM OPT Pane -->
+    <div class="official-pane" id="ot-stem">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🏛️</div><div><div class="offic-src">USCIS</div><div class="offic-title">STEM OPT Extension — Official Page</div></div></div>
+        <div class="offic-desc">Official USCIS page for the 24-month STEM OPT extension — eligibility, employer E-Verify requirement, how to apply, and cap-gap protection.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">STEM OPT</span><span class="offic-tag">24-Month</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/optional-practical-training-extension-for-stem-students-stem-opt" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">USCIS</div><div class="offic-title">Form I-983 — STEM OPT Training Plan</div></div></div>
+        <div class="offic-desc">Employers must complete Form I-983 (Training Plan) with you. Describes learning objectives, hours, mentoring, and salary. Must be submitted to your DSO.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">STEM OPT</span><span class="offic-tag">I-983</span></div><a class="offic-link" href="https://www.uscis.gov/i-983" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">✅</div><div><div class="offic-src">E-Verify — DHS</div><div class="offic-title">E-Verify Employer Search</div></div></div>
+        <div class="offic-desc">Your STEM OPT employer MUST be enrolled in E-Verify. Use this official tool to verify your employer is enrolled before accepting an offer.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">STEM OPT</span><span class="offic-tag">E-Verify</span></div><a class="offic-link" href="https://www.e-verify.gov/employers/verification-center/search-for-an-employer" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📚</div><div><div class="offic-src">DHS — Study in the States</div><div class="offic-title">STEM OPT Extension Guide</div></div></div>
+        <div class="offic-desc">DHS walkthrough of the full STEM OPT process — applying 90 days early, timing, bi-annual evaluations, and what happens if you change employers.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">STEM OPT</span><span class="offic-tag">Extension</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students/stem-opt" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+    </div>
+
+    <!-- H1B Pane -->
+    <div class="official-pane" id="ot-h1b">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🏛️</div><div><div class="offic-src">USCIS</div><div class="offic-title">H-1B Specialty Occupations — Official Page</div></div></div>
+        <div class="offic-desc">USCIS official H-1B page — eligibility, the annual cap, lottery process, employer petition (I-129), premium processing, and transfer rules.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">Lottery</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/h-1b-specialty-occupations" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🎲</div><div><div class="offic-src">USCIS</div><div class="offic-title">H-1B Electronic Registration Process</div></div></div>
+        <div class="offic-desc">How the annual H-1B lottery registration works — employers register in March, selections are notified, then petitions are filed. Understand the cap-subject process.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">Registration</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/temporary-workers/h-1b-specialty-occupations-and-fashion-models/h-1b-electronic-registration-process" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">💰</div><div><div class="offic-src">DOL</div><div class="offic-title">H-1B Prevailing Wage &amp; LCA</div></div></div>
+        <div class="offic-desc">DOL Labor Condition Application (LCA) — employers must pay the prevailing wage. Use the Foreign Labor Certification Data Center to look up wage levels by job title &amp; location.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">Wages</span><span class="offic-tag">LCA</span></div><a class="offic-link" href="https://flag.dol.gov/wage-data/wage-search" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🛡️</div><div><div class="offic-src">USCIS</div><div class="offic-title">Cap-Gap Extension for OPT → H1B</div></div></div>
+        <div class="offic-desc">If your H-1B petition is filed before your OPT expires, you may be eligible for a cap-gap extension allowing you to keep working while waiting for Oct 1 H-1B start date.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">Cap-Gap</span><span class="offic-tag">OPT</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/cap-gap-extension-for-f-1-students-with-pending-h-1b-petitions" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📊</div><div><div class="offic-src">DOL — OFLC</div><div class="offic-title">H-1B Employer Data Hub</div></div></div>
+        <div class="offic-desc">Official DOL database of H-1B employers — search which companies filed H-1B petitions, how many, approval rates, and wage levels. Updated annually.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">Sponsors</span></div><a class="offic-link" href="https://www.dol.gov/agencies/eta/foreign-labor/performance" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+    </div>
+
+    <!-- CPT Pane -->
+    <div class="official-pane" id="ot-cpt">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📚</div><div><div class="offic-src">DHS — Study in the States</div><div class="offic-title">Curricular Practical Training (CPT) Guide</div></div></div>
+        <div class="offic-desc">DHS official CPT overview — how it works, part-time vs full-time CPT, the 12-month rule, authorization process through your DSO, and how it affects OPT eligibility.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">CPT</span><span class="offic-tag">Authorization</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students/cpt" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🏛️</div><div><div class="offic-src">USCIS</div><div class="offic-title">CPT — Students and Employment</div></div></div>
+        <div class="offic-desc">USCIS definition of CPT under 8 CFR 214.2(f)(10)(i) — it must be an integral part of your established curriculum and must be authorized before you start work.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">CPT</span><span class="offic-tag">Legal Basis</span></div><a class="offic-link" href="https://www.uscis.gov/working-in-the-united-states/students-and-exchange-visitors/students-and-employment" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">⚠️</div><div><div class="offic-src">DHS</div><div class="offic-title">CPT &amp; OPT Interaction — The 12-Month Rule</div></div></div>
+        <div class="offic-desc">12+ months of full-time CPT eliminates OPT eligibility entirely. Part-time CPT (under 20 hrs/wk) does not count against OPT. Plan carefully with your DSO.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">CPT</span><span class="offic-tag">OPT Impact</span></div><a class="offic-link" href="https://studyinthestates.dhs.gov/students/cpt/cpt-and-opt" target="_blank" rel="noopener">Visit →</a></div>
+      </div>
+    </div>
+
+    <!-- Key Forms Pane -->
+    <div class="official-pane" id="ot-forms">
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">USCIS Form</div><div class="offic-title">Form I-765 — Employment Authorization Document (EAD)</div></div></div>
+        <div class="offic-desc">Used for OPT and STEM OPT EAD applications. File online at myaccount.uscis.gov. Current processing time: 3–5 months. Apply early — up to 90 days before OPT start.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">OPT</span><span class="offic-tag">STEM OPT</span></div><a class="offic-link" href="https://www.uscis.gov/i-765" target="_blank" rel="noopener">Download →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">USCIS Form</div><div class="offic-title">Form I-983 — STEM OPT Training Plan</div></div></div>
+        <div class="offic-desc">Required for STEM OPT. Employer fills out Section 4 &amp; 5 describing training objectives. Submit to DSO with I-765 renewal. Must update if employer or role changes.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">STEM OPT</span></div><a class="offic-link" href="https://www.uscis.gov/i-983" target="_blank" rel="noopener">Download →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">USCIS Form</div><div class="offic-title">Form I-129 — H-1B Petition for Nonimmigrant Worker</div></div></div>
+        <div class="offic-desc">Filed by your employer to petition for H-1B status. Includes H Classification Supplement. Your employer's immigration attorney typically handles this filing.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span></div><a class="offic-link" href="https://www.uscis.gov/i-129" target="_blank" rel="noopener">Download →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">IRS Form</div><div class="offic-title">Form 8843 — Statement for Exempt Individuals (F-1)</div></div></div>
+        <div class="offic-desc">F-1 students must file Form 8843 every year, even with no US income. It establishes your exempt individual status for the "substantial presence" test. Deadline: June 15.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">F1</span><span class="offic-tag">Taxes</span></div><a class="offic-link" href="https://www.irs.gov/forms-pubs/about-form-8843" target="_blank" rel="noopener">Download →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">📋</div><div><div class="offic-src">DOL Form</div><div class="offic-title">LCA — Labor Condition Application (ETA-9035)</div></div></div>
+        <div class="offic-desc">Employers file the LCA before the H-1B petition to confirm wage compliance. Certified LCAs are public record — you can search your employer's LCA at the DOL OFLC portal.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">H1B</span><span class="offic-tag">LCA</span></div><a class="offic-link" href="https://flag.dol.gov/wage-data/wage-search" target="_blank" rel="noopener">Search →</a></div>
+      </div>
+      <div class="offic-card">
+        <div class="offic-top"><div class="offic-icon">🔎</div><div><div class="offic-src">USCIS</div><div class="offic-title">Case Status Check — myUSCIS</div></div></div>
+        <div class="offic-desc">Track your I-765 (EAD), I-129 (H-1B), or any USCIS case in real time. You'll need your 13-character receipt number starting with EAC, WAC, LIN, SRC, or IOE.</div>
+        <div class="offic-footer"><div class="offic-tags"><span class="offic-tag">All Visas</span></div><a class="offic-link" href="https://egov.uscis.gov/casestatus/landing.do" target="_blank" rel="noopener">Check →</a></div>
       </div>
     </div>
   </div>
@@ -594,6 +791,14 @@ function esc(s) {
 }
 function escHtml(s) {
   return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── Official resources tab switcher ────────────────────────────────────────────
+function switchOTab(btn, paneId) {
+  document.querySelectorAll('.otab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.official-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(paneId).classList.add('active');
 }
 
 // ── Category filter ─────────────────────────────────────────────────────────────
