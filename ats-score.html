@@ -150,6 +150,31 @@ button,input,textarea,select{font-family:inherit}
 /* toast */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a30;border:1px solid rgba(255,255,255,0.15);color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
 
+/* ══ AI SKILL GAP SECTION ═══════════════════════════════════════════════════ */
+.ai-gap-wrap{margin-top:16px}
+.ai-gap-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:13px 22px;border-radius:12px;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;transition:opacity .2s;font-family:inherit}
+.ai-gap-btn:hover{opacity:.88}
+.ai-gap-btn:disabled{opacity:.45;cursor:not-allowed}
+.ai-gap-output{margin-top:14px;background:#0d0d1e;border:1px solid rgba(79,70,229,.25);border-radius:14px;padding:22px 24px;font-size:0.86rem;color:#e2e8f0;line-height:1.7;display:none}
+.ai-gap-output.visible{display:block}
+/* Markdown rendering inside AI output */
+.ai-gap-output h1,.ai-gap-output h2,.ai-gap-output h3{color:#fff;font-weight:800;margin:16px 0 8px}
+.ai-gap-output h1{font-size:1.05rem}.ai-gap-output h2{font-size:0.97rem}.ai-gap-output h3{font-size:0.9rem}
+.ai-gap-output p{margin:6px 0 10px;color:rgba(255,255,255,.7)}
+.ai-gap-output ul,.ai-gap-output ol{padding-left:18px;margin:6px 0 10px}
+.ai-gap-output li{margin-bottom:5px;color:rgba(255,255,255,.65)}
+.ai-gap-output strong{color:#fff;font-weight:700}
+.ai-gap-output em{color:rgba(255,255,255,.55);font-style:italic}
+.ai-gap-output table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.81rem}
+.ai-gap-output th{background:rgba(79,70,229,.18);color:#818CF8;font-weight:700;padding:8px 12px;text-align:left;border-bottom:1px solid rgba(79,70,229,.3)}
+.ai-gap-output td{padding:7px 12px;border-bottom:1px solid rgba(255,255,255,.06);color:rgba(255,255,255,.65)}
+.ai-gap-output tr:last-child td{border-bottom:none}
+.ai-gap-output code{background:rgba(255,255,255,.07);padding:1px 6px;border-radius:5px;font-size:0.83em;color:#a5b4fc;font-family:monospace}
+.ai-gap-output hr{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
+.ai-gap-output blockquote{border-left:3px solid rgba(79,70,229,.5);padding-left:12px;color:rgba(255,255,255,.45);margin:10px 0}
+.ai-cursor::after{content:"|";animation:blink .7s step-start infinite;color:#818CF8}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
 /* ══ SIDEBAR ══════════════════════════════════════════════════════════════════ */
 .sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200;overflow:hidden}
 .sb:hover{overflow-y:auto}
@@ -363,6 +388,16 @@ body{padding-left:72px}
         <div class="kw-tags" id="missing-tags"></div>
       </div>
     </div>
+
+    <!-- AI Skill Gap Analysis -->
+    <div class="ai-gap-wrap" id="ai-gap-wrap" style="display:none">
+      <button class="ai-gap-btn" id="ai-gap-btn" onclick="runSkillGap()">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        Deep Skill Gap Analysis (AI)
+      </button>
+      <div class="ai-gap-output" id="ai-gap-output"></div>
+    </div>
+
   </div>
 </div>
 
@@ -616,6 +651,12 @@ function runScore() {
 
   const result = computeATSScore(resume, jd);
   renderResults(result);
+  // Show AI Skill Gap button after keyword score is shown
+  document.getElementById('ai-gap-wrap').style.display = 'block';
+  document.getElementById('ai-gap-output').classList.remove('visible');
+  document.getElementById('ai-gap-output').innerHTML = '';
+  document.getElementById('ai-gap-btn').disabled = false;
+  document.getElementById('ai-gap-btn').innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Deep Skill Gap Analysis (AI)';
 }
 
 function renderResults(r) {
@@ -683,6 +724,175 @@ function renderResults(r) {
     missingEl.innerHTML = r.missing.map(w => `<span class="kw-tag-miss">${w}</span>`).join('');
   } else {
     missingEl.innerHTML = '<span class="kw-empty">None — all keywords covered! &#127881;</span>';
+  }
+}
+
+// ── AI Skill Gap Analyzer ─────────────────────────────────────────────────────
+const SKILL_GAP_SYSTEM = `You are Ambore's Skill Gap Analyzer — an expert, honest, and highly actionable career coach powered by Ambore.org.
+
+Your goal is to help job seekers quickly understand exactly how their current skills match a target job and give them realistic, fast ways to close any gaps — without ever suggesting they lie or fabricate experience.
+
+### Input You Will Receive:
+- User's Resume (full text or parsed sections)
+- Job Description (full text)
+- Optional: Target role, years of experience, or specific focus (e.g., "fresh graduate", "career switcher")
+
+### Step-by-Step Analysis Process (Follow Exactly):
+
+1. **Extract Skills & Requirements**
+   - From the Job Description: List the top 10–15 must-have hard skills, tools, technologies, soft skills, and qualifications. Prioritize what appears most frequently or is listed first.
+   - From the User's Resume: Extract demonstrated skills, tools, technologies, and experience level (Strong / Medium / None).
+
+2. **Calculate Match**
+   - Overall Skill Match Score: XX% (e.g., 68%)
+   - Categorize every key requirement as:
+     - Strong Match
+     - Partial / Weak Match
+     - No Match (Gap)
+
+3. **Create Clear Output Structure**
+   Always respond with this exact structure using clean markdown:
+
+   **🎯 Your Skill Match for [Job Title]: XX%**
+
+   [Brief 1-sentence summary, e.g., "You're a strong technical match but need to strengthen cloud & containerization skills."]
+
+   **Strengths** (bullet list of well-matched skills with short proof from resume)
+
+   **Skill Gap Breakdown** (use a clean markdown table)
+   | Skill / Requirement       | Your Level     | Required Level | Gap Size | Priority |
+   |---------------------------|----------------|----------------|----------|----------|
+   | Docker & Kubernetes       | None           | High           | High     | ★★★      |
+   | ...                       | ...            | ...            | ...      | ...      |
+
+   **Action Plan to Close Gaps** (most important section — be specific and realistic)
+
+   For each major gap (High & Medium priority), suggest 2–3 quick, actionable ways to close it within 1–4 weeks:
+   - **Build a Project**: Suggest a small, portfolio-worthy project idea that directly demonstrates the skill. Make it connectable to Ambore's "Build Project" tool (e.g., "Build and deploy a simple REST API using Docker — use Ambore's Build Project tool to generate full description & tech stack").
+   - **Earn a Certification**: Recommend quick, relevant, preferably free or low-cost certs (e.g., "Google Cloud Skills Boost – free Docker course" or "AWS Certified Cloud Practitioner").
+   - **Add to Resume**: Suggest exact bullet points or keywords to add naturally once the gap is closed. Include a one-click style note: "After completing, use Ambore's AI Resume Tailor to add this cleanly."
+
+   Prioritize:
+   - Quick wins first (1–2 weekends)
+   - High-impact skills for this specific job
+   - Learning resources that are free or very affordable
+
+4. **Tone & Rules**
+   - Be encouraging but honest — never sugarcoat big gaps.
+   - Keep it realistic for freshers, career switchers, and experienced professionals.
+   - Emphasize "data stays private" style — no data is stored unless user chooses to save.
+   - End with motivation: "Closing these 2–3 gaps can realistically push your match score above 85% and significantly boost your interview chances."
+   - Offer next steps: "Ready to build a project for this gap?" or "Update your resume with these suggestions?"`;
+
+function renderMarkdownGap(md) {
+  if (!md) return '';
+  return md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    // code blocks
+    .replace(/```[\s\S]*?```/g, m => `<code>${m.slice(3,-3).replace(/^[a-z]*\n/,'')}</code>`)
+    // inline code
+    .replace(/`([^`]+)`/g,'<code>$1</code>')
+    // headings
+    .replace(/^### (.+)$/gm,'<h3>$1</h3>')
+    .replace(/^## (.+)$/gm,'<h2>$1</h2>')
+    .replace(/^# (.+)$/gm,'<h1>$1</h1>')
+    // bold/italic
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')
+    .replace(/\*(.+?)\*/g,'<em>$1</em>')
+    // hr
+    .replace(/^---$/gm,'<hr>')
+    // tables (simple)
+    .replace(/(\|.+\|\n)+/g, tableStr => {
+      const rows = tableStr.trim().split('\n').filter(r => !/^\|[-:| ]+\|$/.test(r));
+      if (!rows.length) return tableStr;
+      const cells = r => r.split('|').filter((_,i,a)=>i>0&&i<a.length-1).map(c=>`<td>${c.trim()}</td>`).join('');
+      const hcells = rows[0].split('|').filter((_,i,a)=>i>0&&i<a.length-1).map(c=>`<th>${c.trim()}</th>`).join('');
+      const body = rows.slice(1).map(r=>`<tr>${cells(r)}</tr>`).join('');
+      return `<table><thead><tr>${hcells}</tr></thead><tbody>${body}</tbody></table>`;
+    })
+    // blockquote
+    .replace(/^> (.+)$/gm,'<blockquote>$1</blockquote>')
+    // unordered lists
+    .replace(/^[ \t]*[-*] (.+)$/gm,'<li>$1</li>')
+    .replace(/(<li>[\s\S]+?<\/li>)(?![\s\S]*<li>)/g, '<ul>$&</ul>')
+    .replace(/(<li>.*<\/li>\n?)+/g, m => `<ul>${m}</ul>`)
+    // ordered lists
+    .replace(/^\d+\. (.+)$/gm,'<li>$1</li>')
+    // paragraphs (lines not already wrapped)
+    .replace(/^(?!<[hultb]|<hr|<block)(.+)$/gm,'<p>$1</p>')
+    .replace(/<\/ul>\s*<ul>/g,'');
+}
+
+let _gapAbort = null;
+async function runSkillGap() {
+  const resume = document.getElementById('resume-text').value.trim();
+  const jd = document.getElementById('jd-text').value.trim();
+  if (!resume || !jd) { showToast('Please provide both resume and job description first.'); return; }
+
+  const btn = document.getElementById('ai-gap-btn');
+  const out = document.getElementById('ai-gap-output');
+
+  btn.disabled = true;
+  btn.textContent = '⏳ Analyzing…';
+  out.classList.add('visible');
+  out.innerHTML = '<span class="ai-cursor"></span>';
+
+  if (_gapAbort) _gapAbort.abort();
+  _gapAbort = new AbortController();
+  const timer = setTimeout(() => _gapAbort.abort(), 90000);
+
+  let md = '';
+  try {
+    const res = await fetch('/api/claude', {
+      signal: _gapAbort.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        stream: true,
+        system: SKILL_GAP_SYSTEM,
+        messages: [{
+          role: 'user',
+          content: `Resume:\n${resume}\n\nJob Description:\n${jd}`
+        }]
+      })
+    });
+    if (!res.ok) {
+      const e = await res.json().catch(() => ({}));
+      throw new Error(e.error?.message || 'API error ' + res.status);
+    }
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          const p = JSON.parse(data);
+          if (p.type === 'error') throw new Error(p.error?.message || 'Stream error');
+          if (p.type === 'content_block_delta' && p.delta?.text) {
+            md += p.delta.text;
+            out.innerHTML = renderMarkdownGap(md) + '<span class="ai-cursor"></span>';
+            out.scrollTop = out.scrollHeight;
+          }
+        } catch(e) { if (!(e instanceof SyntaxError)) throw e; }
+      }
+    }
+    out.innerHTML = renderMarkdownGap(md);
+  } catch (err) {
+    out.innerHTML = `<p style="color:#f87171">Error: ${err.message}</p>`;
+  } finally {
+    clearTimeout(timer);
+    btn.disabled = false;
+    btn.innerHTML = '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg> Re-run Skill Gap Analysis';
   }
 }
 
