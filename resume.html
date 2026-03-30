@@ -1547,6 +1547,27 @@ function printResume() {
   setTimeout(() => { printWin.print(); printWin.close(); }, 300);
 }
 
+function triggerBlobDownload(blob, filename, toastMsg) {
+  const url = URL.createObjectURL(blob);
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+  if (isIOS) {
+    // iOS Safari blocks programmatic blob downloads — open in new tab so user can save manually
+    window.open(url, '_blank');
+    showToast('Tap & hold the file → "Download" to save');
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+    return;
+  }
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.target = '_blank'; // helps Google Sites / embedded contexts
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000); // delay so download has time to start
+  if (toastMsg) showToast(toastMsg);
+}
+
 function downloadTxt() {
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   // Strip markdown to produce clean plain text — best for ATS parsers
@@ -1561,15 +1582,7 @@ function downloadTxt() {
     .trim();
   const name = (Auth.getUser()?.name || 'Resume').replace(/\s+/g,'_');
   const blob = new Blob([txt], { type: 'text/plain;charset=utf-8' });
-  const url  = URL.createObjectURL(blob);
-  const a    = document.createElement('a');
-  a.href = url;
-  a.download = `Resume_${name}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast('Plain text downloaded — use this with Jobscan, Resume Worded, or any ATS scanner');
+  triggerBlobDownload(blob, `Resume_${name}.txt`, 'Plain text downloaded — use this with Jobscan, Resume Worded, or any ATS scanner');
 }
 
 async function downloadDocx() {
@@ -1580,15 +1593,7 @@ async function downloadDocx() {
 <head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
 <body>${renderMarkdown(generatedMarkdown)}</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `Resume_${tplName}.doc`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-  showToast(`Resume downloaded (${tplName} template)! Open with Word to save as DOCX.`);
+  triggerBlobDownload(blob, `Resume_${tplName}.doc`, `Resume downloaded (${tplName} template)! Open with Word to save as DOCX.`);
 }
 
 /* ═══════════════════════════════════════════
