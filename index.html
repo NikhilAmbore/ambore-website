@@ -4,8 +4,6 @@
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link rel="preconnect" href="https://accounts.google.com"/>
-<link rel="dns-prefetch" href="https://www.googletagmanager.com"/>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-F3S7FLQRSM',{anonymize_ip:true,cookie_flags:'SameSite=None;Secure',cookie_expires:0});</script>
 <script>window.addEventListener('unhandledrejection',e=>{if(e.reason?.name==='AbortError'){e.preventDefault();return;}console.error('[Ambore]',e.reason);e.preventDefault();});window.onerror=(m,s,l,c,e)=>{if(e?.name==='AbortError')return true;console.error('[Ambore]',m);return true;};</script>
@@ -14,1041 +12,912 @@
 <title>Ambore — Free AI Resume Optimizer | Match Resume to Any Job in Seconds</title>
 <meta name="description" content="Upload your resume + paste a job description → get an ATS-optimized resume instantly. Free forever. No credit card. Used by 12,000+ job seekers."/>
 <link rel="canonical" href="https://ambore.org/"/>
-<!-- Open Graph -->
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://ambore.org/"/>
 <meta property="og:title" content="Ambore — Free AI Resume Optimizer"/>
 <meta property="og:description" content="Match your resume to any job in seconds. AI-powered ATS optimization, 50,000+ jobs, interview practice. 100% free — no credit card."/>
 <meta property="og:image" content="https://ambore.org/og-image.png"/>
-<meta property="og:site_name" content="Ambore"/>
-<!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="Ambore — Free AI Resume Optimizer"/>
 <meta name="twitter:description" content="Upload resume + paste job description → ATS-optimized resume in 60 seconds. Free, no credit card."/>
 <meta name="twitter:image" content="https://ambore.org/og-image.png"/>
-<!-- Structured Data -->
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ambore","url":"https://ambore.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 14 tools, no credit card.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
 <link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <script>
-// ── Analytics: dual-track (Railway + GA4) ─────────────────────────────────
 function track(e,p,extra){
-  // Custom endpoint
   fetch('https://web-production-d62ab.up.railway.app/api/track',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({event:e,page:p,...extra})}).catch(()=>{});
-  // GA4 event
   if(typeof gtag==='function')gtag('event',e,{page:p,...extra});
 }
-// Key conversion events fired from auth/feature functions
 window._trackEvent=track;
 window.addEventListener('load',()=>track('page_view','index'));
 </script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:#0A0F1E;color:#fff;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:#fff;color:#1a1a2e;overflow-x:hidden;-webkit-font-smoothing:antialiased}
 a{text-decoration:none;color:inherit}
 ul{list-style:none}
 img{max-width:100%;display:block}
 button,input,textarea{font-family:inherit}
 :root{
-  --blue:#2563EB;--blue-d:#1D4ED8;--navy:#0A0F1E;--white:#fff;
-  --slate:#94A3B8;--amber:#F59E0B;--card:#111827;--card2:#0F172A;
-  --border:rgba(255,255,255,0.08);--border-b:rgba(37,99,235,0.3);
-  --green:#22c55e;--orange:#F97316;--orange-d:#EA580C;
+  --blue:#2563EB;--blue-d:#1D4ED8;--blue-l:#EFF6FF;
+  --navy:#0A0F1E;--dark:#0f172a;
+  --slate:#64748B;--slate-l:#94A3B8;
+  --amber:#F59E0B;--green:#16a34a;--green-l:#f0fdf4;
+  --orange:#F97316;--orange-d:#EA580C;
+  --card:#F8FAFC;--border:#E2E8F0;
+  --text:#1e293b;--text-m:#475569;--text-s:#94A3B8;
+  --radius:12px;--radius-lg:20px;
+  --shadow:0 1px 3px rgba(0,0,0,.08),0 4px 16px rgba(0,0,0,.06);
+  --shadow-lg:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06);
 }
-.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.container{max-width:1160px;margin:0 auto;padding:0 24px}
+
 /* ── ANNOUNCE BAR ── */
 #ann-bar{background:linear-gradient(90deg,#065f46,#059669);padding:10px 40px 10px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:.82rem;font-weight:600;color:#fff;position:relative;z-index:201}
 #ann-bar a{color:#fff;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);border-radius:20px;padding:4px 14px;min-height:28px;display:inline-flex;align-items:center;transition:background .2s;white-space:nowrap}
 #ann-bar a:hover{background:rgba(255,255,255,.28)}
-#ann-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;padding:4px 8px;line-height:1;min-height:28px;min-width:28px;transition:color .2s}
-#ann-close:hover{color:#fff}
+#ann-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;padding:4px 8px;line-height:1;min-height:28px;min-width:28px}
+
 /* ── NAVBAR ── */
-#nav{position:fixed;left:0;right:0;z-index:100;padding:13px 0;background:rgba(10,15,30,.7);backdrop-filter:blur(12px);border-bottom:1px solid transparent;transition:all .3s}
-#nav.scrolled{background:rgba(10,15,30,.95);border-bottom-color:var(--border);padding:9px 0}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.12rem;letter-spacing:-.02em;color:#fff;cursor:pointer}
+#nav{position:fixed;left:0;right:0;z-index:100;padding:0;background:#fff;border-bottom:1px solid var(--border);transition:box-shadow .2s}
+#nav.scrolled{box-shadow:0 2px 16px rgba(0,0,0,.07)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
+.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--text);cursor:pointer}
 .logo-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:22px}
-.nav-links>a,.nav-links>button{font-size:.85rem;font-weight:500;color:var(--slate);background:none;border:none;cursor:pointer;transition:color .2s;padding:0;white-space:nowrap}
-.nav-links>a:hover,.nav-links>button:hover{color:#fff}
+.nav-links{display:flex;align-items:center;gap:4px}
+.nav-links>a,.nav-links>button{font-size:.87rem;font-weight:500;color:var(--text-m);background:none;border:none;cursor:pointer;transition:color .15s;padding:6px 10px;border-radius:8px;white-space:nowrap}
+.nav-links>a:hover,.nav-links>button:hover{color:var(--text);background:#f1f5f9}
 .nav-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.btn-ghost{padding:8px 17px;border-radius:8px;font-size:.85rem;font-weight:600;color:rgba(255,255,255,.8);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);cursor:pointer;transition:all .2s;white-space:nowrap;min-height:36px}
-.btn-ghost:hover{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.3);color:#fff}
-.btn-blue{padding:8px 17px;border-radius:8px;font-size:.85rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;transition:background .2s;white-space:nowrap;min-height:36px}
+.btn-ghost{padding:8px 16px;border-radius:8px;font-size:.87rem;font-weight:600;color:var(--text-m);background:transparent;border:1px solid var(--border);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px}
+.btn-ghost:hover{border-color:#94a3b8;color:var(--text);background:#f8fafc}
+.btn-blue{padding:8px 18px;border-radius:8px;font-size:.87rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;transition:background .15s;white-space:nowrap;min-height:38px}
 .btn-blue:hover{background:var(--blue-d)}
 .ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px;min-height:44px;min-width:44px;align-items:center;justify-content:center}
-.ham span{width:22px;height:2px;background:rgba(255,255,255,.85);border-radius:2px;display:block;transition:all .25s}
+.ham span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .25s}
+
 /* ── MEGA DROPDOWN ── */
 .dd-wrap{position:relative}
-.dd-trig{display:flex;align-items:center;gap:5px}
+.dd-trig{display:flex;align-items:center;gap:4px}
 .dd-trig svg{transition:transform .2s}
 .dd-wrap:hover .dd-trig svg{transform:rotate(180deg)}
-.dd-menu{display:none;position:absolute;top:calc(100% + 14px);left:50%;transform:translateX(-50%);background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:20px;min-width:580px;z-index:300;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+.dd-menu{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;min-width:580px;z-index:300;box-shadow:0 20px 60px rgba(0,0,0,.12)}
 .dd-wrap:hover .dd-menu{display:flex}
 .dd-col{display:flex;flex-direction:column;gap:0;flex:1;padding:0 10px}
-.dd-col:not(:last-child){border-right:1px solid rgba(255,255,255,.06)}
-.dd-head{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);padding:0 8px 8px;border-bottom:1px solid rgba(255,255,255,.06);margin-bottom:6px}
-.dd-col a{font-size:.82rem;color:rgba(255,255,255,.6);padding:7px 8px;border-radius:7px;transition:all .15s;cursor:pointer;display:block}
-.dd-col a:hover{background:rgba(37,99,235,.12);color:#fff}
+.dd-col:not(:last-child){border-right:1px solid var(--border)}
+.dd-head{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);padding:0 8px 8px;border-bottom:1px solid var(--border);margin-bottom:6px}
+.dd-col a{font-size:.85rem;color:var(--text-m);padding:7px 8px;border-radius:8px;transition:all .12s;cursor:pointer;display:block}
+.dd-col a:hover{background:var(--blue-l);color:var(--blue)}
+
 /* ── MOBILE MENU ── */
-#mob-menu{display:none;position:fixed;inset:0;background:rgba(10,15,30,.98);backdrop-filter:blur(24px);padding:80px 24px 100px;flex-direction:column;z-index:98;overflow-y:auto}
+#mob-menu{display:none;position:fixed;inset:0;background:#fff;padding:80px 24px 100px;flex-direction:column;z-index:98;overflow-y:auto}
 #mob-menu.open{display:flex}
-.mob-sec{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.3);padding:14px 0 6px;border-top:1px solid rgba(255,255,255,.06);margin-top:6px}
+.mob-sec{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-s);padding:14px 0 6px;border-top:1px solid var(--border);margin-top:6px}
 .mob-sec:first-child{border-top:none;margin-top:0}
-#mob-menu a{padding:11px 0;font-size:.95rem;font-weight:500;color:rgba(255,255,255,.7);border-bottom:1px solid rgba(255,255,255,.04);display:block;transition:color .2s}
-#mob-menu a:hover{color:#fff}
-.mob-auth{display:flex;gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid rgba(255,255,255,.08)}
+#mob-menu a{padding:11px 0;font-size:.95rem;font-weight:500;color:var(--text-m);border-bottom:1px solid var(--border);display:block;transition:color .15s}
+#mob-menu a:hover{color:var(--blue)}
+.mob-auth{display:flex;gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
 .mob-auth .btn-ghost,.mob-auth .btn-blue{flex:1;text-align:center;padding:12px}
-.mob-x{position:absolute;top:16px;right:20px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:rgba(255,255,255,.6);font-size:1.3rem;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s}
-.mob-x:hover{color:#fff;background:rgba(255,255,255,.12)}
-/* ── NAV USER ── */
+.mob-x{position:absolute;top:16px;right:20px;background:var(--card);border:1px solid var(--border);color:var(--text-m);font-size:1.2rem;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mob-x:hover{color:var(--text);background:#e2e8f0}
 .nav-user{display:flex;align-items:center;gap:8px}
-.nav-uname{font-size:.82rem;font-weight:600;color:rgba(255,255,255,.6);background:rgba(37,99,235,.12);padding:4px 10px;border-radius:20px;border:1px solid rgba(37,99,235,.25);white-space:nowrap}
-.nav-logout{background:none;border:none;font-size:.8rem;color:rgba(255,255,255,.3);cursor:pointer;transition:color .2s}
+.nav-uname{font-size:.82rem;font-weight:600;color:var(--blue);background:var(--blue-l);padding:4px 10px;border-radius:20px;border:1px solid rgba(37,99,235,.2);white-space:nowrap}
+.nav-logout{background:none;border:none;font-size:.8rem;color:var(--text-s);cursor:pointer;transition:color .15s}
 .nav-logout:hover{color:#ef4444}
+
 /* ── HERO ── */
-.hero{padding:52px 0 28px;position:relative;overflow:hidden}
-.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(37,99,235,.12),transparent 70%);top:-300px;left:50%;transform:translateX(-50%);pointer-events:none}
-.hero-inner{display:flex;flex-direction:column;align-items:center;text-align:center;max-width:680px;margin:0 auto}
-.hero-img{display:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;border-radius:100px;background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.3);font-size:.78rem;font-weight:600;color:#93c5fd;margin-bottom:18px;letter-spacing:.02em}
-.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--blue);animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(37,99,235,.6)}50%{opacity:.7;box-shadow:0 0 0 6px rgba(37,99,235,0)}}
-.hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:900;line-height:1.12;letter-spacing:-.03em;margin-bottom:14px;color:#fff}
+.hero{padding:100px 0 72px;background:linear-gradient(160deg,#f8faff 0%,#fff 50%,#fafbff 100%);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-200px;right:-200px;width:700px;height:700px;background:radial-gradient(circle,rgba(37,99,235,.06) 0%,transparent 70%);pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:-100px;left:-100px;width:500px;height:500px;background:radial-gradient(circle,rgba(249,115,22,.04) 0%,transparent 70%);pointer-events:none}
+.hero-inner{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:center;position:relative;z-index:1}
+@media(max-width:900px){.hero-inner{grid-template-columns:1fr;gap:40px;text-align:center}}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;padding:5px 14px;border-radius:100px;background:#fff;border:1px solid var(--border);font-size:.78rem;font-weight:600;color:var(--text-m);margin-bottom:20px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.badge-dot{width:7px;height:7px;border-radius:50%;background:#16a34a;flex-shrink:0;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(22,163,74,.5)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(22,163,74,0)}}
+.hero h1{font-size:clamp(2rem,4vw,3.2rem);font-weight:900;line-height:1.1;letter-spacing:-.03em;color:var(--text);margin-bottom:18px}
 .hero h1 .accent{color:var(--blue)}
-.hero-sub{font-size:clamp(.9rem,1.6vw,1rem);color:var(--slate);line-height:1.6;max-width:500px;margin-bottom:24px}
-.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px;justify-content:center}
-.btn-hero-p{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(249,115,22,.4)}
-.btn-hero-p:hover{background:var(--orange-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(249,115,22,.5)}
-.btn-orange{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:52px;transition:all .2s;box-shadow:0 4px 24px rgba(249,115,22,.35)}
-.btn-orange:hover{background:var(--orange-d);transform:translateY(-1px);box-shadow:0 8px 32px rgba(249,115,22,.5)}
-.btn-orange-sm{padding:11px 22px;border-radius:9px;font-size:.88rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:42px;transition:all .2s}
+.hero-sub{font-size:1.05rem;color:var(--text-m);line-height:1.7;max-width:480px;margin-bottom:28px}
+@media(max-width:900px){.hero-sub{margin:0 auto 28px}}
+.hero-ctas{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:24px}
+@media(max-width:900px){.hero-ctas{justify-content:center}}
+.btn-hero-p{padding:14px 28px;border-radius:10px;font-size:.97rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;min-height:50px;transition:all .18s;box-shadow:0 4px 14px rgba(37,99,235,.35);display:inline-flex;align-items:center;gap:8px}
+.btn-hero-p:hover{background:var(--blue-d);transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.4)}
+.btn-hero-g{padding:14px 28px;border-radius:10px;font-size:.97rem;font-weight:600;color:var(--text);background:#fff;border:1px solid var(--border);cursor:pointer;min-height:50px;transition:all .18s;display:inline-flex;align-items:center;gap:8px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.btn-hero-g:hover{border-color:#94a3b8;background:#f8fafc;transform:translateY(-1px)}
+.btn-orange{padding:14px 28px;border-radius:10px;font-size:.97rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:50px;transition:all .18s;box-shadow:0 4px 14px rgba(249,115,22,.3);display:inline-flex;align-items:center;gap:8px}
+.btn-orange:hover{background:var(--orange-d);transform:translateY(-1px)}
+.btn-orange-sm{padding:10px 20px;border-radius:9px;font-size:.88rem;font-weight:700;color:#fff;background:var(--orange);border:none;cursor:pointer;min-height:40px;transition:all .15s}
 .btn-orange-sm:hover{background:var(--orange-d)}
-.btn-hero-g{padding:16px 34px;border-radius:10px;font-size:1rem;font-weight:600;color:rgba(255,255,255,.75);background:transparent;border:1px solid rgba(255,255,255,.2);cursor:pointer;min-height:52px;transition:all .2s}
-.btn-hero-g:hover{border-color:rgba(255,255,255,.4);color:#fff;background:rgba(255,255,255,.04)}
-.hero-sp{font-size:.82rem;color:rgba(255,255,255,.45);margin-bottom:14px}
-.hero-sp span{color:rgba(255,255,255,.7)}
-.hero-trust{display:flex;gap:18px;flex-wrap:wrap;justify-content:center}
-.trust-i{display:flex;align-items:center;gap:6px;font-size:.77rem;color:rgba(255,255,255,.45)}
-.trust-i .ck{color:var(--green);font-size:.9rem}
-.tsep{width:1px;height:13px;background:rgba(255,255,255,.12)}
-/* ── MARQUEE ── */
-.mqstrip{display:none}
-.mqtrack{display:flex;white-space:nowrap;animation:mq 32s linear infinite}
-.mqtrack:hover{animation-play-state:paused}
-.mqi{display:inline-flex;align-items:center;gap:10px;padding:0 30px;font-size:.77rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.3)}
-.mqdot{width:4px;height:4px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.hero-trust{display:flex;gap:20px;flex-wrap:wrap}
+@media(max-width:900px){.hero-trust{justify-content:center}}
+.trust-i{display:flex;align-items:center;gap:6px;font-size:.82rem;color:var(--text-m);font-weight:500}
+.ck{color:var(--green);font-weight:700}
+
+/* ── HERO MOCKUP ── */
+.hero-visual{position:relative}
+@media(max-width:900px){.hero-visual{display:none}}
+.mockup-card{background:#fff;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow-lg);overflow:hidden;font-size:13px}
+.mockup-bar{background:#f8fafc;border-bottom:1px solid var(--border);padding:10px 16px;display:flex;align-items:center;gap:8px}
+.mockup-dots{display:flex;gap:5px}
+.mockup-dots span{width:10px;height:10px;border-radius:50%}
+.mockup-dots span:nth-child(1){background:#ef4444}
+.mockup-dots span:nth-child(2){background:#f59e0b}
+.mockup-dots span:nth-child(3){background:#22c55e}
+.mockup-url{flex:1;background:#fff;border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:.73rem;color:var(--text-s);text-align:center}
+.mockup-body{padding:20px}
+.score-ring-wrap{display:flex;align-items:center;gap:20px;margin-bottom:18px;padding:16px;background:linear-gradient(135deg,#eff6ff,#f0fdf4);border-radius:12px;border:1px solid #dbeafe}
+.score-ring{width:72px;height:72px;border-radius:50%;background:conic-gradient(#2563eb 0% 78%,#e2e8f0 78% 100%);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
+.score-ring::before{content:'';position:absolute;inset:8px;background:#fff;border-radius:50%}
+.score-ring-val{position:relative;z-index:1;font-size:1.15rem;font-weight:900;color:var(--blue)}
+.score-info h4{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:3px}
+.score-info p{font-size:.75rem;color:var(--text-m)}
+.score-badges{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.score-badge{font-size:.67rem;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--blue-l);color:var(--blue);border:1px solid #bfdbfe}
+.score-badge.green{background:#f0fdf4;color:#16a34a;border-color:#bbf7d0}
+.score-badge.orange{background:#fff7ed;color:#ea580c;border-color:#fed7aa}
+.mockup-kw{margin-bottom:14px}
+.kw-lbl{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-s);margin-bottom:8px}
+.kw-chips{display:flex;flex-wrap:wrap;gap:5px}
+.kw-chip{font-size:.72rem;padding:3px 9px;border-radius:20px;font-weight:600}
+.kw-chip.match{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.kw-chip.miss{background:#fef2f2;color:#ef4444;border:1px solid #fecaca;text-decoration:line-through}
+.mockup-action{background:var(--blue);color:#fff;border:none;border-radius:9px;padding:10px 16px;font-size:.82rem;font-weight:700;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:center;gap:7px}
+.mockup-float{position:absolute;right:-20px;bottom:40px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow-lg);font-size:.78rem;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.mockup-float2{position:absolute;left:-24px;top:60px;background:#fff;border:1px solid var(--border);border-radius:12px;padding:10px 14px;box-shadow:var(--shadow-lg);font-size:.75rem;animation:float 4s ease-in-out infinite .5s}
+
+/* ── LOGOS BAR ── */
+.logos-bar{padding:24px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#fff;overflow:hidden}
+.logos-track{display:flex;white-space:nowrap;animation:mq 40s linear infinite}
+.logos-track:hover{animation-play-state:paused}
+.logo-i{display:inline-flex;align-items:center;gap:8px;padding:0 28px;font-size:.82rem;font-weight:600;color:var(--text-s);letter-spacing:.02em}
+.logo-dot{width:3px;height:3px;border-radius:50%;background:var(--text-s);opacity:.4;flex-shrink:0}
 @keyframes mq{from{transform:translateX(0)}to{transform:translateX(-50%)}}
-/* ── START HERE ── */
-.start-here{background:rgba(37,99,235,.05);border-top:1px solid rgba(37,99,235,.15);border-bottom:1px solid rgba(37,99,235,.15);padding:56px 0}
-.sh-lbl{text-align:center;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:32px}
-.sh-row{display:flex;align-items:stretch;justify-content:center;gap:0}
-.sh-card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:28px 22px;flex:1;max-width:270px;position:relative;overflow:hidden;cursor:pointer;transition:all .2s}
-.sh-card:hover{transform:translateY(-4px);border-color:rgba(37,99,235,.5);background:rgba(37,99,235,.07)}
-.sh-num{position:absolute;top:8px;right:12px;font-size:3.5rem;font-weight:900;color:rgba(255,255,255,.04);line-height:1}
-.sh-ico{font-size:2rem;margin-bottom:11px;display:block}
-.sh-card h3{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:6px}
-.sh-card p{font-size:.81rem;color:var(--slate);line-height:1.55;margin-bottom:12px}
-.sh-link{font-size:.81rem;font-weight:600;color:var(--blue)}
-.sh-arr{display:flex;align-items:center;padding:0 14px;font-size:1.5rem;color:rgba(255,255,255,.2);flex-shrink:0;padding-top:24px}
-@media(max-width:768px){.sh-row{flex-direction:column;align-items:stretch;gap:10px;max-width:400px;margin:0 auto}.sh-card{max-width:none}.sh-arr{padding:0;justify-content:center;transform:rotate(90deg);padding-bottom:0;padding-top:0}}
-/* ── SECTION BASE ── */
+
+/* ── STATS ── */
+.stats-section{padding:64px 0;background:#fff}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+@media(max-width:640px){.stats-grid{grid-template-columns:1fr 1fr}}
+.stat-item{padding:28px 24px;text-align:center;border-right:1px solid var(--border)}
+.stat-item:last-child{border-right:none}
+@media(max-width:640px){.stat-item:nth-child(2){border-right:none}.stat-item:nth-child(3){border-right:none;border-top:1px solid var(--border)}.stat-item:nth-child(4){border-top:1px solid var(--border)}}
+.stat-n{font-size:2rem;font-weight:900;color:var(--blue);display:block;margin-bottom:4px;line-height:1}
+.stat-l{font-size:.8rem;color:var(--text-m);font-weight:500}
+
+/* ── SECTION ── */
 section{padding:80px 0;position:relative}
-.sec-lbl{display:inline-block;font-size:.72rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--blue);margin-bottom:12px}
-.sec-h{font-size:clamp(1.7rem,3.8vw,2.8rem);font-weight:800;line-height:1.15;letter-spacing:-.025em;margin-bottom:14px;color:#fff}
-.sec-sub{font-size:.97rem;color:var(--slate);line-height:1.75;max-width:520px}
+.sec-lbl{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:12px;background:var(--blue-l);padding:4px 12px;border-radius:20px}
+.sec-h{font-size:clamp(1.7rem,3.5vw,2.6rem);font-weight:800;line-height:1.15;letter-spacing:-.025em;margin-bottom:14px;color:var(--text)}
+.sec-sub{font-size:.97rem;color:var(--text-m);line-height:1.75;max-width:520px}
 .tc{text-align:center}.tc .sec-sub{margin:0 auto}
-/* ── DEMO SECTION ── */
-.demo-sec{background:rgba(255,255,255,.01);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:72px 0}
-.demo-panels{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:44px}
-@media(max-width:768px){.demo-panels{grid-template-columns:1fr}}
-.demo-card{background:#0F172A;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px;position:relative;overflow:hidden}
-.demo-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 20% 0%,rgba(37,99,235,.08),transparent 60%);pointer-events:none}
-.dc-lbl{font-size:.67rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:16px;display:flex;align-items:center;gap:6px}
-.dc-lbl::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--blue);display:inline-block}
-.demo-qlbl{font-size:.84rem;font-weight:600;color:rgba(255,255,255,.6);margin-bottom:11px}
-.demo-bubble{background:rgba(37,99,235,.1);border:1px solid rgba(37,99,235,.2);border-radius:12px;border-top-left-radius:4px;padding:14px 16px;font-size:.87rem;color:rgba(255,255,255,.8);line-height:1.65;margin-bottom:18px;position:relative;z-index:1}
-.demo-gen{display:flex;align-items:center;gap:10px;padding:10px 14px;background:rgba(37,99,235,.07);border:1px solid rgba(37,99,235,.18);border-radius:10px;z-index:1;position:relative}
-.ddots{display:flex;gap:4px}
-.ddots span{width:5px;height:5px;border-radius:50%;background:var(--blue);opacity:.5;animation:gp 1.2s ease-in-out infinite}
-.ddots span:nth-child(2){animation-delay:.2s}
-.ddots span:nth-child(3){animation-delay:.4s}
-@keyframes gp{0%,100%{opacity:.25;transform:scale(.8)}50%{opacity:1;transform:scale(1.1)}}
-.demo-gen-t{font-size:.79rem;font-weight:600;color:rgba(37,99,235,.9)}
-.demo-badge{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:100px;background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);font-size:.71rem;font-weight:700;color:var(--green);margin-bottom:16px}
-.demo-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px rgba(34,197,94,.7)}
-.star-row{margin-bottom:12px;position:relative;z-index:1;opacity:0;transform:translateY(8px);transition:opacity .5s ease,transform .5s ease}
-.star-row.shown{opacity:1;transform:translateY(0)}
-.star-lbl{font-size:.64rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--blue);margin-bottom:4px}
-.star-txt{font-size:.81rem;color:rgba(255,255,255,.7);line-height:1.6}
-.cur{display:inline-block;width:2px;height:12px;background:var(--blue);margin-left:2px;vertical-align:text-bottom;animation:blink 1s step-end infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.demo-cta{text-align:center;margin-top:28px}
-/* ── TOOL GRID ── */
-.tg-3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}
-@media(max-width:900px){.tg-3{grid-template-columns:1fr 1fr}}
-@media(max-width:600px){.tg-3{grid-template-columns:1fr}}
-.tg-col{background:var(--card);border:1px solid rgba(255,255,255,.07);border-radius:14px;overflow:hidden}
-.tg-head{padding:12px 17px;font-size:.77rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
-.tg-col:nth-child(1) .tg-head{background:rgba(37,99,235,.18);color:#93c5fd}
-.tg-col:nth-child(2) .tg-head{background:rgba(20,184,166,.14);color:#5eead4}
-.tg-col:nth-child(3) .tg-head{background:rgba(139,92,246,.14);color:#c4b5fd}
-.tg-item{display:flex;align-items:center;gap:11px;padding:11px 17px;border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;transition:background .15s,transform .15s}
-.tg-item:last-child{border-bottom:none}
-.tg-item:hover{background:rgba(255,255,255,.04);transform:translateX(2px)}
-.tg-ico{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0}
-.tg-info{flex:1;min-width:0}
-.tg-name{font-size:.84rem;font-weight:600;color:#F9FAFB;display:flex;align-items:center;gap:5px}
-.tg-desc{font-size:.71rem;color:rgba(255,255,255,.37);margin-top:2px}
-.tg-cta{font-size:.71rem;font-weight:600;color:var(--blue);flex-shrink:0;white-space:nowrap}
-.most-badge{font-size:.56rem;background:var(--amber);color:#000;padding:2px 5px;border-radius:10px;font-weight:800;white-space:nowrap}
-.tg-item.highlighted{background:linear-gradient(90deg,rgba(249,115,22,.10),rgba(249,115,22,.04));border-left:3px solid var(--orange);border-bottom:1px solid rgba(249,115,22,.18);padding-left:14px}
-.tg-item.highlighted:hover{background:linear-gradient(90deg,rgba(249,115,22,.16),rgba(249,115,22,.07))}
-.tg-item.highlighted .tg-cta{color:var(--orange);font-weight:700}
-/* ── STATS BAR ── */
-.stats-bar{display:flex;align-items:stretch;flex-wrap:wrap;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:rgba(255,255,255,.01)}
-.stat-i{padding:22px 28px;text-align:center;flex:1;min-width:130px;border-right:1px solid var(--border)}
-.stat-i:last-child{border-right:none}
-.stat-n{font-size:1.55rem;font-weight:900;color:var(--blue);display:block;margin-bottom:3px}
-.stat-l{font-size:.76rem;color:var(--slate);font-weight:500}
-@media(max-width:640px){.stat-i{min-width:50%;padding:16px 12px}.stat-n{font-size:1.2rem}}
-/* ── COMPANY TICKER ── */
-.co-ticker{padding:14px 0;border-bottom:1px solid var(--border);overflow:hidden;background:rgba(255,255,255,.01)}
-.co-track{display:flex;white-space:nowrap;animation:mq 40s linear infinite}
-.co-track:hover{animation-play-state:paused}
-.co-i{display:inline-flex;align-items:center;gap:8px;padding:0 24px;font-size:.8rem;font-weight:600;color:rgba(255,255,255,.35)}
-.co-dot{width:3px;height:3px;border-radius:50%;background:rgba(255,255,255,.2);flex-shrink:0}
+
 /* ── HOW IT WORKS ── */
-.how-sec{background:rgba(255,255,255,.015);padding:80px 0}
-.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:start}
-@media(max-width:768px){.how-grid{grid-template-columns:1fr;gap:36px}}
-.how-sticky{position:sticky;top:120px}
-.steps{display:flex;flex-direction:column;gap:0}
-.step{display:grid;grid-template-columns:48px 1fr;gap:22px;align-items:flex-start;padding:28px 0;border-bottom:1px solid var(--border)}
-.step:last-child{border-bottom:none}
-.step-n{width:38px;height:38px;border-radius:10px;background:rgba(37,99,235,.12);border:1px solid rgba(37,99,235,.25);display:flex;align-items:center;justify-content:center;font-size:.83rem;font-weight:800;color:var(--blue);flex-shrink:0}
-.step h3{font-size:.98rem;font-weight:700;color:#fff;margin-bottom:6px;letter-spacing:-.01em}
-.step p{font-size:.86rem;color:var(--slate);line-height:1.7}
-/* ── WHY AMBORE ── */
-.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:44px}
-@media(max-width:900px){.why-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:480px){.why-grid{grid-template-columns:1fr 1fr}}
-.why-card{padding:22px 18px;background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:14px;transition:all .2s}
-.why-card:hover{background:rgba(37,99,235,.06);border-color:rgba(37,99,235,.25);transform:translateY(-3px)}
-.why-ico{font-size:1.35rem;margin-bottom:9px}
-.why-t{font-size:.86rem;font-weight:700;color:#fff;margin-bottom:5px}
-.why-d{font-size:.77rem;color:var(--slate);line-height:1.6}
-/* ── COMPARE ── */
-.cmp-sec{padding:72px 0}
-.cmp-scroll{overflow-x:auto;margin-top:28px;border-radius:14px;border:1px solid var(--border)}
+.how-sec{background:#f8fafc}
+.steps-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:48px}
+@media(max-width:768px){.steps-grid{grid-template-columns:1fr}}
+.step-card{background:#fff;border:1px solid var(--border);border-radius:16px;padding:28px 24px;position:relative;transition:all .2s}
+.step-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg);border-color:#bfdbfe}
+.step-num{width:36px;height:36px;border-radius:10px;background:var(--blue);color:#fff;font-size:.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;margin-bottom:16px}
+.step-ico{font-size:1.8rem;margin-bottom:12px;display:block}
+.step-card h3{font-size:1rem;font-weight:700;color:var(--text);margin-bottom:8px}
+.step-card p{font-size:.87rem;color:var(--text-m);line-height:1.65}
+.step-connector{position:absolute;top:32px;right:-13px;width:26px;height:26px;background:#fff;border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;color:var(--text-s);z-index:1}
+@media(max-width:768px){.step-connector{display:none}}
+
+/* ── TOOLS GRID ── */
+.tools-sec{background:#fff}
+.tools-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:40px}
+@media(max-width:900px){.tools-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.tools-grid{grid-template-columns:1fr}}
+.tool-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 20px;cursor:pointer;transition:all .18s;display:flex;align-items:flex-start;gap:14px}
+.tool-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg);border-color:#bfdbfe}
+.tool-card.featured{background:linear-gradient(135deg,#eff6ff,#f0fdf4);border-color:#bfdbfe;grid-column:1/-1}
+.tool-ico{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;background:var(--blue-l)}
+.tool-info{flex:1;min-width:0}
+.tool-name{font-size:.93rem;font-weight:700;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.tool-desc{font-size:.8rem;color:var(--text-m);line-height:1.5}
+.tool-badge{font-size:.6rem;background:var(--orange);color:#fff;padding:2px 7px;border-radius:10px;font-weight:800}
+.tool-badge-new{font-size:.6rem;background:#7c3aed;color:#fff;padding:2px 7px;border-radius:10px;font-weight:800}
+.tool-arrow{color:var(--text-s);font-size:.9rem;flex-shrink:0;transition:transform .15s}
+.tool-card:hover .tool-arrow{transform:translateX(3px);color:var(--blue)}
+
+/* ── FREE PREVIEW SECTION ── */
+.preview-sec{background:#f8fafc;border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.preview-card{background:#fff;border-radius:20px;border:1px solid var(--border);box-shadow:var(--shadow);overflow:hidden;max-width:860px;margin:0 auto}
+.prev-lbl{font-size:.77rem;font-weight:600;color:var(--text-m);display:block;margin-bottom:6px}
+.prev-ta{width:100%;background:#f8fafc;border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:.87rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box;transition:border-color .15s}
+.prev-ta:focus{border-color:var(--blue);background:#fff}
+.prev-card{padding:28px}
+.prev-btn{width:100%;padding:14px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:.96rem;font-weight:700;cursor:pointer;min-height:50px;transition:background .15s}
+.prev-btn:hover{background:var(--blue-d)}
+.prev-spinner{width:36px;height:36px;border:3px solid #e2e8f0;border-top-color:var(--blue);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+.prev-metric{background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:12px 16px;text-align:center;min-width:80px}
+.pm-val{font-size:1.2rem;font-weight:800;color:var(--blue);line-height:1.2}
+.pm-lbl{font-size:.67rem;color:var(--text-s);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.prev-insight{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border-radius:10px;margin-bottom:8px}
+.pi-icon{font-size:1rem;flex-shrink:0;margin-top:1px}
+.pi-text{font-size:.84rem;color:var(--text-m);line-height:1.6}
+.pi-text strong{color:var(--text)}
+
+/* ── COMPARE TABLE ── */
+.cmp-sec{background:#fff}
+.cmp-scroll{overflow-x:auto;margin-top:36px;border-radius:16px;border:1px solid var(--border);box-shadow:var(--shadow)}
 .cmp-tbl{width:100%;border-collapse:collapse;min-width:440px}
-.cmp-tbl th,.cmp-tbl td{padding:12px 17px;text-align:center;font-size:.84rem;border-bottom:1px solid rgba(255,255,255,.06)}
-.cmp-tbl th{font-weight:700;font-size:.73rem;text-transform:uppercase;letter-spacing:.05em;color:rgba(255,255,255,.45);background:#0F172A}
-.cmp-tbl td:first-child,.cmp-tbl th:first-child{text-align:left;font-weight:600;color:#F9FAFB}
-.col-a{background:rgba(37,99,235,.08);color:#93c5fd;font-weight:700;border-left:2px solid rgba(37,99,235,.3);border-right:2px solid rgba(37,99,235,.3)}
-.cmp-tbl thead .col-a{color:#60a5fa;background:rgba(37,99,235,.2);border-top:2px solid var(--blue)}
-.cmp-tbl tbody tr:last-child .col-a{border-bottom:2px solid rgba(37,99,235,.4)}
-.cmp-tbl tr:hover td{background:rgba(255,255,255,.015)}
-.cmp-cap{text-align:center;font-size:.77rem;color:rgba(255,255,255,.3);margin-top:12px}
+.cmp-tbl th,.cmp-tbl td{padding:14px 18px;text-align:center;font-size:.87rem;border-bottom:1px solid var(--border)}
+.cmp-tbl th{font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--text-s);background:#f8fafc}
+.cmp-tbl td:first-child,.cmp-tbl th:first-child{text-align:left;font-weight:600;color:var(--text)}
+.col-a{background:#eff6ff;color:var(--blue);font-weight:700;border-left:2px solid #bfdbfe;border-right:2px solid #bfdbfe}
+.cmp-tbl thead .col-a{background:#dbeafe;border-top:2px solid var(--blue)}
+.cmp-tbl tbody tr:last-child .col-a{border-bottom:2px solid #bfdbfe}
+.cmp-tbl tr:hover td{background:#fafbff}
+
 /* ── TESTIMONIALS ── */
-.test-sec{padding:72px 0;border-top:1px solid var(--border)}
-.tf-pills{display:flex;flex-wrap:wrap;gap:8px;margin:26px 0;justify-content:center}
-.tf-pill{padding:6px 15px;border-radius:20px;border:1px solid rgba(255,255,255,.15);background:none;color:rgba(255,255,255,.55);font-size:.79rem;font-weight:600;cursor:pointer;transition:all .15s;min-height:34px}
-.tf-pill:hover{border-color:rgba(255,255,255,.35);color:#fff}
+.test-sec{background:#f8fafc}
+.tf-pills{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0;justify-content:center}
+.tf-pill{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:#fff;color:var(--text-m);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;min-height:34px}
+.tf-pill:hover{border-color:#93c5fd;color:var(--blue)}
 .tf-pill.active{background:var(--blue);border-color:var(--blue);color:#fff}
-.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:15px}
+.tg{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 @media(max-width:900px){.tg{grid-template-columns:1fr 1fr}}
 @media(max-width:560px){.tg{grid-template-columns:1fr}}
-.tc-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:20px 18px;display:flex;flex-direction:column;gap:11px;transition:all .2s}
-.tc-card:hover{border-color:rgba(255,255,255,.15);transform:translateY(-3px)}
-.tc-tag{display:inline-flex;align-items:center;gap:4px;font-size:.66rem;font-weight:700;padding:3px 8px;border-radius:5px;width:fit-content}
-.tc-stars{font-size:.87rem}
-.tc-body{font-size:.84rem;color:rgba(255,255,255,.65);line-height:1.7;flex:1}
-.tc-body strong{color:#fff}
-.tc-auth{display:flex;align-items:center;gap:9px;margin-top:3px}
-.tc-av{width:33px;height:33px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.84rem;font-weight:800;flex-shrink:0}
-.tc-name{font-size:.8rem;font-weight:700;color:#fff}
-.tc-role{font-size:.69rem;color:rgba(255,255,255,.35)}
-.sp-nums{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:44px}
-@media(max-width:700px){.sp-nums{grid-template-columns:1fr 1fr}}
-.sp-n{text-align:center;padding:17px 10px;background:var(--card);border:1px solid var(--border);border-radius:12px}
-.sp-nv{font-size:1.6rem;font-weight:900;color:var(--blue);line-height:1.2}
-.sp-nl{font-size:.71rem;color:rgba(255,255,255,.35);margin-top:3px;font-weight:600}
+.tc-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 20px;display:flex;flex-direction:column;gap:12px;transition:all .18s;box-shadow:var(--shadow)}
+.tc-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-lg)}
+.tc-tag{display:inline-flex;align-items:center;gap:4px;font-size:.67rem;font-weight:700;padding:3px 8px;border-radius:6px;width:fit-content}
+.tc-stars{font-size:.9rem;color:#f59e0b}
+.tc-body{font-size:.87rem;color:var(--text-m);line-height:1.7;flex:1}
+.tc-body strong{color:var(--text)}
+.tc-auth{display:flex;align-items:center;gap:10px;margin-top:4px}
+.tc-av{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.85rem;font-weight:800;flex-shrink:0;color:#fff}
+.tc-name{font-size:.82rem;font-weight:700;color:var(--text)}
+.tc-role{font-size:.7rem;color:var(--text-s)}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:820px;margin:0 auto}
+@media(max-width:640px){.pricing-grid{grid-template-columns:1fr}}
+.price-card{background:#fff;border:1px solid var(--border);border-radius:20px;padding:32px 28px;box-shadow:var(--shadow)}
+.price-card.featured{background:var(--dark);border-color:#334155}
+.price-feat{font-size:.85rem;color:var(--text-m);display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.price-feat.dark{color:rgba(255,255,255,.65)}
+.price-ck{color:var(--green);flex-shrink:0;font-weight:700}
+.price-ck.dark{color:#4ade80}
+
 /* ── FAQ ── */
-.faq-sec{background:rgba(255,255,255,.015);padding:72px 0}
-.faq-list{margin-top:44px;border:1px solid var(--border);border-radius:16px;overflow:hidden}
+.faq-sec{background:#f8fafc}
+.faq-list{margin-top:44px;border:1px solid var(--border);border-radius:16px;overflow:hidden;background:#fff;box-shadow:var(--shadow)}
 .faq-item{border-bottom:1px solid var(--border)}
 .faq-item:last-child{border-bottom:none}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 26px;background:transparent;border:none;cursor:pointer;text-align:left;color:#fff;font-size:.91rem;font-weight:600;transition:background .2s;gap:14px;min-height:44px}
-.faq-q:hover{background:rgba(255,255,255,.02)}
-.faq-chev{width:17px;height:17px;flex-shrink:0;color:var(--slate);transition:transform .25s}
+.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:20px 24px;background:transparent;border:none;cursor:pointer;text-align:left;color:var(--text);font-size:.92rem;font-weight:600;transition:background .15s;gap:14px;min-height:44px}
+.faq-q:hover{background:#f8fafc}
+.faq-chev{width:18px;height:18px;flex-shrink:0;color:var(--text-s);transition:transform .25s}
 .faq-item.open .faq-chev{transform:rotate(180deg);color:var(--blue)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height .35s ease}
 .faq-item.open .faq-a{max-height:400px}
-.faq-ai{padding:0 26px 20px;font-size:.86rem;color:var(--slate);line-height:1.75}
-/* ── EMAIL CAPTURE ── */
-.email-sec{padding:72px 0;background:linear-gradient(180deg,transparent,rgba(37,99,235,.06));border-top:1px solid var(--border)}
-.email-form{display:flex;gap:10px;max-width:460px;margin:24px auto 11px;flex-wrap:wrap;justify-content:center}
-.email-in{flex:1;min-width:190px;padding:13px 17px;background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:.88rem;outline:none;transition:border-color .2s;min-height:48px}
-.email-in:focus{border-color:var(--blue)}
-.email-in::placeholder{color:rgba(255,255,255,.3)}
-.email-sub{padding:13px 22px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s;white-space:nowrap;min-height:48px}
+.faq-ai{padding:0 24px 20px;font-size:.88rem;color:var(--text-m);line-height:1.75}
+
+/* ── CTA SECTION ── */
+.cta-sec{background:linear-gradient(135deg,var(--dark) 0%,#1e3a5f 100%);padding:80px 0}
+.cta-sec .sec-h{color:#fff}
+.cta-sec .sec-sub{color:rgba(255,255,255,.6)}
+.email-form{display:flex;gap:10px;max-width:460px;margin:28px auto 12px;flex-wrap:wrap;justify-content:center}
+.email-in{flex:1;min-width:190px;padding:13px 17px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);border-radius:10px;color:#fff;font-size:.9rem;outline:none;transition:border-color .15s;min-height:50px}
+.email-in:focus{border-color:rgba(255,255,255,.4)}
+.email-in::placeholder{color:rgba(255,255,255,.35)}
+.email-sub{padding:13px 24px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:.9rem;cursor:pointer;transition:background .15s;white-space:nowrap;min-height:50px}
 .email-sub:hover{background:var(--orange-d)}
-.email-note{font-size:.73rem;color:rgba(255,255,255,.3);text-align:center}
-.email-ok{font-size:.87rem;color:var(--green);margin-top:11px;text-align:center;display:none}
+.email-note{font-size:.75rem;color:rgba(255,255,255,.35);text-align:center}
+.email-ok{font-size:.88rem;color:#4ade80;margin-top:11px;text-align:center;display:none}
+
 /* ── FOOTER ── */
-footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712}
-.foot-inner{display:flex;align-items:flex-start;justify-content:space-between;gap:36px;flex-wrap:wrap;margin-bottom:36px}
-.foot-brand p{font-size:.82rem;color:var(--slate);line-height:1.6;max-width:230px;margin-top:10px}
-.foot-links{display:flex;gap:44px;flex-wrap:wrap}
-.foot-col h5{font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.3);margin-bottom:13px}
-.foot-col a{display:block;font-size:.84rem;color:var(--slate);margin-bottom:8px;transition:color .2s;cursor:pointer}
+footer{background:var(--dark);padding:56px 0 32px}
+.foot-inner{display:flex;gap:60px;flex-wrap:wrap;margin-bottom:40px}
+@media(max-width:768px){.foot-inner{gap:32px}}
+.foot-brand{flex:1;min-width:200px}
+.foot-brand .logo{color:#fff;margin-bottom:12px}
+.foot-brand p{font-size:.85rem;color:rgba(255,255,255,.4);line-height:1.65;max-width:240px;margin-bottom:18px}
+.soc-icons{display:flex;gap:8px}
+.foot-links{display:flex;gap:40px;flex-wrap:wrap}
+@media(max-width:560px){.foot-links{gap:24px}}
+.foot-col h5{font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.4);margin-bottom:14px}
+.foot-col a{display:block;font-size:.85rem;color:rgba(255,255,255,.5);margin-bottom:8px;transition:color .15s}
 .foot-col a:hover{color:#fff}
-.foot-bot{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;border-top:1px solid var(--border);padding-top:22px}
-.foot-bot p{font-size:.79rem;color:rgba(255,255,255,.2)}
-.foot-bot-lnks{display:flex;gap:16px}
-.foot-bot-lnks a{font-size:.79rem;color:rgba(255,255,255,.2);transition:color .2s}
+.foot-bot{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
+.foot-bot p{font-size:.8rem;color:rgba(255,255,255,.3)}
+.foot-bot-lnks{display:flex;gap:18px}
+.foot-bot-lnks a{font-size:.8rem;color:rgba(255,255,255,.3);transition:color .15s}
 .foot-bot-lnks a:hover{color:rgba(255,255,255,.6)}
-.soc-icons{display:flex;gap:8px;margin-top:13px}
-/* ── MOBILE BOTTOM NAV ── */
-.mob-bnav{display:none}
-@media(max-width:767px){
-  .mob-bnav{display:flex;position:fixed;bottom:0;left:0;right:0;background:#111827;border-top:1px solid rgba(255,255,255,.1);z-index:600;padding:6px 0 max(env(safe-area-inset-bottom),6px)}
-  .mob-bnav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;padding:4px;font-size:.59rem;font-weight:600;min-height:44px}
-  .mob-bnav button:active{color:var(--blue)}
-  body{padding-bottom:64px}
-}
+
+/* ── MOBILE NAV ── */
+.mob-bnav{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;border-top:1px solid var(--border);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+@media(max-width:640px){.mob-bnav{display:flex}}
+.mob-bnav button{display:flex;flex-direction:column;align-items:center;gap:3px;background:none;border:none;cursor:pointer;color:var(--text-s);font-size:.6rem;font-weight:600;padding:6px 10px;border-radius:10px;transition:color .15s;min-width:54px}
+.mob-bnav button:hover,.mob-bnav button.active{color:var(--blue)}
+
 /* ── SLIDE BANNER ── */
-.slide-ban{position:fixed;bottom:24px;right:24px;width:290px;background:#1F2937;border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:18px;z-index:1000;box-shadow:0 20px 60px rgba(0,0,0,.5)}
-.slide-ban.hidden{display:none}
-.sban-x{position:absolute;top:10px;right:11px;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;font-size:1rem;min-height:26px;min-width:26px}
-.sban-btn{display:inline-block;margin-top:7px;padding:6px 13px;background:var(--blue);color:#fff;border-radius:8px;font-size:.78rem;font-weight:600}
-.sban-btn-a{background:var(--amber);color:#000}
-@media(max-width:480px){.slide-ban{right:10px;left:10px;width:auto;bottom:72px}}
-@media(max-width:480px){.auth-ov{padding:12px;align-items:flex-end}.auth-mod{border-radius:20px 20px 16px 16px;max-height:92vh;overflow-y:auto}.auth-pan{padding:16px}}
+.slide-ban{position:fixed;bottom:70px;right:18px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px;max-width:280px;z-index:199;flex-direction:column;gap:8px;box-shadow:var(--shadow-lg);display:none}
+@media(min-width:641px){.slide-ban{bottom:18px}}
+.sban-x{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text-s);font-size:1rem;cursor:pointer}
+.sban-btn{display:inline-flex;align-items:center;padding:7px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.79rem;font-weight:700;cursor:pointer;transition:background .15s}
+.sban-btn:hover{background:var(--blue-d)}
+.sban-btn-a{background:var(--orange)}
+.sban-btn-a:hover{background:var(--orange-d)}
+.hidden{display:none}
+
 /* ── AUTH MODAL ── */
-.auth-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
+.auth-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
 .auth-ov.open{display:flex}
-.auth-mod{background:#0A0F1E;border:1px solid rgba(255,255,255,.1);border-radius:20px;width:100%;max-width:390px;overflow:hidden}
-.auth-head{display:flex;align-items:center;justify-content:space-between;padding:17px 22px;border-bottom:1px solid rgba(255,255,255,.06)}
-.auth-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.93rem;color:#fff}
-.auth-logo-i{width:25px;height:25px;display:flex;align-items:center;justify-content:center;}
-.auth-x{background:none;border:none;color:rgba(255,255,255,.3);font-size:1.4rem;cursor:pointer;line-height:1;padding:0 4px;transition:color .2s;min-height:30px;min-width:30px}
-.auth-x:hover{color:#fff}
-.auth-tabs{display:flex;border-bottom:1px solid rgba(255,255,255,.06)}
-.auth-tab{flex:1;padding:11px;text-align:center;font-size:.84rem;font-weight:600;color:rgba(255,255,255,.35);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
-.auth-tab.active{color:#fff;border-bottom-color:var(--blue)}
+.auth-mod{background:#fff;border:1px solid var(--border);border-radius:20px;width:100%;max-width:390px;overflow:hidden;box-shadow:0 24px 64px rgba(0,0,0,.15)}
+.auth-head{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--border)}
+.auth-logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:.93rem;color:var(--text)}
+.auth-x{background:none;border:none;color:var(--text-s);font-size:1.4rem;cursor:pointer;line-height:1;padding:0 4px;transition:color .15s;min-height:30px;min-width:30px}
+.auth-x:hover{color:var(--text)}
+.auth-tabs{display:flex;border-bottom:1px solid var(--border)}
+.auth-tab{flex:1;padding:11px;text-align:center;font-size:.85rem;font-weight:600;color:var(--text-s);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .15s}
+.auth-tab.active{color:var(--blue);border-bottom-color:var(--blue)}
 .auth-pan{display:none;padding:20px;flex-direction:column;gap:0}
 .auth-pan.active{display:flex}
 .auth-field{margin-bottom:12px}
-.auth-field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.35);margin-bottom:5px}
-.auth-field input{width:100%;padding:10px 13px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);border-radius:9px;color:#fff;font-size:.87rem;outline:none;transition:border-color .2s}
-.auth-field input:focus{border-color:rgba(37,99,235,.5)}
-.auth-field input::placeholder{color:rgba(255,255,255,.18)}
-.auth-err{font-size:.77rem;color:#f87171;background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.2);border-radius:8px;padding:7px 11px;margin-bottom:11px;display:none}
+.auth-field label{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-s);margin-bottom:5px}
+.auth-field input{width:100%;padding:10px 13px;background:#f8fafc;border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:.9rem;outline:none;transition:border-color .15s}
+.auth-field input:focus{border-color:var(--blue);background:#fff}
+.auth-err{font-size:.78rem;color:#ef4444;background:#fef2f2;border:1px solid #fecaca;border-radius:8px;padding:8px 12px;margin-bottom:10px;display:none}
 .auth-err.show{display:block}
-.auth-sub{width:100%;padding:11px;border-radius:10px;background:var(--blue);border:none;color:#fff;font-size:.88rem;font-weight:700;cursor:pointer;margin-top:3px;transition:background .2s;min-height:42px}
+.auth-sub{width:100%;padding:11px;border-radius:10px;background:var(--blue);border:none;color:#fff;font-size:.9rem;font-weight:700;cursor:pointer;margin-top:3px;transition:background .15s;min-height:44px}
 .auth-sub:hover{background:var(--blue-d)}
-.auth-sw{text-align:center;margin-top:11px;font-size:.79rem;color:rgba(255,255,255,.3)}
-.auth-sw a{color:#93c5fd;font-weight:600;cursor:pointer}
-.auth-div{display:flex;align-items:center;gap:11px;margin:13px 0;color:rgba(255,255,255,.2);font-size:.74rem;font-weight:600;letter-spacing:.06em}
-.auth-div::before,.auth-div::after{content:'';flex:1;height:1px;background:rgba(255,255,255,.08)}
-.g-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:9px;padding:10px 15px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.12);border-radius:10px;color:rgba(255,255,255,.85);font-size:.87rem;font-weight:600;cursor:pointer;transition:all .2s;min-height:42px}
-.g-btn:hover{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22)}
-/* ── REVEAL ── */
-.rev{opacity:0;transform:translateY(26px);transition:opacity .6s ease,transform .6s ease}
+.auth-sw{text-align:center;margin-top:11px;font-size:.8rem;color:var(--text-s)}
+.auth-sw a{color:var(--blue);font-weight:600;cursor:pointer}
+.auth-div{display:flex;align-items:center;gap:10px;font-size:.76rem;color:var(--text-s);margin:12px 0}
+.auth-div::before,.auth-div::after{content:'';flex:1;height:1px;background:var(--border)}
+.g-btn{width:100%;padding:10px;border:1px solid var(--border);border-radius:9px;background:#fff;color:var(--text);font-size:.88rem;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;transition:all .15s;min-height:42px}
+.g-btn:hover{background:#f8fafc;border-color:#94a3b8}
+@media(max-width:480px){.auth-ov{padding:12px;align-items:flex-end}.auth-mod{border-radius:20px 20px 16px 16px;max-height:92vh;overflow-y:auto}.auth-pan{padding:16px}}
+
+/* ── SCROLL REVEAL ── */
+.rev{opacity:0;transform:translateY(20px);transition:opacity .55s ease,transform .55s ease}
 .rev.rev-in{opacity:1;transform:translateY(0)}
 .r1{transition-delay:.1s}.r2{transition-delay:.2s}.r3{transition-delay:.3s}
-/* ── FREE PREVIEW ── */
-.prev-card{background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:18px;padding:28px}
-.prev-inputs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-.prev-lbl{display:block;font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.4);margin-bottom:8px}
-.prev-ta{width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.85rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:'Inter',sans-serif;transition:border-color .2s}
-.prev-ta:focus{border-color:rgba(37,99,235,.5)}.prev-ta::placeholder{color:rgba(255,255,255,.2)}
-.prev-btn{width:100%;padding:14px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:.96rem;font-weight:700;cursor:pointer;min-height:50px;transition:all .2s;box-shadow:0 4px 20px rgba(249,115,22,.3)}
-.prev-btn:hover{background:var(--orange-d);transform:translateY(-1px)}.prev-btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-.prev-spinner{width:36px;height:36px;border:3px solid rgba(255,255,255,.1);border-top-color:var(--orange);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto}
-@keyframes spin{to{transform:rotate(360deg)}}
-.prev-metric{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:12px 16px;text-align:center;min-width:76px}
-.pm-val{font-size:1.2rem;font-weight:900;color:#fff;line-height:1.1}
-.pm-lbl{font-size:.62rem;color:rgba(255,255,255,.35);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
-.prev-insight{display:flex;gap:10px;align-items:flex-start;padding:11px 14px;border-radius:10px;margin-bottom:8px}
-.pi-icon{font-size:1rem;flex-shrink:0;margin-top:1px}.pi-text{font-size:.83rem;line-height:1.6;color:rgba(255,255,255,.72)}
-.pi-text strong{color:#fff}
-/* ── BEFORE/AFTER ── */
-.ba-card{background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:16px;overflow:hidden}
-.ba-header{display:flex;align-items:center;justify-content:space-between;padding:13px 18px;font-size:.82rem;font-weight:700}
-.ba-bad{background:rgba(239,68,68,.07);color:#f87171;border-bottom:1px solid rgba(239,68,68,.15)}
-.ba-good{background:rgba(34,197,94,.07);color:#4ade80;border-bottom:1px solid rgba(34,197,94,.15)}
-.ba-score{font-size:.73rem;padding:3px 10px;border-radius:20px;border:1px solid;font-weight:800}
-.ba-body{padding:18px}
-.ba-sec-title{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:8px}
-.ba-bullet{font-size:.79rem;line-height:1.6;padding:3px 0 3px 0}
-.bad-bullet{color:rgba(255,110,110,.65)}.good-bullet{color:rgba(255,255,255,.75)}
-.kw-hl{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.25);border-radius:4px;padding:1px 5px;color:#4ade80;font-size:.77rem}
-.ba-tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px}
-.ba-tag{font-size:.71rem;padding:3px 9px;border-radius:20px;font-weight:600}
-.ba-tag.ok{background:rgba(255,255,255,.06);color:rgba(255,255,255,.45);border:1px solid rgba(255,255,255,.1)}
-.ba-tag.missing{background:rgba(239,68,68,.08);color:#f87171;border:1px solid rgba(239,68,68,.2)}
-.ba-tag.added{background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
-.ba-flag{font-size:.75rem;font-weight:500;padding:2px 0}
-.ba-flag.bad{color:#f87171}.ba-flag.good{color:#4ade80}
-/* ── USE CASE ── */
-.uc-card{background:rgba(255,255,255,.025);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:28px 22px;cursor:pointer;transition:all .25s;position:relative;overflow:hidden}
-.uc-card:hover{transform:translateY(-5px);background:rgba(37,99,235,.06);border-color:rgba(37,99,235,.3)}
-.uc-icon{font-size:2.2rem;margin-bottom:13px}
-.uc-title{font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:6px}
-.uc-sub{font-size:.82rem;color:var(--slate);line-height:1.55;margin-bottom:14px}
-.uc-list{list-style:none;display:flex;flex-direction:column;gap:7px;margin-bottom:18px}
-.uc-list li{font-size:.79rem;color:rgba(255,255,255,.55);padding-left:18px;position:relative;line-height:1.5}
-.uc-list li::before{content:'✓';position:absolute;left:0;color:var(--blue);font-weight:700}
-.uc-cta{font-size:.82rem;font-weight:700;color:var(--blue)}
-/* ── CAREER SCORE (index page) ── */
-.score-ring{position:relative;width:90px;height:90px;flex-shrink:0}
-.score-ring svg{transform:rotate(-90deg)}
-.score-ring-val{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.35rem;font-weight:900;color:#fff}
-@media(max-width:640px){.prev-inputs{grid-template-columns:1fr!important}.ba-grid-2{grid-template-columns:1fr!important}.uc-grid-3{grid-template-columns:1fr!important}}
-@media(max-width:920px){.nav-links{display:none}.ham{display:flex}}
-@media(max-width:600px){.hero-ctas{flex-direction:column;align-items:stretch}.btn-hero-p,.btn-hero-g{width:100%;text-align:center}.foot-inner{flex-direction:column}section{padding:64px 0}.hero{padding:100px 0 48px}}
-.logo-img{height:28px!important;width:28px!important;max-height:28px!important;max-width:28px!important;object-fit:contain;display:block;flex-shrink:0}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .hero{padding:88px 0 48px}
+  section{padding:56px 0}
+  .stats-section{padding:48px 0}
+}
+@media(max-width:768px){
+  .ham{display:flex}
+  .nav-links,.nav-actions{display:none}
+}
 </style>
-<script src="/protect.js"></script>
-<script src="/theme.js"></script>
-<script src="/supabase-sync.js"></script>
 </head>
 <body>
 
 <!-- ANN BAR -->
 <div id="ann-bar">
-  <span>💬 Join 1,000+ job seekers on WhatsApp — free resume help &amp; tips</span>
-  <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" rel="noopener">Join WhatsApp →</a>
-  <button id="ann-close" onclick="dismissAnn()" aria-label="Dismiss">×</button>
+  <span>🎁 Free AI Career Tools — No Credit Card, No Trial Limits</span>
+  <a href="javascript:void(0)" onclick="openAuth('signup')">Get Started Free</a>
+  <button id="ann-close" onclick="dismissAnn()" aria-label="Close">✕</button>
 </div>
 
 <!-- NAVBAR -->
 <nav id="nav">
   <div class="container">
     <div class="nav-inner">
-      <a href="javascript:void(0)" class="logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore</a>
+      <div class="logo" onclick="window.location.href='/'">
+        <img src="/logo.png" class="logo-icon" alt="Ambore" style="height:28px;width:28px;object-fit:contain">
+        Ambore
+      </div>
       <div class="nav-links">
         <div class="dd-wrap">
-          <button class="dd-trig">🛠️ Tools <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="6 9 12 15 18 9"/></svg></button>
+          <button class="dd-trig">Tools <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
           <div class="dd-menu">
             <div class="dd-col">
-              <div class="dd-head">📄 Get the Job</div>
-              <a href="javascript:void(0)" onclick="goToFeature('/jobs')">Job Portal 🔥</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/resume')">AI Resume Tailor</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/resume-builder')">Resume Builder</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')">Cover Letter</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/email')">Email Generator</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/ats-score')">ATS Score</a>
+              <div class="dd-head">Get the Job</div>
+              <a onclick="goToFeature('/jobs')">💼 Job Portal</a>
+              <a onclick="goToFeature('/resume')">✂️ AI Resume Tailor</a>
+              <a onclick="goToFeature('/resume-builder')">📄 Resume Builder</a>
+              <a onclick="goToFeature('/cover-letter')">✉️ Cover Letter</a>
+              <a onclick="goToFeature('/ats-score')">🎯 ATS Score Checker</a>
+              <a onclick="goToFeature('/email')">📨 Email Generator</a>
             </div>
             <div class="dd-col">
-              <div class="dd-head">🌐 Build Your Brand</div>
-              <a href="javascript:void(0)" onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/portfolio')">Portfolio Builder</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/certifications')">Certifications</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/coaching')">Live Coaching</a>
+              <div class="dd-head">Build Your Brand</div>
+              <a onclick="goToFeature('/linkedin')">🔗 LinkedIn Optimizer</a>
+              <a onclick="goToFeature('/portfolio')">🌐 Portfolio Builder</a>
+              <a onclick="goToFeature('/certifications')">🏆 Certifications</a>
+              <a onclick="goToFeature('/coaching')">🎓 Live Coaching</a>
+              <a onclick="goToFeature('/community')">👥 Community</a>
             </div>
             <div class="dd-col">
-              <div class="dd-head">🎯 Win the Interview</div>
-              <a href="javascript:void(0)" onclick="goToFeature('/interview')">AI Mock Interview Practice 🎙</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/learn')">Learn AI</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/project')">Build Project</a>
-              <a href="javascript:void(0)" onclick="goToFeature('/dashboard')">Dashboard</a>
+              <div class="dd-head">Win the Interview</div>
+              <a onclick="goToFeature('/interview')">🎙 AI Mock Interview</a>
+              <a onclick="goToFeature('/learn')">📚 Learn AI</a>
+              <a onclick="goToFeature('/project')">🔨 Build Projects</a>
+              <a onclick="goToFeature('/dashboard')">📊 Dashboard</a>
             </div>
           </div>
         </div>
-        <a href="#how">How It Works</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#faq">FAQ</a>
+        <a href="/jobs">Jobs</a>
+        <a href="/#how">How It Works</a>
+        <a href="/#pricing">Pricing</a>
       </div>
-      <div class="nav-actions">
-        <div id="nav-cta-auth" style="display:flex;align-items:center;gap:8px">
-          <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login')">Log In</a>
-          <a href="javascript:void(0)" class="btn-blue" onclick="track('hero_cta_click','index',{cta:'nav'});openAuth('signup')">Get Started Free</a>
-        </div>
-        <div id="nav-cta-user" style="display:none;align-items:center;gap:8px">
-          <span class="nav-uname">Hi, <span id="nav-user-name"></span></span>
-          <a href="/dashboard" class="btn-ghost">Dashboard</a>
-          <button class="nav-logout" onclick="handleLogout()">Log out</button>
-        </div>
+      <div class="nav-actions" id="nav-cta-auth" style="display:flex">
+        <button class="btn-ghost" onclick="openAuth('login')">Log In</button>
+        <button class="btn-blue" onclick="openAuth('signup')">Get Started Free</button>
       </div>
-      <button class="ham" id="ham" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <div class="nav-user" id="nav-cta-user" style="display:none">
+        <span class="nav-uname" id="nav-user-name"></span>
+        <button class="nav-logout" onclick="handleLogout()">Sign out</button>
+      </div>
+      <button class="ham" id="ham" onclick="toggleMenu()" aria-expanded="false" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
     </div>
   </div>
 </nav>
 
 <!-- MOBILE MENU -->
 <div id="mob-menu">
-  <button class="mob-x" onclick="toggleMenu()">×</button>
-  <div class="mob-sec">📄 Get the Job</div>
-  <a href="javascript:void(0)" onclick="goToFeature('/jobs');toggleMenu()">Job Portal 🔥</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/resume');toggleMenu()">AI Resume Tailor</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/resume-builder');toggleMenu()">Resume Builder</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/cover-letter');toggleMenu()">Cover Letter</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/email');toggleMenu()">Email Generator</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/ats-score');toggleMenu()">ATS Score</a>
-  <div class="mob-sec">🌐 Build Your Brand</div>
-  <a href="javascript:void(0)" onclick="goToFeature('/linkedin');toggleMenu()">LinkedIn Optimizer</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/portfolio');toggleMenu()">Portfolio Builder</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/certifications');toggleMenu()">Certifications</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/coaching');toggleMenu()">Live Coaching</a>
-  <div class="mob-sec">🎯 Win the Interview</div>
-  <a href="javascript:void(0)" onclick="goToFeature('/interview');toggleMenu()">AI Mock Interview Practice 🎙</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/learn');toggleMenu()">Learn AI</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/project');toggleMenu()">Build Project</a>
-  <a href="javascript:void(0)" onclick="goToFeature('/dashboard');toggleMenu()">Dashboard</a>
+  <button class="mob-x" onclick="toggleMenu()">✕</button>
+  <div class="mob-sec">Get the Job</div>
+  <a onclick="goToFeature('/jobs');toggleMenu()">💼 Job Portal</a>
+  <a onclick="goToFeature('/resume');toggleMenu()">✂️ AI Resume Tailor</a>
+  <a onclick="goToFeature('/resume-builder');toggleMenu()">📄 Resume Builder</a>
+  <a onclick="goToFeature('/cover-letter');toggleMenu()">✉️ Cover Letter</a>
+  <a onclick="goToFeature('/ats-score');toggleMenu()">🎯 ATS Score Checker</a>
+  <div class="mob-sec">Build Your Brand</div>
+  <a onclick="goToFeature('/linkedin');toggleMenu()">🔗 LinkedIn Optimizer</a>
+  <a onclick="goToFeature('/portfolio');toggleMenu()">🌐 Portfolio Builder</a>
+  <a onclick="goToFeature('/certifications');toggleMenu()">🏆 Certifications</a>
+  <div class="mob-sec">Win the Interview</div>
+  <a onclick="goToFeature('/interview');toggleMenu()">🎙 AI Mock Interview</a>
+  <a onclick="goToFeature('/learn');toggleMenu()">📚 Learn AI</a>
+  <a onclick="goToFeature('/dashboard');toggleMenu()">📊 Dashboard</a>
   <div class="mob-auth" id="mob-auth-guest">
-    <a href="javascript:void(0)" class="btn-ghost" onclick="openAuth('login');toggleMenu()">Log In</a>
-    <a href="javascript:void(0)" class="btn-blue" onclick="openAuth('signup');toggleMenu()">Get Started Free</a>
+    <button class="btn-ghost" onclick="openAuth('login');toggleMenu()">Log In</button>
+    <button class="btn-blue" onclick="openAuth('signup');toggleMenu()">Sign Up Free</button>
   </div>
-  <div class="mob-auth" id="mob-auth-user" style="display:none;flex-direction:column;gap:8px">
-    <a href="/dashboard" class="btn-blue" onclick="toggleMenu()">Dashboard</a>
-    <button class="btn-ghost" style="width:100%" onclick="handleLogout();toggleMenu()">Log Out</button>
+  <div class="mob-auth" id="mob-auth-user" style="display:none">
+    <button class="btn-ghost" onclick="goToFeature('/dashboard');toggleMenu()">Dashboard</button>
+    <button class="btn-ghost" onclick="handleLogout();toggleMenu()">Sign Out</button>
   </div>
 </div>
 
-<!-- HERO -->
+<!-- ═══════════════════════════════ HERO ═══════════════════════════════ -->
 <section class="hero" id="hero">
-  <div class="hero-glow"></div>
   <div class="container">
     <div class="hero-inner">
-      <div class="hero-badge"><span class="badge-dot"></span>✨ Free AI Resume Optimizer — Trusted by 12,000+ Job Seekers</div>
-      <h1>Free AI Resume Optimizer<br><span class="accent">No Credit Card Required</span></h1>
-      <p class="hero-sub">Paste any job description → get your ATS match score, missing keywords, and an interview-ready resume. Free, no sign-up to preview, results in 60 seconds.</p>
-      <div class="hero-ctas">
-        <button class="btn-hero-p" id="hero-cta" onclick="track('hero_cta_click','index',{cta:'primary'});openAuth('signup')">🔍 Check My Resume Score →</button>
-        <button class="btn-hero-g" onclick="track('hero_cta_click','index',{cta:'jobs'});goToFeature('/jobs')">💼 Browse 50,000+ Jobs →</button>
-      </div>
-      <div class="hero-trust">
-        <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
-        <span class="tsep"></span>
-        <span class="trust-i"><span class="ck">✓</span> Always 100% Free</span>
-        <span class="tsep"></span>
-        <span class="trust-i"><span class="ck">✓</span> Data Stays Private</span>
-        <span class="tsep"></span>
-        <span class="trust-i"><span class="ck">✓</span> Ready in 60 Seconds</span>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- FREE RESUME PREVIEW — Try Before Signup -->
-<section id="free-preview" style="padding:60px 0;background:linear-gradient(180deg,rgba(37,99,235,.05),transparent);border-top:1px solid rgba(37,99,235,.12);border-bottom:1px solid rgba(37,99,235,.1)">
-  <div class="container" style="max-width:880px">
-    <div class="tc rev" style="margin-bottom:32px">
-      <div class="sec-lbl">Free Instant Check — No Account Needed</div>
-      <h2 class="sec-h">See your resume score<br>in 30 seconds</h2>
-      <p class="sec-sub" style="margin:0 auto">Paste a job description below. See exactly where your resume stands — before you even create an account.</p>
-    </div>
-    <div class="prev-card rev r1">
-      <div id="prev-inputs" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-        <div>
-          <label class="prev-lbl">📋 Job Description <span style="font-weight:400;color:rgba(255,255,255,.25)">(required)</span></label>
-          <textarea id="prev-jd" class="prev-ta" rows="5" placeholder="Paste the full job description here. The more detail, the better the analysis..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.85rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"></textarea>
-        </div>
-        <div>
-          <label class="prev-lbl">📄 Your Resume Text <span style="font-weight:400;color:rgba(255,255,255,.25)">(optional — for accuracy)</span></label>
-          <textarea id="prev-resume" class="prev-ta" rows="5" placeholder="Paste your resume text here to see exactly what's missing and what matches..." style="width:100%;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.1);border-radius:10px;color:#fff;font-size:.85rem;line-height:1.65;padding:12px 14px;resize:vertical;outline:none;font-family:inherit;box-sizing:border-box"></textarea>
-        </div>
-      </div>
-      <button id="prev-btn" class="prev-btn" onclick="runFreePreview()" style="width:100%;padding:14px;background:#f97316;color:#fff;border:none;border-radius:10px;font-size:.96rem;font-weight:700;cursor:pointer;min-height:50px">🔍 Analyze My Resume Score — Free →</button>
-      <!-- Loading -->
-      <div id="prev-loading" style="display:none;text-align:center;padding:36px 0">
-        <div class="prev-spinner"></div>
-        <p id="prev-load-txt" style="color:rgba(255,255,255,.55);font-size:.87rem;margin-top:14px;transition:all .4s">Analyzing job requirements…</p>
-      </div>
-      <!-- Results -->
-      <div id="prev-results" style="display:none">
-        <div style="border-top:1px solid rgba(255,255,255,.08);margin-top:22px;padding-top:22px">
-          <!-- Scores row -->
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px">
-            <div>
-              <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:6px">Overall Resume Score</div>
-              <div style="display:flex;align-items:baseline;gap:4px"><span id="prev-score" style="font-size:3rem;font-weight:900;color:#fff;line-height:1">--</span><span style="font-size:1rem;color:rgba(255,255,255,.3)">/100</span></div>
-              <div id="prev-verdict" style="font-size:.78rem;font-weight:600;margin-top:4px"></div>
-            </div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap">
-              <div class="prev-metric"><div class="pm-val" id="pm-ats">--</div><div class="pm-lbl">ATS Match</div></div>
-              <div class="prev-metric"><div class="pm-val" id="pm-kw">--</div><div class="pm-lbl">Keywords</div></div>
-              <div class="prev-metric"><div class="pm-val" id="pm-fmt">--</div><div class="pm-lbl">Format</div></div>
-            </div>
-          </div>
-          <!-- Score bar -->
-          <div style="background:rgba(255,255,255,.06);border-radius:100px;height:8px;margin-bottom:22px;overflow:hidden">
-            <div id="prev-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,#f97316,#2563eb);width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)"></div>
-          </div>
-          <!-- Visible insights (2) -->
-          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:10px">Key Findings</div>
-          <div id="prev-vis"></div>
-          <!-- Blurred locked insights (hidden for logged-in users via JS) -->
-          <div style="position:relative;margin-top:4px" id="prev-lock-wrap">
-            <div style="filter:blur(5px);pointer-events:none;user-select:none" id="prev-blr"></div>
-            <div id="prev-lock" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,transparent 0%,rgba(17,24,39,.97) 40%);border-radius:12px;padding:24px 20px">
-              <div style="font-size:1.05rem;font-weight:800;color:#fff;margin-bottom:6px;text-align:center">🔒 Unlock Your Full Analysis</div>
-              <p style="font-size:.82rem;color:rgba(255,255,255,.5);text-align:center;margin-bottom:18px;max-width:340px;line-height:1.6">See all insights, missing keywords list, ATS fix checklist, and your personalised improvement plan — <strong style="color:#fff">completely free</strong>.</p>
-              <button onclick="openAuth('signup')" style="padding:13px 30px;background:var(--orange);color:#fff;border:none;border-radius:10px;font-size:.92rem;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(249,115,22,.4);transition:all .2s" onmouseover="this.style.background='#ea580c'" onmouseout="this.style.background='var(--orange)'">Create Free Account → See Full Results</button>
-              <p style="font-size:.72rem;color:rgba(255,255,255,.28);margin-top:9px">No credit card · Takes 30 seconds · 100% free</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- TOOL GRID — immediately visible after hero -->
-<section id="features" style="padding-top:28px;padding-bottom:48px">
-  <div class="container">
-    <!-- FEATURED RESUME OPTIMIZER CARD -->
-    <div style="background:linear-gradient(135deg,rgba(249,115,22,.12),rgba(37,99,235,.1));border:1px solid rgba(249,115,22,.3);border-radius:16px;padding:24px 28px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px" class="rev">
       <div>
-        <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(249,115,22,.15);border:1px solid rgba(249,115,22,.3);border-radius:20px;padding:4px 12px;font-size:.7rem;font-weight:700;color:#fb923c;margin-bottom:10px;letter-spacing:.05em;text-transform:uppercase">⭐ Most Popular</div>
-        <h3 style="font-size:1.12rem;font-weight:800;color:#fff;margin-bottom:6px">AI Resume Tailor</h3>
-        <p style="font-size:.86rem;color:var(--slate);line-height:1.55;max-width:480px">Upload your resume + paste any job description → AI rewrites your resume to match keywords, beat ATS, and land more interviews. <strong style="color:#fff">87% of users get an interview in 2 weeks.</strong></p>
+        <div class="hero-badge rev"><span class="badge-dot"></span>Free for job seekers — always</div>
+        <h1 class="rev r1">Land More Interviews<br>with <span class="accent">AI-Optimized</span><br>Resumes</h1>
+        <p class="hero-sub rev r2">Paste any job description → get your ATS match score, missing keywords, and an interview-ready resume. Results in 60 seconds. No credit card.</p>
+        <div class="hero-ctas rev r2">
+          <button class="btn-hero-p" id="hero-cta" onclick="track('hero_cta_click','index',{cta:'primary'});openAuth('signup')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+            Check My Resume Score
+          </button>
+          <button class="btn-hero-g" onclick="track('hero_cta_click','index',{cta:'jobs'});goToFeature('/jobs')">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-4 0v2"/></svg>
+            Browse 50,000+ Jobs
+          </button>
+        </div>
+        <div class="hero-trust rev r3">
+          <span class="trust-i"><span class="ck">✓</span> No Credit Card</span>
+          <span class="trust-i"><span class="ck">✓</span> Always Free</span>
+          <span class="trust-i"><span class="ck">✓</span> Results in 60s</span>
+          <span class="trust-i"><span class="ck">✓</span> Data Stays Private</span>
+        </div>
       </div>
-      <button class="btn-orange" onclick="goToFeature('/resume')" style="min-height:46px;padding:12px 28px;font-size:.92rem;white-space:nowrap;flex-shrink:0">✂️ Tailor My Resume Free →</button>
-    </div>
-    <div class="tc" style="margin-bottom:4px">
-      <p style="font-size:.82rem;color:rgba(255,255,255,.4);font-weight:600;letter-spacing:.05em;text-transform:uppercase">Explore all 15 free tools</p>
-    </div>
-    <div class="tg-3">
-      <div class="tg-col">
-        <div class="tg-head">📄 Get the Job</div>
-        <div class="tg-item highlighted" onclick="goToFeature('/jobs')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">💼</div><div class="tg-info"><div class="tg-name">Job Portal <span class="most-badge">Most Used</span></div><div class="tg-desc">50,000+ live jobs from 97 companies</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item highlighted" onclick="goToFeature('/resume')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">📄</div><div class="tg-info"><div class="tg-name">AI Resume Tailor <span class="most-badge">Most Used</span></div><div class="tg-desc">Tailor your resume to any job in seconds</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/resume-builder')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✂️</div><div class="tg-info"><div class="tg-name">Resume Builder</div><div class="tg-desc">Build a polished resume from scratch</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/cover-letter')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">✉️</div><div class="tg-info"><div class="tg-name">Cover Letter</div><div class="tg-desc">Tailored in under 2 minutes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/email')"><div class="tg-ico" style="background:rgba(37,99,235,.12)">📨</div><div class="tg-info"><div class="tg-name">Email Generator</div><div class="tg-desc">Cold outreach that gets replies</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item highlighted" onclick="goToFeature('/ats-score')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">🎯</div><div class="tg-info"><div class="tg-name">ATS Score Checker</div><div class="tg-desc">See your resume score instantly</div></div><span class="tg-cta">Try →</span></div>
-      </div>
-      <div class="tg-col">
-        <div class="tg-head">🌐 Build Your Brand</div>
-        <div class="tg-item" onclick="goToFeature('/linkedin')"><div class="tg-ico" style="background:rgba(20,184,166,.15)">🔗</div><div class="tg-info"><div class="tg-name">LinkedIn Optimizer</div><div class="tg-desc">10× more profile views</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/portfolio')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🌐</div><div class="tg-info"><div class="tg-name">Portfolio Builder</div><div class="tg-desc">No-code portfolio in minutes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item highlighted" onclick="goToFeature('/certifications')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">🏆</div><div class="tg-info"><div class="tg-name">Certifications</div><div class="tg-desc">Add credentials to your profile</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/coaching')"><div class="tg-ico" style="background:rgba(20,184,166,.12)">🎓</div><div class="tg-info"><div class="tg-name">Live Coaching</div><div class="tg-desc">1:1 career coaching sessions</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/community')"><div class="tg-ico" style="background:rgba(79,70,229,.15)">👥</div><div class="tg-info"><div class="tg-name">Community Resources</div><div class="tg-desc">Guides, PDFs &amp; career docs</div></div><span class="tg-cta">Try →</span></div>
-      </div>
-      <div class="tg-col">
-        <div class="tg-head">🎯 Win the Interview</div>
-        <div class="tg-item highlighted" onclick="goToFeature('/interview')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">🎙</div><div class="tg-info"><div class="tg-name">AI Mock Interview Practice <span class="most-badge">Popular</span></div><div class="tg-desc">Practice STAR answers — for practice only</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item highlighted" onclick="goToFeature('/learn')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">📚</div><div class="tg-info"><div class="tg-name">Learn AI</div><div class="tg-desc">Master 12 AI domains with quizzes</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item highlighted" onclick="goToFeature('/project')"><div class="tg-ico" style="background:rgba(249,115,22,.18)">🔨</div><div class="tg-info"><div class="tg-name">Build Project</div><div class="tg-desc">Portfolio-ready projects with AI</div></div><span class="tg-cta">Try →</span></div>
-        <div class="tg-item" onclick="goToFeature('/dashboard')"><div class="tg-ico" style="background:rgba(139,92,246,.12)">📊</div><div class="tg-info"><div class="tg-name">Dashboard</div><div class="tg-desc">Track your full job search</div></div><span class="tg-cta">Try →</span></div>
+      <!-- PRODUCT MOCKUP -->
+      <div class="hero-visual rev r2">
+        <div class="mockup-float2">
+          <div style="font-size:.72rem;font-weight:700;color:#16a34a;margin-bottom:2px">✅ Resume matched!</div>
+          <div style="font-size:.68rem;color:var(--text-s)">87% ATS score · 12 keywords added</div>
+        </div>
+        <div class="mockup-card">
+          <div class="mockup-bar">
+            <div class="mockup-dots"><span></span><span></span><span></span></div>
+            <div class="mockup-url">ambore.org/resume</div>
+          </div>
+          <div class="mockup-body">
+            <div class="score-ring-wrap">
+              <div class="score-ring"><span class="score-ring-val">78</span></div>
+              <div class="score-info">
+                <h4>ATS Match Score</h4>
+                <p style="margin-bottom:6px">Good — room to improve</p>
+                <div class="score-badges">
+                  <span class="score-badge green">ATS: 87%</span>
+                  <span class="score-badge">Keywords: 74%</span>
+                  <span class="score-badge orange">Missing: 6</span>
+                </div>
+              </div>
+            </div>
+            <div class="mockup-kw">
+              <div class="kw-lbl">Keyword Analysis</div>
+              <div class="kw-chips">
+                <span class="kw-chip match">Python</span>
+                <span class="kw-chip match">AWS</span>
+                <span class="kw-chip match">React</span>
+                <span class="kw-chip miss">Docker</span>
+                <span class="kw-chip miss">Kubernetes</span>
+                <span class="kw-chip match">SQL</span>
+                <span class="kw-chip miss">CI/CD</span>
+                <span class="kw-chip match">Agile</span>
+              </div>
+            </div>
+            <button class="mockup-action" onclick="openAuth('signup')">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+              Tailor Resume for This Job →
+            </button>
+          </div>
+        </div>
+        <div class="mockup-float">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:2px">
+            <div style="width:7px;height:7px;border-radius:50%;background:#16a34a"></div>
+            <span style="font-size:.72rem;font-weight:700;color:var(--text)">Interview scheduled!</span>
+          </div>
+          <div style="font-size:.67rem;color:var(--text-s)">Sarah got a call after tailoring</div>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- DEMO — moved here, after tool grid -->
-<div class="demo-sec" id="demo">
+<!-- LOGOS -->
+<div class="logos-bar">
+  <div class="logos-track">
+    <span class="logo-i"><span class="logo-dot"></span>Stripe</span><span class="logo-i"><span class="logo-dot"></span>OpenAI</span><span class="logo-i"><span class="logo-dot"></span>Anthropic</span><span class="logo-i"><span class="logo-dot"></span>Figma</span><span class="logo-i"><span class="logo-dot"></span>Cloudflare</span><span class="logo-i"><span class="logo-dot"></span>Databricks</span><span class="logo-i"><span class="logo-dot"></span>Notion</span><span class="logo-i"><span class="logo-dot"></span>Airbnb</span><span class="logo-i"><span class="logo-dot"></span>Discord</span><span class="logo-i"><span class="logo-dot"></span>Datadog</span><span class="logo-i"><span class="logo-dot"></span>MongoDB</span><span class="logo-i"><span class="logo-dot"></span>Twilio</span><span class="logo-i"><span class="logo-dot"></span>Reddit</span><span class="logo-i"><span class="logo-dot"></span>Perplexity AI</span><span class="logo-i"><span class="logo-dot"></span>Lyft</span><span class="logo-i"><span class="logo-dot"></span>Toast</span><span class="logo-i"><span class="logo-dot"></span>Instacart</span><span class="logo-i"><span class="logo-dot"></span>Okta</span><span class="logo-i"><span class="logo-dot"></span>Twitch</span><span class="logo-i"><span class="logo-dot"></span>Snowflake</span>
+    <span class="logo-i"><span class="logo-dot"></span>Stripe</span><span class="logo-i"><span class="logo-dot"></span>OpenAI</span><span class="logo-i"><span class="logo-dot"></span>Anthropic</span><span class="logo-i"><span class="logo-dot"></span>Figma</span><span class="logo-i"><span class="logo-dot"></span>Cloudflare</span><span class="logo-i"><span class="logo-dot"></span>Databricks</span><span class="logo-i"><span class="logo-dot"></span>Notion</span><span class="logo-i"><span class="logo-dot"></span>Airbnb</span><span class="logo-i"><span class="logo-dot"></span>Discord</span><span class="logo-i"><span class="logo-dot"></span>Datadog</span><span class="logo-i"><span class="logo-dot"></span>MongoDB</span><span class="logo-i"><span class="logo-dot"></span>Twilio</span><span class="logo-i"><span class="logo-dot"></span>Reddit</span><span class="logo-i"><span class="logo-dot"></span>Perplexity AI</span><span class="logo-i"><span class="logo-dot"></span>Lyft</span><span class="logo-i"><span class="logo-dot"></span>Toast</span><span class="logo-i"><span class="logo-dot"></span>Instacart</span><span class="logo-i"><span class="logo-dot"></span>Okta</span><span class="logo-i"><span class="logo-dot"></span>Twitch</span><span class="logo-i"><span class="logo-dot"></span>Snowflake</span>
+  </div>
+</div>
+
+<!-- STATS -->
+<div class="stats-section">
   <div class="container">
-    <div class="tc rev">
-      <div class="sec-lbl">Product Demo</div>
-      <h2 class="sec-h">Real-Time AI. Zero Lag.</h2>
-      <p class="sec-sub">Watch Interview AI generate a full STAR answer in under 2 seconds.</p>
+    <div class="stats-grid rev">
+      <div class="stat-item"><span class="stat-n" data-target="50000" data-suffix="+">50,000+</span><span class="stat-l">Live Tech Jobs</span></div>
+      <div class="stat-item"><span class="stat-n" data-target="97" data-suffix="">97</span><span class="stat-l">Top Companies</span></div>
+      <div class="stat-item"><span class="stat-n" data-target="14" data-suffix="">14</span><span class="stat-l">Free AI Tools</span></div>
+      <div class="stat-item"><span class="stat-n" data-target="87" data-suffix="%">87%</span><span class="stat-l">Got Interviews in 2 Weeks</span></div>
     </div>
-    <div class="demo-panels">
-      <div class="demo-card rev r1">
-        <div class="dc-lbl">Live Interview Feed</div>
-        <div class="demo-qlbl">🎙 Interviewer asks:</div>
-        <div class="demo-bubble">"Tell me about a time you led a cross-functional team through a difficult challenge."</div>
-        <div class="demo-gen">
-          <div class="ddots"><span></span><span></span><span></span></div>
-          <span class="demo-gen-t">✦ Ambore AI generating…</span>
+  </div>
+</div>
+
+<!-- FREE PREVIEW -->
+<section class="preview-sec" id="free-preview">
+  <div class="container">
+    <div class="tc rev" style="margin-bottom:36px">
+      <div class="sec-lbl">Try Free — No Account Needed</div>
+      <h2 class="sec-h">See your resume score in 30 seconds</h2>
+      <p class="sec-sub" style="margin:0 auto">Paste any job description and see exactly where your resume stands before you create an account.</p>
+    </div>
+    <div class="preview-card rev r1">
+      <div class="prev-card">
+        <div id="prev-inputs" style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+          <div>
+            <label class="prev-lbl">📋 Job Description <span style="font-weight:400;color:var(--text-s)">(required)</span></label>
+            <textarea id="prev-jd" class="prev-ta" rows="6" placeholder="Paste the full job description here..."></textarea>
+          </div>
+          <div>
+            <label class="prev-lbl">📄 Your Resume Text <span style="font-weight:400;color:var(--text-s)">(optional — for accuracy)</span></label>
+            <textarea id="prev-resume" class="prev-ta" rows="6" placeholder="Paste your resume text here to see exactly what's missing..."></textarea>
+          </div>
+        </div>
+        <button id="prev-btn" class="prev-btn" onclick="runFreePreview()">🔍 Analyze My Resume Score — Free →</button>
+        <div id="prev-loading" style="display:none;text-align:center;padding:40px 0">
+          <div class="prev-spinner"></div>
+          <p id="prev-load-txt" style="color:var(--text-m);font-size:.88rem;margin-top:16px">Analysing job requirements…</p>
+        </div>
+        <div id="prev-results" style="display:none">
+          <div style="border-top:1px solid var(--border);margin-top:24px;padding-top:24px">
+            <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;margin-bottom:20px">
+              <div>
+                <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);margin-bottom:6px">Overall Resume Score</div>
+                <div style="display:flex;align-items:baseline;gap:4px"><span id="prev-score" style="font-size:3rem;font-weight:900;color:var(--text);line-height:1">--</span><span style="font-size:1rem;color:var(--text-s)">/100</span></div>
+                <div id="prev-verdict" style="font-size:.8rem;font-weight:600;margin-top:4px"></div>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <div class="prev-metric"><div class="pm-val" id="pm-ats">--</div><div class="pm-lbl">ATS Match</div></div>
+                <div class="prev-metric"><div class="pm-val" id="pm-kw">--</div><div class="pm-lbl">Keywords</div></div>
+                <div class="prev-metric"><div class="pm-val" id="pm-fmt">--</div><div class="pm-lbl">Format</div></div>
+              </div>
+            </div>
+            <div style="background:var(--border);border-radius:100px;height:8px;margin-bottom:24px;overflow:hidden">
+              <div id="prev-bar" style="height:100%;border-radius:100px;background:linear-gradient(90deg,var(--orange),var(--blue));width:0;transition:width 1.2s cubic-bezier(.4,0,.2,1)"></div>
+            </div>
+            <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);margin-bottom:10px">Key Findings</div>
+            <div id="prev-vis"></div>
+            <div style="position:relative;margin-top:4px" id="prev-lock-wrap">
+              <div style="filter:blur(5px);pointer-events:none;user-select:none" id="prev-blr"></div>
+              <div id="prev-lock" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:linear-gradient(180deg,transparent 0%,rgba(248,250,252,.97) 40%);border-radius:12px;padding:24px 20px">
+                <div style="font-size:1.05rem;font-weight:800;color:var(--text);margin-bottom:6px;text-align:center">🔒 Unlock Your Full Analysis</div>
+                <p style="font-size:.84rem;color:var(--text-m);text-align:center;margin-bottom:18px;max-width:340px;line-height:1.6">See all insights, missing keywords, ATS fix checklist, and your personalised improvement plan — <strong style="color:var(--text)">completely free</strong>.</p>
+                <button onclick="openAuth('signup')" style="padding:13px 30px;background:var(--blue);color:#fff;border:none;border-radius:10px;font-size:.93rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(37,99,235,.3)">Create Free Account → See Full Results</button>
+                <p style="font-size:.73rem;color:var(--text-s);margin-top:9px">No credit card · Takes 30 seconds · 100% free</p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="demo-card rev r2">
-        <div class="dc-lbl">AI Answer Output</div>
-        <div class="demo-badge">Answer ready in 1.8s</div>
-        <div class="star-row" id="sr1"><div class="star-lbl">Situation</div><div class="star-txt">At my last company, we faced an urgent deadline to migrate our core payment service with only 6 weeks to deliver.</div></div>
-        <div class="star-row" id="sr2"><div class="star-lbl">Task</div><div class="star-txt">As the lead engineer, I coordinated across backend, frontend, QA, and DevOps — four teams with competing priorities.</div></div>
-        <div class="star-row" id="sr3"><div class="star-lbl">Action</div><div class="star-txt">I ran daily standups, created a shared risk tracker, and unblocked two engineers personally by pair-programming through the toughest integrations.</div></div>
-        <div class="star-row" id="sr4"><div class="star-lbl">Result</div><div class="star-txt">We shipped on time with zero incidents. Latency dropped 40% and the migration became the template for two subsequent upgrades.<span class="cur"></span></div></div>
-      </div>
     </div>
-    <div class="demo-cta rev"><a href="javascript:void(0)" onclick="ctaAction()" class="btn-orange" id="demo-cta-btn" style="display:inline-flex;align-items:center;gap:8px;min-height:50px;padding:14px 32px;font-size:.95rem">🚀 Start Free — No Credit Card →</a></div>
   </div>
-</div>
-
-<!-- STATS BAR -->
-<div class="stats-bar" id="stats-bar">
-  <div class="stat-i"><span class="stat-n" data-target="50000" data-suffix="+">50,000+</span><span class="stat-l">Active Tech Jobs</span></div>
-  <div class="stat-i"><span class="stat-n" data-target="97" data-suffix="">97</span><span class="stat-l">Top Companies</span></div>
-  <div class="stat-i"><span class="stat-n" data-target="14" data-suffix="">14</span><span class="stat-l">Free AI Tools</span></div>
-  <div class="stat-i"><span class="stat-n" data-target="87" data-suffix="%">87%</span><span class="stat-l">Got Interviews in 2 Weeks</span></div>
-  <div class="stat-i"><span class="stat-n">4.9★</span><span class="stat-l">Average Rating</span></div>
-</div>
-
-<!-- COMPANY TICKER -->
-<div class="co-ticker">
-  <div class="co-track">
-    <span class="co-i"><span class="co-dot"></span>Stripe</span><span class="co-i"><span class="co-dot"></span>OpenAI</span><span class="co-i"><span class="co-dot"></span>Anthropic</span><span class="co-i"><span class="co-dot"></span>Figma</span><span class="co-i"><span class="co-dot"></span>Cloudflare</span><span class="co-i"><span class="co-dot"></span>Databricks</span><span class="co-i"><span class="co-dot"></span>Notion</span><span class="co-i"><span class="co-dot"></span>Airbnb</span><span class="co-i"><span class="co-dot"></span>Discord</span><span class="co-i"><span class="co-dot"></span>Datadog</span><span class="co-i"><span class="co-dot"></span>MongoDB</span><span class="co-i"><span class="co-dot"></span>Okta</span><span class="co-i"><span class="co-dot"></span>Twilio</span><span class="co-i"><span class="co-dot"></span>Reddit</span><span class="co-i"><span class="co-dot"></span>Perplexity AI</span><span class="co-i"><span class="co-dot"></span>Harvey</span><span class="co-i"><span class="co-dot"></span>Lyft</span><span class="co-i"><span class="co-dot"></span>Toast</span><span class="co-i"><span class="co-dot"></span>Instacart</span><span class="co-i"><span class="co-dot"></span>Twitch</span>
-    <span class="co-i"><span class="co-dot"></span>Stripe</span><span class="co-i"><span class="co-dot"></span>OpenAI</span><span class="co-i"><span class="co-dot"></span>Anthropic</span><span class="co-i"><span class="co-dot"></span>Figma</span><span class="co-i"><span class="co-dot"></span>Cloudflare</span><span class="co-i"><span class="co-dot"></span>Databricks</span><span class="co-i"><span class="co-dot"></span>Notion</span><span class="co-i"><span class="co-dot"></span>Airbnb</span><span class="co-i"><span class="co-dot"></span>Discord</span><span class="co-i"><span class="co-dot"></span>Datadog</span><span class="co-i"><span class="co-dot"></span>MongoDB</span><span class="co-i"><span class="co-dot"></span>Okta</span><span class="co-i"><span class="co-dot"></span>Twilio</span><span class="co-i"><span class="co-dot"></span>Reddit</span><span class="co-i"><span class="co-dot"></span>Perplexity AI</span><span class="co-i"><span class="co-dot"></span>Harvey</span><span class="co-i"><span class="co-dot"></span>Lyft</span><span class="co-i"><span class="co-dot"></span>Toast</span><span class="co-i"><span class="co-dot"></span>Instacart</span><span class="co-i"><span class="co-dot"></span>Twitch</span>
-  </div>
-</div>
+</section>
 
 <!-- HOW IT WORKS -->
 <section id="how" class="how-sec">
   <div class="container">
-    <div class="tc rev" style="max-width:600px;margin:0 auto 48px">
+    <div class="tc rev" style="max-width:560px;margin:0 auto 48px">
       <div class="sec-lbl">How It Works</div>
-      <h2 class="sec-h">Tailored resume in<br>3 simple steps</h2>
+      <h2 class="sec-h">Tailored resume in 3 simple steps</h2>
       <p class="sec-sub">No templates. No guessing. AI reads the job description and rewrites your resume to match — ATS-optimized in under 60 seconds.</p>
     </div>
-    <div class="sh-row rev" style="gap:0;max-width:900px;margin:0 auto">
-      <div class="sh-card" onclick="openAuth('signup')">
-        <div class="sh-num">1</div>
-        <span class="sh-ico">📄</span>
+    <div class="steps-grid">
+      <div class="step-card rev r1" onclick="openAuth('signup')">
+        <div class="step-num">1</div>
+        <span class="step-ico">📄</span>
         <h3>Upload Your Resume</h3>
-        <p>Paste your existing resume or start from scratch. No special format required.</p>
-        <span class="sh-link">→ Takes 30 seconds</span>
+        <p>Paste your existing resume or upload a PDF. No special format required — any resume works.</p>
+        <div class="step-connector">→</div>
       </div>
-      <div class="sh-arr">→</div>
-      <div class="sh-card" onclick="openAuth('signup')">
-        <div class="sh-num">2</div>
-        <span class="sh-ico">📋</span>
-        <h3>Paste the Job Description</h3>
-        <p>Copy any job posting from LinkedIn, Indeed, or company sites and paste it in.</p>
-        <span class="sh-link">→ Works with any JD</span>
+      <div class="step-card rev r2" onclick="openAuth('signup')">
+        <div class="step-num">2</div>
+        <span class="step-ico">🎯</span>
+        <h3>Paste Job Description</h3>
+        <p>Copy the full job description from LinkedIn, Indeed, or anywhere. The more detail, the better.</p>
+        <div class="step-connector">→</div>
       </div>
-      <div class="sh-arr">→</div>
-      <div class="sh-card" onclick="openAuth('signup')">
-        <div class="sh-num">3</div>
-        <span class="sh-ico">✅</span>
-        <h3>Get Your Optimized Resume</h3>
-        <p>AI rewrites your resume to match the JD keywords, structure, and ATS requirements.</p>
-        <span class="sh-link">→ Ready in 60 seconds</span>
+      <div class="step-card rev r3" onclick="openAuth('signup')">
+        <div class="step-num">3</div>
+        <span class="step-ico">⚡</span>
+        <h3>Get Your Tailored Resume</h3>
+        <p>AI rewrites your resume with matching keywords, an ATS-optimized format, and quantified bullets.</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:36px" class="rev">
-      <button class="btn-orange" onclick="ctaAction()" id="howitworks-cta-btn" style="min-height:50px;padding:14px 36px;font-size:.96rem">🚀 Try It Free — No Credit Card →</button>
+      <button class="btn-hero-p" onclick="ctaAction()" id="howitworks-cta-btn">🚀 Start Free — No Credit Card →</button>
     </div>
   </div>
 </section>
 
-
-<!-- WHY CREATE AN ACCOUNT -->
-<section style="padding:72px 0;border-top:1px solid var(--border)">
+<!-- ALL TOOLS -->
+<section class="tools-sec" id="features">
   <div class="container">
     <div class="tc rev" style="max-width:560px;margin:0 auto 40px">
-      <div class="sec-lbl">Your Free Account</div>
-      <h2 class="sec-h">Why create a free account?</h2>
-      <p class="sec-sub">Signing up is free and unlocks everything. Here's what you get.</p>
+      <div class="sec-lbl">All 14 Free Tools</div>
+      <h2 class="sec-h">Everything you need to land the job</h2>
+      <p class="sec-sub">From resume tailoring to mock interviews — one platform, zero cost.</p>
     </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;max-width:860px;margin:0 auto" class="why-acct-grid">
-      <div class="why-card rev">
-        <div class="why-ico">💾</div>
-        <div class="why-t">Save Your Resumes</div>
-        <p class="why-d">All your tailored resumes are saved to your account. Access them anytime, on any device.</p>
+    <!-- Featured -->
+    <div class="tool-card featured rev" onclick="goToFeature('/resume')" style="margin-bottom:16px;cursor:pointer">
+      <div class="tool-ico" style="width:52px;height:52px;background:var(--blue-l)">✂️</div>
+      <div class="tool-info">
+        <div class="tool-name" style="font-size:1.05rem">AI Resume Tailor <span class="tool-badge">Most Popular</span></div>
+        <div class="tool-desc" style="font-size:.88rem">Upload your resume + paste any job description → AI rewrites to match keywords, beat ATS, and land more interviews. <strong style="color:var(--text)">87% of users get an interview in 2 weeks.</strong></div>
       </div>
-      <div class="why-card rev r1">
-        <div class="why-ico">📊</div>
-        <div class="why-t">Track Applications</div>
-        <p class="why-d">Keep a full list of jobs you applied to, with resume versions and notes in one dashboard.</p>
+      <button class="btn-hero-p" style="flex-shrink:0;font-size:.88rem;min-height:42px;padding:10px 20px">Try Free →</button>
+    </div>
+    <div class="tools-grid">
+      <div class="tool-card rev r1" onclick="goToFeature('/jobs')">
+        <div class="tool-ico" style="background:#fff7ed">💼</div>
+        <div class="tool-info"><div class="tool-name">Job Portal <span class="tool-badge">Hot</span></div><div class="tool-desc">50,000+ live jobs from 97 top companies</div></div>
+        <span class="tool-arrow">→</span>
       </div>
-      <div class="why-card rev r2">
-        <div class="why-ico">🎯</div>
-        <div class="why-t">Personalized Suggestions</div>
-        <p class="why-d">The AI learns from your profile and gets smarter with each resume you generate.</p>
+      <div class="tool-card rev r2" onclick="goToFeature('/ats-score')">
+        <div class="tool-ico" style="background:#f0fdf4">🎯</div>
+        <div class="tool-info"><div class="tool-name">ATS Score Checker</div><div class="tool-desc">See your resume score instantly</div></div>
+        <span class="tool-arrow">→</span>
       </div>
-    </div>
-    <div style="text-align:center;margin-top:32px" class="rev">
-      <button class="btn-orange-sm" onclick="openAuth('signup')">Create Free Account →</button>
-      <p style="margin-top:10px;font-size:.76rem;color:rgba(255,255,255,.3)">No credit card · No spam · Unsubscribe anytime</p>
-    </div>
-  </div>
-</section>
-<style>@media(max-width:700px){.why-acct-grid{grid-template-columns:1fr!important}}</style>
-
-<!-- WHY AMBORE -->
-<section>
-  <div class="container">
-    <div class="tc rev" style="max-width:600px;margin:0 auto">
-      <div class="sec-lbl">Why Ambore</div>
-      <h2 class="sec-h">Built for job seekers<br>who mean business</h2>
-      <p class="sec-sub">Every feature saves you time and maximises your chances of landing the right role.</p>
-    </div>
-    <div class="why-grid">
-      <div class="why-card rev"><div class="why-ico">🔍</div><div class="why-t">10 Job Sources</div><p class="why-d">LinkedIn, Indeed, USAJobs, Adzuna, The Muse, Remotive — aggregated automatically</p></div>
-      <div class="why-card rev r1"><div class="why-ico">⏰</div><div class="why-t">Hourly Updates</div><p class="why-d">Jobs scraped every hour so you always see the freshest listings first</p></div>
-      <div class="why-card rev r2"><div class="why-ico">🎯</div><div class="why-t">ATS-Optimized</div><p class="why-d">AI resume tailoring matches keywords and formatting that ATS systems look for</p></div>
-      <div class="why-card rev r3"><div class="why-ico">⚡</div><div class="why-t">Sub-2s Answers</div><p class="why-d">Interview AI delivers STAR-format answers in under 2 seconds — real time</p></div>
-      <div class="why-card rev"><div class="why-ico">🎙</div><div class="why-t">8 Round Types</div><p class="why-d">HR screen to executive round — the AI adapts answers for each stage</p></div>
-      <div class="why-card rev r1"><div class="why-ico">📸</div><div class="why-t">Screen Analysis</div><p class="why-d">Stuck on a coding problem? Capture your screen and get instant solutions</p></div>
-      <div class="why-card rev r2"><div class="why-ico">🔒</div><div class="why-t">100% Private</div><p class="why-d">All data stays in your browser — no server storage, no tracking</p></div>
-      <div class="why-card rev r3"><div class="why-ico">💰</div><div class="why-t">Completely Free</div><p class="why-d">No credit card, no trial limits — all features at zero cost</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- WHO IS AMBORE FOR — Use Case Segmentation -->
-<section style="padding:72px 0;border-top:1px solid var(--border)">
-  <div class="container">
-    <div class="tc rev" style="max-width:560px;margin:0 auto 44px">
-      <div class="sec-lbl">Who It's Built For</div>
-      <h2 class="sec-h">Every career stage,<br>one free platform</h2>
-      <p class="sec-sub" style="margin:0 auto">Whether you're just starting out or making a big move — Ambore has tools built exactly for where you are.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px" class="uc-grid-3">
-      <div class="uc-card rev" onclick="openAuth('signup')">
-        <div class="uc-icon">🎓</div>
-        <h3 class="uc-title">Students</h3>
-        <p class="uc-sub">Landing your first internship or entry-level role with no experience</p>
-        <ul class="uc-list">
-          <li>Build a resume from zero</li>
-          <li>Find internship-friendly jobs</li>
-          <li>Practice behavioral interviews</li>
-          <li>ATS keyword coaching</li>
-        </ul>
-        <div class="uc-cta">Start free →</div>
+      <div class="tool-card rev r3" onclick="goToFeature('/resume-builder')">
+        <div class="tool-ico" style="background:var(--blue-l)">📄</div>
+        <div class="tool-info"><div class="tool-name">Resume Builder</div><div class="tool-desc">Build a polished resume from scratch</div></div>
+        <span class="tool-arrow">→</span>
       </div>
-      <div class="uc-card rev r1" onclick="openAuth('signup')" style="border-color:rgba(249,115,22,.3);background:rgba(249,115,22,.04)">
-        <div style="position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--orange);color:#fff;font-size:.62rem;font-weight:800;padding:3px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.07em;text-transform:uppercase">Most Popular</div>
-        <div class="uc-icon">💼</div>
-        <h3 class="uc-title">Fresh Graduates</h3>
-        <p class="uc-sub">Breaking into your first full-time role after graduation</p>
-        <ul class="uc-list">
-          <li>ATS-optimized resume tailoring</li>
-          <li>Match resume to any JD</li>
-          <li>50,000+ entry-level jobs</li>
-          <li>Mock interview practice</li>
-        </ul>
-        <div class="uc-cta" style="color:var(--orange)">Start free →</div>
+      <div class="tool-card rev r1" onclick="goToFeature('/interview')">
+        <div class="tool-ico" style="background:#fdf4ff">🎙</div>
+        <div class="tool-info"><div class="tool-name">AI Mock Interview <span class="tool-badge-new">New</span></div><div class="tool-desc">Practice STAR answers with real-time AI coaching</div></div>
+        <span class="tool-arrow">→</span>
       </div>
-      <div class="uc-card rev r2" onclick="openAuth('signup')">
-        <div class="uc-icon">🚀</div>
-        <h3 class="uc-title">Experienced Pros</h3>
-        <p class="uc-sub">Leveling up, switching industries, or targeting senior roles</p>
-        <ul class="uc-list">
-          <li>Senior-level resume optimization</li>
-          <li>Executive keyword targeting</li>
-          <li>LinkedIn profile overhaul</li>
-          <li>Leadership interview prep</li>
-        </ul>
-        <div class="uc-cta">Start free →</div>
+      <div class="tool-card rev r2" onclick="goToFeature('/cover-letter')">
+        <div class="tool-ico" style="background:#fffbeb">✉️</div>
+        <div class="tool-info"><div class="tool-name">Cover Letter Generator</div><div class="tool-desc">Tailored cover letter in under 2 minutes</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r3" onclick="goToFeature('/linkedin')">
+        <div class="tool-ico" style="background:#eff6ff">🔗</div>
+        <div class="tool-info"><div class="tool-name">LinkedIn Optimizer</div><div class="tool-desc">10× more profile views overnight</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r1" onclick="goToFeature('/email')">
+        <div class="tool-ico" style="background:#f0fdf4">📨</div>
+        <div class="tool-info"><div class="tool-name">Email Generator</div><div class="tool-desc">Cold outreach that actually gets replies</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r2" onclick="goToFeature('/portfolio')">
+        <div class="tool-ico" style="background:#fdf4ff">🌐</div>
+        <div class="tool-info"><div class="tool-name">Portfolio Builder</div><div class="tool-desc">No-code portfolio in minutes</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r3" onclick="goToFeature('/learn')">
+        <div class="tool-ico" style="background:#fff7ed">📚</div>
+        <div class="tool-info"><div class="tool-name">Learn AI</div><div class="tool-desc">Master 12 AI domains with quizzes</div></div>
+        <span class="tool-arrow">→</span>
       </div>
     </div>
   </div>
 </section>
 
 <!-- COMPARE -->
-<section class="cmp-sec" id="compare">
+<section class="cmp-sec" id="compare" style="background:#f8fafc">
   <div class="container">
-    <div class="tc rev"><div class="sec-lbl">Why Ambore?</div><h2 class="sec-h">Better than the alternatives</h2></div>
-    <div class="cmp-scroll rev">
+    <div class="tc rev" style="max-width:520px;margin:0 auto 12px">
+      <div class="sec-lbl">Why Ambore</div>
+      <h2 class="sec-h">Everything free, no compromises</h2>
+      <p class="sec-sub">Compare us to the competition — every core feature is free, forever.</p>
+    </div>
+    <div class="cmp-scroll rev r1">
       <table class="cmp-tbl">
-        <thead><tr><th>Feature</th><th class="col-a">✦ Ambore</th><th>ChatGPT</th><th>Teal</th><th>LinkedIn Premium</th></tr></thead>
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="col-a">✨ Ambore</th>
+            <th>JobScan</th>
+            <th>TealHQ</th>
+          </tr>
+        </thead>
         <tbody>
-          <tr><td>100% Free forever</td><td class="col-a">✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Real-time Interview AI</td><td class="col-a">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>50,000+ Job Listings</td><td class="col-a">✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
-          <tr><td>AI Resume + ATS Checker</td><td class="col-a">✅</td><td>❌</td><td>✅</td><td>❌</td></tr>
-          <tr><td>LinkedIn Optimizer</td><td class="col-a">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Portfolio Builder</td><td class="col-a">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>Learn AI (12 domains)</td><td class="col-a">✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
-          <tr><td>No account needed to start</td><td class="col-a">✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+          <tr><td>ATS Score Checker</td><td class="col-a">✅ Free</td><td>5 free/mo</td><td>✅ Free</td></tr>
+          <tr><td>AI Resume Tailor</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
+          <tr><td>Job Portal (50k+ jobs)</td><td class="col-a">✅ Free</td><td>❌ None</td><td>Limited</td></tr>
+          <tr><td>AI Mock Interview</td><td class="col-a">✅ Free</td><td>❌ None</td><td>💰 Paid</td></tr>
+          <tr><td>Cover Letter Generator</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
+          <tr><td>LinkedIn Optimizer</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
+          <tr><td>No credit card required</td><td class="col-a">✅ Yes</td><td>❌ Required</td><td>❌ Required</td></tr>
+          <tr><td>Monthly cost</td><td class="col-a" style="font-weight:900">$0</td><td>$39.95/mo</td><td>$29/mo</td></tr>
         </tbody>
       </table>
     </div>
-    <p class="cmp-cap">All 14 features. Always free. No credit card.</p>
-    <div style="text-align:center;margin-top:18px"><button class="btn-orange" onclick="openAuth('signup')" style="min-height:44px;padding:12px 28px;font-size:.92rem">Get Started Free →</button></div>
+    <p style="text-align:center;font-size:.78rem;color:var(--text-s);margin-top:14px" class="rev">Competitor pricing based on public plans as of 2026.</p>
   </div>
 </section>
 
 <!-- TESTIMONIALS -->
 <section class="test-sec" id="testimonials">
-  <div class="container" style="max-width:1100px">
-    <div class="tc rev"><div class="sec-lbl">Success Stories</div><h2 class="sec-h">Real people. Real results.</h2><p class="sec-sub">Join thousands who landed interviews and offers using Ambore.</p></div>
+  <div class="container">
+    <div class="tc rev">
+      <div class="sec-lbl">Real Results</div>
+      <h2 class="sec-h">Trusted by 12,000+ job seekers</h2>
+    </div>
     <div class="tf-pills">
-      <button class="tf-pill active" onclick="filterT('all',this)">All</button>
+      <button class="tf-pill active" onclick="filterT('all',this)">All Stories</button>
       <button class="tf-pill" onclick="filterT('resume',this)">Resume</button>
-      <button class="tf-pill" onclick="filterT('interview',this)">Interview AI</button>
-      <button class="tf-pill" onclick="filterT('jobs',this)">Job Portal</button>
-      <button class="tf-pill" onclick="filterT('linkedin',this)">LinkedIn</button>
-      <button class="tf-pill" onclick="filterT('ats',this)">ATS Score</button>
+      <button class="tf-pill" onclick="filterT('interview',this)">Interview</button>
+      <button class="tf-pill" onclick="filterT('jobs',this)">Jobs</button>
     </div>
     <div class="tg">
-      <div class="tc-card rev" data-tool="resume"><div class="tc-tag" style="background:rgba(34,197,94,.12);color:#4ade80;border:1px solid rgba(34,197,94,.25)">✅ Got the job</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"I applied to 12 roles with my old resume and heard nothing. Used Ambore's Resume Builder + ATS checker, rewrote for each JD — <strong>got 4 interviews in 2 weeks.</strong>"</div><div class="tc-auth"><div class="tc-av" style="background:rgba(59,130,246,.2);color:#60a5fa">P</div><div><div class="tc-name">Priya M.</div><div class="tc-role">Software Engineer · NYC</div></div></div></div>
-      <div class="tc-card rev r1" data-tool="interview"><div class="tc-tag" style="background:rgba(139,92,246,.12);color:#a78bfa;border:1px solid rgba(139,92,246,.25)">🎙 Interview win</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"The Interview AI is insane. I practiced 3 nights before my Google loop and the real questions were almost identical. <strong>Signed my offer letter yesterday.</strong>"</div><div class="tc-auth"><div class="tc-av" style="background:rgba(139,92,246,.2);color:#a78bfa">J</div><div><div class="tc-name">Jason T.</div><div class="tc-role">Senior SWE · San Francisco</div></div></div></div>
-      <div class="tc-card rev r2" data-tool="ats"><div class="tc-tag" style="background:rgba(245,158,11,.12);color:#fbbf24;border:1px solid rgba(245,158,11,.25)">🎯 ATS unlocked</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"My ATS score was 34% before. After adding the missing keywords Ambore flagged, it jumped to 81%. <strong>First recruiter call came 3 days later.</strong>"</div><div class="tc-auth"><div class="tc-av" style="background:rgba(245,158,11,.2);color:#fbbf24">A</div><div><div class="tc-name">Aisha K.</div><div class="tc-role">Product Manager · Austin</div></div></div></div>
-      <div class="tc-card rev r1" data-tool="resume"><div class="tc-tag" style="background:rgba(236,72,153,.12);color:#f9a8d4;border:1px solid rgba(236,72,153,.25)">📝 Cover letter magic</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"Writing cover letters used to take an hour each. Now it's 2 minutes. <strong>Recruiters comment on how tailored my letters are.</strong> They have no idea 😂"</div><div class="tc-auth"><div class="tc-av" style="background:rgba(236,72,153,.2);color:#f9a8d4">M</div><div><div class="tc-name">Marcus L.</div><div class="tc-role">UX Designer · Chicago</div></div></div></div>
-      <div class="tc-card rev r2" data-tool="jobs"><div class="tc-tag" style="background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.25)">💼 Dream job found</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"Found my current role through the Job Portal — 2 hours old on the front page. Applied, tailored my resume in Ambore, <strong>hired in 12 days.</strong>"</div><div class="tc-auth"><div class="tc-av" style="background:rgba(16,185,129,.2);color:#34d399">S</div><div><div class="tc-name">Sofia R.</div><div class="tc-role">Data Analyst · Seattle</div></div></div></div>
-      <div class="tc-card rev r3" data-tool="linkedin"><div class="tc-tag" style="background:rgba(14,165,233,.12);color:#38bdf8;border:1px solid rgba(14,165,233,.25)">🔗 LinkedIn boost</div><div class="tc-stars">⭐⭐⭐⭐⭐</div><div class="tc-body">"Rewrote my LinkedIn with the optimizer. Views went from ~20/week to <strong>200+ within a month.</strong> Two recruiters reached out with roles I wasn't applying for."</div><div class="tc-auth"><div class="tc-av" style="background:rgba(14,165,233,.2);color:#38bdf8">D</div><div><div class="tc-name">David N.</div><div class="tc-role">DevOps Engineer · Remote</div></div></div></div>
-    </div>
-    <div class="sp-nums">
-      <div class="sp-n rev"><div class="sp-nv">12,000+</div><div class="sp-nl">Active Users</div></div>
-      <div class="sp-n rev r1"><div class="sp-nv">87%</div><div class="sp-nl">Got Interviews in 2 Weeks</div></div>
-      <div class="sp-n rev r2"><div class="sp-nv">4.9/5</div><div class="sp-nl">Average Rating</div></div>
-      <div class="sp-n rev r3"><div class="sp-nv">50,000+</div><div class="sp-nl">Resumes Tailored</div></div>
-    </div>
-  </div>
-</section>
-
-<!-- BEFORE / AFTER -->
-<section style="padding:72px 0;border-top:1px solid var(--border)">
-  <div class="container">
-    <div class="tc rev" style="max-width:580px;margin:0 auto 48px">
-      <div class="sec-lbl">The Ambore Difference</div>
-      <h2 class="sec-h">From generic resume<br>to interview-ready</h2>
-      <p class="sec-sub" style="margin:0 auto">Here's what AI optimization actually does — using a real before/after example.</p>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:980px;margin:0 auto" class="ba-grid-2">
-      <!-- Before -->
-      <div class="ba-card rev">
-        <div class="ba-header ba-bad">
-          <span>❌ Before — Generic Resume</span>
-          <span class="ba-score" style="background:rgba(239,68,68,.15);color:#f87171;border-color:rgba(239,68,68,.3)">ATS: 34%</span>
-        </div>
-        <div class="ba-body">
-          <div class="ba-sec-title">Work Experience</div>
-          <div class="ba-bullet bad-bullet">• Responsible for managing team projects</div>
-          <div class="ba-bullet bad-bullet">• Worked on various software development tasks</div>
-          <div class="ba-bullet bad-bullet">• Helped with product launches and coordination</div>
-          <div class="ba-bullet bad-bullet">• Participated in meetings and gave updates</div>
-          <div class="ba-sec-title" style="margin-top:14px">Skills</div>
-          <div class="ba-tags">
-            <span class="ba-tag missing">Python ✗</span>
-            <span class="ba-tag missing">Docker ✗</span>
-            <span class="ba-tag missing">AWS ✗</span>
-            <span class="ba-tag ok">JavaScript</span>
-            <span class="ba-tag missing">SQL ✗</span>
-          </div>
-          <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px">
-            <div class="ba-flag bad">⚠️ No quantified achievements</div>
-            <div class="ba-flag bad">⚠️ Missing 8 required keywords</div>
-            <div class="ba-flag bad">⚠️ Weak, passive action verbs</div>
-            <div class="ba-flag bad">⚠️ Likely auto-rejected by ATS</div>
-          </div>
-        </div>
+      <div class="tc-card rev r1" data-tool="resume">
+        <div><span class="tc-tag" style="background:#eff6ff;color:var(--blue)">✂️ Resume Tailor</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">I uploaded my resume and pasted a job description. <strong>In 45 seconds I had a completely rewritten resume</strong> with all the right keywords. Got a callback from Google within 3 days.</div>
+        <div class="tc-auth"><div class="tc-av" style="background:var(--blue)">A</div><div><div class="tc-name">Alex M.</div><div class="tc-role">Software Engineer → Google</div></div></div>
       </div>
-      <!-- After -->
-      <div class="ba-card rev r1">
-        <div class="ba-header ba-good">
-          <span>✅ After — AI Optimized by Ambore</span>
-          <span class="ba-score" style="background:rgba(34,197,94,.15);color:#4ade80;border-color:rgba(34,197,94,.3)">ATS: 91%</span>
-        </div>
-        <div class="ba-body">
-          <div class="ba-sec-title">Work Experience</div>
-          <div class="ba-bullet good-bullet">• Led cross-functional team of 8, shipping 3 features 2 weeks ahead of schedule</div>
-          <div class="ba-bullet good-bullet">• Engineered <span class="kw-hl">Python/Docker</span> microservices, reducing API latency by <strong style="color:#fff">40%</strong></div>
-          <div class="ba-bullet good-bullet">• Owned product launches across <span class="kw-hl">AWS</span>, achieving <strong style="color:#fff">99.9% uptime</strong> SLA</div>
-          <div class="ba-bullet good-bullet">• Increased team velocity <strong style="color:#fff">35%</strong> via <span class="kw-hl">Agile/Scrum</span> implementation</div>
-          <div class="ba-sec-title" style="margin-top:14px">Skills</div>
-          <div class="ba-tags">
-            <span class="ba-tag added">Python ✓</span>
-            <span class="ba-tag added">Docker ✓</span>
-            <span class="ba-tag added">AWS ✓</span>
-            <span class="ba-tag ok">JavaScript</span>
-            <span class="ba-tag added">SQL ✓</span>
-          </div>
-          <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px">
-            <div class="ba-flag good">✅ 4 quantified achievements added</div>
-            <div class="ba-flag good">✅ All required keywords matched</div>
-            <div class="ba-flag good">✅ Strong, active action verbs</div>
-            <div class="ba-flag good">✅ Passes ATS — gets to recruiters</div>
-          </div>
-        </div>
+      <div class="tc-card rev r2" data-tool="interview">
+        <div><span class="tc-tag" style="background:#fdf4ff;color:#7c3aed">🎙 Mock Interview</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">The mock interview tool is insane. <strong>It generated perfect STAR answers in real time</strong> as I practiced. I walked into my Amazon interview feeling completely prepared and got the offer.</div>
+        <div class="tc-auth"><div class="tc-av" style="background:#7c3aed">P</div><div><div class="tc-name">Priya S.</div><div class="tc-role">Product Manager → Amazon</div></div></div>
+      </div>
+      <div class="tc-card rev r3" data-tool="jobs">
+        <div><span class="tc-tag" style="background:#fff7ed;color:var(--orange)">💼 Job Portal</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">Found 3 perfect roles in 10 minutes that I hadn't seen on LinkedIn. <strong>Applied to all three, tailored my resume for each</strong>, and got 2 interviews within a week. Completely free!</div>
+        <div class="tc-auth"><div class="tc-av" style="background:var(--orange)">M</div><div><div class="tc-name">Marcus J.</div><div class="tc-role">Data Analyst → Stripe</div></div></div>
+      </div>
+      <div class="tc-card rev r1" data-tool="resume">
+        <div><span class="tc-tag" style="background:#eff6ff;color:var(--blue)">✂️ Resume Tailor</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">My ATS score went from 43% to 89% after tailoring. <strong>I had been applying for 6 months with no callbacks</strong> — within 2 weeks of using Ambore I had 4 interviews lined up.</div>
+        <div class="tc-auth"><div class="tc-av" style="background:#16a34a">L</div><div><div class="tc-name">Lena K.</div><div class="tc-role">Marketing Manager → Notion</div></div></div>
+      </div>
+      <div class="tc-card rev r2" data-tool="interview">
+        <div><span class="tc-tag" style="background:#fdf4ff;color:#7c3aed">🎙 Mock Interview</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">I used this literally during my phone screen — <strong>the AI gave me a perfect STAR answer for a question I wasn't expecting</strong>. The interviewer complimented how well-structured my answers were.</div>
+        <div class="tc-auth"><div class="tc-av" style="background:#f59e0b">R</div><div><div class="tc-name">Raj T.</div><div class="tc-role">Backend Eng → Cloudflare</div></div></div>
+      </div>
+      <div class="tc-card rev r3" data-tool="resume">
+        <div><span class="tc-tag" style="background:#f0fdf4;color:#16a34a">🎯 ATS Score</span></div>
+        <div class="tc-stars">★★★★★</div>
+        <div class="tc-body">I had no idea my resume was being rejected by ATS bots before a human saw it. <strong>Ambore showed me exactly what was wrong</strong> and the AI fixed it all in one click. Life-changing tool.</div>
+        <div class="tc-auth"><div class="tc-av" style="background:#ef4444">S</div><div><div class="tc-name">Sofia B.</div><div class="tc-role">UX Designer → Figma</div></div></div>
       </div>
     </div>
-    <div style="text-align:center;margin-top:32px" class="rev">
-      <button class="btn-orange" onclick="openAuth('signup')" style="min-height:50px;padding:14px 36px;font-size:.95rem">✂️ Optimize My Resume Now — Free →</button>
-      <p style="font-size:.76rem;color:rgba(255,255,255,.3);margin-top:10px">No credit card · Results in 60 seconds</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px" class="rev">
+      <div style="text-align:center;padding:20px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)"><div style="font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1.2;margin-bottom:4px">12,000+</div><div style="font-size:.78rem;color:var(--text-m);font-weight:500">Active Users</div></div>
+      <div style="text-align:center;padding:20px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)"><div style="font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1.2;margin-bottom:4px">4.9★</div><div style="font-size:.78rem;color:var(--text-m);font-weight:500">Average Rating</div></div>
+      <div style="text-align:center;padding:20px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)"><div style="font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1.2;margin-bottom:4px">87%</div><div style="font-size:.78rem;color:var(--text-m);font-weight:500">Interview Rate</div></div>
+      <div style="text-align:center;padding:20px;background:#fff;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow)"><div style="font-size:1.8rem;font-weight:900;color:var(--blue);line-height:1.2;margin-bottom:4px">60s</div><div style="font-size:.78rem;color:var(--text-m);font-weight:500">Avg. Tailor Time</div></div>
     </div>
   </div>
 </section>
 
 <!-- PRICING -->
-<section id="pricing" style="padding:80px 0;border-top:1px solid var(--border);background:rgba(255,255,255,.01)">
+<section id="pricing" style="background:#fff">
   <div class="container">
-    <div class="tc rev" style="max-width:560px;margin:0 auto 48px">
+    <div class="tc rev" style="max-width:520px;margin:0 auto 48px">
       <div class="sec-lbl">Simple Pricing</div>
-      <h2 class="sec-h">Powerful tools,<br>permanently free</h2>
-      <p class="sec-sub" style="margin:0 auto">Core career tools are free forever. Pro features coming for power users — no surprise charges.</p>
+      <h2 class="sec-h">Powerful tools, permanently free</h2>
+      <p class="sec-sub">Core career tools are free forever. Pro for power users — no surprise charges.</p>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;max-width:820px;margin:0 auto" class="pricing-grid">
-      <!-- Free Plan -->
-      <div style="background:#111827;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:32px 28px" class="rev">
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:rgba(255,255,255,.4);margin-bottom:10px">Free — Forever</div>
-        <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$0</div>
-        <div style="font-size:.82rem;color:rgba(255,255,255,.35);margin-bottom:24px">No credit card · No trial</div>
-        <button class="btn-orange" onclick="ctaAction()" id="pricing-cta-btn" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px">Start Free →</button>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:4px">What's included</div>
-          <div class="price-feat">✅ AI Resume Tailor (unlimited)</div>
-          <div class="price-feat">✅ Resume Builder from scratch</div>
-          <div class="price-feat">✅ 50,000+ live job listings</div>
-          <div class="price-feat">✅ AI Mock Interview Practice</div>
-          <div class="price-feat">✅ Cover Letter Generator</div>
-          <div class="price-feat">✅ ATS Score Checker</div>
-          <div class="price-feat">✅ LinkedIn Optimizer</div>
-          <div class="price-feat">✅ Email Generator</div>
-          <div class="price-feat">✅ Career Score Dashboard</div>
-          <div class="price-feat">✅ All 14 AI tools</div>
+    <div class="pricing-grid rev">
+      <div class="price-card">
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-s);margin-bottom:10px">Free — Forever</div>
+        <div style="font-size:3rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">$0</div>
+        <div style="font-size:.83rem;color:var(--text-s);margin-bottom:24px">No credit card · No trial limits</div>
+        <button class="btn-hero-p" onclick="ctaAction()" id="pricing-cta-btn" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px;justify-content:center">Start Free →</button>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);margin-bottom:4px">What's included</div>
+          <div class="price-feat"><span class="price-ck">✓</span> AI Resume Tailor (unlimited)</div>
+          <div class="price-feat"><span class="price-ck">✓</span> 50,000+ live job listings</div>
+          <div class="price-feat"><span class="price-ck">✓</span> AI Mock Interview Practice</div>
+          <div class="price-feat"><span class="price-ck">✓</span> ATS Score Checker</div>
+          <div class="price-feat"><span class="price-ck">✓</span> Cover Letter Generator</div>
+          <div class="price-feat"><span class="price-ck">✓</span> LinkedIn Optimizer</div>
+          <div class="price-feat"><span class="price-ck">✓</span> Resume Builder</div>
+          <div class="price-feat"><span class="price-ck">✓</span> Career Score Dashboard</div>
+          <div class="price-feat"><span class="price-ck">✓</span> All 14 AI tools</div>
         </div>
       </div>
-      <!-- Pro Plan (Coming Soon) -->
-      <div style="background:linear-gradient(135deg,rgba(79,70,229,.12),rgba(124,58,237,.08));border:2px solid rgba(79,70,229,.4);border-radius:20px;padding:32px 28px;position:relative" class="rev r1">
+      <div class="price-card featured rev r1" style="position:relative">
         <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#4F46E5,#7C3AED);color:#fff;font-size:.65rem;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap;letter-spacing:.08em;text-transform:uppercase">Coming Soon</div>
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#a5b4fc;margin-bottom:10px">Ambore Pro</div>
         <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$9<span style="font-size:1rem;font-weight:500;color:rgba(255,255,255,.4)">/mo</span></div>
-        <div style="font-size:.82rem;color:rgba(255,255,255,.35);margin-bottom:24px">Early access · Cancel anytime</div>
-        <button onclick="openAuth('signup');track('pro_waitlist_clicked','index',{})" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:rgba(79,70,229,.2);color:#a5b4fc;border:1px solid rgba(79,70,229,.4);border-radius:10px;cursor:pointer;transition:all .2s;margin-bottom:24px" onmouseover="this.style.background='rgba(79,70,229,.35)'" onmouseout="this.style.background='rgba(79,70,229,.2)'">Join Waitlist →</button>
-        <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:4px">Everything in Free, plus</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ Priority AI processing (instant)</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ Unlimited resume versions saved</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ 1-click apply (auto-tailor + send)</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ AI cover letter auto-generation</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ Job match alerts (real-time)</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ LinkedIn outreach AI writer</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ Salary negotiation coach</div>
-          <div class="price-feat" style="color:#a5b4fc">⚡ Priority email support</div>
+        <div style="font-size:.83rem;color:rgba(255,255,255,.35);margin-bottom:24px">Early access · Cancel anytime</div>
+        <button onclick="openAuth('signup');track('pro_waitlist_clicked','index',{})" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:rgba(79,70,229,.3);color:#a5b4fc;border:1px solid rgba(79,70,229,.5);border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:24px" onmouseover="this.style.background='rgba(79,70,229,.45)'" onmouseout="this.style.background='rgba(79,70,229,.3)'">Join Waitlist →</button>
+        <div style="display:flex;flex-direction:column;gap:9px">
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:4px">Everything in Free, plus</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Priority AI processing (instant)</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Unlimited resume versions saved</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> 1-click apply (auto-tailor + send)</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Job match alerts (real-time)</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> LinkedIn outreach AI writer</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Salary negotiation coach</div>
+          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Priority support</div>
         </div>
       </div>
     </div>
-    <p style="text-align:center;font-size:.78rem;color:rgba(255,255,255,.25);margin-top:20px" class="rev">Core features are free forever. Pro is optional — never required to get value from Ambore.</p>
   </div>
 </section>
-<style>
-.price-feat{font-size:.83rem;color:rgba(255,255,255,.65);display:flex;align-items:flex-start;gap:6px;line-height:1.5}
-@media(max-width:640px){.pricing-grid{grid-template-columns:1fr!important}}
-</style>
+<style>.price-feat.dark{color:rgba(255,255,255,.65)}.price-ck.dark{color:#4ade80}</style>
 
 <!-- FAQ -->
 <section id="faq" class="faq-sec">
   <div class="container" style="max-width:780px">
     <div class="tc rev"><div class="sec-lbl">FAQ</div><h2 class="sec-h">Common questions</h2></div>
-    <div class="faq-list">
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is Ambore?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore is a free, all-in-one AI career platform with 14 tools: a Job Portal (50,000+ hourly-updated jobs from 97 companies), AI Resume Tailor, Cover Letter Generator, Email Generator, LinkedIn Optimizer, Portfolio Builder, and an AI Interview Co-Pilot for real-time answers during interviews.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Where do the job listings come from?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Jobs are automatically scraped from 10 sources: LinkedIn, Indeed, USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour across 97 top companies.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How does the AI Resume Tailor work?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Upload your existing resume and paste the job description. The AI analyzes both, rewrites your resume to highlight relevant skills, match keywords, and optimize formatting for ATS systems. You get a tailored resume in seconds.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is the Interview AI detectable?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore runs entirely in your browser. There are no extensions, no screen sharing, and no external indicators. It works with Zoom, Google Meet, Teams, and in-person interviews.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is my data private? Does it cost anything?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Everything is free — no credit card, no trial limits. All personal data is stored locally in your browser's localStorage. Nothing is sent to external servers beyond the AI API calls needed to generate answers.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is my IP address tracked?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">We use Google Analytics with IP anonymization. Your IP is never stored or logged by us. We do not sell, share, or store IP addresses.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What happens if Ambore gets hacked?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Nothing happens to you. Ambore stores zero user data on servers — your account and all content live entirely in your own browser's localStorage. There is no central database to steal.</div></div></div>
+    <div class="faq-list rev r1">
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is Ambore?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore is a free, all-in-one AI career platform with 14 tools: a Job Portal (50,000+ hourly-updated jobs from 97 companies), AI Resume Tailor, Cover Letter Generator, Email Generator, LinkedIn Optimizer, Portfolio Builder, and an AI Mock Interview tool for practicing answers.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it really free?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Yes, completely free. No credit card, no trial limits, no paywalls on core features. A Pro plan is coming for power users who want priority AI and advanced features, but the free plan gives you everything you need to land a job.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How does the AI Resume Tailor work?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Upload your existing resume and paste the job description. The AI analyzes both, rewrites your resume to highlight relevant skills, match keywords, and optimize formatting for ATS systems. You get a tailored resume in under 60 seconds.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Where do the job listings come from?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Jobs are automatically sourced from LinkedIn, Indeed, USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour across 97 top companies.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is my data private and secure?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Your account and data live entirely in your browser's localStorage — there is no central database. We use Google Analytics with IP anonymization. Your password is SHA-256 hashed before storing. We never sell your data.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How secure is my password?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Your password is hashed with SHA-256 before saving — the actual password is never stored anywhere, only a fingerprint of it. Even with localStorage access, your password cannot be recovered.</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- EMAIL CAPTURE -->
-<section class="email-sec">
+<!-- CTA SECTION -->
+<section class="cta-sec">
   <div class="container tc">
-    <div class="rev"><div class="sec-lbl">Get Started Free</div><h2 class="sec-h">Your optimized resume<br>is one click away.</h2><p class="sec-sub" style="margin:0 auto">Join 12,000+ job seekers — free AI resume optimizer, no credit card required.</p></div>
-    <form class="email-form" onsubmit="handleEmailSub(event)">
+    <div class="rev"><div class="sec-lbl" style="background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)">Get Started Free</div><h2 class="sec-h">Your optimized resume<br>is one click away.</h2><p class="sec-sub">Join 12,000+ job seekers — free AI resume optimizer, no credit card required.</p></div>
+    <form class="email-form rev r1" onsubmit="handleEmailSub(event)">
       <input type="email" id="ec-email" class="email-in" placeholder="Enter your email address..." required/>
       <button type="submit" class="email-sub">Get Started Free →</button>
     </form>
-    <p class="email-note">No credit card · No trial limits · 14 free AI tools</p>
-    <div style="margin-top:22px;padding:16px 20px;background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.2);border-radius:12px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center">
-      <span style="font-size:.82rem;color:rgba(255,255,255,.65)">🎁 <strong style="color:#fff">Refer 3 friends</strong> → unlock priority AI access + advanced features</span>
-      <button onclick="doReferral()" style="padding:7px 16px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:.79rem;font-weight:700;cursor:pointer;white-space:nowrap">Share Ambore →</button>
+    <p class="email-note rev r2">No credit card · No trial limits · 14 free AI tools</p>
+    <div style="margin-top:22px;padding:16px 20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center" class="rev r2">
+      <span style="font-size:.84rem;color:rgba(255,255,255,.6)">🎁 <strong style="color:#fff">Refer 3 friends</strong> → unlock priority AI access</span>
+      <button onclick="doReferral()" style="padding:7px 16px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap">Share Ambore →</button>
     </div>
-    <p class="email-ok" id="email-ok">✅ You're in! <a href="javascript:void(0)" onclick="openAuth('signup')" style="color:var(--blue);font-weight:600">Create your account →</a></p>
+    <p class="email-ok" id="email-ok">✅ You're in! <a href="javascript:void(0)" onclick="openAuth('signup')" style="color:#93c5fd;font-weight:600">Create your account →</a></p>
   </div>
 </section>
 
@@ -1057,32 +926,30 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
   <div class="container">
     <div class="foot-inner">
       <div class="foot-brand">
-        <div class="logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore</div>
+        <div class="logo"><img src="/logo.png" class="logo-icon" alt="Ambore" style="height:26px;width:26px;object-fit:contain;flex-shrink:0">Ambore</div>
         <p>Your all-in-one AI career platform — jobs, resumes, and interview prep, all free.</p>
         <div class="soc-icons">
-          <a href="https://www.linkedin.com/in/nikhil-ambore" target="_blank" rel="noopener" style="width:32px;height:32px;border-radius:8px;background:rgba(10,102,194,.15);border:1px solid rgba(10,102,194,.3);display:flex;align-items:center;justify-content:center;color:rgba(88,166,255,.8);transition:all .2s" onmouseover="this.style.background='rgba(10,102,194,.3)'" onmouseout="this.style.background='rgba(10,102,194,.15)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
-          <a href="https://www.instagram.com/ambore_org?igsh=MTBrandjNGdvNzkzcg%3D%3D&utm_source=qr" target="_blank" rel="noopener" style="width:32px;height:32px;border-radius:8px;background:rgba(225,48,108,.12);border:1px solid rgba(225,48,108,.25);display:flex;align-items:center;justify-content:center;color:rgba(240,100,150,.8);transition:all .2s" onmouseover="this.style.background='rgba(225,48,108,.25)'" onmouseout="this.style.background='rgba(225,48,108,.12)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+          <a href="https://www.linkedin.com/in/nikhil-ambore" target="_blank" rel="noopener" style="width:32px;height:32px;border-radius:8px;background:rgba(10,102,194,.2);border:1px solid rgba(10,102,194,.3);display:flex;align-items:center;justify-content:center;color:rgba(88,166,255,.8);transition:all .2s" onmouseover="this.style.background='rgba(10,102,194,.35)'" onmouseout="this.style.background='rgba(10,102,194,.2)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6zM2 9h4v12H2z"/><circle cx="4" cy="4" r="2"/></svg></a>
+          <a href="https://www.instagram.com/ambore_org?igsh=MTBrandjNGdvNzkzcg%3D%3D&utm_source=qr" target="_blank" rel="noopener" style="width:32px;height:32px;border-radius:8px;background:rgba(225,48,108,.15);border:1px solid rgba(225,48,108,.25);display:flex;align-items:center;justify-content:center;color:rgba(240,100,150,.8);transition:all .2s" onmouseover="this.style.background='rgba(225,48,108,.28)'" onmouseout="this.style.background='rgba(225,48,108,.15)'"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
         </div>
       </div>
       <div class="foot-links">
         <div class="foot-col">
           <h5>Tools</h5>
-          <a href="javascript:void(0)" onclick="goToFeature('/jobs')">Job Portal</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/resume')">AI Resume Tailor</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/resume-builder')">Resume Builder</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/cover-letter')">Cover Letter</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/email')">Email Generator</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/portfolio')">Portfolio Builder</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/interview')">AI Mock Interview Practice</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/ats-score')">ATS Score</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/learn')">Learn AI</a>
-          <a href="javascript:void(0)" onclick="goToFeature('/dashboard')">Dashboard</a>
+          <a onclick="goToFeature('/jobs')">Job Portal</a>
+          <a onclick="goToFeature('/resume')">AI Resume Tailor</a>
+          <a onclick="goToFeature('/resume-builder')">Resume Builder</a>
+          <a onclick="goToFeature('/cover-letter')">Cover Letter</a>
+          <a onclick="goToFeature('/email')">Email Generator</a>
+          <a onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
+          <a onclick="goToFeature('/interview')">AI Mock Interview</a>
+          <a onclick="goToFeature('/ats-score')">ATS Score</a>
+          <a onclick="goToFeature('/dashboard')">Dashboard</a>
         </div>
         <div class="foot-col" id="foot-acct">
           <h5>Account</h5>
-          <a href="javascript:void(0)" onclick="openAuth('login')">Log In</a>
-          <a href="javascript:void(0)" onclick="openAuth('signup')">Sign Up Free</a>
+          <a onclick="openAuth('login')">Log In</a>
+          <a onclick="openAuth('signup')">Sign Up Free</a>
         </div>
         <div class="foot-col">
           <h5>Connect</h5>
@@ -1093,7 +960,7 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       </div>
     </div>
     <div class="foot-bot">
-      <p>&copy; 2026 Ambore. All rights reserved.</p>
+      <p>© 2026 Ambore. All rights reserved.</p>
       <div class="foot-bot-lnks"><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a></div>
     </div>
   </div>
@@ -1101,18 +968,18 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 
 <!-- MOBILE BOTTOM NAV -->
 <div class="mob-bnav">
-  <button onclick="goToFeature('/jobs')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></button>
-  <button onclick="goToFeature('/resume')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></button>
-  <button onclick="goToFeature('/resume-builder')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Optimize</span></button>
-  <button onclick="toggleMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>More</span></button>
+  <button onclick="goToFeature('/jobs')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></button>
+  <button onclick="goToFeature('/resume')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></button>
+  <button onclick="goToFeature('/resume-builder')"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg><span>Optimize</span></button>
+  <button onclick="toggleMenu()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg><span>More</span></button>
 </div>
 
 <!-- SLIDE BANNER -->
 <div class="slide-ban hidden" id="slide-ban">
   <button class="sban-x" onclick="dismissSlide()">✕</button>
-  <div style="font-size:.83rem;line-height:1.5">💬 <strong>Join 1,000+ job seekers</strong> — free tips &amp; resume help</div>
+  <div style="font-size:.83rem;line-height:1.5;color:var(--text)">💬 <strong>Join 1,000+ job seekers</strong> — free tips &amp; resume help</div>
   <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" class="sban-btn">Join WhatsApp →</a>
-  <div style="margin-top:8px;font-size:.83rem;line-height:1.5">🚀 <strong>Struggling with interviews?</strong> Get 1:1 career help</div>
+  <div style="margin-top:6px;font-size:.83rem;line-height:1.5;color:var(--text)">🚀 <strong>Struggling with interviews?</strong> Get 1:1 career help</div>
   <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" class="sban-btn sban-btn-a">Apply Free →</a>
 </div>
 
@@ -1120,14 +987,13 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
 <div class="auth-ov" id="auth-ov">
   <div class="auth-mod">
     <div class="auth-head">
-      <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore</div>
+      <div class="auth-logo"><img src="/logo.png" class="logo-icon" alt="Ambore" style="height:26px;width:26px;object-fit:contain;flex-shrink:0">Ambore</div>
       <button class="auth-x" onclick="closeAuth()">&times;</button>
     </div>
     <div class="auth-tabs" id="auth-tabs">
       <div class="auth-tab active" data-tab="login" onclick="switchTab('login')">Log In</div>
       <div class="auth-tab" data-tab="signup" onclick="switchTab('signup')">Sign Up</div>
     </div>
-    <!-- Login -->
     <div class="auth-pan active" id="pan-login">
       <div class="auth-err" id="err-login"></div>
       <div class="auth-field"><label>Email</label><input type="email" id="li-em" placeholder="you@example.com"/></div>
@@ -1135,14 +1001,13 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       <button class="auth-sub" onclick="doLogin(event)">Log In →</button>
       <div class="auth-div">or</div>
       <button class="g-btn" onclick="doGoogle(event)" type="button"><svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844a4.14 4.14 0 0 1-1.796 2.716v2.259h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.184l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332A8.997 8.997 0 0 0 9 18z"/><path fill="#FBBC05" d="M3.964 10.706A5.41 5.41 0 0 1 3.682 9c0-.593.102-1.17.282-1.706V4.962H.957A8.996 8.996 0 0 0 0 9c0 1.452.348 2.827.957 4.038l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0A8.997 8.997 0 0 0 .957 4.962L3.964 7.294C4.672 5.163 6.656 3.58 9 3.58z"/></svg>Continue with Google</button>
-      <div class="auth-sw"><a onclick="switchTab('forgot')" style="color:rgba(255,255,255,.4);font-weight:400;cursor:pointer">Forgot password?</a></div>
+      <div class="auth-sw"><a onclick="switchTab('forgot')" style="color:var(--text-s);font-weight:400;cursor:pointer">Forgot password?</a></div>
       <div class="auth-sw">No account? <a onclick="switchTab('signup')">Sign up free</a></div>
     </div>
-    <!-- Signup -->
     <div class="auth-pan" id="pan-signup">
       <div style="text-align:center;margin-bottom:14px">
-        <p style="font-size:.84rem;font-weight:700;color:#fff;margin-bottom:3px">Create your free account</p>
-        <p style="font-size:.75rem;color:rgba(255,255,255,.4)">No credit card required · Takes 30 seconds</p>
+        <p style="font-size:.86rem;font-weight:700;color:var(--text);margin-bottom:3px">Create your free account</p>
+        <p style="font-size:.76rem;color:var(--text-s)">No credit card required · Takes 30 seconds</p>
       </div>
       <div class="auth-err" id="err-signup"></div>
       <div class="auth-div" style="margin-top:0">continue with</div>
@@ -1152,14 +1017,13 @@ footer{border-top:1px solid var(--border);padding:52px 0 32px;background:#030712
       <div class="auth-field"><label>Email</label><input type="email" id="su-em" placeholder="you@example.com" maxlength="254" autocomplete="email"/></div>
       <div class="auth-field"><label>Password</label><input type="password" id="su-pw" placeholder="Min 8 characters" maxlength="128" autocomplete="new-password"/></div>
       <div class="auth-field"><label>Confirm Password</label><input type="password" id="su-pw2" placeholder="Repeat password" maxlength="128" autocomplete="new-password"/></div>
-      <button class="auth-sub" onclick="doSignup(event)" style="background:var(--orange)">Create Free Account →</button>
-      <p style="text-align:center;font-size:.72rem;color:rgba(255,255,255,.3);margin-top:10px">🔒 We never sell your data. Ever.</p>
+      <button class="auth-sub" onclick="doSignup(event)" style="background:var(--blue)">Create Free Account →</button>
+      <p style="text-align:center;font-size:.73rem;color:var(--text-s);margin-top:10px">🔒 We never sell your data. Ever.</p>
       <div class="auth-sw">Already have account? <a onclick="switchTab('login')">Log in</a></div>
     </div>
-    <!-- Forgot -->
     <div class="auth-pan" id="pan-forgot">
       <div class="auth-err" id="err-forgot"></div>
-      <p style="color:rgba(255,255,255,.5);font-size:.82rem;margin-bottom:13px">Enter your email and set a new password.</p>
+      <p style="color:var(--text-m);font-size:.84rem;margin-bottom:13px">Enter your email and set a new password.</p>
       <div class="auth-field"><label>Email</label><input type="email" id="fp-em" placeholder="you@example.com"/></div>
       <div class="auth-field"><label>New Password</label><input type="password" id="fp-pw" placeholder="Min 6 characters"/></div>
       <div class="auth-field"><label>Confirm New Password</label><input type="password" id="fp-pw2" placeholder="Repeat new password"/></div>
