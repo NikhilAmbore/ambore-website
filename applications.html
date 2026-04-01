@@ -7,18 +7,18 @@
 <link rel="icon" href="/logo.png"/>
 <script src="/supabase-sync.js"></script>
 <style>
-:root{--bg:#07070f;--card:#0f0f1e;--border:rgba(255,255,255,.08);--blue:#2563EB;--grad:linear-gradient(135deg,#4F46E5,#7C3AED);--orange:#f97316;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--slate:rgba(255,255,255,.5)}
+:root{--bg:#f8fafc;--card:#fff;--border:#E2E8F0;--blue:#2563EB;--grad:linear-gradient(135deg,#2563EB,#1D4ED8);--orange:#f97316;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--slate:#64748B}
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-left:72px}
+body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif;min-height:100vh;padding-left:72px}
 @media(max-width:768px){body{padding-left:0}}
 
 /* Sidebar (same as tool pages) */
-.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200}
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200}
 .sb-logo{width:42px;height:42px;background:transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity .15s}
 .sb-logo:hover{opacity:.85}
 .sb-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 8px}
-.sb-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;text-decoration:none;color:rgba(255,255,255,.4);font-size:.58rem;font-weight:600;cursor:pointer;border:none;background:none;width:100%;transition:all .15s;text-align:center;line-height:1.2}
-.sb-item:hover{background:rgba(255,255,255,.06);color:rgba(255,255,255,.8)}
+.sb-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;text-decoration:none;color:#64748B;font-size:.58rem;font-weight:600;cursor:pointer;border:none;background:none;width:100%;transition:all .15s;text-align:center;line-height:1.2}
+.sb-item:hover{background:#E2E8F0;color:#CBD5E1}
 .sb-item.active{background:rgba(79,70,229,.15);color:#818CF8}
 .sb-item svg{flex-shrink:0}
 .sb-logout{color:rgba(239,68,68,.6)!important}
@@ -28,19 +28,19 @@ body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif
 /* Main */
 .main{padding:28px 32px;max-width:1100px}
 .page-header{margin-bottom:28px}
-.page-title{font-size:1.5rem;font-weight:900;color:#fff;margin-bottom:4px}
+.page-title{font-size:1.5rem;font-weight:900;color:#1e293b;margin-bottom:4px}
 .page-sub{font-size:.85rem;color:var(--slate)}
 
 /* Stats row */
 .stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px 20px}
-.stat-num{font-size:1.8rem;font-weight:900;color:#fff;line-height:1}
+.stat-num{font-size:1.8rem;font-weight:900;color:#1e293b;line-height:1}
 .stat-lbl{font-size:.72rem;color:var(--slate);margin-top:4px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
 
 /* Pipeline columns */
 .pipeline{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;align-items:start}
 .col-header{padding:10px 14px;border-radius:10px 10px 0 0;font-size:.75rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;display:flex;align-items:center;justify-content:space-between}
-.col-body{background:rgba(255,255,255,.02);border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;min-height:200px;padding:10px}
+.col-body{background:#F8FAFC;border:1px solid var(--border);border-top:none;border-radius:0 0 12px 12px;min-height:200px;padding:10px}
 .col-tracking .col-header{background:rgba(79,70,229,.15);color:#a5b4fc}
 .col-applied .col-header{background:rgba(37,99,235,.15);color:#60a5fa}
 .col-interview .col-header{background:rgba(245,158,11,.15);color:#fbbf24}
@@ -48,24 +48,24 @@ body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif
 
 /* Job cards */
 .app-card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:12px;margin-bottom:8px;cursor:pointer;transition:border-color .15s}
-.app-card:hover{border-color:rgba(255,255,255,.18)}
-.app-role{font-size:.84rem;font-weight:700;color:#fff;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.app-card:hover{border-color:#CBD5E1}
+.app-role{font-size:.84rem;font-weight:700;color:#1e293b;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .app-company{font-size:.72rem;color:var(--slate);margin-bottom:8px}
-.app-date{font-size:.68rem;color:rgba(255,255,255,.25)}
+.app-date{font-size:.68rem;color:#CBD5E1}
 .app-actions{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
 .app-btn{padding:3px 10px;border-radius:6px;font-size:.67rem;font-weight:700;cursor:pointer;border:1px solid;transition:all .15s}
 .btn-move{background:rgba(79,70,229,.1);border-color:rgba(79,70,229,.3);color:#a5b4fc}
 .btn-move:hover{background:rgba(79,70,229,.25)}
 .btn-reject{background:rgba(239,68,68,.08);border-color:rgba(239,68,68,.2);color:#f87171}
 .btn-reject:hover{background:rgba(239,68,68,.18)}
-.btn-open{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.1);color:rgba(255,255,255,.6)}
-.btn-open:hover{background:rgba(255,255,255,.1)}
-.empty-col{text-align:center;padding:28px 12px;color:rgba(255,255,255,.2);font-size:.78rem}
+.btn-open{background:#F8FAFC;border-color:#E2E8F0;color:#CBD5E1}
+.btn-open:hover{background:#E2E8F0}
+.empty-col{text-align:center;padding:28px 12px;color:#94A3B8;font-size:.78rem}
 
 /* Mobile dock */
-.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid var(--border);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
-.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,.4);font-size:.58rem;font-weight:600;background:none;border:none;cursor:pointer;min-width:44px;transition:color .15s}
-.md-item:hover,.md-item.active{color:#818CF8}
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.07);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:8px;text-decoration:none;color:#64748B;font-size:.58rem;font-weight:600;background:none;border:none;cursor:pointer;min-width:44px;transition:color .15s}
+.md-item:hover,.md-item.active{color:#2563EB}
 @media(max-width:768px){
   .sb{display:none}
   .main{margin-left:0;padding:16px;padding-bottom:80px}
@@ -110,7 +110,7 @@ body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif
 <div id="promo-banner" style="background:linear-gradient(90deg,#312e81,#1e3a5f);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;flex-wrap:wrap;position:relative">
   <span>&#128640; Struggling to get interviews? Get 1:1 career help &mdash; resume, LinkedIn, interview prep &amp; more</span>
   <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 14px;white-space:nowrap;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">Apply Free &rarr;</a>
-  <button onclick="this.parentElement.style.display='none'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,0.5);font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px" aria-label="Close">&times;</button>
+  <button onclick="this.parentElement.style.display='none'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#1e293b;font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px" aria-label="Close">&times;</button>
 </div>
 
 <!-- Main content -->
@@ -121,8 +121,8 @@ body{background:var(--bg);color:#f8fafc;font-family:'Inter',system-ui,sans-serif
       <p class="page-sub">Track every job from saved → applied → interview → offer</p>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <span id="data-source" style="font-size:.7rem;color:rgba(255,255,255,.25)"></span>
-      <a href="/jobs" style="padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,#4F46E5,#7C3AED);color:#fff;text-decoration:none">+ Apply Jobs</a>
+      <span id="data-source" style="font-size:.7rem;color:#CBD5E1"></span>
+      <a href="/jobs" style="padding:8px 16px;border-radius:8px;font-size:.8rem;font-weight:700;background:linear-gradient(135deg,#2563EB,#1D4ED8);color:#fff;text-decoration:none">+ Apply Jobs</a>
     </div>
   </div>
 
