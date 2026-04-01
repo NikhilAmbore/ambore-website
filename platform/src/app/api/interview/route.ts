@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
-import { openai } from '@/lib/openai';
+import { claudeChat } from '@/lib/claude';
 import prisma from '@/lib/prisma';
 
 const schema = z.object({
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     const { question, role, company, context } = parsed.data;
     const userId = session.user.id;
 
-    // Rate limit
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const count = await prisma.activityLog.count({
@@ -44,18 +43,11 @@ export async function POST(req: NextRequest) {
       ? `The candidate is interviewing for a ${role ?? 'software engineering'} role${company ? ` at ${company}` : ''}.`
       : 'The candidate is preparing for a general tech interview.';
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: `You are an expert interview coach. ${systemCtx} Generate a strong STAR-method answer that is specific, quantified, and compelling. Sound natural — not like a robot reciting a template.`,
-        },
-        {
-          role: 'user',
-          content: `Interview question: "${question}"${context ? `\n\nBackground context: ${context}` : ''}
+    const answer = await claudeChat(
+      `You are an expert interview coach. ${systemCtx} Generate a strong STAR-method answer that is specific, quantified, and compelling. Sound natural — not like a robot reciting a template.`,
+      `Interview question: "${question}"${context ? `\n\nBackground context: ${context}` : ''}
 
-Generate a complete STAR answer (Situation, Task, Action, Result). Include:
+Generate a complete STAR answer. Include:
 - Specific numbers/metrics in the Result section
 - Concrete technical or business details
 - A natural, conversational tone
@@ -68,13 +60,8 @@ Format as:
 **Result:** ...
 
 Then add one line: **Key takeaway:** (what this shows about you as a candidate)`,
-        },
-      ],
-      temperature: 0.6,
-      max_tokens: 600,
-    });
-
-    const answer = response.choices[0]?.message?.content ?? '';
+      600
+    );
 
     await prisma.activityLog.create({
       data: {
@@ -84,7 +71,6 @@ Then add one line: **Key takeaway:** (what this shows about you as a candidate)`
       },
     });
 
-    // Update career score — wrapped in try/catch so answer still returns on score failure
     try {
       const existing = await prisma.careerScore.findUnique({ where: { userId } });
       if (existing) {

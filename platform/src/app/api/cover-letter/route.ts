@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
-import { openai } from '@/lib/openai';
+import { claudeChat } from '@/lib/claude';
 import prisma from '@/lib/prisma';
 
 const schema = z.object({
@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
     const { resumeText, jobDescription, tone } = parsed.data;
     const userId = session.user.id;
 
-    // Rate limit
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const count = await prisma.activityLog.count({
@@ -45,16 +44,9 @@ export async function POST(req: NextRequest) {
       concise: 'brief and punchy — no more than 250 words, every sentence must add value',
     };
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are an expert cover letter writer. Write compelling, personalized cover letters that get responses. Never use generic phrases like "I am writing to apply". Be specific and concrete.',
-        },
-        {
-          role: 'user',
-          content: `Write a cover letter with a ${toneInstructions[tone]}.
+    const coverLetter = await claudeChat(
+      'You are an expert cover letter writer. Write compelling, personalized cover letters that get responses. Never use generic phrases like "I am writing to apply". Be specific and concrete.',
+      `Write a cover letter with a ${toneInstructions[tone]}.
 
 RESUME:
 ${resumeText.slice(0, 8000)}
@@ -70,21 +62,12 @@ Instructions:
 - End with a clear, confident call to action
 - Do NOT use placeholder text like [Your Name] — write the full letter
 
-Return only the cover letter text, no subject line, no "Dear Hiring Manager" boilerplate unless it fits naturally.`,
-        },
-      ],
-      temperature: 0.7,
-      max_tokens: 800,
-    });
-
-    const coverLetter = response.choices[0]?.message?.content ?? '';
+Return only the cover letter text.`,
+      800
+    );
 
     await prisma.activityLog.create({
-      data: {
-        userId,
-        type: 'cover_letter_generated',
-        metadata: { tone },
-      },
+      data: { userId, type: 'cover_letter_generated', metadata: { tone } },
     });
 
     return NextResponse.json({ success: true, coverLetter });

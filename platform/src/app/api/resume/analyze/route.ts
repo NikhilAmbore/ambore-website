@@ -3,7 +3,7 @@ import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { analyzeResume } from '@/lib/openai';
+import { analyzeResume } from '@/lib/claude';
 
 const analyzeSchema = z.object({
   resumeText: z.string().min(10, 'Resume text is too short').max(50000, 'Resume text is too long'),

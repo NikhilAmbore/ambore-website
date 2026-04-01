@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { z } from 'zod';
 import { authOptions } from '@/lib/auth';
-import { openai } from '@/lib/openai';
+import { claudeChat } from '@/lib/claude';
 import prisma from '@/lib/prisma';
 
 const schema = z.object({
@@ -30,7 +30,6 @@ export async function POST(req: NextRequest) {
     const { section, currentText, targetRole, industry } = parsed.data;
     const userId = session.user.id;
 
-    // Rate limit
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const count = await prisma.activityLog.count({
@@ -40,7 +39,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: `Daily limit of ${DAILY_LIMIT} optimizations reached. Try again tomorrow.` }, { status: 429 });
     }
 
-    const sectionPrompts = {
+    const sectionPrompts: Record<string, string> = {
       headline: `Rewrite this LinkedIn headline to be more compelling and keyword-rich. Make it specific, not generic. Show value, not just title.
 Current headline: "${currentText}"
 ${targetRole ? `Target role: ${targetRole}` : ''}
@@ -74,30 +73,14 @@ For each bullet:
 Return the improved bullets in the same format.`,
     };
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a LinkedIn optimization expert who has helped thousands of professionals land jobs at top companies. You know exactly what recruiters and ATS systems look for.',
-        },
-        {
-          role: 'user',
-          content: sectionPrompts[section],
-        },
-      ],
-      temperature: 0.65,
-      max_tokens: 700,
-    });
-
-    const optimized = response.choices[0]?.message?.content ?? '';
+    const optimized = await claudeChat(
+      'You are a LinkedIn optimization expert who has helped thousands of professionals land jobs at top companies. You know exactly what recruiters and ATS systems look for.',
+      sectionPrompts[section],
+      700
+    );
 
     await prisma.activityLog.create({
-      data: {
-        userId,
-        type: 'linkedin_optimized',
-        metadata: { section },
-      },
+      data: { userId, type: 'linkedin_optimized', metadata: { section } },
     });
 
     return NextResponse.json({ success: true, optimized });
