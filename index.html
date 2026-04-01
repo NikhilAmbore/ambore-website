@@ -61,19 +61,21 @@ button,input,textarea{font-family:inherit}
 #ann-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;padding:4px 8px;line-height:1;min-height:28px;min-width:28px}
 
 /* ── NAVBAR ── */
-#nav{position:fixed;left:0;right:0;z-index:100;padding:0;background:#fff;border-bottom:1px solid var(--border);transition:box-shadow .2s}
-#nav.scrolled{box-shadow:0 2px 16px rgba(0,0,0,.07)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:12px;height:64px}
-.logo{display:flex;align-items:center;gap:8px;font-weight:800;font-size:1.1rem;letter-spacing:-.02em;color:var(--text);cursor:pointer}
-.logo-icon{width:30px;height:30px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.nav-links{display:flex;align-items:center;gap:4px}
-.nav-links>a,.nav-links>button{font-size:.87rem;font-weight:500;color:var(--text-m);background:none;border:none;cursor:pointer;transition:color .15s;padding:6px 10px;border-radius:8px;white-space:nowrap}
-.nav-links>a:hover,.nav-links>button:hover{color:var(--text);background:#f1f5f9}
-.nav-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.btn-ghost{padding:8px 16px;border-radius:8px;font-size:.87rem;font-weight:600;color:var(--text-m);background:transparent;border:1px solid var(--border);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px}
-.btn-ghost:hover{border-color:#94a3b8;color:var(--text);background:#f8fafc}
-.btn-blue{padding:8px 18px;border-radius:8px;font-size:.87rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;transition:background .15s;white-space:nowrap;min-height:38px}
-.btn-blue:hover{background:var(--blue-d)}
+#nav{position:fixed;left:0;right:0;z-index:100;padding:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:box-shadow .2s}
+#nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.08)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;letter-spacing:-.03em;color:var(--text);cursor:pointer;text-decoration:none}
+.logo-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#1e3a8a;display:flex;align-items:center;justify-content:center}
+.logo-icon img{width:130px;height:87px;margin-left:-47px;margin-top:-20px;object-fit:cover}
+.logo-text{font-weight:900;font-size:1.2rem;letter-spacing:-.03em;background:linear-gradient(135deg,#1e293b,#2563EB);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:2px}
+.nav-links>a,.nav-links>button{font-size:.88rem;font-weight:500;color:var(--text-m);background:none;border:none;cursor:pointer;transition:color .15s;padding:7px 12px;border-radius:8px;white-space:nowrap}
+.nav-links>a:hover,.nav-links>button:hover{color:var(--blue);background:var(--blue-l)}
+.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.btn-ghost{padding:8px 18px;border-radius:9px;font-size:.87rem;font-weight:600;color:var(--text-m);background:transparent;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px}
+.btn-ghost:hover{border-color:#2563EB;color:var(--blue);background:var(--blue-l)}
+.btn-blue{padding:9px 20px;border-radius:9px;font-size:.87rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px;box-shadow:0 2px 8px rgba(37,99,235,.3)}
+.btn-blue:hover{background:var(--blue-d);box-shadow:0 4px 14px rgba(37,99,235,.4);transform:translateY(-1px)}
 .ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px;min-height:44px;min-width:44px;align-items:center;justify-content:center}
 .ham span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .25s}
 
@@ -102,8 +104,8 @@ button,input,textarea{font-family:inherit}
 .mob-x{position:absolute;top:16px;right:20px;background:var(--card);border:1px solid var(--border);color:var(--text-m);font-size:1.2rem;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
 .mob-x:hover{color:var(--text);background:#e2e8f0}
 .nav-user{display:flex;align-items:center;gap:8px}
-.nav-uname{font-size:.82rem;font-weight:600;color:var(--blue);background:var(--blue-l);padding:4px 10px;border-radius:20px;border:1px solid rgba(37,99,235,.2);white-space:nowrap}
-.nav-logout{background:none;border:none;font-size:.8rem;color:var(--text-s);cursor:pointer;transition:color .15s}
+.nav-uname{font-size:.82rem;font-weight:700;color:#fff;background:var(--blue);padding:6px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,.25)}
+.nav-logout{background:none;border:none;font-size:.82rem;font-weight:500;color:var(--text-s);cursor:pointer;transition:color .15s;padding:4px 8px}
 .nav-logout:hover{color:#ef4444}
 
 /* ── HERO ── */
@@ -403,10 +405,10 @@ footer{background:var(--dark);padding:56px 0 32px}
 <nav id="nav">
   <div class="container">
     <div class="nav-inner">
-      <div class="logo" onclick="window.location.href='/'">
-        <img src="/logo.png" class="logo-icon" alt="Ambore" style="height:28px;width:28px;object-fit:contain">
-        Ambore
-      </div>
+      <a href="/" class="logo">
+        <div class="logo-icon"><img src="/logo.png" alt="Ambore"></div>
+        <span class="logo-text">Ambore</span>
+      </a>
       <div class="nav-links">
         <div class="dd-wrap">
           <button class="dd-trig">Tools <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
