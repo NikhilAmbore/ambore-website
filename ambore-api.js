@@ -135,4 +135,43 @@ global.AmborAPI = {
   logActivity,
 };
 
+// ── Back button — inject on all inner pages ────────────────────────────────────
+(function(){
+  var path = window.location.pathname.replace(/\/+$/,'') || '/';
+  if(path === '/' || path === '') return; // homepage — no back button needed
+
+  document.addEventListener('DOMContentLoaded', function(){
+    var sb = document.querySelector('.sb');
+    if(!sb) return; // only on sidebar pages
+
+    var style = document.createElement('style');
+    style.textContent =
+      '.sb-back{display:flex;align-items:center;justify-content:center;width:44px;height:36px;' +
+      'margin:0 auto 8px;border-radius:8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);' +
+      'color:rgba(255,255,255,0.55);cursor:pointer;text-decoration:none;transition:all .15s;flex-shrink:0}' +
+      '.sb-back:hover{background:rgba(255,255,255,0.12);color:#fff;border-color:rgba(255,255,255,0.22);transform:translateX(-2px)}' +
+      '.sb-back svg{flex-shrink:0}';
+    document.head.appendChild(style);
+
+    var btn = document.createElement('a');
+    btn.className = 'sb-back';
+    btn.title = 'Back';
+    btn.setAttribute('aria-label', 'Go back');
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><polyline points="12 19 5 12 12 5"/></svg>';
+    btn.addEventListener('click', function(e){
+      e.preventDefault();
+      if(document.referrer && document.referrer.indexOf(window.location.hostname) !== -1 && window.history.length > 1){
+        window.history.back();
+      } else {
+        window.location.href = '/';
+      }
+    });
+
+    // Insert right before the logo
+    var logo = sb.querySelector('.sb-logo');
+    if(logo) sb.insertBefore(btn, logo);
+    else sb.insertBefore(btn, sb.firstChild);
+  });
+})();
+
 })(window);
