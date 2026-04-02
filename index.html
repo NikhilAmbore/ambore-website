@@ -61,51 +61,57 @@ button,input,textarea{font-family:inherit}
 #ann-close{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:rgba(255,255,255,.6);font-size:1.1rem;cursor:pointer;padding:4px 8px;line-height:1;min-height:28px;min-width:28px}
 
 /* ── NAVBAR ── */
-#nav{position:fixed;left:0;right:0;z-index:100;padding:0;background:rgba(255,255,255,0.95);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--border);transition:box-shadow .2s}
-#nav.scrolled{box-shadow:0 4px 24px rgba(0,0,0,.08)}
-.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:16px;height:68px}
-.logo{display:flex;align-items:center;gap:10px;font-weight:900;font-size:1.25rem;letter-spacing:-.03em;color:var(--text);cursor:pointer;text-decoration:none}
-.logo-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#000;display:flex;align-items:center;justify-content:center}
+#nav{position:fixed;left:0;right:0;z-index:100;padding:0;background:#fff;border-bottom:1px solid #e8eaed;transition:box-shadow .2s}
+#nav.scrolled{box-shadow:0 2px 12px rgba(0,0,0,.06)}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:8px;height:60px}
+.logo{display:flex;align-items:center;gap:9px;font-weight:900;font-size:1.18rem;letter-spacing:-.03em;color:var(--text);cursor:pointer;text-decoration:none;flex-shrink:0}
+.logo-icon{width:32px;height:32px;border-radius:8px;overflow:hidden;flex-shrink:0;background:#000;display:flex;align-items:center;justify-content:center}
 .logo-icon img{width:100%;height:100%;object-fit:cover;border-radius:0}
-.logo-text{font-weight:900;font-size:1.2rem;letter-spacing:-.03em;background:linear-gradient(135deg,#38bdf8 0%,#2563EB 50%,#fb923c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.nav-links{display:flex;align-items:center;gap:2px}
-.nav-links>a,.nav-links>button{font-size:.88rem;font-weight:500;color:var(--text-m);background:none;border:none;cursor:pointer;transition:color .15s;padding:7px 12px;border-radius:8px;white-space:nowrap}
-.nav-links>a:hover,.nav-links>button:hover{color:var(--blue);background:var(--blue-l)}
-.nav-actions{display:flex;align-items:center;gap:10px;flex-shrink:0}
-.btn-ghost{padding:8px 18px;border-radius:9px;font-size:.87rem;font-weight:600;color:var(--text-m);background:transparent;border:1.5px solid var(--border);cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px}
-.btn-ghost:hover{border-color:#2563EB;color:var(--blue);background:var(--blue-l)}
-.btn-blue{padding:9px 20px;border-radius:9px;font-size:.87rem;font-weight:700;color:#fff;background:var(--blue);border:none;cursor:pointer;transition:all .15s;white-space:nowrap;min-height:38px;box-shadow:0 2px 8px rgba(37,99,235,.3)}
-.btn-blue:hover{background:var(--blue-d);box-shadow:0 4px 14px rgba(37,99,235,.4);transform:translateY(-1px)}
+.logo-text{font-weight:900;font-size:1.1rem;letter-spacing:-.03em;background:linear-gradient(135deg,#38bdf8 0%,#2563EB 50%,#fb923c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.nav-links{display:flex;align-items:center;gap:0;flex:1;padding:0 12px}
+.nav-links>a{font-size:.875rem;font-weight:500;color:#1a1a2e;text-decoration:none;padding:6px 11px;border-radius:6px;white-space:nowrap;transition:background .15s,color .15s;display:inline-flex;align-items:center}
+.nav-links>a:hover{background:#f1f5f9;color:#2563EB}
+.nav-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.btn-ghost{padding:7px 16px;border-radius:8px;font-size:.85rem;font-weight:600;color:#374151;background:transparent;border:1.5px solid #d1d5db;cursor:pointer;transition:all .15s;white-space:nowrap;min-height:36px}
+.btn-ghost:hover{border-color:#2563EB;color:var(--blue);background:#eff6ff}
+.btn-blue{padding:7px 18px;border-radius:8px;font-size:.85rem;font-weight:700;color:#fff;background:#2563EB;border:none;cursor:pointer;transition:all .15s;white-space:nowrap;min-height:36px;box-shadow:0 1px 4px rgba(37,99,235,.25)}
+.btn-blue:hover{background:#1d4ed8;box-shadow:0 3px 10px rgba(37,99,235,.35);transform:translateY(-1px)}
+.nav-search{background:none;border:none;cursor:pointer;padding:7px;border-radius:7px;color:#374151;display:flex;align-items:center;justify-content:center;transition:background .15s}
+.nav-search:hover{background:#f1f5f9;color:#2563EB}
 .ham{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:6px;min-height:44px;min-width:44px;align-items:center;justify-content:center}
-.ham span{width:22px;height:2px;background:var(--text);border-radius:2px;display:block;transition:all .25s}
+.ham span{width:20px;height:2px;background:#374151;border-radius:2px;display:block;transition:all .25s}
 
-/* ── MEGA DROPDOWN ── */
+/* ── DROPDOWN ── */
 .dd-wrap{position:relative}
-.dd-trig{display:flex;align-items:center;gap:4px;border:none;background:none;outline:none;cursor:pointer;font-size:inherit;font-family:inherit;color:inherit;padding:0}
-.dd-trig svg{transition:transform .2s}
+.dd-trig{display:inline-flex;align-items:center;gap:3px;border:none;background:none;outline:none;cursor:pointer;font-size:.875rem;font-weight:500;font-family:inherit;color:#1a1a2e;padding:6px 11px;border-radius:6px;white-space:nowrap;transition:background .15s,color .15s}
+.dd-trig:hover{background:#f1f5f9;color:#2563EB}
+.dd-trig svg{transition:transform .2s;opacity:.6}
 .dd-wrap:hover .dd-trig svg{transform:rotate(180deg)}
-.dd-menu{display:none;position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:16px;padding:20px;min-width:580px;z-index:300;box-shadow:0 20px 60px rgba(0,0,0,.12)}
-.dd-wrap:hover .dd-menu{display:flex}
-.dd-col{display:flex;flex-direction:column;gap:0;flex:1;padding:0 10px}
-.dd-col:not(:last-child){border-right:1px solid var(--border)}
-.dd-head{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);padding:0 8px 8px;border-bottom:1px solid var(--border);margin-bottom:6px}
-.dd-col a{font-size:.85rem;color:var(--text-m);padding:7px 8px;border-radius:8px;transition:all .12s;cursor:pointer;display:block}
-.dd-col a:hover{background:var(--blue-l);color:var(--blue)}
+.dd-wrap:hover .dd-trig{background:#f1f5f9;color:#2563EB}
+.dd-menu{display:none;position:absolute;top:calc(100% + 8px);left:0;background:#fff;border:1px solid #e8eaed;border-radius:12px;padding:8px;min-width:200px;z-index:300;box-shadow:0 8px 32px rgba(0,0,0,.1),0 2px 8px rgba(0,0,0,.06)}
+.dd-menu.wide{min-width:560px;padding:16px;display:none}
+.dd-wrap:hover .dd-menu{display:block}
+.dd-wrap:hover .dd-menu.wide{display:flex}
+.dd-col{display:flex;flex-direction:column;gap:0;flex:1;padding:0 6px}
+.dd-col:not(:last-child){border-right:1px solid #f1f5f9;margin-right:4px;padding-right:10px}
+.dd-head{font-size:.68rem;font-weight:700;text-transform:uppercase;letter-spacing:.09em;color:#94a3b8;padding:4px 8px 8px;margin-bottom:2px}
+.dd-menu a,.dd-col a{font-size:.855rem;color:#374151;padding:8px 10px;border-radius:7px;transition:all .12s;cursor:pointer;display:block;text-decoration:none;font-weight:500}
+.dd-menu a:hover,.dd-col a:hover{background:#eff6ff;color:#2563EB}
 
 /* ── MOBILE MENU ── */
-#mob-menu{display:none;position:fixed;inset:0;background:#fff;padding:80px 24px 100px;flex-direction:column;z-index:98;overflow-y:auto}
+#mob-menu{display:none;position:fixed;inset:0;background:#fff;padding:72px 20px 100px;flex-direction:column;z-index:98;overflow-y:auto}
 #mob-menu.open{display:flex}
-.mob-sec{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-s);padding:14px 0 6px;border-top:1px solid var(--border);margin-top:6px}
+.mob-sec{font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;padding:14px 0 6px;border-top:1px solid var(--border);margin-top:4px}
 .mob-sec:first-child{border-top:none;margin-top:0}
-#mob-menu a{padding:11px 0;font-size:.95rem;font-weight:500;color:var(--text-m);border-bottom:1px solid var(--border);display:block;transition:color .15s}
-#mob-menu a:hover{color:var(--blue)}
+#mob-menu a{padding:11px 4px;font-size:.94rem;font-weight:500;color:#374151;border-bottom:1px solid #f1f5f9;display:block;transition:color .15s}
+#mob-menu a:hover{color:#2563EB}
 .mob-auth{display:flex;gap:10px;margin-top:20px;padding-top:18px;border-top:1px solid var(--border)}
 .mob-auth .btn-ghost,.mob-auth .btn-blue{flex:1;text-align:center;padding:12px}
-.mob-x{position:absolute;top:16px;right:20px;background:var(--card);border:1px solid var(--border);color:var(--text-m);font-size:1.2rem;width:36px;height:36px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-.mob-x:hover{color:var(--text);background:#e2e8f0}
+.mob-x{position:absolute;top:14px;right:16px;background:#f8fafc;border:1px solid #e2e8f0;color:#64748b;font-size:1.1rem;width:34px;height:34px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
+.mob-x:hover{color:#1e293b;background:#e2e8f0}
 .nav-user{display:flex;align-items:center;gap:8px}
-.nav-uname{font-size:.82rem;font-weight:700;color:#fff;background:var(--blue);padding:6px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,.25)}
-.nav-logout{background:none;border:none;font-size:.82rem;font-weight:500;color:var(--text-s);cursor:pointer;transition:color .15s;padding:4px 8px}
+.nav-uname{font-size:.82rem;font-weight:700;color:#fff;background:var(--blue);padding:5px 14px;border-radius:20px;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,.2)}
+.nav-logout{background:none;border:none;font-size:.82rem;font-weight:500;color:#94a3b8;cursor:pointer;transition:color .15s;padding:4px 8px}
 .nav-logout:hover{color:#ef4444}
 
 /* ── HERO ── */
@@ -395,7 +401,7 @@ footer{background:var(--dark);padding:56px 0 32px}
   section{padding:56px 0}
   .stats-section{padding:48px 0}
 }
-@media(max-width:768px){
+@media(max-width:1024px){
   .ham{display:flex}
   .nav-links,.nav-actions{display:none}
 }
@@ -420,40 +426,76 @@ footer{background:var(--dark);padding:56px 0 32px}
         <span class="logo-text">Ambore</span>
       </a>
       <div class="nav-links">
+        <!-- Products -->
         <div class="dd-wrap">
-          <button class="dd-trig">Tools <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
-          <div class="dd-menu">
+          <button class="dd-trig">Products <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dd-menu wide">
             <div class="dd-col">
               <div class="dd-head">Get the Job</div>
-              <a onclick="goToFeature('/jobs')">💼 Job Portal</a>
-              <a onclick="goToFeature('/resume')">✂️ AI Resume Tailor</a>
-              <a onclick="goToFeature('/resume-builder')">📄 Resume Builder</a>
-              <a onclick="goToFeature('/cover-letter')">✉️ Cover Letter</a>
-              <a onclick="goToFeature('/ats-score')">🎯 ATS Score Checker</a>
-              <a onclick="goToFeature('/email')">📨 Email Generator</a>
+              <a onclick="goToFeature('/jobs')">Job Portal</a>
+              <a onclick="goToFeature('/resume')">AI Resume Tailor</a>
+              <a onclick="goToFeature('/resume-builder')">Resume Builder</a>
+              <a onclick="goToFeature('/ats-score')">ATS Score Checker</a>
+              <a onclick="goToFeature('/email')">Email Generator</a>
             </div>
             <div class="dd-col">
               <div class="dd-head">Build Your Brand</div>
-              <a onclick="goToFeature('/linkedin')">🔗 LinkedIn Optimizer</a>
-              <a onclick="goToFeature('/portfolio')">🌐 Portfolio Builder</a>
-              <a onclick="goToFeature('/certifications')">🏆 Certifications</a>
-              <a onclick="goToFeature('/coaching')">🎓 Live Coaching</a>
-              <a onclick="goToFeature('/community')">👥 Community</a>
+              <a onclick="goToFeature('/cover-letter')">Cover Letter</a>
+              <a onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
+              <a onclick="goToFeature('/portfolio')">Portfolio Builder</a>
+              <a onclick="goToFeature('/certifications')">Certifications</a>
             </div>
             <div class="dd-col">
               <div class="dd-head">Win the Interview</div>
-              <a onclick="goToFeature('/interview')">🎙 AI Mock Interview</a>
-              <a onclick="goToFeature('/learn')">📚 Learn AI</a>
-              <a onclick="goToFeature('/project')">🔨 Build Projects</a>
-              <a onclick="goToFeature('/dashboard')">📊 Dashboard</a>
+              <a onclick="goToFeature('/interview')">AI Mock Interview</a>
+              <a onclick="goToFeature('/learn')">Learn AI</a>
+              <a onclick="goToFeature('/project')">Build Projects</a>
+              <a onclick="goToFeature('/dashboard')">Dashboard</a>
             </div>
           </div>
         </div>
-        <a href="/jobs">Jobs</a>
-        <a href="/#how">How It Works</a>
+        <!-- ATS Resume -->
+        <div class="dd-wrap">
+          <button class="dd-trig">ATS Resume <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dd-menu">
+            <a onclick="goToFeature('/resume')">AI Resume Tailor</a>
+            <a onclick="goToFeature('/resume-builder')">Resume Builder</a>
+            <a onclick="goToFeature('/ats-score')">ATS Score Checker</a>
+          </div>
+        </div>
+        <!-- Cover Letter -->
+        <div class="dd-wrap">
+          <button class="dd-trig">Cover Letter <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dd-menu">
+            <a onclick="goToFeature('/cover-letter')">AI Cover Letter</a>
+            <a onclick="goToFeature('/email')">Email Generator</a>
+          </div>
+        </div>
+        <!-- LinkedIn -->
+        <div class="dd-wrap">
+          <button class="dd-trig">LinkedIn <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dd-menu">
+            <a onclick="goToFeature('/linkedin')">LinkedIn Optimizer</a>
+            <a onclick="goToFeature('/portfolio')">Portfolio Builder</a>
+          </div>
+        </div>
         <a href="/#pricing">Pricing</a>
+        <!-- Resources -->
+        <div class="dd-wrap">
+          <button class="dd-trig">Resources <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="dd-menu">
+            <a onclick="goToFeature('/learn')">Learn AI</a>
+            <a onclick="goToFeature('/coaching')">Live Coaching</a>
+            <a onclick="goToFeature('/community')">Community</a>
+            <a onclick="goToFeature('/certifications')">Certifications</a>
+          </div>
+        </div>
+        <a href="/jobs">Jobs</a>
       </div>
       <div class="nav-actions" id="nav-cta-auth" style="display:flex">
+        <button class="nav-search" aria-label="Search" onclick="goToFeature('/jobs')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        </button>
         <button class="btn-ghost" onclick="openAuth('login')">Log In</button>
         <button class="btn-blue" onclick="openAuth('signup')">Get Started Free</button>
       </div>
