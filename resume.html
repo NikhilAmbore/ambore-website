@@ -448,6 +448,7 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
@@ -1391,15 +1392,20 @@ function stripMarkdown(md) {
 function saveToDashboard() {
   if (!generatedMarkdown) { showToast('Generate a resume first.'); return; }
   const jd = document.getElementById('jd-text').value.trim();
-  // Extract company/job title hint from JD (first line or empty)
   const jdFirst = jd.split('\n').find(l => l.trim()) || '';
+  const title = 'AI Resume — ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   const prefill = {
-    content:  generatedMarkdown,
-    name:     'AI Resume — ' + new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+    content: generatedMarkdown,
+    name: title,
     jobTitle: '',
-    company:  jdFirst.length < 80 ? jdFirst : '',
+    company: jdFirst.length < 80 ? jdFirst : '',
   };
   sessionStorage.setItem('ambore_save_resume', JSON.stringify(prefill));
+  // Also save to DB in background
+  if (window.AmborAPI) {
+    AmborAPI.saveResume({ title: title, content: generatedMarkdown }).catch(function(){});
+    AmborAPI.logActivity('resume_analyzed', { title: title }).catch(function(){});
+  }
   window.location.href = 'dashboard.html?tab=resumes';
 }
 
@@ -1541,6 +1547,7 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
+<script src="/ambore-api.js" defer></script>
 </head><body>${html}</body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -1590,7 +1597,8 @@ async function downloadDocx() {
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
+<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style><script src="/ambore-api.js" defer></script>
+</head>
 <body>${renderMarkdown(generatedMarkdown)}</body></html>`;
   const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
   triggerBlobDownload(blob, `Resume_${tplName}.doc`, `Resume downloaded (${tplName} template)! Open with Word to save as DOCX.`);

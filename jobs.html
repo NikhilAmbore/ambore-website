@@ -456,6 +456,7 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
@@ -1211,6 +1212,10 @@ function toggleSaveJob(e, jobId) {
   if (btn) {
     if (already) { btn.textContent = '♡'; btn.title = 'Save job'; btn.classList.remove('saved'); }
     else         { btn.textContent = '♥'; btn.title = 'Saved to Dashboard'; btn.classList.add('saved'); }
+  }
+  // Sync to DB
+  if (window.AmborAPI) {
+    AmborAPI.toggleSaveJob(jobId, job ? {jobId, title: job.title, company: job.company, location: job.location, url: job.url} : null, !already).catch(function(){});
   }
 }
 

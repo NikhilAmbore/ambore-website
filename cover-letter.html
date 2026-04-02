@@ -213,6 +213,7 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
@@ -544,6 +545,7 @@ Output ONLY the letter text with no extra commentary or labels.`;
           }
         }
         document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
+        if(window.AmborAPI){AmborAPI.logActivity('cover_letter_generated',{company:companyName||''}).catch(function(){});}
         break;
       }catch(retryErr){
         const isOverloaded=retryErr.message?.toLowerCase().includes('overload')||retryErr.message?.includes('529');
@@ -608,6 +610,7 @@ function downloadLetterPDF(){
     button{display:none}
   }
 </style>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 <div class="page">

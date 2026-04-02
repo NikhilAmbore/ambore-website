@@ -418,6 +418,7 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
@@ -2271,6 +2272,37 @@ document.addEventListener('keydown', e => {
   renderResumes();
   initCareerScore();
   renderApplications();
+
+  // ── Sync real data from DB in background ──────────────────────────────────
+  if(window.AmborAPI){
+    AmborAPI.getDashboard().then(function(data){
+      if(!data) return;
+      // Update career score display from DB
+      var cs=data.careerScore;
+      if(cs&&cs.overall>0){
+        var saved={overall:cs.overall,resume:cs.resume,ats:cs.ats,interview:cs.interview,ts:Date.now()};
+        localStorage.setItem('ambore_career_scores',JSON.stringify(saved));
+        initCareerScore();
+      }
+    }).catch(function(){});
+
+    // Sync applications from DB
+    AmborAPI.getApplications().then(function(apps){
+      if(!apps||!apps.length) return;
+      var u=AmborAPI.getUser();
+      if(!u) return;
+      // Merge DB apps into localStorage (DB is source of truth)
+      var key='ambore_applications_'+u.id;
+      var mapped=apps.map(function(a){
+        return {id:a.id,jobTitle:a.jobTitle,company:a.company,location:a.location,
+          status:a.status,appliedDate:a.appliedDate,notes:a.notes,
+          salary:a.salary,url:a.url,jobData:a.jobData};
+      });
+      localStorage.setItem(key,JSON.stringify(mapped));
+      updateStats();
+      renderApplications();
+    }).catch(function(){});
+  }
 })();
 
 // ── Sidebar active state ──────────────────────────────────────────────────────

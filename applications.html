@@ -74,6 +74,7 @@ body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif
   .stats-row{grid-template-columns:repeat(2,1fr)}
 }
 </style>
+<script src="/ambore-api.js" defer></script>
 </head>
 <body>
 
@@ -298,13 +299,45 @@ document.addEventListener('DOMContentLoaded',function(){
   if(!u) return;
   _userId=u.email;
 
+  // Show cached data instantly
   _apps=loadFromLocal();
-
   var src=document.getElementById('data-source');
   if(src) src.textContent=_apps.length ? _apps.length+' application'+ (_apps.length===1?'':'s')+' loaded' : '';
-
   renderAll();
+
+  // Sync from DB in background
+  if(window.AmborAPI){
+    AmborAPI.getApplications().then(function(dbApps){
+      if(!dbApps||!dbApps.length) return;
+      // Convert DB format → display format
+      var converted=dbApps.map(function(a){
+        return {
+          id:a.id, job_id:a.id,
+          status:a.status||'applied',
+          applied_at:a.appliedDate||a.createdAt,
+          job_data:{title:a.jobTitle,company:a.company,location:a.location||'',url:a.url||'',salary:a.salary||''},
+          notes:a.notes||''
+        };
+      });
+      _apps=converted;
+      if(src) src.textContent=converted.length+' application'+(converted.length===1?'':'s')+' from your account';
+      renderAll();
+    }).catch(function(){});
+  }
 });
+
+// Override moveApp to also sync to DB
+var _origMoveApp=moveApp;
+if(window.AmborAPI){
+  window.addEventListener('load',function(){
+    var _savedMoveApp=window.moveApp;
+    window.moveApp=function(id,newStatus){
+      _savedMoveApp(id,newStatus);
+      // Also update in DB
+      AmborAPI.saveApplication({id:id,status:newStatus,jobTitle:' ',company:' '}).catch(function(){});
+    };
+  });
+}
 </script>
 </body>
 </html>
