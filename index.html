@@ -1330,16 +1330,10 @@ function escHtml(s){
 }
 
 // ── Auth modal ────────────────────────────────────────────────────────────────
+var APP_URL='https://ambore-app.netlify.app';
 function openAuth(tab){
-  // Already logged in — signup CTAs go straight to the tool instead of modal
-  if((tab==='signup'||tab==='register')&&getSession()){
-    window.location.href='/resume';return;
-  }
-  var ov=document.getElementById('auth-ov');
-  ov.classList.add('open');ov.style.display='';
-  document.body.style.overflow='hidden';
-  switchTab(tab||'login');
-  track('auth_modal_opened','index',{tab:tab||'login'});
+  var dest=tab==='signup'||tab==='register'?APP_URL+'/auth/signup':APP_URL+'/auth/signin';
+  window.location.href=dest;
 }
 function closeAuth(){
   var ov=document.getElementById('auth-ov');
@@ -1547,7 +1541,7 @@ function postLoginRedirect(){
 
 // ── goToFeature ───────────────────────────────────────────────────────────────
 function goToFeature(page){
-  window.location.href=page;
+  window.location.href=APP_URL+page;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
