@@ -1,6 +1,7 @@
 {
-  "name": "ambore-functions",
+  "name": "ambore-website",
   "version": "1.0.0",
+  "private": true,
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "pg": "^8.11.3"
