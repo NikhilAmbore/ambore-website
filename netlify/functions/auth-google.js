@@ -1,20 +1,12 @@
-const { Pool } = require('pg');
-
-let pool;
-function getPool() {
-  if (!pool) pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-  return pool;
-}
+const { getPool, ok, err, preflight } = require('./_db');
 
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'https://ambore.org',
-  };
+  if (event.httpMethod === 'OPTIONS') return preflight();
+  if (event.httpMethod !== 'POST') return err('Method not allowed', 405);
+
   try {
     const { email, name, picture } = JSON.parse(event.body || '{}');
-    if (!email) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email required.' }) };
+    if (!email) return err('Email required.', 400);
 
     const db = getPool();
     const existing = await db.query('SELECT id, name, email FROM "User" WHERE email = $1', [email.toLowerCase()]);
@@ -22,7 +14,6 @@ exports.handler = async (event) => {
     let user;
     if (existing.rows.length > 0) {
       user = existing.rows[0];
-      // Update name/image if changed
       await db.query('UPDATE "User" SET name = $1, image = $2, "updatedAt" = NOW() WHERE id = $3', [name || user.name, picture || '', user.id]);
     } else {
       const referralCode = Math.random().toString(36).substring(2, 10).toUpperCase();
@@ -42,9 +33,9 @@ exports.handler = async (event) => {
       );
     }
 
-    return { statusCode: 200, headers, body: JSON.stringify({ userId: user.id, name: user.name, email: user.email }) };
-  } catch (err) {
-    console.error('Google auth error:', err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error. Please try again.' }) };
+    return ok({ userId: user.id, name: user.name, email: user.email });
+  } catch (e) {
+    console.error('[auth-google]', e.message);
+    return err('Server error: ' + e.message, 500);
   }
 };

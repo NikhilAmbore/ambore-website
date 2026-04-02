@@ -2207,7 +2207,7 @@ function _fetchGoogleUser(token){
       if(window.AmborDB)AmborDB.onLogin({email:u.email,name:u.name||u.email,picture:u.picture||''});
       postLoginRedirect();
     });
-  }).catch(function(){_googleErr('Google sign-in failed. Try again.');});
+  }).catch(function(e){_googleErr('Google sign-in failed. '+(e&&e.message?e.message:'Try again.'));});
 }
 function _googleErr(msg){
   ['err-login','err-signup'].forEach(function(id){
