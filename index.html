@@ -272,6 +272,26 @@ section{padding:80px 0;position:relative}
 
 /* ── TESTIMONIALS ── */
 .test-sec{background:#f8fafc}
+.rating-banner{background:#fff;border:1px solid var(--border);border-radius:20px;padding:28px 32px;display:flex;align-items:center;gap:40px;margin-bottom:40px;box-shadow:var(--shadow);flex-wrap:wrap}
+.rating-big{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;flex-shrink:0;min-width:100px}
+.rating-num{font-size:3.8rem;font-weight:900;color:#1e293b;line-height:1}
+.rating-stars-big{font-size:1.35rem;color:#f59e0b;letter-spacing:2px}
+.rating-count{font-size:.75rem;color:var(--text-s);font-weight:500;margin-top:2px}
+.rating-bars{flex:1;display:flex;flex-direction:column;gap:7px;min-width:200px}
+.rating-row{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--text-m)}
+.rating-row span:first-child{width:36px;text-align:right;font-weight:600;flex-shrink:0}
+.rating-bar-bg{flex:1;height:7px;background:#f1f5f9;border-radius:4px;overflow:hidden}
+.rating-bar-fill{height:100%;border-radius:4px;background:#f59e0b}
+.rating-bar-fill.five{width:78%}
+.rating-bar-fill.four{width:14%}
+.rating-bar-fill.three{width:5%}
+.rating-bar-fill.two{width:2%}
+.rating-bar-fill.one{width:1%}
+.rating-row span:last-child{width:28px;font-size:.72rem;color:var(--text-s)}
+.rating-badges{display:flex;flex-direction:column;gap:10px;flex-shrink:0}
+.rating-badge-item{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:var(--text-m)}
+.rating-badge-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:.85rem;flex-shrink:0}
+@media(max-width:640px){.rating-banner{gap:24px;padding:20px}.rating-num{font-size:3rem}}
 .tf-pills{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0;justify-content:center}
 .tf-pill{padding:6px 16px;border-radius:20px;border:1px solid var(--border);background:#fff;color:var(--text-m);font-size:.82rem;font-weight:600;cursor:pointer;transition:all .15s;min-height:34px}
 .tf-pill:hover{border-color:#93c5fd;color:var(--blue)}
@@ -570,6 +590,15 @@ footer{background:var(--dark);padding:56px 0 32px}
             <div class="hav" style="background:#dc2626">K</div>
           </div>
           <span class="hav-txt">Joined this week — <strong>they're already getting calls</strong></span>
+        </div>
+        <div class="rev r3" style="display:flex;align-items:center;gap:12px;margin-top:4px;flex-wrap:wrap">
+          <div style="display:flex;align-items:center;gap:6px">
+            <span style="font-size:1rem;color:#f59e0b;letter-spacing:1px">★★★★★</span>
+            <span style="font-size:.85rem;font-weight:800;color:#fff">4.9</span>
+            <span style="font-size:.78rem;color:rgba(255,255,255,.45)">(1,200+ reviews)</span>
+          </div>
+          <span style="width:1px;height:14px;background:rgba(255,255,255,.15);display:inline-block"></span>
+          <span style="font-size:.78rem;color:rgba(255,255,255,.45)">Verified by real users</span>
         </div>
       </div>
       <!-- PRODUCT MOCKUP -->
@@ -871,6 +900,28 @@ footer{background:var(--dark);padding:56px 0 32px}
       <div class="sec-lbl">Real Results</div>
       <h2 class="sec-h">Trusted by 12,000+ job seekers</h2>
     </div>
+
+    <!-- Rating summary -->
+    <div class="rating-banner rev">
+      <div class="rating-big">
+        <div class="rating-num">4.9</div>
+        <div class="rating-stars-big">★★★★★</div>
+        <div class="rating-count">1,200+ ratings</div>
+      </div>
+      <div class="rating-bars">
+        <div class="rating-row"><span>5 ★</span><div class="rating-bar-bg"><div class="rating-bar-fill five"></div></div><span>78%</span></div>
+        <div class="rating-row"><span>4 ★</span><div class="rating-bar-bg"><div class="rating-bar-fill four"></div></div><span>14%</span></div>
+        <div class="rating-row"><span>3 ★</span><div class="rating-bar-bg"><div class="rating-bar-fill three"></div></div><span>5%</span></div>
+        <div class="rating-row"><span>2 ★</span><div class="rating-bar-bg"><div class="rating-bar-fill two"></div></div><span>2%</span></div>
+        <div class="rating-row"><span>1 ★</span><div class="rating-bar-bg"><div class="rating-bar-fill one"></div></div><span>1%</span></div>
+      </div>
+      <div class="rating-badges">
+        <div class="rating-badge-item"><div class="rating-badge-icon" style="background:#eff6ff">🎯</div> 87% got interviews within 2 weeks</div>
+        <div class="rating-badge-item"><div class="rating-badge-icon" style="background:#f0fdf4">✓</div> Verified real user reviews</div>
+        <div class="rating-badge-item"><div class="rating-badge-icon" style="background:#fff7ed">🚀</div> #1 free AI resume tool</div>
+      </div>
+    </div>
+
     <div class="tf-pills">
       <button class="tf-pill active" onclick="filterT('all',this)">All Stories</button>
       <button class="tf-pill" onclick="filterT('resume',this)">Resume</button>
