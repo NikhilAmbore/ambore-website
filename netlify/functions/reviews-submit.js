@@ -1,4 +1,4 @@
-const { getPool, ok, err, preflight, verifyUser } = require('./_db');
+const { getPool, ok, err, preflight } = require('./_db');
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
@@ -12,34 +12,34 @@ exports.handler = async (event) => {
 
     const db = getPool();
 
-    // Allow guest reviews (no userId required)
     if (userId) {
-      const user = await verifyUser(userId);
-      if (!user) return err('Invalid user', 401);
-
-      // One review per user — upsert
+      // Logged-in user — upsert by userId using a simple check
+      const existing = await db.query('SELECT id FROM "Review" WHERE "userId" = $1', [userId]);
+      if (existing.rows.length > 0) {
+        await db.query(
+          `UPDATE "Review" SET rating=$2, comment=$3, name=$4, role=$5, "createdAt"=NOW() WHERE "userId"=$1`,
+          [userId, rating, comment.trim(), name.trim(), (role || '').trim()]
+        );
+      } else {
+        await db.query(
+          `INSERT INTO "Review" (id, "userId", rating, comment, name, role, "createdAt")
+           VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())`,
+          [userId, rating, comment.trim(), name.trim(), (role || '').trim()]
+        );
+      }
+    } else {
+      // Guest — insert with NULL userId (Prisma schema allows nullable userId via String?)
+      // Use a raw insert without the userId column
       await db.query(
         `INSERT INTO "Review" (id, "userId", rating, comment, name, role, "createdAt")
-         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())
-         ON CONFLICT ("userId") DO UPDATE
-         SET rating=$2, comment=$3, name=$4, role=$5, "createdAt"=NOW()`,
-        [userId, rating, comment.trim(), name.trim(), (role || '').trim()]
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())`,
+        ['guest_' + Date.now(), rating, comment.trim(), name.trim(), (role || '').trim()]
       );
-    } else {
-      // Guest review — store without userId
-      await db.query(
-        `INSERT INTO "GuestReview" (id, rating, comment, name, role, "createdAt")
-         VALUES (gen_random_uuid(), $1, $2, $3, $4, NOW())`,
-        [rating, comment.trim(), name.trim(), (role || '').trim()]
-      ).catch(async () => {
-        // Fallback: store in Review table with a placeholder userId approach
-        // Just store as activity for now if GuestReview table doesn't exist
-      });
     }
 
     return ok({ success: true });
   } catch (e) {
     console.error('[reviews-submit]', e.message);
-    return err('Server error', 500);
+    return err('Server error: ' + e.message, 500);
   }
 };
