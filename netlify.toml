@@ -1,6 +1,10 @@
 [build]
   publish = "."
 
+# ── Functions ─────────────────────────────────────────────────────────────────
+[functions]
+  directory = "netlify/functions"
+
 # ── Edge Functions ────────────────────────────────────────────────────────────
 # claude-proxy — serverless AI proxy that keeps the Anthropic key server-side.
 # Mounted at /api/claude; all HTML pages POST here instead of calling

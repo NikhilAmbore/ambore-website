@@ -1330,10 +1330,15 @@ function escHtml(s){
 }
 
 // ── Auth modal ────────────────────────────────────────────────────────────────
-var APP_URL='https://ambore-app.netlify.app';
 function openAuth(tab){
-  var dest=tab==='signup'||tab==='register'?APP_URL+'/auth/signup':APP_URL+'/auth/signin';
-  window.location.href=dest;
+  if((tab==='signup'||tab==='register')&&getSession()){
+    window.location.href='/resume';return;
+  }
+  var ov=document.getElementById('auth-ov');
+  ov.classList.add('open');ov.style.display='';
+  document.body.style.overflow='hidden';
+  switchTab(tab||'login');
+  track('auth_modal_opened','index',{tab:tab||'login'});
 }
 function closeAuth(){
   var ov=document.getElementById('auth-ov');
@@ -1381,15 +1386,21 @@ async function doLogin(e){
   var em=document.getElementById('li-em').value.trim().toLowerCase();
   var pw=document.getElementById('li-pw').value;
   if(!em||!pw){setErr('err-login','Please fill in all fields.');return;}
-  var users=getUsers();
-  if(!users[em]){setErr('err-login','No account found. Sign up first.');return;}
-  var hash=await hashPwd(pw);
-  if(users[em].hash!==hash){setErr('err-login','Incorrect password.');return;}
-  saveSession({email:em,name:users[em].name||em});
-  closeAuth();updateNavCta();updatePageAuth();
-  track('login_completed','index',{method:'email'});
-  if(window.AmborDB)AmborDB.onLogin({email:em,name:users[em].name||em});
-  postLoginRedirect();
+  var btn=document.querySelector('#pan-login .auth-sub');
+  if(btn){btn.textContent='Signing in...';btn.disabled=true;}
+  try{
+    var res=await fetch('/api/auth-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
+    var data=await res.json();
+    if(!res.ok){setErr('err-login',data.error||'Login failed.');if(btn){btn.textContent='Log In';btn.disabled=false;}return;}
+    saveSession({email:em,name:data.name||em,id:data.userId});
+    closeAuth();updateNavCta();updatePageAuth();
+    track('login_completed','index',{method:'email'});
+    if(window.AmborDB)AmborDB.onLogin({email:em,name:data.name||em});
+    postLoginRedirect();
+  }catch(err){
+    setErr('err-login','Network error. Please try again.');
+    if(btn){btn.textContent='Log In';btn.disabled=false;}
+  }
 }
 
 // ── Signup ────────────────────────────────────────────────────────────────────
@@ -1404,16 +1415,21 @@ async function doSignup(e){
   if(!/^[^@]+@[^@]+\.[^@]+$/.test(em)){setErr('err-signup','Invalid email address.');return;}
   if(pw.length<8){setErr('err-signup','Password must be at least 8 characters.');return;}
   if(pw!==pw2){setErr('err-signup','Passwords do not match.');return;}
-  var users=getUsers();
-  if(users[em]){setErr('err-signup','An account with that email already exists.');return;}
-  var hash=await hashPwd(pw);
-  users[em]={name:nm,hash:hash,created:Date.now()};
-  saveUsers(users);
-  saveSession({email:em,name:nm});
-  closeAuth();updateNavCta();updatePageAuth();
-  track('signup_completed','index',{method:'email'});
-  if(window.AmborDB)AmborDB.onLogin({email:em,name:nm});
-  postLoginRedirect();
+  var btn=document.querySelector('#pan-signup .auth-sub');
+  if(btn){btn.textContent='Creating account...';btn.disabled=true;}
+  try{
+    var res=await fetch('/api/auth-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,password:pw})});
+    var data=await res.json();
+    if(!res.ok){setErr('err-signup',data.error||'Registration failed.');if(btn){btn.textContent='Create Account';btn.disabled=false;}return;}
+    saveSession({email:em,name:nm,id:data.userId});
+    closeAuth();updateNavCta();updatePageAuth();
+    track('signup_completed','index',{method:'email'});
+    if(window.AmborDB)AmborDB.onLogin({email:em,name:nm});
+    postLoginRedirect();
+  }catch(err){
+    setErr('err-signup','Network error. Please try again.');
+    if(btn){btn.textContent='Create Account';btn.disabled=false;}
+  }
 }
 
 // ── Reset password ────────────────────────────────────────────────────────────
@@ -1470,16 +1486,15 @@ function _fetchGoogleUser(token){
     headers:{Authorization:'Bearer '+token}
   }).then(function(r){return r.json();}).then(function(u){
     if(!u.email){_googleErr('Could not get email from Google.');return;}
-    var users=getUsers();
-    if(!users[u.email]){
-      users[u.email]={name:u.name||u.email,hash:'__google__',created:Date.now()};
-      saveUsers(users);
-    }
-    saveSession({email:u.email,name:u.name||u.email,picture:u.picture||''});
-    closeAuth();updateNavCta();updatePageAuth();
-    track('signup_completed','index',{method:'google'});
-    if(window.AmborDB)AmborDB.onLogin({email:u.email,name:u.name||u.email,picture:u.picture||''});
-    postLoginRedirect();
+    return fetch('/api/auth-google',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:u.email,name:u.name||u.email,picture:u.picture||'',googleId:u.sub||''})
+    }).then(function(r){return r.json();}).then(function(data){
+      saveSession({email:u.email,name:u.name||u.email,picture:u.picture||'',id:data.userId});
+      closeAuth();updateNavCta();updatePageAuth();
+      track('signup_completed','index',{method:'google'});
+      if(window.AmborDB)AmborDB.onLogin({email:u.email,name:u.name||u.email,picture:u.picture||''});
+      postLoginRedirect();
+    });
   }).catch(function(){_googleErr('Google sign-in failed. Try again.');});
 }
 function _googleErr(msg){
@@ -1541,7 +1556,7 @@ function postLoginRedirect(){
 
 // ── goToFeature ───────────────────────────────────────────────────────────────
 function goToFeature(page){
-  window.location.href=APP_URL+page;
+  window.location.href=page;
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
