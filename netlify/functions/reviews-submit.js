@@ -1,5 +1,15 @@
 const { getPool, ok, err, preflight } = require('./_db');
 
+// Make userId nullable on first run (one-time migration)
+let migrated = false;
+async function ensureNullable(db) {
+  if (migrated) return;
+  try {
+    await db.query(`ALTER TABLE "Review" ALTER COLUMN "userId" DROP NOT NULL`);
+  } catch(e) { /* already nullable or no permission — ignore */ }
+  migrated = true;
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
   if (event.httpMethod !== 'POST') return err('Method not allowed', 405);
@@ -11,9 +21,10 @@ exports.handler = async (event) => {
     if (!name || name.trim().length < 2) return err('Name required');
 
     const db = getPool();
+    await ensureNullable(db);
 
     if (userId) {
-      // Logged-in user — upsert by userId using a simple check
+      // Logged-in user — upsert
       const existing = await db.query('SELECT id FROM "Review" WHERE "userId" = $1', [userId]);
       if (existing.rows.length > 0) {
         await db.query(
@@ -28,12 +39,11 @@ exports.handler = async (event) => {
         );
       }
     } else {
-      // Guest — insert with NULL userId (Prisma schema allows nullable userId via String?)
-      // Use a raw insert without the userId column
+      // Guest — NULL userId
       await db.query(
-        `INSERT INTO "Review" (id, "userId", rating, comment, name, role, "createdAt")
-         VALUES (gen_random_uuid(), $1, $2, $3, $4, $5, NOW())`,
-        ['guest_' + Date.now(), rating, comment.trim(), name.trim(), (role || '').trim()]
+        `INSERT INTO "Review" (id, rating, comment, name, role, "createdAt")
+         VALUES (gen_random_uuid(), $1, $2, $3, $4, NOW())`,
+        [rating, comment.trim(), name.trim(), (role || '').trim()]
       );
     }
 
