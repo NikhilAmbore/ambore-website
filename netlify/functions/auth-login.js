@@ -1,35 +1,27 @@
-const { Pool } = require('pg');
+const { getPool, ok, err, preflight } = require('./_db');
 const bcrypt = require('bcryptjs');
 
-let pool;
-function getPool() {
-  if (!pool) pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
-  return pool;
-}
-
 exports.handler = async (event) => {
-  if (event.httpMethod !== 'POST') return { statusCode: 405, body: 'Method Not Allowed' };
-  const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': 'https://ambore.org',
-  };
+  if (event.httpMethod === 'OPTIONS') return preflight();
+  if (event.httpMethod !== 'POST') return err('Method not allowed', 405);
+
   try {
     const { email, password } = JSON.parse(event.body || '{}');
-    if (!email || !password) return { statusCode: 400, headers, body: JSON.stringify({ error: 'Email and password required.' }) };
+    if (!email || !password) return err('Email and password required.', 400);
 
     const db = getPool();
     const result = await db.query('SELECT id, name, email, "hashedPassword" FROM "User" WHERE email = $1', [email.toLowerCase()]);
-    if (result.rows.length === 0) return { statusCode: 401, headers, body: JSON.stringify({ error: 'No account found. Sign up first.' }) };
+    if (result.rows.length === 0) return err('No account found. Sign up first.', 401);
 
     const user = result.rows[0];
-    if (!user.hashedPassword) return { statusCode: 401, headers, body: JSON.stringify({ error: 'This account uses Google sign-in.' }) };
+    if (!user.hashedPassword) return err('This account uses Google sign-in.', 401);
 
     const valid = await bcrypt.compare(password, user.hashedPassword);
-    if (!valid) return { statusCode: 401, headers, body: JSON.stringify({ error: 'Incorrect password.' }) };
+    if (!valid) return err('Incorrect password.', 401);
 
-    return { statusCode: 200, headers, body: JSON.stringify({ userId: user.id, name: user.name, email: user.email }) };
-  } catch (err) {
-    console.error('Login error:', err);
-    return { statusCode: 500, headers, body: JSON.stringify({ error: 'Server error. Please try again.' }) };
+    return ok({ userId: user.id, name: user.name, email: user.email });
+  } catch (e) {
+    console.error('[auth-login]', e.message);
+    return err('Server error: ' + e.message, 500);
   }
 };
