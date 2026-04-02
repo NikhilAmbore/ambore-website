@@ -1774,7 +1774,7 @@ async function doLogin(e){
   var btn=document.querySelector('#pan-login .auth-sub');
   if(btn){btn.textContent='Signing in...';btn.disabled=true;}
   try{
-    var res=await fetch('/api/auth-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
+    var res=await fetch('/.netlify/functions/auth-login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:em,password:pw})});
     var data=await res.json();
     if(!res.ok){setErr('err-login',data.error||'Login failed.');if(btn){btn.textContent='Log In';btn.disabled=false;}return;}
     saveSession({email:em,name:data.name||em,id:data.userId});
@@ -1803,7 +1803,7 @@ async function doSignup(e){
   var btn=document.querySelector('#pan-signup .auth-sub');
   if(btn){btn.textContent='Creating account...';btn.disabled=true;}
   try{
-    var res=await fetch('/api/auth-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,password:pw})});
+    var res=await fetch('/.netlify/functions/auth-register',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:nm,email:em,password:pw})});
     var data=await res.json();
     if(!res.ok){setErr('err-signup',data.error||'Registration failed.');if(btn){btn.textContent='Create Account';btn.disabled=false;}return;}
     saveSession({email:em,name:nm,id:data.userId});
@@ -1871,7 +1871,7 @@ function _fetchGoogleUser(token){
     headers:{Authorization:'Bearer '+token}
   }).then(function(r){return r.json();}).then(function(u){
     if(!u.email){_googleErr('Could not get email from Google.');return;}
-    return fetch('/api/auth-google',{method:'POST',headers:{'Content-Type':'application/json'},
+    return fetch('/.netlify/functions/auth-google',{method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({email:u.email,name:u.name||u.email,picture:u.picture||'',googleId:u.sub||''})
     }).then(function(r){return r.json();}).then(function(data){
       saveSession({email:u.email,name:u.name||u.email,picture:u.picture||'',id:data.userId});
