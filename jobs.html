@@ -210,18 +210,6 @@ a{text-decoration:none;color:inherit}
 .jc-btn-ai:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 3px 12px rgba(79,70,229,0.4)}
 .jc-btn-apply{margin-left:auto;background:rgba(34,197,94,0.09);border-color:rgba(34,197,94,0.22);color:#4ade80;text-decoration:none}
 .jc-btn-apply:hover{background:rgba(34,197,94,0.16);color:#6ee7b7}
-/* Right: score panel */
-.job-score-panel{width:116px;flex-shrink:0;background:rgba(0,0,0,0.28);border-left:1px solid var(--border);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px 8px;gap:5px}
-.score-ring-wrap{position:relative;width:68px;height:68px;flex-shrink:0}
-.score-ring{width:68px;height:68px}
-.score-bg{fill:none;stroke:#E2E8F0;stroke-width:6}
-.score-fill{fill:none;stroke-width:6;stroke-linecap:round;transition:stroke-dasharray 0.5s ease}
-.score-fill.great{stroke:#2dd4bf}.score-fill.good{stroke:#60a5fa}.score-fill.fair{stroke:#94a3b8}
-.score-pct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:0.82rem;font-weight:800;color:#1e293b}
-.score-label{font-size:0.6rem;font-weight:800;letter-spacing:0.07em;text-transform:uppercase;text-align:center}
-.score-label.great{color:#2dd4bf}.score-label.good{color:#60a5fa}.score-label.fair{color:#94a3b8}
-.score-visa-row{display:flex;align-items:center;gap:3px;font-size:0.6rem;font-weight:600;text-align:center}
-.score-visa-row.h1b{color:#34d399}.score-visa-row.opt{color:#60a5fa}
 /* keep btn-oca alias for OCA modal trigger (used elsewhere) */
 .btn-oca{display:inline-flex;align-items:center;gap:5px;padding:6px 14px;border-radius:8px;font-size:0.76rem;font-weight:700;background:linear-gradient(135deg,#2563EB,#1D4ED8);border:none;color:#fff;cursor:pointer;transition:all 0.15s;white-space:nowrap;box-shadow:0 2px 8px rgba(37,99,235,0.25)}
 .btn-oca:hover{opacity:0.88;transform:translateY(-1px);box-shadow:0 4px 14px rgba(79,70,229,0.5)}
@@ -335,12 +323,6 @@ a{text-decoration:none;color:inherit}
   .category-pills{gap:5px;margin-top:14px}
   .main-layout{padding:14px 12px 36px;gap:12px}
   .job-card-main{padding:12px}
-  .job-score-panel{width:88px;padding:10px 6px}
-  .score-ring-wrap{width:54px;height:54px}
-  .score-ring{width:54px;height:54px}
-  .score-pct{font-size:0.7rem}
-  .score-label{font-size:0.55rem}
-  .score-visa-row{font-size:0.55rem}
   .job-logo{width:36px;height:36px;font-size:0.85rem}
   .job-title{font-size:0.88rem}
   .job-company{font-size:0.75rem}
@@ -946,34 +928,6 @@ function applyAndRender() {
 /* ═══════════════════════════════════════════
    MATCH SCORE — keyword overlap with user profile
 ═══════════════════════════════════════════ */
-function computeMatchScore(job) {
-  function hashScore(str) {
-    let h = 5381;
-    for (let i = 0; i < str.length; i++) h = ((h << 5) + h) ^ str.charCodeAt(i);
-    return 55 + (Math.abs(h) % 34); // 55–88 deterministic
-  }
-  try {
-    const userRaw = localStorage.getItem('ambore_user');
-    if (!userRaw) return hashScore(job.id || job.title || '');
-    const uid = JSON.parse(userRaw).id;
-    const profRaw = uid ? localStorage.getItem('ambore_profile_' + uid) : null;
-    if (!profRaw) return hashScore(job.id || job.title || '');
-    const prof = JSON.parse(profRaw);
-    const jText = ((job.title || '') + ' ' + (job.description || '')).toLowerCase();
-    let score = 45;
-    const desired = (prof.desired_title || prof.desiredTitle || prof.title || '').toLowerCase();
-    if (desired) {
-      const hits = desired.split(/\s+/).filter(w => w.length > 2 && jText.includes(w));
-      score += Math.min(22, hits.length * 8);
-    }
-    const skills = (prof.skills || '').split(/[,\n]+/).map(s => s.trim().toLowerCase()).filter(Boolean);
-    const sHits = skills.filter(s => s.length > 1 && jText.includes(s));
-    score += Math.min(25, sHits.length * 5);
-    return Math.min(97, Math.max(38, score));
-  } catch(e) {
-    return hashScore(job.id || job.title || '');
-  }
-}
 
 /* ═══════════════════════════════════════════
    SKIP JOB — hide card this session
@@ -1030,15 +984,6 @@ function renderJobCard(job) {
   const atsLabels = { greenhouse:'Greenhouse',lever:'Lever',ashby:'Ashby',workday:'Workday',remotive:'Remotive',themuse:'The Muse',remoteok:'RemoteOK',weworkremotely:'WeWorkRemotely',usajobs:'USAJobs',adzuna:'Adzuna',serpapi:'Google Jobs',linkedin:'LinkedIn',apify:'Indeed',indeed:'Indeed',jobvite:'Jobvite',jobicy:'Jobicy',icims:'iCIMS',taleo:'Taleo',workable:'Workable',smartrecruiters:'SmartRecruiters',html:'Direct',dice:'Dice',ziprecruiter:'ZipRecruiter',monster:'Monster',himalayas:'Himalayas',arbeitnow:'Arbeitnow',hackernews:'HN Jobs',workingnomads:'WorkingNomads',authenticjobs:'AuthenticJobs',jobspresso:'Jobspresso',aijobs:'AI Jobs',simplyhired:'SimplyHired' };
   const atsTag = `<span class="job-tag">${atsLabels[job.ats] || job.ats || 'Direct'}</span>`;
 
-  // Match score + ring
-  const score      = computeMatchScore(job);
-  const matchClass = score >= 75 ? 'great' : score >= 50 ? 'good' : 'fair';
-  const matchLabel = score >= 75 ? 'Great Match' : score >= 50 ? 'Good Match' : 'Fair Match';
-  const CIRC       = 150.8; // 2π × 24
-  const dashLen    = (score / 100 * CIRC).toFixed(1);
-  const scoreH1b   = h1b ? `<div class="score-visa-row h1b">✓ H1B Sponsor</div>` : '';
-  const scoreOpt   = opt ? `<div class="score-visa-row opt">✓ OPT Friendly</div>` : '';
-
   return `
     <div class="job-card" id="jcard-${jid}">
       <div class="job-card-main">
@@ -1064,19 +1009,6 @@ function renderJobCard(job) {
           <button class="jc-btn jc-btn-ai" onclick="oneClickApply('${jid}')">✦ AI Apply</button>
           <a class="jc-btn jc-btn-apply" href="${escapeHtml(job.url)}" target="_blank" rel="noopener noreferrer" onclick="markApplied('${jid}')">Apply →</a>
         </div>
-      </div>
-      <div class="job-score-panel">
-        <div class="score-ring-wrap">
-          <svg class="score-ring" viewBox="0 0 60 60">
-            <circle class="score-bg" cx="30" cy="30" r="24"/>
-            <circle class="score-fill ${matchClass}" cx="30" cy="30" r="24"
-              stroke-dasharray="${dashLen} ${CIRC}"
-              transform="rotate(-90 30 30)"/>
-          </svg>
-          <span class="score-pct">${score}%</span>
-        </div>
-        <div class="score-label ${matchClass}">${matchLabel}</div>
-        ${scoreH1b}${scoreOpt}
       </div>
     </div>`;
 }
