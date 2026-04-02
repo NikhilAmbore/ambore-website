@@ -136,14 +136,14 @@ model ActivityLog {
 
 model Review {
   id        String   @id @default(cuid())
-  userId    String
+  userId    String?
   rating    Int
   comment   String   @db.Text
   name      String
   role      String?
   createdAt DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
 }
 
 model CareerScore {

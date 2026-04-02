@@ -1,15 +1,5 @@
 const { getPool, ok, err, preflight } = require('./_db');
 
-// Make userId nullable on first run (one-time migration)
-let migrated = false;
-async function ensureNullable(db) {
-  if (migrated) return;
-  try {
-    await db.query(`ALTER TABLE "Review" ALTER COLUMN "userId" DROP NOT NULL`);
-  } catch(e) { /* already nullable or no permission — ignore */ }
-  migrated = true;
-}
-
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
   if (event.httpMethod !== 'POST') return err('Method not allowed', 405);
@@ -21,7 +11,6 @@ exports.handler = async (event) => {
     if (!name || name.trim().length < 2) return err('Name required');
 
     const db = getPool();
-    await ensureNullable(db);
 
     if (userId) {
       // Logged-in user — upsert
