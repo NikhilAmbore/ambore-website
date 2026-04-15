@@ -397,6 +397,7 @@ var _ctx = null;         // {sessionId, userId, company, role, resume, jd}
 var _recognition = null;
 var _isPaused = false;
 var _isEnded = false;
+var _micDenied = false;
 var _timerInterval = null;
 var _startTime = Date.now();
 var _lastAiCall = 0;     // rate limit
@@ -512,13 +513,13 @@ function initSpeech() {
 
   _recognition.onerror = function(e) {
     if (e.error === 'not-allowed') {
+      _micDenied = true; // stop onend from restarting
       setStatus('denied');
-      // Show inline warning — do NOT destroy the UI; AI buttons still work without mic
       var ph = document.getElementById('t-placeholder');
       if (ph) {
         ph.classList.remove('hidden');
         ph.innerHTML = '<div class="t-icon">🎙</div>' +
-          '<div style="color:#ef4444">Mic access denied.<br/>Transcription unavailable — you can still use AI actions below.</div>';
+          '<div>Mic access denied.<br/><span style="color:var(--muted);font-size:0.8rem">AI suggestion buttons still work — type your question below.</span></div>';
       }
     } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
       console.warn('[copilot] speech error:', e.error);
@@ -526,7 +527,7 @@ function initSpeech() {
   };
 
   _recognition.onend = function() {
-    if (!_isPaused && !_isEnded) {
+    if (!_isPaused && !_isEnded && !_micDenied) {
       try { _recognition.start(); } catch(ex) {}
     }
   };
