@@ -5,7 +5,25 @@
  * GET  ?userId=       → list user's past sessions
  * GET  ?sessionId=    → get single session
  */
-const { getPool, ok, err, preflight, verifyUser } = require('./_db');
+const { getPool, ok, err, preflight } = require('./_db');
+
+// Accepts UUID or email — handles sessions where ambore_user.id was stored as email
+async function verifyUserFlex(db, userId) {
+  if (!userId) return null;
+  try {
+    const r = await db.query(
+      `SELECT id, name, email FROM "User" WHERE id::text = $1 OR email = $1`,
+      [userId]
+    );
+    return r.rows[0] || null;
+  } catch (e) {
+    // Fallback: email-only lookup if UUID cast fails
+    try {
+      const r = await db.query(`SELECT id, name, email FROM "User" WHERE email = $1`, [userId]);
+      return r.rows[0] || null;
+    } catch { return null; }
+  }
+}
 
 async function ensureTables(db) {
   await db.query(`
@@ -56,7 +74,7 @@ exports.handler = async (event) => {
     try { body = JSON.parse(event.body || '{}'); } catch { return err('Invalid JSON', 400); }
 
     const { action, userId } = body;
-    const user = await verifyUser(userId);
+    const user = await verifyUserFlex(db, userId);
     if (!user) return err('Unauthorized', 401);
 
     // Create new session

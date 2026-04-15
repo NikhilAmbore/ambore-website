@@ -4,7 +4,24 @@
  * GET  ?sessionId= → retrieve notes by session
  * GET  ?token=     → retrieve notes by public share token
  */
-const { getPool, ok, err, preflight, verifyUser } = require('./_db');
+const { getPool, ok, err, preflight } = require('./_db');
+
+// Accepts UUID or email — backward compat for sessions where id was stored as email
+async function verifyUserFlex(db, userId) {
+  if (!userId) return null;
+  try {
+    const r = await db.query(
+      `SELECT id, name, email FROM "User" WHERE id::text = $1 OR email = $1`,
+      [userId]
+    );
+    return r.rows[0] || null;
+  } catch (e) {
+    try {
+      const r = await db.query(`SELECT id, name, email FROM "User" WHERE email = $1`, [userId]);
+      return r.rows[0] || null;
+    } catch { return null; }
+  }
+}
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
@@ -19,7 +36,7 @@ exports.handler = async (event) => {
     const { sessionId, userId, notesJson } = body;
     if (!sessionId || !notesJson) return err('sessionId and notesJson required', 400);
 
-    const user = await verifyUser(userId);
+    const user = await verifyUserFlex(db, userId);
     if (!user) return err('Unauthorized', 401);
 
     // Verify the session belongs to this user

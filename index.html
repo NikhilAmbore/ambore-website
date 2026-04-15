@@ -2054,7 +2054,7 @@ function saveSession(user){
   saveDB(d);
   // Also write ambore_user so all tool pages (which check this key) see the session
   localStorage.setItem('ambore_user',JSON.stringify({
-    id:user.email, email:user.email, name:user.name||user.email,
+    id:user.id||user.email, email:user.email, name:user.name||user.email,
     picture:user.picture||'', expiresAt:exp
   }));
 }
@@ -2309,7 +2309,7 @@ function goToFeature(page){
       if(sess&&sess.user&&sess.user.email){
         var u=sess.user;
         localStorage.setItem('ambore_user',JSON.stringify({
-          id:u.email, email:u.email, name:u.name||u.email,
+          id:u.id||u.email, email:u.email, name:u.name||u.email,
           picture:u.picture||'', expiresAt:sess.expires
         }));
       }
