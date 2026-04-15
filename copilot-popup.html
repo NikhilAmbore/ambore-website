@@ -569,7 +569,6 @@ function setStatus(state) {
   switch(state) {
     case 'listening':
       label.textContent = 'Listening…';
-      document.getElementById('header').classList && null;
       break;
     case 'paused':
       dot.classList.add('paused');
@@ -638,7 +637,7 @@ var ACTION_PROMPTS = {
   }
 };
 
-var SYSTEM_PROMPT = function(ctx) {
+function SYSTEM_PROMPT(ctx) {
   var parts = ['You are a real-time interview coach. The user is in a LIVE job interview right now.'];
   if (ctx.company) parts.push('Company: ' + ctx.company + '.');
   if (ctx.role)    parts.push('Role: ' + ctx.role + '.');
@@ -646,7 +645,7 @@ var SYSTEM_PROMPT = function(ctx) {
   if (ctx.jd)      parts.push('Job description:\n' + ctx.jd.slice(0, 2000));
   parts.push('Give short, direct, spoken-language responses the candidate can say out loud. No markdown, no headers, no bullet symbols unless specifically asked. Be specific and use resume achievements when possible.');
   return parts.join('\n\n');
-};
+}
 
 function triggerAction(actionType, customQuestion) {
   // Rate limit: 1 call per 5 seconds
