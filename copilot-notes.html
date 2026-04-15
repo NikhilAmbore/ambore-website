@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<meta name="robots" content="noindex"/>
+<title>Ambore — Interview Meeting Notes</title>
+<link rel="icon" href="/logo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh}
+:root{
+  --blue:#2563EB;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;
+  --border:#E2E8F0;--card:#fff;--muted:#64748B;--grad:linear-gradient(135deg,#2563EB,#1D4ED8);
+}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#E2E8F0;border-radius:3px}
+
+/* ── Nav ─────────────────────────────────────────────────────────────────── */
+.top-nav{
+  display:flex;align-items:center;gap:12px;padding:14px 24px;
+  background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;
+}
+.back-btn{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border:1px solid var(--border);border-radius:8px;background:#F8FAFC;
+  color:var(--muted);font-size:0.82rem;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:all 0.2s;
+}
+.back-btn:hover{border-color:#94A3B8;color:#1e293b}
+.nav-logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#1e293b}
+.nav-logo img{width:24px;height:24px;border-radius:6px}
+.nav-sep{flex:1}
+.print-btn{
+  display:flex;align-items:center;gap:6px;padding:7px 14px;
+  background:var(--grad);color:#fff;border-radius:8px;font-size:0.8rem;
+  font-weight:700;cursor:pointer;border:none;transition:opacity 0.2s;
+}
+.print-btn:hover{opacity:0.88}
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
+.main{max-width:760px;margin:0 auto;padding:36px 20px 80px}
+
+/* ── Loading ─────────────────────────────────────────────────────────────── */
+#loading{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:60vh;gap:14px;color:var(--muted);}
+.spinner{width:30px;height:30px;border:3px solid var(--border);
+  border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Header card ─────────────────────────────────────────────────────────── */
+.notes-header{
+  background:#fff;border:1px solid var(--border);border-radius:16px;
+  padding:24px 28px;margin-bottom:20px;
+  background:linear-gradient(135deg,#0f172a,#1e3a5f);color:#fff;
+}
+.nh-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.2);
+  border-radius:20px;padding:4px 12px;font-size:0.7rem;font-weight:700;
+  color:rgba(255,255,255,0.85);margin-bottom:12px;
+}
+.nh-company{font-size:1.5rem;font-weight:900;line-height:1.2;margin-bottom:4px}
+.nh-role{font-size:0.9rem;color:rgba(255,255,255,0.7);margin-bottom:16px}
+.nh-meta{display:flex;flex-wrap:wrap;gap:14px}
+.nh-meta-item{display:flex;align-items:center;gap:5px;font-size:0.78rem;color:rgba(255,255,255,0.7)}
+.nh-meta-item strong{color:#fff}
+
+/* ── Notes sections ──────────────────────────────────────────────────────── */
+.notes-card{
+  background:#fff;border:1px solid var(--border);border-radius:14px;
+  padding:20px 24px;margin-bottom:14px;
+}
+.notes-section-title{
+  font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--muted);margin-bottom:12px;display:flex;align-items:center;gap:6px;
+}
+.notes-section-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.notes-text{font-size:0.88rem;line-height:1.7;color:#334155}
+.notes-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.notes-list li{
+  display:flex;gap:10px;font-size:0.86rem;line-height:1.6;color:#334155;
+}
+.notes-list li .num{
+  min-width:22px;height:22px;border-radius:6px;
+  background:rgba(37,99,235,0.08);color:var(--blue);
+  font-size:0.72rem;font-weight:800;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;margin-top:1px;
+}
+.chip-row{display:flex;flex-wrap:wrap;gap:7px}
+.chip{
+  background:#F1F5FF;border:1px solid rgba(37,99,235,0.2);border-radius:20px;
+  padding:4px 12px;font-size:0.75rem;font-weight:600;color:var(--blue);
+}
+.check-row{display:flex;flex-direction:column;gap:8px}
+.check-item{display:flex;gap:10px;align-items:flex-start;font-size:0.86rem;color:#334155;line-height:1.55}
+.check-icon{font-size:0.9rem;margin-top:1px;flex-shrink:0}
+
+.email-block{
+  background:#F8FAFC;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;font-size:0.84rem;line-height:1.7;color:#334155;
+  white-space:pre-wrap;font-family:'Inter',sans-serif;
+}
+
+/* ── Share bar ───────────────────────────────────────────────────────────── */
+.share-bar{
+  display:flex;align-items:center;gap:10px;background:#fff;
+  border:1px solid var(--border);border-radius:12px;padding:14px 18px;
+  margin-bottom:20px;
+}
+.share-bar p{font-size:0.82rem;color:var(--muted);flex:1}
+.share-btn{
+  display:flex;align-items:center;gap:6px;padding:7px 14px;
+  background:#F1F5FF;border:1px solid rgba(37,99,235,0.2);
+  border-radius:8px;font-size:0.78rem;font-weight:700;
+  color:var(--blue);cursor:pointer;border:none;transition:all 0.15s;
+}
+.share-btn:hover{background:#DBEAFE}
+
+/* ── Print ───────────────────────────────────────────────────────────────── */
+@media print{
+  .top-nav,.share-bar,.print-btn,.back-btn{display:none!important}
+  body{background:#fff}
+  .main{padding:0;max-width:100%}
+  .notes-header{background:linear-gradient(135deg,#0f172a,#1e3a5f)!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="top-nav" aria-label="Page navigation">
+  <a href="/live-copilot" class="back-btn" aria-label="Back to Live Copilot">← Live Copilot</a>
+  <div class="nav-logo">
+    <img src="/logo.png" alt="Ambore"/>
+    Ambore
+  </div>
+  <div class="nav-sep"></div>
+  <button class="print-btn" onclick="window.print()" aria-label="Print or save as PDF">🖨 Print / PDF</button>
+</nav>
+
+<!-- Loading -->
+<div id="loading">
+  <div class="spinner"></div>
+  <div style="font-size:0.85rem">Loading meeting notes…</div>
+</div>
+
+<!-- Main content -->
+<main class="main hidden" id="main">
+
+  <!-- Header card -->
+  <div class="notes-header" id="header-card">
+    <div class="nh-badge">📄 Interview Meeting Notes</div>
+    <div class="nh-company" id="nh-company">—</div>
+    <div class="nh-role" id="nh-role">—</div>
+    <div class="nh-meta">
+      <div class="nh-meta-item">📅 <strong id="nh-date">—</strong></div>
+      <div class="nh-meta-item">⏱ <strong id="nh-duration">—</strong></div>
+    </div>
+  </div>
+
+  <!-- Share bar (only for personal view) -->
+  <div class="share-bar" id="share-bar">
+    <p>Share these notes with yourself or a mentor</p>
+    <button class="share-btn" id="share-link-btn" onclick="copyShareLink()" aria-label="Copy share link">🔗 Copy Link</button>
+  </div>
+
+  <!-- Sections injected by JS -->
+  <div id="notes-sections"></div>
+
+</main>
+
+<!-- Error state -->
+<div id="error-state" class="hidden" style="text-align:center;padding:60px 20px;color:var(--muted)">
+  <div style="font-size:2.5rem;margin-bottom:12px">📭</div>
+  <div style="font-size:1rem;font-weight:700;color:#1e293b;margin-bottom:6px">Notes not found</div>
+  <div style="font-size:0.85rem">This link may have expired or is invalid.</div>
+  <a href="/live-copilot" style="display:inline-block;margin-top:18px;color:var(--blue);font-size:0.85rem;font-weight:600">← Back to Live Copilot</a>
+</div>
+
+<script>
+'use strict';
+
+var _notes = null;
+var _shareToken = null;
+
+window.addEventListener('DOMContentLoaded', function() {
+  var params = new URLSearchParams(location.search);
+  var token = params.get('token');
+  var sessionId = params.get('sid');
+
+  if (token) {
+    loadNotes('?token=' + encodeURIComponent(token));
+    _shareToken = token;
+  } else if (sessionId) {
+    loadNotes('?sessionId=' + encodeURIComponent(sessionId));
+  } else {
+    showError();
+  }
+});
+
+async function loadNotes(query) {
+  try {
+    var res = await fetch('/.netlify/functions/copilot-notes' + query);
+    var data = await res.json();
+    if (!res.ok || !data.notes) throw new Error(data.error || 'Not found');
+    _notes = data.notes;
+    _shareToken = _notes.share_token || _shareToken;
+    render(_notes);
+  } catch(e) {
+    showError();
+  }
+}
+
+function render(n) {
+  var json = typeof n.notes_json === 'string' ? JSON.parse(n.notes_json) : n.notes_json;
+
+  // Header
+  document.getElementById('nh-company').textContent = n.company_name || 'Interview';
+  document.getElementById('nh-role').textContent = n.job_title || '';
+  document.getElementById('nh-date').textContent = n.started_at
+    ? new Date(n.started_at).toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})
+    : '—';
+  document.getElementById('nh-duration').textContent = n.duration_seconds
+    ? Math.floor(n.duration_seconds / 60) + ' min ' + (n.duration_seconds % 60) + ' sec'
+    : '—';
+
+  // Share link
+  if (_shareToken) {
+    document.getElementById('share-bar').classList.remove('hidden');
+  } else {
+    document.getElementById('share-bar').classList.add('hidden');
+  }
+
+  var container = document.getElementById('notes-sections');
+  container.innerHTML = '';
+
+  if (json.summary) {
+    container.appendChild(makeCard('📋 Summary',
+      '<p class="notes-text">' + esc(json.summary) + '</p>'));
+  }
+
+  if (json.questions_asked && json.questions_asked.length) {
+    container.appendChild(makeCard('❓ Questions Asked by Interviewer', makeNumberedList(json.questions_asked)));
+  }
+
+  if (json.key_answers && json.key_answers.length) {
+    container.appendChild(makeCard('💬 Your Key Answers', makeNumberedList(json.key_answers)));
+  }
+
+  if (json.topics && json.topics.length) {
+    container.appendChild(makeCard('🏷 Topics Discussed', makeChips(json.topics)));
+  }
+
+  if (json.what_went_well && json.what_went_well.length) {
+    container.appendChild(makeCard('✅ What Went Well', makeCheckList(json.what_went_well, '✅')));
+  }
+
+  if (json.to_improve && json.to_improve.length) {
+    container.appendChild(makeCard('📈 Areas to Improve', makeCheckList(json.to_improve, '📌')));
+  }
+
+  if (json.follow_up_email) {
+    var emailCard = makeCard('📧 Follow-up Email Draft',
+      '<div class="email-block">' + esc(json.follow_up_email) + '</div>' +
+      '<button onclick="copyEmail()" style="margin-top:10px;padding:6px 14px;border:1px solid var(--border);border-radius:7px;background:#F8FAFC;font-size:0.75rem;font-weight:600;cursor:pointer;color:#475569" id="copy-email-btn">📋 Copy Email</button>'
+    );
+    container.appendChild(emailCard);
+  }
+
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('main').classList.remove('hidden');
+}
+
+// ── Builders ──────────────────────────────────────────────────────────────────
+function makeCard(title, bodyHtml) {
+  var card = document.createElement('div');
+  card.className = 'notes-card';
+  card.innerHTML = '<div class="notes-section-title">' + esc(title) + '</div>' + bodyHtml;
+  return card;
+}
+
+function makeNumberedList(arr) {
+  return '<ul class="notes-list">' + arr.map(function(s, i) {
+    return '<li><span class="num">' + (i+1) + '</span><span>' + esc(s) + '</span></li>';
+  }).join('') + '</ul>';
+}
+
+function makeChips(arr) {
+  return '<div class="chip-row">' + arr.map(function(s) {
+    return '<span class="chip">' + esc(s) + '</span>';
+  }).join('') + '</div>';
+}
+
+function makeCheckList(arr, icon) {
+  return '<div class="check-row">' + arr.map(function(s) {
+    return '<div class="check-item"><span class="check-icon">' + esc(icon) + '</span><span>' + esc(s) + '</span></div>';
+  }).join('') + '</div>';
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+function copyShareLink() {
+  if (!_shareToken) return;
+  var url = 'https://ambore.org/copilot-notes?token=' + _shareToken;
+  navigator.clipboard.writeText(url).then(function() {
+    var btn = document.getElementById('share-link-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.textContent = '🔗 Copy Link'; }, 2000);
+  }).catch(function(){});
+}
+
+function copyEmail() {
+  if (!_notes) return;
+  var json = typeof _notes.notes_json === 'string' ? JSON.parse(_notes.notes_json) : _notes.notes_json;
+  if (!json.follow_up_email) return;
+  navigator.clipboard.writeText(json.follow_up_email).then(function() {
+    var btn = document.getElementById('copy-email-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.textContent = '📋 Copy Email'; }, 2000);
+  }).catch(function(){});
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function showError() {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('error-state').classList.remove('hidden');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-F3S7FLQRSM',{anonymize_ip:true,cookie_flags:'SameSite=None;Secure',cookie_expires:0});
+</script>
+<script>
+window.addEventListener('unhandledrejection',e=>{if(e.reason?.name==='AbortError'){e.preventDefault();return;}console.error('[Ambore]',e.reason);e.preventDefault();});
+window.onerror=(m,s,l,c,e)=>{if(e?.name==='AbortError')return true;console.error('[Ambore]',m);return true;};
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<link rel="canonical" href="https://ambore.org/live-copilot"/>
+<meta name="description" content="Live Interview Copilot — real-time AI suggestions and transcription during your actual job interviews. Free on Ambore."/>
+<title>Ambore — Live Interview Copilot | Real-Time AI During Your Interview</title>
+<link rel="icon" href="/logo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='/?auth=login&redirect=/live-copilot&msg=Please+log+in+to+access+Live+Copilot';
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b}
+:root{
+  --blue:#2563EB;--blue-dark:#1D4ED8;--green:#22c55e;--yellow:#f59e0b;--red:#ef4444;
+  --border:#E2E8F0;--card:#fff;--muted:#64748B;--grad:linear-gradient(135deg,#2563EB,#1D4ED8);
+}
+button,input,textarea,select{font-family:inherit}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#E2E8F0;border-radius:3px}
+
+/* ── Nav ─────────────────────────────────────────────────────────────────── */
+.top-nav{
+  display:flex;align-items:center;gap:12px;padding:14px 24px;
+  background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:10;
+}
+.back-btn{
+  display:flex;align-items:center;gap:6px;padding:6px 12px;
+  border:1px solid var(--border);border-radius:8px;background:#F8FAFC;
+  color:var(--muted);font-size:0.82rem;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:all 0.2s;
+}
+.back-btn:hover{border-color:#94A3B8;color:#1e293b}
+.nav-logo{display:flex;align-items:center;gap:8px;font-size:1rem;font-weight:900;color:#1e293b}
+.nav-logo img{width:24px;height:24px;border-radius:6px}
+
+/* ── Main ────────────────────────────────────────────────────────────────── */
+.main{padding:36px 20px 80px;max-width:880px;margin:0 auto}
+
+/* ── Hero ────────────────────────────────────────────────────────────────── */
+.hero{text-align:center;margin-bottom:40px}
+.hero-badge{
+  display:inline-flex;align-items:center;gap:7px;
+  background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.2);
+  border-radius:20px;padding:5px 16px;font-size:0.75rem;font-weight:700;
+  color:var(--blue);margin-bottom:16px;
+}
+.pulse{width:7px;height:7px;border-radius:50%;background:var(--red);animation:pulse 1.4s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.85)}}
+.hero h1{font-size:2.1rem;font-weight:900;color:#0f172a;margin-bottom:10px;line-height:1.2}
+.hero p{font-size:0.96rem;color:var(--muted);max-width:540px;margin:0 auto 24px;line-height:1.65}
+
+/* How it works */
+.how-row{display:flex;justify-content:center;gap:0;margin-bottom:8px;flex-wrap:wrap}
+.how-step{
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  padding:10px 16px;position:relative;flex:1;min-width:130px;max-width:180px;
+}
+.how-step:not(:last-child)::after{
+  content:'→';position:absolute;right:-4px;top:16px;
+  font-size:1rem;color:#CBD5E1;
+}
+.how-icon{width:38px;height:38px;border-radius:10px;background:rgba(37,99,235,0.08);
+  display:flex;align-items:center;justify-content:center;font-size:1.2rem}
+.how-label{font-size:0.72rem;font-weight:600;color:#475569;text-align:center;line-height:1.4}
+@media(max-width:540px){.how-step::after{display:none}.how-row{gap:4px}}
+
+/* ── Form Card ───────────────────────────────────────────────────────────── */
+.form-card{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:16px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.04);
+  margin-bottom:28px;
+}
+.form-section{padding:22px 24px;border-bottom:1px solid var(--border)}
+.form-section:last-child{border-bottom:none}
+.fs-label{
+  font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;
+  color:var(--muted);margin-bottom:14px;display:flex;align-items:center;gap:7px;
+}
+.fs-label span{font-size:0.95rem}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:600px){.two-col{grid-template-columns:1fr}}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:0.75rem;font-weight:600;color:#475569}
+.field input,.field select,.field textarea{
+  padding:10px 13px;background:#F8FAFC;border:1px solid var(--border);
+  border-radius:9px;color:#1e293b;font-size:0.88rem;outline:none;
+  transition:border-color 0.2s;
+}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue);background:#fff}
+.field textarea{height:160px;resize:vertical;line-height:1.6}
+.field input::placeholder,.field textarea::placeholder{color:#94A3B8}
+
+/* App load chip */
+.app-chip-row{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.app-chip{
+  display:flex;align-items:center;gap:6px;padding:5px 12px;
+  background:#F1F5FF;border:1px solid rgba(37,99,235,0.2);border-radius:20px;
+  font-size:0.78rem;font-weight:600;color:var(--blue);cursor:pointer;
+  transition:all 0.15s;
+}
+.app-chip:hover{background:#DBEAFE;border-color:var(--blue)}
+.app-chip.selected{background:var(--blue);color:#fff;border-color:var(--blue)}
+.no-apps{font-size:0.83rem;color:var(--muted);font-style:italic}
+
+/* Tips */
+.tips-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+@media(max-width:640px){.tips-row{grid-template-columns:1fr}}
+.tip-card{
+  background:#F8FAFC;border:1px solid var(--border);border-radius:10px;
+  padding:14px 16px;display:flex;gap:10px;align-items:flex-start;
+}
+.tip-icon{font-size:1.2rem;margin-top:1px}
+.tip-text{font-size:0.8rem;color:#475569;line-height:1.5}
+.tip-text strong{color:#1e293b;display:block;margin-bottom:2px;font-size:0.8rem}
+
+/* ── Start Button ─────────────────────────────────────────────────────────── */
+.start-row{text-align:center;margin-bottom:36px}
+.btn-start{
+  display:inline-flex;align-items:center;gap:10px;
+  background:var(--grad);color:#fff;border:none;
+  padding:14px 36px;border-radius:12px;font-size:1rem;font-weight:800;
+  cursor:pointer;transition:opacity 0.2s,transform 0.15s;box-shadow:0 4px 14px rgba(37,99,235,0.35);
+}
+.btn-start:hover:not(:disabled){opacity:0.9;transform:translateY(-1px)}
+.btn-start:disabled{opacity:0.55;cursor:not-allowed;transform:none}
+.btn-start .spinner{
+  width:18px;height:18px;border:2px solid rgba(255,255,255,0.4);
+  border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.start-hint{font-size:0.78rem;color:var(--muted);margin-top:8px}
+
+/* ── Past Sessions ────────────────────────────────────────────────────────── */
+.section-title{
+  font-size:0.85rem;font-weight:700;color:#1e293b;
+  display:flex;align-items:center;gap:8px;margin-bottom:14px;
+}
+.sessions-list{display:flex;flex-direction:column;gap:10px}
+.session-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:14px 18px;display:flex;align-items:center;gap:14px;
+  transition:border-color 0.15s;
+}
+.session-card:hover{border-color:#94A3B8}
+.sess-ico{
+  width:38px;height:38px;border-radius:9px;
+  background:rgba(37,99,235,0.08);display:flex;align-items:center;
+  justify-content:center;font-size:1.1rem;flex-shrink:0;
+}
+.sess-body{flex:1;min-width:0}
+.sess-title{font-size:0.88rem;font-weight:700;color:#1e293b}
+.sess-meta{font-size:0.75rem;color:var(--muted);margin-top:2px}
+.sess-status{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:2px 9px;border-radius:20px;font-size:0.7rem;font-weight:700;
+}
+.sess-status.active{background:rgba(34,197,94,0.1);color:var(--green)}
+.sess-status.completed{background:rgba(100,116,139,0.1);color:#64748B}
+.sess-notes-btn{
+  display:flex;align-items:center;gap:5px;padding:5px 12px;
+  border:1px solid var(--border);border-radius:8px;background:#F8FAFC;
+  color:#475569;font-size:0.75rem;font-weight:600;cursor:pointer;
+  text-decoration:none;transition:all 0.15s;
+}
+.sess-notes-btn:hover{border-color:var(--blue);color:var(--blue)}
+.empty-state{
+  text-align:center;padding:32px;color:var(--muted);
+  background:var(--card);border:1px dashed var(--border);border-radius:12px;
+}
+.empty-state .es-icon{font-size:2rem;margin-bottom:8px}
+.empty-state p{font-size:0.85rem}
+</style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav class="top-nav" aria-label="Page navigation">
+  <a href="/interview" class="back-btn" aria-label="Back to Interview tools">← Back</a>
+  <div class="nav-logo">
+    <img src="/logo.png" alt="Ambore logo"/>
+    Ambore
+  </div>
+</nav>
+
+<main class="main">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-badge">
+      <span class="pulse"></span>
+      Live AI Copilot — Beta
+    </div>
+    <h1>Your AI Wingman<br/>During Real Interviews</h1>
+    <p>Open a floating copilot alongside Zoom, Google Meet, or any platform. Get live transcription and instant AI suggestions — without leaving your interview.</p>
+
+    <div class="how-row" role="list" aria-label="How it works steps">
+      <div class="how-step" role="listitem">
+        <div class="how-icon">📋</div>
+        <div class="how-label">Set up context<br/>(resume + JD)</div>
+      </div>
+      <div class="how-step" role="listitem">
+        <div class="how-icon">🎤</div>
+        <div class="how-label">Grant mic<br/>permission</div>
+      </div>
+      <div class="how-step" role="listitem">
+        <div class="how-icon">💬</div>
+        <div class="how-label">Copilot floats<br/>alongside</div>
+      </div>
+      <div class="how-step" role="listitem">
+        <div class="how-icon">🤖</div>
+        <div class="how-label">AI suggests<br/>answers live</div>
+      </div>
+      <div class="how-step" role="listitem">
+        <div class="how-icon">📄</div>
+        <div class="how-label">Auto meeting<br/>notes saved</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup Form -->
+  <div class="form-card" role="form" aria-label="Session setup">
+
+    <!-- Load from saved applications -->
+    <div class="form-section">
+      <div class="fs-label"><span>📁</span> Load from Saved Application (optional)</div>
+      <div class="app-chip-row" id="app-chips">
+        <span class="no-apps">Loading your applications…</span>
+      </div>
+    </div>
+
+    <!-- Job context -->
+    <div class="form-section">
+      <div class="fs-label"><span>🏢</span> Interview Details</div>
+      <div class="two-col">
+        <div class="field">
+          <label for="f-company">Company Name</label>
+          <input type="text" id="f-company" placeholder="e.g. Google" maxlength="120"/>
+        </div>
+        <div class="field">
+          <label for="f-role">Role / Position</label>
+          <input type="text" id="f-role" placeholder="e.g. Software Engineer" maxlength="120"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resume -->
+    <div class="form-section">
+      <div class="fs-label"><span>📄</span> Your Resume</div>
+      <div class="field">
+        <label for="f-resume">Paste your resume text — AI uses this to personalize suggestions</label>
+        <textarea id="f-resume" placeholder="Paste your full resume here (plain text)…"></textarea>
+      </div>
+    </div>
+
+    <!-- Job Description -->
+    <div class="form-section">
+      <div class="fs-label"><span>📝</span> Job Description</div>
+      <div class="field">
+        <label for="f-jd">Paste the job description so AI knows what they're looking for</label>
+        <textarea id="f-jd" placeholder="Paste the job description here…"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Start button -->
+  <div class="start-row">
+    <button class="btn-start" id="btn-start" onclick="startSession()">
+      <span id="btn-start-icon">🎙</span>
+      <span id="btn-start-text">Start Live Session</span>
+    </button>
+    <p class="start-hint">Opens a compact copilot window. Position it next to your video call.</p>
+  </div>
+
+  <!-- Tips -->
+  <div class="tips-row" aria-label="Tips for using Live Copilot">
+    <div class="tip-card">
+      <div class="tip-icon">💡</div>
+      <div class="tip-text">
+        <strong>Best setup</strong>
+        Position the copilot popup near your camera so you can glance naturally without looking away.
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">🎧</div>
+      <div class="tip-text">
+        <strong>Use earbuds</strong>
+        Wear headphones so the mic only picks up your voice — better transcription accuracy.
+      </div>
+    </div>
+    <div class="tip-card">
+      <div class="tip-icon">⌨️</div>
+      <div class="tip-text">
+        <strong>Keyboard shortcuts</strong>
+        In the copilot: <strong>Ctrl+Enter</strong> = "What to say", <strong>Esc</strong> = clear AI response.
+      </div>
+    </div>
+  </div>
+
+  <!-- Past Sessions -->
+  <div style="margin-top:44px">
+    <div class="section-title">
+      🕒 Past Copilot Sessions
+      <span id="sessions-count" style="font-size:0.72rem;color:var(--muted);font-weight:500"></span>
+    </div>
+    <div class="sessions-list" id="sessions-list">
+      <div class="empty-state">
+        <div class="es-icon">📭</div>
+        <p>No sessions yet. Start your first Live Copilot session above.</p>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script src="/ambore-api.js" defer></script>
+<script>
+'use strict';
+
+var _user = null;
+var _apps = [];
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', function() {
+  _user = AmborAPI.getUser();
+  if (!_user) return;
+  loadApps();
+  loadSessions();
+});
+
+// ── Load saved applications ───────────────────────────────────────────────────
+async function loadApps() {
+  try {
+    var apps = await AmborAPI.getApplications();
+    _apps = apps || [];
+    var container = document.getElementById('app-chips');
+    if (!_apps.length) {
+      container.innerHTML = '<span class="no-apps">No saved applications — fill in the details below manually.</span>';
+      return;
+    }
+    container.innerHTML = '';
+    _apps.forEach(function(app, i) {
+      var chip = document.createElement('button');
+      chip.className = 'app-chip';
+      chip.type = 'button';
+      chip.textContent = (app.company || 'Unknown') + ' — ' + (app.role || app.jobTitle || 'Unknown Role');
+      chip.setAttribute('aria-label', 'Load ' + chip.textContent);
+      chip.onclick = function() { selectApp(app, chip); };
+      container.appendChild(chip);
+    });
+  } catch (e) {
+    document.getElementById('app-chips').innerHTML =
+      '<span class="no-apps">Could not load applications.</span>';
+  }
+}
+
+function selectApp(app, chip) {
+  document.querySelectorAll('.app-chip').forEach(function(c){ c.classList.remove('selected'); });
+  chip.classList.add('selected');
+  document.getElementById('f-company').value = app.company || '';
+  document.getElementById('f-role').value = app.role || app.jobTitle || '';
+  if (app.jobDescription) document.getElementById('f-jd').value = app.jobDescription;
+}
+
+// ── Load past sessions ────────────────────────────────────────────────────────
+async function loadSessions() {
+  try {
+    var data = await fetch('/.netlify/functions/copilot-session?userId=' +
+      encodeURIComponent(_user.id)).then(function(r){ return r.json(); });
+
+    var sessions = data.sessions || [];
+    var count = document.getElementById('sessions-count');
+    count.textContent = sessions.length ? '(' + sessions.length + ')' : '';
+
+    var list = document.getElementById('sessions-list');
+    if (!sessions.length) return; // keep empty state
+
+    list.innerHTML = '';
+    sessions.forEach(function(s) {
+      var started = new Date(s.started_at);
+      var dateStr = started.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+      var dur = s.duration_seconds ? fmtDur(s.duration_seconds) : '—';
+      var card = document.createElement('div');
+      card.className = 'session-card';
+
+      var notesBtn = s.notes_id
+        ? '<a href="/copilot-notes?sid=' + s.id + '" class="sess-notes-btn" target="_blank" rel="noopener noreferrer">📄 Notes</a>'
+        : '';
+      var statusClass = s.status === 'active' ? 'active' : 'completed';
+      var statusLabel = s.status === 'active' ? '● Live' : '✓ Done';
+
+      card.innerHTML =
+        '<div class="sess-ico">🎙</div>' +
+        '<div class="sess-body">' +
+          '<div class="sess-title">' + esc(s.company_name || 'Unknown Company') + ' — ' + esc(s.job_title || 'Unknown Role') + '</div>' +
+          '<div class="sess-meta">' + dateStr + ' · ' + dur + '</div>' +
+        '</div>' +
+        '<span class="sess-status ' + statusClass + '">' + statusLabel + '</span>' +
+        notesBtn;
+      list.appendChild(card);
+    });
+  } catch (e) {
+    console.warn('[live-copilot] sessions load error:', e.message);
+  }
+}
+
+// ── Start Session ─────────────────────────────────────────────────────────────
+async function startSession() {
+  var company = document.getElementById('f-company').value.trim();
+  var role    = document.getElementById('f-role').value.trim();
+  var resume  = document.getElementById('f-resume').value.trim();
+  var jd      = document.getElementById('f-jd').value.trim();
+
+  if (!company) { alert('Please enter the company name.'); document.getElementById('f-company').focus(); return; }
+  if (!role)    { alert('Please enter the role / position.'); document.getElementById('f-role').focus(); return; }
+  if (!resume && !jd) { alert('Please paste your resume or job description so the AI can help you.'); return; }
+
+  // Check mic permission before creating session
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach(function(t){ t.stop(); });
+  } catch (e) {
+    alert('Microphone access is required for the Live Copilot.\n\nPlease allow mic access in your browser and try again.');
+    return;
+  }
+
+  setBtnLoading(true);
+
+  try {
+    var res = await fetch('/.netlify/functions/copilot-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'create',
+        userId: _user.id,
+        company: company,
+        role: role,
+        resume: resume,
+        jd: jd
+      })
+    });
+    var data = await res.json();
+    if (!res.ok || !data.sessionId) throw new Error(data.error || 'Failed to create session');
+
+    var sid = data.sessionId;
+
+    // Store context for popup to read
+    var ctx = {
+      sessionId: sid,
+      userId: _user.id,
+      userName: _user.name,
+      company: company,
+      role: role,
+      resume: resume,
+      jd: jd
+    };
+    localStorage.setItem('copilot_ctx_' + sid, JSON.stringify(ctx));
+
+    // Open popup
+    var w = 440, h = 720;
+    var left = Math.max(0, screen.width - w - 20);
+    var top  = Math.max(0, (screen.height - h) / 2);
+    var popup = window.open(
+      '/copilot-popup?sid=' + sid,
+      'AmboreliveCopilot_' + sid,
+      'width=' + w + ',height=' + h + ',left=' + left + ',top=' + top +
+      ',resizable=yes,scrollbars=no,toolbar=no,menubar=no,location=no,status=no'
+    );
+
+    if (!popup || popup.closed) {
+      alert('Popup was blocked. Please allow popups for ambore.org in your browser settings, then try again.');
+      setBtnLoading(false);
+      return;
+    }
+
+    // Refresh sessions list after a short delay
+    setTimeout(loadSessions, 1500);
+    setBtnLoading(false);
+
+  } catch (e) {
+    setBtnLoading(false);
+    alert('Could not start session: ' + e.message);
+  }
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function setBtnLoading(on) {
+  var btn  = document.getElementById('btn-start');
+  var icon = document.getElementById('btn-start-icon');
+  var txt  = document.getElementById('btn-start-text');
+  btn.disabled = on;
+  if (on) {
+    icon.outerHTML = '<span id="btn-start-icon" class="spinner"></span>';
+    txt.textContent = 'Starting…';
+  } else {
+    document.getElementById('btn-start-icon').outerHTML = '<span id="btn-start-icon">🎙</span>';
+    txt.textContent = 'Start Live Session';
+  }
+}
+
+function fmtDur(sec) {
+  var m = Math.floor(sec / 60), s = sec % 60;
+  return m + 'm ' + (s < 10 ? '0' + s : s) + 's';
+}
+
+function esc(str) {
+  return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

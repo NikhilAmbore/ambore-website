@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ambore Live Copilot</title>
+<link rel="icon" href="/logo.png"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{
+  height:100%;font-family:'Inter',sans-serif;
+  background:#0f172a;color:#f1f5f9;
+  overflow:hidden;user-select:none;
+}
+:root{
+  --bg:#0f172a;--card:#1e293b;--card2:#263248;
+  --border:#334155;--border2:#3f526b;
+  --blue:#3b82f6;--blue-dark:#2563eb;
+  --green:#22c55e;--yellow:#f59e0b;--red:#ef4444;
+  --muted:#94a3b8;--text:#f1f5f9;--text2:#cbd5e1;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.hidden{display:none!important}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+
+/* ── Layout ──────────────────────────────────────────────────────────────── */
+.layout{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* ── Header ──────────────────────────────────────────────────────────────── */
+.header{
+  display:flex;align-items:center;gap:8px;padding:10px 14px;
+  background:#0a1628;border-bottom:1px solid var(--border);
+  flex-shrink:0;
+}
+.header-logo{
+  display:flex;align-items:center;gap:6px;font-size:0.82rem;
+  font-weight:800;color:#f1f5f9;
+}
+.header-logo img{width:18px;height:18px;border-radius:4px}
+.header-dot{width:6px;height:6px;border-radius:50%;background:var(--red);margin-left:2px;
+  animation:live-blink 1.5s infinite}
+@keyframes live-blink{0%,100%{opacity:1}50%{opacity:0.3}}
+.header-title{font-size:0.82rem;font-weight:700;color:var(--muted)}
+.header-sep{flex:1}
+.header-timer{
+  font-size:0.78rem;font-weight:700;color:#f1f5f9;
+  font-variant-numeric:tabular-nums;letter-spacing:0.04em;
+}
+.header-btn{
+  width:26px;height:26px;border-radius:6px;
+  background:transparent;color:var(--muted);font-size:0.9rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.15s,color 0.15s;
+}
+.header-btn:hover{background:var(--card2);color:var(--text)}
+
+/* ── Context bar ─────────────────────────────────────────────────────────── */
+.context-bar{
+  display:flex;align-items:center;gap:8px;padding:6px 14px;
+  background:#111e35;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.context-chip{
+  display:flex;align-items:center;gap:5px;padding:3px 10px;
+  background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);
+  border-radius:20px;font-size:0.7rem;font-weight:600;color:#93c5fd;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:180px;
+}
+
+/* ── Status bar ──────────────────────────────────────────────────────────── */
+.status-bar{
+  display:flex;align-items:center;gap:8px;padding:7px 14px;
+  background:var(--card2);border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.listen-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--green);
+  flex-shrink:0;transition:background 0.3s;
+}
+.listen-dot.paused{background:var(--yellow)}
+.listen-dot.off{background:#475569}
+.listen-label{font-size:0.73rem;font-weight:600;color:var(--text2);flex:1}
+.lang-select{
+  background:transparent;border:1px solid var(--border);border-radius:6px;
+  color:var(--muted);font-size:0.68rem;padding:2px 6px;outline:none;
+  cursor:pointer;
+}
+.lang-select option{background:#1e293b}
+.pause-btn{
+  display:flex;align-items:center;gap:4px;padding:4px 10px;
+  background:var(--card);border:1px solid var(--border);border-radius:6px;
+  color:var(--text2);font-size:0.7rem;font-weight:600;
+  transition:all 0.15s;
+}
+.pause-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* ── Transcript ──────────────────────────────────────────────────────────── */
+.transcript-wrap{
+  flex:1;min-height:0;overflow-y:auto;padding:12px 14px;
+  display:flex;flex-direction:column;gap:4px;
+}
+.transcript-header{
+  font-size:0.64rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;
+  display:flex;align-items:center;gap:6px;
+}
+.transcript-header::after{content:'';flex:1;height:1px;background:var(--border)}
+.t-line{font-size:0.82rem;color:var(--text2);line-height:1.55;word-break:break-word}
+.t-line.interim{color:#64748b;font-style:italic}
+.t-placeholder{font-size:0.82rem;color:#475569;text-align:center;margin-top:20px;line-height:1.6}
+.t-placeholder .t-icon{font-size:1.8rem;margin-bottom:6px}
+
+/* ── AI Response ─────────────────────────────────────────────────────────── */
+.ai-panel{
+  flex-shrink:0;max-height:230px;border-top:1px solid var(--border);
+  display:flex;flex-direction:column;
+}
+.ai-header{
+  display:flex;align-items:center;gap:6px;padding:8px 14px 0;
+  flex-shrink:0;
+}
+.ai-header-label{
+  font-size:0.64rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.1em;color:var(--muted);flex:1;
+  display:flex;align-items:center;gap:6px;
+}
+.ai-header-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.copy-btn{
+  display:flex;align-items:center;gap:4px;padding:3px 9px;
+  background:transparent;border:1px solid var(--border);border-radius:6px;
+  color:var(--muted);font-size:0.68rem;font-weight:600;
+  transition:all 0.15s;
+}
+.copy-btn:hover{border-color:var(--blue);color:var(--blue)}
+.ai-body{
+  flex:1;overflow-y:auto;padding:8px 14px 12px;
+  font-size:0.84rem;line-height:1.6;color:var(--text2);
+  word-break:break-word;min-height:60px;
+}
+.ai-placeholder{color:#475569;font-size:0.82rem;font-style:italic}
+.ai-cursor{
+  display:inline-block;width:2px;height:14px;background:var(--blue);
+  margin-left:1px;vertical-align:middle;animation:blink 0.9s step-end infinite;
+}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.ai-thinking{
+  display:flex;align-items:center;gap:6px;color:var(--muted);font-size:0.8rem;font-style:italic;
+}
+.thinking-dots{display:flex;gap:3px}
+.thinking-dots span{
+  width:5px;height:5px;border-radius:50%;background:var(--blue);
+  animation:tdot 1.2s ease-in-out infinite;
+}
+.thinking-dots span:nth-child(2){animation-delay:0.2s}
+.thinking-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes tdot{0%,80%,100%{transform:scale(0.6);opacity:0.4}40%{transform:scale(1);opacity:1}}
+
+/* ── Quick Actions ───────────────────────────────────────────────────────── */
+.actions-wrap{
+  flex-shrink:0;padding:8px 14px;border-top:1px solid var(--border);
+  display:flex;flex-wrap:wrap;gap:6px;
+}
+.action-btn{
+  display:flex;align-items:center;gap:5px;padding:6px 11px;
+  background:var(--card2);border:1px solid var(--border);border-radius:8px;
+  color:var(--text2);font-size:0.73rem;font-weight:600;
+  transition:all 0.15s;flex-shrink:0;
+}
+.action-btn:hover:not(:disabled){
+  background:rgba(59,130,246,0.12);border-color:var(--blue);color:#93c5fd;
+}
+.action-btn:disabled{opacity:0.45;cursor:not-allowed}
+.action-btn.active{background:rgba(59,130,246,0.15);border-color:var(--blue);color:#93c5fd}
+.action-btn .ab-icon{font-size:0.85rem}
+
+/* ── Input ────────────────────────────────────────────────────────────────── */
+.input-row{
+  flex-shrink:0;display:flex;gap:6px;padding:8px 14px;
+  border-top:1px solid var(--border);
+}
+.ask-input{
+  flex:1;background:var(--card2);border:1px solid var(--border);
+  border-radius:8px;color:var(--text);font-size:0.82rem;
+  padding:8px 12px;outline:none;transition:border-color 0.15s;
+}
+.ask-input:focus{border-color:var(--blue)}
+.ask-input::placeholder{color:#475569}
+.send-btn{
+  width:34px;height:34px;border-radius:8px;
+  background:var(--blue);color:#fff;font-size:1rem;
+  display:flex;align-items:center;justify-content:center;
+  transition:background 0.15s;flex-shrink:0;
+}
+.send-btn:hover{background:var(--blue-dark)}
+.send-btn:disabled{background:#1e3a6e;opacity:0.5;cursor:not-allowed}
+
+/* ── Footer ──────────────────────────────────────────────────────────────── */
+.footer{
+  flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 14px;
+  background:#0a1628;border-top:1px solid var(--border);
+}
+.end-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  background:rgba(239,68,68,0.12);border:1px solid rgba(239,68,68,0.3);
+  border-radius:8px;color:#fca5a5;font-size:0.78rem;font-weight:700;
+  padding:7px 0;transition:all 0.15s;
+}
+.end-btn:hover{background:rgba(239,68,68,0.22);border-color:rgba(239,68,68,0.6)}
+.end-btn:disabled{opacity:0.45;cursor:not-allowed}
+.clear-btn{
+  display:flex;align-items:center;gap:4px;padding:7px 12px;
+  background:var(--card);border:1px solid var(--border);border-radius:8px;
+  color:var(--muted);font-size:0.73rem;font-weight:600;transition:all 0.15s;
+}
+.clear-btn:hover{border-color:var(--blue);color:var(--text2)}
+.rate-msg{
+  position:fixed;bottom:60px;left:50%;transform:translateX(-50%);
+  background:#1e3a6e;border:1px solid var(--blue);border-radius:8px;
+  color:#93c5fd;font-size:0.75rem;font-weight:600;padding:6px 14px;
+  white-space:nowrap;z-index:999;transition:opacity 0.3s;
+}
+
+/* ── Notes overlay ────────────────────────────────────────────────────────── */
+#notes-screen{
+  position:fixed;inset:0;background:#0f172a;z-index:100;
+  display:flex;flex-direction:column;overflow:hidden;
+}
+.notes-header{
+  display:flex;align-items:center;gap:10px;padding:12px 16px;
+  background:#0a1628;border-bottom:1px solid var(--border);flex-shrink:0;
+}
+.notes-header h2{font-size:0.88rem;font-weight:800;color:#f1f5f9;flex:1}
+.notes-body{flex:1;overflow-y:auto;padding:16px}
+.notes-section{margin-bottom:18px}
+.notes-section h3{font-size:0.72rem;font-weight:700;text-transform:uppercase;
+  letter-spacing:0.08em;color:var(--muted);margin-bottom:8px}
+.notes-text{font-size:0.83rem;line-height:1.65;color:var(--text2);white-space:pre-wrap}
+.notes-footer{
+  flex-shrink:0;display:flex;gap:8px;padding:10px 14px;
+  border-top:1px solid var(--border);background:#0a1628;
+}
+.notes-btn{
+  flex:1;display:flex;align-items:center;justify-content:center;gap:6px;
+  padding:8px 0;border-radius:8px;font-size:0.78rem;font-weight:700;
+  transition:all 0.15s;
+}
+.notes-btn.primary{background:var(--blue);color:#fff;border:1px solid var(--blue)}
+.notes-btn.primary:hover{background:var(--blue-dark)}
+.notes-btn.secondary{background:var(--card2);border:1px solid var(--border);color:var(--text2)}
+.notes-btn.secondary:hover{border-color:var(--blue);color:var(--blue)}
+.generating-notes{
+  display:flex;flex-direction:column;align-items:center;
+  justify-content:center;flex:1;gap:14px;
+}
+.generating-notes .spin{
+  width:32px;height:32px;border:3px solid var(--border);
+  border-top-color:var(--blue);border-radius:50%;animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<div class="layout" id="main-layout">
+
+  <!-- Header -->
+  <div class="header" role="banner">
+    <div class="header-logo">
+      <img src="/logo.png" alt="Ambore"/>
+      <span>Live Copilot</span>
+    </div>
+    <span class="header-dot" title="Recording"></span>
+    <div class="header-sep"></div>
+    <div class="header-timer" id="timer" aria-live="off">00:00</div>
+    <button class="header-btn" onclick="window.minimize?window.minimize():window.blur()" title="Minimize (Ctrl+H)" aria-label="Minimize">−</button>
+  </div>
+
+  <!-- Context bar -->
+  <div class="context-bar" aria-label="Session context">
+    <div class="context-chip" id="ctx-company" title="">🏢 —</div>
+    <div class="context-chip" id="ctx-role" title="">💼 —</div>
+    <div class="context-chip" id="ctx-resume" style="color:#6ee7b7">📄 Resume loaded</div>
+  </div>
+
+  <!-- Status bar -->
+  <div class="status-bar" aria-label="Recording status">
+    <div class="listen-dot" id="listen-dot"></div>
+    <span class="listen-label" id="listen-label">Initializing…</span>
+    <select class="lang-select" id="lang-select" aria-label="Transcription language" onchange="changeLang()">
+      <option value="en-US">EN 🇺🇸</option>
+      <option value="en-GB">EN 🇬🇧</option>
+      <option value="en-IN">EN 🇮🇳</option>
+      <option value="es-ES">ES 🇪🇸</option>
+      <option value="fr-FR">FR 🇫🇷</option>
+      <option value="de-DE">DE 🇩🇪</option>
+      <option value="pt-BR">PT 🇧🇷</option>
+      <option value="zh-CN">ZH 🇨🇳</option>
+    </select>
+    <button class="pause-btn" id="pause-btn" onclick="togglePause()" aria-label="Pause recording">
+      ⏸ Pause
+    </button>
+  </div>
+
+  <!-- Transcript panel -->
+  <div class="transcript-wrap" id="transcript-wrap" role="log" aria-live="polite" aria-label="Live transcript">
+    <div class="transcript-header">Live Transcript</div>
+    <div id="transcript-lines"></div>
+    <div id="transcript-interim" class="t-line interim"></div>
+    <div class="t-placeholder" id="t-placeholder">
+      <div class="t-icon">🎤</div>
+      <div>Transcript will appear here as you speak.<br/>The AI listens to your microphone.</div>
+    </div>
+  </div>
+
+  <!-- AI Response panel -->
+  <div class="ai-panel">
+    <div class="ai-header">
+      <div class="ai-header-label">AI Suggestion</div>
+      <button class="copy-btn" id="copy-btn" onclick="copyResponse()" aria-label="Copy AI response">📋 Copy</button>
+    </div>
+    <div class="ai-body" id="ai-body">
+      <span class="ai-placeholder" id="ai-placeholder">Use the actions below or type a question — AI response streams here.</span>
+    </div>
+  </div>
+
+  <!-- Quick Actions -->
+  <div class="actions-wrap" role="toolbar" aria-label="Quick actions">
+    <button class="action-btn" id="act-say" onclick="triggerAction('what_to_say')" title="What should I say right now? (Ctrl+Enter)" aria-label="What to say">
+      <span class="ab-icon">💬</span> What to Say
+    </button>
+    <button class="action-btn" id="act-followups" onclick="triggerAction('follow_ups')" title="Smart follow-up questions" aria-label="Follow-up questions">
+      <span class="ab-icon">❓</span> Follow-ups
+    </button>
+    <button class="action-btn" id="act-recap" onclick="triggerAction('recap')" title="Summarize so far" aria-label="Recap conversation">
+      <span class="ab-icon">📋</span> Recap
+    </button>
+    <button class="action-btn" id="act-star" onclick="triggerAction('star_answer')" title="STAR method answer" aria-label="STAR method answer">
+      <span class="ab-icon">⭐</span> STAR Answer
+    </button>
+    <button class="action-btn" id="act-assist" onclick="triggerAction('assist')" title="General AI assist" aria-label="AI Assist">
+      <span class="ab-icon">🤖</span> Assist
+    </button>
+  </div>
+
+  <!-- Custom input -->
+  <div class="input-row">
+    <input
+      type="text"
+      class="ask-input"
+      id="ask-input"
+      placeholder="Ask anything about this interview…"
+      aria-label="Ask a custom question"
+      maxlength="500"
+      onkeydown="handleInputKey(event)"
+    />
+    <button class="send-btn" id="send-btn" onclick="sendCustom()" aria-label="Send question">↑</button>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <button class="clear-btn" onclick="clearAI()" aria-label="Clear AI response">✕ Clear</button>
+    <button class="end-btn" id="end-btn" onclick="endSession()" aria-label="End session and generate notes">
+      🔴 End Session
+    </button>
+  </div>
+
+</div>
+
+<!-- Notes screen (shown after session ends) -->
+<div id="notes-screen" class="hidden">
+  <div class="notes-header">
+    <h2 id="notes-title">📄 Meeting Notes</h2>
+    <button class="clear-btn" onclick="closeNotes()" aria-label="Close notes">✕</button>
+  </div>
+  <div class="notes-body" id="notes-body">
+    <div class="generating-notes" id="notes-generating">
+      <div class="spin"></div>
+      <div style="color:var(--muted);font-size:0.83rem">Generating your meeting notes…</div>
+    </div>
+    <div id="notes-content" class="hidden"></div>
+  </div>
+  <div class="notes-footer">
+    <button class="notes-btn secondary" onclick="copyNotes()" id="copy-notes-btn">📋 Copy Notes</button>
+    <button class="notes-btn primary" onclick="openFullNotes()" id="open-notes-btn" disabled>🔗 Open Full Page</button>
+  </div>
+</div>
+
+<div class="rate-msg hidden" id="rate-msg">Please wait a moment before requesting again.</div>
+
+<script>
+'use strict';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+var _ctx = null;         // {sessionId, userId, company, role, resume, jd}
+var _recognition = null;
+var _isPaused = false;
+var _isEnded = false;
+var _timerInterval = null;
+var _startTime = Date.now();
+var _lastAiCall = 0;     // rate limit
+var _aiAbort = null;     // AbortController for streaming
+var _fullTranscript = '';
+var _finalLines = [];    // array of final transcript strings
+var _currentAiText = '';
+var _notesData = null;
+var _notesShareToken = null;
+
+// ── Boot ──────────────────────────────────────────────────────────────────────
+(function init() {
+  var params = new URLSearchParams(location.search);
+  var sid = params.get('sid');
+  if (!sid) { document.body.innerHTML = '<div style="color:#ef4444;padding:20px">Missing session ID.</div>'; return; }
+
+  // Read context stored by the setup page
+  try {
+    _ctx = JSON.parse(localStorage.getItem('copilot_ctx_' + sid) || 'null');
+    localStorage.removeItem('copilot_ctx_' + sid); // clean up
+  } catch(e) {}
+
+  if (!_ctx) {
+    // Fallback: fetch from server
+    fetch('/.netlify/functions/copilot-session?sessionId=' + sid)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if (d.session) {
+          _ctx = {
+            sessionId: d.session.id,
+            userId: d.session.user_id,
+            company: d.session.company_name,
+            role: d.session.job_title,
+            resume: d.session.resume_text || '',
+            jd: d.session.job_description || ''
+          };
+          boot();
+        }
+      }).catch(function(){ showError('Session not found.'); });
+    return;
+  }
+  boot();
+})();
+
+function boot() {
+  updateContextChips();
+  startTimer();
+  initSpeech();
+  setStatus('listening');
+  window.focus();
+}
+
+// ── Context chips ─────────────────────────────────────────────────────────────
+function updateContextChips() {
+  var co = document.getElementById('ctx-company');
+  var ro = document.getElementById('ctx-role');
+  var res = document.getElementById('ctx-resume');
+  co.textContent = '🏢 ' + (_ctx.company || 'Company');
+  co.title = _ctx.company || '';
+  ro.textContent = '💼 ' + (_ctx.role || 'Role');
+  ro.title = _ctx.role || '';
+  if (!_ctx.resume && !_ctx.jd) res.textContent = '📄 No context';
+  else if (_ctx.resume) res.textContent = '📄 Resume + JD';
+  else res.textContent = '📄 JD only';
+}
+
+// ── Timer ─────────────────────────────────────────────────────────────────────
+function startTimer() {
+  _startTime = Date.now();
+  _timerInterval = setInterval(function() {
+    var sec = Math.floor((Date.now() - _startTime) / 1000);
+    var m = Math.floor(sec / 60), s = sec % 60;
+    document.getElementById('timer').textContent =
+      (m < 10 ? '0' + m : m) + ':' + (s < 10 ? '0' + s : s);
+  }, 1000);
+}
+
+// ── Speech Recognition ────────────────────────────────────────────────────────
+function initSpeech() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) {
+    setStatus('unsupported');
+    document.getElementById('t-placeholder').innerHTML =
+      '<div class="t-icon">⚠️</div>' +
+      '<div>Speech recognition not supported.<br/>Use Chrome or Edge for live transcription.<br/>You can still use AI actions manually.</div>';
+    return;
+  }
+
+  _recognition = new SR();
+  _recognition.continuous = true;
+  _recognition.interimResults = true;
+  _recognition.lang = document.getElementById('lang-select').value;
+  _recognition.maxAlternatives = 1;
+
+  _recognition.onresult = function(e) {
+    var interim = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      var text = e.results[i][0].transcript;
+      if (e.results[i].isFinal) {
+        var line = text.trim();
+        if (line) {
+          _finalLines.push(line);
+          _fullTranscript += ' ' + line;
+          appendTranscriptLine(line);
+        }
+      } else {
+        interim += text;
+      }
+    }
+    document.getElementById('transcript-interim').textContent = interim;
+    hidePlaceholder();
+  };
+
+  _recognition.onerror = function(e) {
+    if (e.error === 'not-allowed') {
+      setStatus('denied');
+      showError('Microphone access denied. Please allow mic access and reload.');
+    } else if (e.error !== 'no-speech' && e.error !== 'aborted') {
+      console.warn('[copilot] speech error:', e.error);
+    }
+  };
+
+  _recognition.onend = function() {
+    if (!_isPaused && !_isEnded) {
+      try { _recognition.start(); } catch(ex) {}
+    }
+  };
+
+  try {
+    _recognition.start();
+  } catch(e) {
+    console.warn('[copilot] speech start error:', e.message);
+  }
+}
+
+function changeLang() {
+  if (_recognition) {
+    try { _recognition.stop(); } catch(e) {}
+    _recognition.lang = document.getElementById('lang-select').value;
+    if (!_isPaused && !_isEnded) {
+      setTimeout(function() {
+        try { _recognition.start(); } catch(e) {}
+      }, 300);
+    }
+  }
+}
+
+// ── Transcript helpers ────────────────────────────────────────────────────────
+function appendTranscriptLine(text) {
+  var lines = document.getElementById('transcript-lines');
+  var div = document.createElement('div');
+  div.className = 't-line';
+  div.textContent = text;
+  lines.appendChild(div);
+  // Auto-scroll
+  var wrap = document.getElementById('transcript-wrap');
+  wrap.scrollTop = wrap.scrollHeight;
+}
+
+function hidePlaceholder() {
+  var ph = document.getElementById('t-placeholder');
+  if (ph) ph.classList.add('hidden');
+}
+
+// ── Status ────────────────────────────────────────────────────────────────────
+function setStatus(state) {
+  var dot   = document.getElementById('listen-dot');
+  var label = document.getElementById('listen-label');
+  dot.className = 'listen-dot';
+  switch(state) {
+    case 'listening':
+      label.textContent = 'Listening…';
+      document.getElementById('header').classList && null;
+      break;
+    case 'paused':
+      dot.classList.add('paused');
+      label.textContent = 'Paused';
+      break;
+    case 'denied':
+    case 'unsupported':
+    case 'off':
+      dot.classList.add('off');
+      label.textContent = state === 'denied' ? 'Mic denied' : state === 'unsupported' ? 'Transcription N/A' : 'Off';
+      break;
+    default:
+      label.textContent = 'Initializing…';
+  }
+}
+
+// ── Pause / Resume ────────────────────────────────────────────────────────────
+function togglePause() {
+  _isPaused = !_isPaused;
+  var btn = document.getElementById('pause-btn');
+  if (_isPaused) {
+    if (_recognition) try { _recognition.stop(); } catch(e) {}
+    setStatus('paused');
+    btn.textContent = '▶ Resume';
+    document.getElementById('listen-dot').classList.add('paused');
+  } else {
+    setStatus('listening');
+    btn.textContent = '⏸ Pause';
+    if (_recognition) {
+      _recognition.lang = document.getElementById('lang-select').value;
+      try { _recognition.start(); } catch(e) {}
+    }
+  }
+}
+
+// ── AI Calls ──────────────────────────────────────────────────────────────────
+var ACTION_LABELS = {
+  what_to_say : '💬 Suggesting what to say…',
+  follow_ups  : '❓ Generating follow-up questions…',
+  recap       : '📋 Summarizing conversation…',
+  star_answer : '⭐ Crafting STAR answer…',
+  assist      : '🤖 Thinking…',
+  custom      : '🤖 Thinking…'
+};
+
+var ACTION_PROMPTS = {
+  what_to_say: function(t, r, j) {
+    return 'Based on this interview conversation transcript so far:\n\n' + (t||'[no transcript yet]') +
+      '\n\nSuggest the best response I can give RIGHT NOW. Be specific, natural-sounding, under 80 words. Use numbers/achievements from my resume where relevant. Do NOT explain what to do — just give the actual words I should say.';
+  },
+  follow_ups: function(t, r, j) {
+    return 'Interview transcript so far:\n\n' + (t||'[no transcript yet]') +
+      '\n\nGenerate 3–4 smart follow-up questions I (the candidate) can ask the interviewer. Number them. Make them specific to the role and company context. Brief, 1 line each.';
+  },
+  recap: function(t, r, j) {
+    return 'Interview transcript:\n\n' + (t||'[no transcript yet]') +
+      '\n\nSummarize this interview conversation in bullet points:\n• Topics covered\n• Key things said\n• Questions asked\nKeep it concise — 5 to 8 bullets max.';
+  },
+  star_answer: function(t, r, j) {
+    return 'Interview transcript so far:\n\n' + (t||'[no transcript yet]') +
+      '\n\nBased on the last question in the transcript, write a STAR method answer (Situation, Task, Action, Result) using specific achievements from my resume. Under 120 words. Sound natural and conversational.';
+  },
+  assist: function(t, r, j) {
+    return 'Interview transcript so far:\n\n' + (t||'[no transcript yet]') +
+      '\n\nI need general interview coaching. What should I focus on right now based on the conversation? Give concise, actionable advice in 2–3 sentences.';
+  }
+};
+
+var SYSTEM_PROMPT = function(ctx) {
+  var parts = ['You are a real-time interview coach. The user is in a LIVE job interview right now.'];
+  if (ctx.company) parts.push('Company: ' + ctx.company + '.');
+  if (ctx.role)    parts.push('Role: ' + ctx.role + '.');
+  if (ctx.resume)  parts.push('Candidate resume:\n' + ctx.resume.slice(0, 3000));
+  if (ctx.jd)      parts.push('Job description:\n' + ctx.jd.slice(0, 2000));
+  parts.push('Give short, direct, spoken-language responses the candidate can say out loud. No markdown, no headers, no bullet symbols unless specifically asked. Be specific and use resume achievements when possible.');
+  return parts.join('\n\n');
+};
+
+function triggerAction(actionType, customQuestion) {
+  // Rate limit: 1 call per 4 seconds
+  var now = Date.now();
+  if (now - _lastAiCall < 4000) {
+    showRateMsg();
+    return;
+  }
+  _lastAiCall = now;
+
+  var transcript = _fullTranscript.trim().slice(-6000); // last ~6000 chars
+  var userMsg = customQuestion
+    ? customQuestion + '\n\nInterview transcript so far:\n' + (transcript || '[no transcript yet]')
+    : (ACTION_PROMPTS[actionType] || ACTION_PROMPTS.assist)(transcript, _ctx.resume, _ctx.jd);
+
+  setAllActionsDisabled(true);
+  showThinking(ACTION_LABELS[actionType] || '🤖 Thinking…');
+
+  streamClaude(
+    SYSTEM_PROMPT(_ctx),
+    userMsg,
+    600,
+    function onChunk(chunk) { appendAiChunk(chunk); },
+    function onDone(full) {
+      finishAiResponse();
+      setAllActionsDisabled(false);
+      logInteraction(actionType, customQuestion || '', full);
+    },
+    function onError(e) {
+      showAiError(e);
+      setAllActionsDisabled(false);
+    }
+  );
+}
+
+function sendCustom() {
+  var input = document.getElementById('ask-input');
+  var q = input.value.trim();
+  if (!q) return;
+  input.value = '';
+  triggerAction('custom', q);
+}
+
+function handleInputKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendCustom();
+  }
+}
+
+// ── Streaming Claude ──────────────────────────────────────────────────────────
+function streamClaude(system, userMsg, maxTokens, onChunk, onDone, onError) {
+  if (_aiAbort) _aiAbort.abort();
+  _aiAbort = new AbortController();
+
+  var userId = _ctx ? _ctx.userId : '';
+
+  fetch('/api/claude', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-User-ID': userId
+    },
+    body: JSON.stringify({
+      model: 'claude-haiku-4-5-20251001',
+      messages: [{ role: 'user', content: userMsg }],
+      system: system,
+      max_tokens: maxTokens,
+      stream: true
+    }),
+    signal: _aiAbort.signal
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('AI service error (' + res.status + ')');
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buf = '';
+    var full = '';
+
+    function pump() {
+      reader.read().then(function(ref) {
+        if (ref.done) { onDone && onDone(full); return; }
+        buf += decoder.decode(ref.value, { stream: true });
+        var lines = buf.split('\n');
+        buf = lines.pop();
+        for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (!line.startsWith('data: ')) continue;
+          var data = line.slice(6);
+          if (data === '[DONE]') { onDone && onDone(full); return; }
+          try {
+            var j = JSON.parse(data);
+            if (j.type === 'content_block_delta' && j.delta && j.delta.type === 'text_delta') {
+              var chunk = j.delta.text;
+              full += chunk;
+              onChunk && onChunk(chunk);
+            }
+          } catch(ex) {}
+        }
+        pump();
+      }).catch(function(e) {
+        if (e.name !== 'AbortError') onError && onError(e);
+      });
+    }
+    pump();
+  })
+  .catch(function(e) {
+    if (e.name !== 'AbortError') onError && onError(e);
+  });
+}
+
+// ── AI Panel helpers ──────────────────────────────────────────────────────────
+var _aiCursorEl = null;
+
+function showThinking(label) {
+  _currentAiText = '';
+  var body = document.getElementById('ai-body');
+  body.innerHTML =
+    '<div class="ai-thinking"><div class="thinking-dots"><span></span><span></span><span></span></div>' +
+    esc(label) + '</div>';
+  document.getElementById('ai-placeholder').classList.add('hidden');
+}
+
+function appendAiChunk(chunk) {
+  _currentAiText += chunk;
+  var body = document.getElementById('ai-body');
+  // Clear thinking dots on first chunk
+  if (body.querySelector('.ai-thinking')) {
+    body.innerHTML = '';
+    _aiCursorEl = null;
+  }
+  // Remove old cursor
+  if (_aiCursorEl && _aiCursorEl.parentNode) {
+    _aiCursorEl.parentNode.removeChild(_aiCursorEl);
+  }
+  body.appendChild(document.createTextNode(chunk));
+  // Add cursor
+  _aiCursorEl = document.createElement('span');
+  _aiCursorEl.className = 'ai-cursor';
+  body.appendChild(_aiCursorEl);
+  // Auto-scroll
+  body.scrollTop = body.scrollHeight;
+}
+
+function finishAiResponse() {
+  if (_aiCursorEl && _aiCursorEl.parentNode) {
+    _aiCursorEl.parentNode.removeChild(_aiCursorEl);
+    _aiCursorEl = null;
+  }
+}
+
+function showAiError(e) {
+  var body = document.getElementById('ai-body');
+  body.innerHTML = '<span style="color:var(--red);font-size:0.8rem">Could not get AI response. ' + esc(e.message) + '</span>';
+}
+
+function clearAI() {
+  if (_aiAbort) { _aiAbort.abort(); _aiAbort = null; }
+  _currentAiText = '';
+  var body = document.getElementById('ai-body');
+  body.innerHTML = '<span class="ai-placeholder" id="ai-placeholder">Use the actions below or type a question — AI response streams here.</span>';
+  setAllActionsDisabled(false);
+}
+
+function copyResponse() {
+  if (!_currentAiText) return;
+  navigator.clipboard.writeText(_currentAiText).then(function() {
+    var btn = document.getElementById('copy-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.textContent = '📋 Copy'; }, 1800);
+  }).catch(function(){
+    // Fallback
+    var ta = document.createElement('textarea');
+    ta.value = _currentAiText;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function setAllActionsDisabled(dis) {
+  ['act-say','act-followups','act-recap','act-star','act-assist'].forEach(function(id){
+    document.getElementById(id).disabled = dis;
+  });
+  document.getElementById('send-btn').disabled = dis;
+}
+
+// ── Rate limit message ────────────────────────────────────────────────────────
+function showRateMsg() {
+  var el = document.getElementById('rate-msg');
+  el.classList.remove('hidden');
+  setTimeout(function(){ el.classList.add('hidden'); }, 3000);
+}
+
+// ── Log interaction ───────────────────────────────────────────────────────────
+function logInteraction(actionType, question, response) {
+  if (!_ctx) return;
+  fetch('/.netlify/functions/copilot-session', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      action: 'log',
+      userId: _ctx.userId,
+      sessionId: _ctx.sessionId,
+      actionType: actionType,
+      userQuestion: question,
+      aiResponse: response
+    })
+  }).catch(function(){});
+}
+
+// ── End Session ────────────────────────────────────────────────────────────────
+async function endSession() {
+  if (_isEnded) return;
+  if (!confirm('End this session and generate meeting notes?')) return;
+
+  _isEnded = true;
+  clearInterval(_timerInterval);
+  if (_recognition) try { _recognition.stop(); } catch(e) {}
+  if (_aiAbort) _aiAbort.abort();
+
+  setStatus('off');
+  document.getElementById('pause-btn').disabled = true;
+  document.getElementById('end-btn').disabled = true;
+  setAllActionsDisabled(true);
+
+  // Show notes screen
+  document.getElementById('notes-screen').classList.remove('hidden');
+  document.getElementById('notes-generating').classList.remove('hidden');
+  document.getElementById('notes-content').classList.add('hidden');
+
+  var duration = Math.floor((Date.now() - _startTime) / 1000);
+  var transcript = _fullTranscript.trim();
+
+  // End session in DB
+  try {
+    await fetch('/.netlify/functions/copilot-session', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'end',
+        userId: _ctx.userId,
+        sessionId: _ctx.sessionId,
+        transcript: transcript,
+        duration: duration
+      })
+    });
+  } catch(e) { console.warn('[copilot] end session error:', e.message); }
+
+  // Generate meeting notes with AI
+  generateNotes(transcript, duration);
+}
+
+async function generateNotes(transcript, duration) {
+  var notesPrompt =
+    'You are an expert career coach. Generate structured meeting notes for a job interview.\n\n' +
+    'Company: ' + (_ctx.company || 'Unknown') + '\n' +
+    'Role: ' + (_ctx.role || 'Unknown') + '\n' +
+    'Duration: ' + Math.floor(duration / 60) + ' minutes\n\n' +
+    'Interview Transcript:\n' + (transcript || '[No transcript captured]').slice(0, 8000) + '\n\n' +
+    'Generate ONLY valid JSON, no markdown, no extra text. Use this exact shape:\n' +
+    '{"summary":"2-3 sentence overview","questions_asked":["Q1","Q2","Q3"],"key_answers":["Summary of answer 1","Summary of answer 2"],"topics":["Topic1","Topic2"],"follow_up_email":"Dear [Interviewer name],\\n\\n[Thank you email draft]","what_went_well":["Point 1","Point 2"],"to_improve":["Point 1","Point 2"]}';
+
+  var notesJson = null;
+
+  try {
+    // Use non-streaming for notes generation (reliability)
+    var res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-ID': _ctx.userId
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        messages: [{ role: 'user', content: notesPrompt }],
+        system: 'You are an expert career coach generating structured meeting notes. Return ONLY valid JSON, no markdown.',
+        max_tokens: 2000,
+        stream: false
+      })
+    });
+    var data = await res.json();
+    var raw = (data.content && data.content[0] && data.content[0].text) || '';
+    var match = raw.match(/\{[\s\S]*\}/);
+    if (match) notesJson = JSON.parse(match[0]);
+  } catch(e) {
+    console.warn('[copilot] notes generation error:', e.message);
+  }
+
+  // Fallback if AI fails
+  if (!notesJson) {
+    notesJson = {
+      summary: 'Interview at ' + (_ctx.company || 'company') + ' for ' + (_ctx.role || 'role') + '.',
+      questions_asked: ['(Could not extract — see transcript below)'],
+      key_answers: ['(Could not extract)'],
+      topics: ['General interview'],
+      follow_up_email: 'Hi [Interviewer],\n\nThank you for taking the time to speak with me today about the ' + (_ctx.role || 'position') + ' role at ' + (_ctx.company || 'your company') + '. I really enjoyed our conversation and remain very excited about the opportunity.\n\nBest regards,\n' + (_ctx.userName || 'Your Name'),
+      what_went_well: ['You completed the interview!'],
+      to_improve: ['Add more context to capture better notes next time']
+    };
+  }
+
+  _notesData = notesJson;
+
+  // Save notes to DB
+  try {
+    var saveRes = await fetch('/.netlify/functions/copilot-notes', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        sessionId: _ctx.sessionId,
+        userId: _ctx.userId,
+        notesJson: notesJson
+      })
+    });
+    var saveData = await saveRes.json();
+    _notesShareToken = saveData.shareToken;
+  } catch(e) {
+    console.warn('[copilot] save notes error:', e.message);
+  }
+
+  renderNotes(notesJson);
+}
+
+function renderNotes(n) {
+  document.getElementById('notes-generating').classList.add('hidden');
+  var content = document.getElementById('notes-content');
+
+  var html = '';
+
+  if (n.summary) {
+    html += section('📋 Summary', '<p class="notes-text">' + esc(n.summary) + '</p>');
+  }
+  if (n.questions_asked && n.questions_asked.length) {
+    html += section('❓ Questions Asked', listHtml(n.questions_asked));
+  }
+  if (n.key_answers && n.key_answers.length) {
+    html += section('💬 Your Key Answers', listHtml(n.key_answers));
+  }
+  if (n.topics && n.topics.length) {
+    html += section('🏷 Topics Covered', chipRow(n.topics));
+  }
+  if (n.what_went_well && n.what_went_well.length) {
+    html += section('✅ What Went Well', listHtml(n.what_went_well));
+  }
+  if (n.to_improve && n.to_improve.length) {
+    html += section('📈 Areas to Improve', listHtml(n.to_improve));
+  }
+  if (n.follow_up_email) {
+    html += section('📧 Follow-up Email Draft',
+      '<pre class="notes-text" style="white-space:pre-wrap;background:#1a2a44;padding:10px;border-radius:8px">' +
+      esc(n.follow_up_email) + '</pre>');
+  }
+
+  content.innerHTML = html;
+  content.classList.remove('hidden');
+
+  // Enable Open Full Page button if we have a share token
+  var openBtn = document.getElementById('open-notes-btn');
+  openBtn.disabled = !_notesShareToken;
+}
+
+function section(title, body) {
+  return '<div class="notes-section"><h3>' + esc(title) + '</h3>' + body + '</div>';
+}
+function listHtml(arr) {
+  return '<ul style="list-style:none;display:flex;flex-direction:column;gap:5px">' +
+    arr.map(function(s){ return '<li style="font-size:0.82rem;color:var(--text2);line-height:1.5;padding-left:12px;position:relative"><span style="position:absolute;left:0;color:var(--blue)">•</span>' + esc(s) + '</li>'; }).join('') + '</ul>';
+}
+function chipRow(arr) {
+  return '<div style="display:flex;flex-wrap:wrap;gap:6px">' +
+    arr.map(function(s){ return '<span style="background:rgba(59,130,246,0.12);border:1px solid rgba(59,130,246,0.25);border-radius:20px;padding:3px 10px;font-size:0.72rem;font-weight:600;color:#93c5fd">' + esc(s) + '</span>'; }).join('') + '</div>';
+}
+
+function copyNotes() {
+  if (!_notesData) return;
+  var text = buildNotesText(_notesData);
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.getElementById('copy-notes-btn');
+    btn.textContent = '✓ Copied!';
+    setTimeout(function(){ btn.textContent = '📋 Copy Notes'; }, 2000);
+  }).catch(function(){});
+}
+
+function buildNotesText(n) {
+  var lines = ['MEETING NOTES — ' + (_ctx.company||'') + ' / ' + (_ctx.role||'') + '\n'];
+  if (n.summary) lines.push('SUMMARY\n' + n.summary + '\n');
+  if (n.questions_asked && n.questions_asked.length) {
+    lines.push('QUESTIONS ASKED\n' + n.questions_asked.map(function(q,i){ return (i+1)+'. '+q; }).join('\n') + '\n');
+  }
+  if (n.key_answers && n.key_answers.length) {
+    lines.push('KEY ANSWERS\n' + n.key_answers.map(function(a,i){ return (i+1)+'. '+a; }).join('\n') + '\n');
+  }
+  if (n.topics && n.topics.length) lines.push('TOPICS: ' + n.topics.join(', ') + '\n');
+  if (n.what_went_well && n.what_went_well.length) {
+    lines.push('WHAT WENT WELL\n' + n.what_went_well.join('\n') + '\n');
+  }
+  if (n.to_improve && n.to_improve.length) {
+    lines.push('TO IMPROVE\n' + n.to_improve.join('\n') + '\n');
+  }
+  if (n.follow_up_email) lines.push('FOLLOW-UP EMAIL\n' + n.follow_up_email + '\n');
+  return lines.join('\n');
+}
+
+function openFullNotes() {
+  if (_notesShareToken) {
+    window.open('/copilot-notes?token=' + _notesShareToken, '_blank', 'noopener,noreferrer');
+  }
+}
+
+function closeNotes() {
+  document.getElementById('notes-screen').classList.add('hidden');
+}
+
+// ── Keyboard shortcuts ────────────────────────────────────────────────────────
+document.addEventListener('keydown', function(e) {
+  var mod = e.ctrlKey || e.metaKey;
+  if (mod && e.key === 'Enter') {
+    e.preventDefault();
+    triggerAction('what_to_say');
+  }
+  if (mod && (e.key === 'h' || e.key === 'H')) {
+    e.preventDefault();
+    window.blur();
+  }
+  if (e.key === 'Escape') {
+    clearAI();
+  }
+});
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function showError(msg) {
+  document.body.innerHTML = '<div style="color:#ef4444;padding:24px;font-family:Inter,sans-serif;font-size:0.9rem">' + esc(msg) + '</div>';
+}
+
+// Clean up on close
+window.addEventListener('beforeunload', function() {
+  if (_recognition) try { _recognition.stop(); } catch(e) {}
+  if (_aiAbort) _aiAbort.abort();
+});
+</script>
+</body>
+</html>
