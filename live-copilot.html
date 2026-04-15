@@ -467,10 +467,10 @@ async function startSession() {
 
     var sid = data.sessionId;
 
-    // Store context for popup to read
+    // Store context for popup to read — use actualUserId (real UUID) if returned
     var ctx = {
       sessionId: sid,
-      userId: _user.id,
+      userId: data.actualUserId || _user.id,
       userName: _user.name,
       company: company,
       role: role,

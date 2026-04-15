@@ -5,6 +5,7 @@
  * GET  ?token=     → retrieve notes by public share token
  */
 const { getPool, ok, err, preflight } = require('./_db');
+const crypto = require('crypto');
 
 // Accepts UUID or email — backward compat for sessions where id was stored as email
 async function verifyUserFlex(db, userId) {
@@ -39,10 +40,10 @@ exports.handler = async (event) => {
     const user = await verifyUserFlex(db, userId);
     if (!user) return err('Unauthorized', 401);
 
-    // Verify the session belongs to this user
+    // Verify the session belongs to this user (use resolved UUID from flex lookup)
     const check = await db.query(
       'SELECT id FROM copilot_sessions WHERE id=$1 AND user_id=$2',
-      [sessionId, userId]
+      [sessionId, user.id]
     );
     if (!check.rows[0]) return err('Session not found', 404);
 
@@ -60,11 +61,12 @@ exports.handler = async (event) => {
       return ok({ notesId: existing.rows[0].id, shareToken: existing.rows[0].share_token });
     }
 
+    const shareToken = crypto.randomBytes(32).toString('hex');
     const r = await db.query(
-      `INSERT INTO meeting_notes (session_id, user_id, notes_json)
-       VALUES ($1,$2,$3)
+      `INSERT INTO meeting_notes (session_id, user_id, notes_json, share_token)
+       VALUES ($1,$2,$3,$4)
        RETURNING id, share_token`,
-      [sessionId, userId, JSON.stringify(notesJson)]
+      [sessionId, userId, JSON.stringify(notesJson), shareToken]
     );
     return ok({ notesId: r.rows[0].id, shareToken: r.rows[0].share_token });
   }

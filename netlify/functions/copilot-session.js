@@ -6,6 +6,7 @@
  * GET  ?sessionId=    → get single session
  */
 const { getPool, ok, err, preflight } = require('./_db');
+const crypto = require('crypto');
 
 // Accepts UUID or email — handles sessions where ambore_user.id was stored as email
 async function verifyUserFlex(db, userId) {
@@ -54,7 +55,7 @@ async function ensureTables(db) {
       session_id   UUID REFERENCES copilot_sessions(id) ON DELETE CASCADE,
       user_id      UUID REFERENCES "User"(id) ON DELETE CASCADE,
       notes_json   JSONB NOT NULL,
-      share_token  VARCHAR(64) UNIQUE DEFAULT encode(gen_random_bytes(32), 'hex'),
+      share_token  VARCHAR(64) UNIQUE,
       created_at   TIMESTAMP DEFAULT NOW()
     );
   `);
@@ -85,9 +86,10 @@ exports.handler = async (event) => {
            (user_id, company_name, job_title, resume_text, job_description)
          VALUES ($1,$2,$3,$4,$5)
          RETURNING id, started_at`,
-        [userId, company, role, resume.slice(0, 12000), jd.slice(0, 6000)]
+        [user.id, company, role, resume.slice(0, 12000), jd.slice(0, 6000)]
       );
-      return ok({ sessionId: r.rows[0].id, startedAt: r.rows[0].started_at });
+      // Return actualUserId so popup stores the real UUID even if email was passed in
+      return ok({ sessionId: r.rows[0].id, startedAt: r.rows[0].started_at, actualUserId: user.id });
     }
 
     // End existing session
@@ -99,7 +101,7 @@ exports.handler = async (event) => {
          SET status='completed', ended_at=NOW(),
              duration_seconds=$1, full_transcript=$2
          WHERE id=$3 AND user_id=$4`,
-        [duration, transcript.slice(0, 60000), sessionId, userId]
+        [duration, transcript.slice(0, 60000), sessionId, user.id]
       );
       return ok({ success: true });
     }
