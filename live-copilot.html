@@ -344,9 +344,31 @@ var _user = null;
 var _apps = [];
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-window.addEventListener('DOMContentLoaded', function() {
+window.addEventListener('DOMContentLoaded', async function() {
   _user = AmborAPI.getUser();
   if (!_user) return;
+
+  // If stored id looks like an email (old session bug), resolve real UUID first
+  if (_user.id && _user.id.includes('@')) {
+    try {
+      var res = await fetch('/.netlify/functions/copilot-session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'resolve', userId: _user.id })
+      });
+      var d = await res.json();
+      if (d.actualUserId) {
+        _user.id = d.actualUserId;
+        // Patch localStorage so every other page benefits too
+        try {
+          var stored = JSON.parse(localStorage.getItem('ambore_user') || '{}');
+          stored.id = d.actualUserId;
+          localStorage.setItem('ambore_user', JSON.stringify(stored));
+        } catch(e) {}
+      }
+    } catch(e) {}
+  }
+
   loadApps();
   loadSessions();
 });

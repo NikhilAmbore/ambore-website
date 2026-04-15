@@ -6,7 +6,6 @@
  * GET  ?sessionId=    → get single session
  */
 const { getPool, ok, err, preflight } = require('./_db');
-const crypto = require('crypto');
 
 // Accepts UUID or email — handles sessions where ambore_user.id was stored as email
 async function verifyUserFlex(db, userId) {
@@ -77,6 +76,11 @@ exports.handler = async (event) => {
     const { action, userId } = body;
     const user = await verifyUserFlex(db, userId);
     if (!user) return err('Unauthorized', 401);
+
+    // Resolve real UUID from email (used by frontend session auto-patch)
+    if (action === 'resolve') {
+      return ok({ actualUserId: user.id });
+    }
 
     // Create new session
     if (action === 'create') {

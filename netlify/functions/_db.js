@@ -34,12 +34,24 @@ function preflight() {
   return { statusCode: 204, headers: CORS, body: '' };
 }
 
-// Verify userId belongs to a real user — basic auth check
+// Verify userId — accepts UUID or email (backward compat: old sessions stored email as id)
 async function verifyUser(userId) {
   if (!userId) return null;
   const db = getPool();
-  const r = await db.query('SELECT id, name, email FROM "User" WHERE id = $1', [userId]);
-  return r.rows[0] || null;
+  try {
+    // Try UUID match first, then email fallback in one query
+    const r = await db.query(
+      'SELECT id, name, email FROM "User" WHERE id::text = $1 OR email = $1',
+      [userId]
+    );
+    return r.rows[0] || null;
+  } catch (e) {
+    // id::text cast edge case — fall back to email-only
+    try {
+      const r = await db.query('SELECT id, name, email FROM "User" WHERE email = $1', [userId]);
+      return r.rows[0] || null;
+    } catch { return null; }
+  }
 }
 
 module.exports = { getPool, ok, err, preflight, verifyUser, CORS };
