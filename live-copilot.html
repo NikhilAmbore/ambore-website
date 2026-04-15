@@ -293,6 +293,7 @@ button,input,textarea,select{font-family:inherit}
       <span id="btn-start-text">Start Live Session</span>
     </button>
     <p class="start-hint">Opens a compact copilot window. Position it next to your video call.</p>
+    <p id="start-error" style="display:none;color:#ef4444;font-size:0.82rem;margin-top:8px"></p>
   </div>
 
   <!-- Tips -->
@@ -456,17 +457,17 @@ async function startSession() {
   var resume  = document.getElementById('f-resume').value.trim();
   var jd      = document.getElementById('f-jd').value.trim();
 
-  if (!company) { alert('Please enter the company name.'); document.getElementById('f-company').focus(); return; }
-  if (!role)    { alert('Please enter the role / position.'); document.getElementById('f-role').focus(); return; }
-  if (!resume && !jd) { alert('Please paste your resume or job description so the AI can help you.'); return; }
+  if (!company) { showStartError('Please enter the company name.'); document.getElementById('f-company').focus(); return; }
+  if (!role)    { showStartError('Please enter the role / position.'); document.getElementById('f-role').focus(); return; }
+  if (!resume && !jd) { showStartError('Please paste your resume or job description so the AI can help you.'); return; }
 
-  // Check mic permission before creating session
+  // Check mic permission — warn but do not block (AI features work without mic)
+  var micOk = true;
   try {
     var stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     stream.getTracks().forEach(function(t){ t.stop(); });
   } catch (e) {
-    alert('Microphone access is required for the Live Copilot.\n\nPlease allow mic access in your browser and try again.');
-    return;
+    micOk = false;
   }
 
   setBtnLoading(true);
@@ -513,7 +514,7 @@ async function startSession() {
     );
 
     if (!popup || popup.closed) {
-      alert('Popup was blocked. Please allow popups for ambore.org in your browser settings, then try again.');
+      showStartError('Popup was blocked. Please allow popups for ambore.org in your browser settings, then try again.');
       setBtnLoading(false);
       return;
     }
@@ -524,7 +525,7 @@ async function startSession() {
 
   } catch (e) {
     setBtnLoading(false);
-    alert('Could not start session: ' + e.message);
+    showStartError('Could not start session: ' + e.message);
   }
 }
 
@@ -541,6 +542,14 @@ function setBtnLoading(on) {
     document.getElementById('btn-start-icon').outerHTML = '<span id="btn-start-icon">🎙</span>';
     txt.textContent = 'Start Live Session';
   }
+}
+
+function showStartError(msg) {
+  var el = document.getElementById('start-error');
+  if (!el) return;
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(function(){ el.style.display = 'none'; }, 6000);
 }
 
 function fmtDur(sec) {
