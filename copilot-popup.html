@@ -649,24 +649,40 @@ var SYSTEM_PROMPT = function(ctx) {
 };
 
 function triggerAction(actionType, customQuestion) {
-  // Rate limit: 1 call per 4 seconds
+  // Rate limit: 1 call per 5 seconds
   var now = Date.now();
-  if (now - _lastAiCall < 4000) {
-    showRateMsg();
-    return;
-  }
+  if (now - _lastAiCall < 5000) { showRateMsg(); return; }
   _lastAiCall = now;
 
-  var transcript = _fullTranscript.trim().slice(-6000); // last ~6000 chars
-  var userMsg = customQuestion
-    ? customQuestion + '\n\nInterview transcript so far:\n' + (transcript || '[no transcript yet]')
-    : (ACTION_PROMPTS[actionType] || ACTION_PROMPTS.assist)(transcript, _ctx.resume, _ctx.jd);
+  if (!_ctx) { showAiError(new Error('Session context not loaded — please close and reopen.')); return; }
+
+  var transcript = _fullTranscript.trim().slice(-6000);
+  var userMsg;
+  try {
+    userMsg = customQuestion
+      ? customQuestion + '\n\nInterview transcript so far:\n' + (transcript || '[no transcript yet]')
+      : (ACTION_PROMPTS[actionType] || ACTION_PROMPTS.assist)(transcript, _ctx.resume || '', _ctx.jd || '');
+  } catch(e) {
+    showAiError(new Error('Could not build prompt: ' + e.message));
+    return;
+  }
+
+  var system;
+  try { system = SYSTEM_PROMPT(_ctx); } catch(e) {
+    showAiError(new Error('Could not build system prompt: ' + e.message));
+    return;
+  }
 
   setAllActionsDisabled(true);
   showThinking(ACTION_LABELS[actionType] || '🤖 Thinking…');
 
-  callClaude(SYSTEM_PROMPT(_ctx), userMsg, 600)
+  callClaude(system, userMsg, 700)
     .then(function(text) {
+      if (!text || !text.trim()) {
+        showAiError(new Error('AI returned an empty response — please try again.'));
+        setAllActionsDisabled(false);
+        return;
+      }
       _currentAiText = text;
       typewriterShow(text, function() {
         setAllActionsDisabled(false);
@@ -674,6 +690,7 @@ function triggerAction(actionType, customQuestion) {
       });
     })
     .catch(function(e) {
+      console.error('[copilot] triggerAction error:', e.message);
       showAiError(e);
       setAllActionsDisabled(false);
     });
@@ -698,17 +715,28 @@ function handleInputKey(e) {
 // ── Claude API call (non-streaming — reliable across all browsers/popups) ─────
 async function callClaude(system, userMsg, maxTokens) {
   var userId = _ctx ? _ctx.userId : '';
-  var res = await fetch('/api/claude', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'X-User-ID': userId },
-    body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
-      messages: [{ role: 'user', content: userMsg }],
-      system: system,
-      max_tokens: maxTokens,
-      stream: false
-    })
-  });
+  var controller = new AbortController();
+  var timeout = setTimeout(function() { controller.abort(); }, 25000);
+  var res;
+  try {
+    res = await fetch('/api/claude', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'X-User-ID': userId },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        messages: [{ role: 'user', content: userMsg }],
+        system: system,
+        max_tokens: maxTokens,
+        stream: false
+      }),
+      signal: controller.signal
+    });
+  } catch(e) {
+    if (e.name === 'AbortError') throw new Error('Request timed out — please try again.');
+    throw e;
+  } finally {
+    clearTimeout(timeout);
+  }
   var data = await res.json();
   if (!res.ok) throw new Error(data.error || 'AI error ' + res.status);
   return (data.content && data.content[0] && data.content[0].text) || '';
