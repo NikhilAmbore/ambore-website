@@ -400,7 +400,7 @@ var _isEnded = false;
 var _timerInterval = null;
 var _startTime = Date.now();
 var _lastAiCall = 0;     // rate limit
-var _aiAbort = null;     // AbortController for streaming
+var _aiAbort = null;     // unused — kept for safety
 var _fullTranscript = '';
 var _finalLines = [];    // array of final transcript strings
 var _currentAiText = '';
@@ -665,21 +665,18 @@ function triggerAction(actionType, customQuestion) {
   setAllActionsDisabled(true);
   showThinking(ACTION_LABELS[actionType] || '🤖 Thinking…');
 
-  streamClaude(
-    SYSTEM_PROMPT(_ctx),
-    userMsg,
-    600,
-    function onChunk(chunk) { appendAiChunk(chunk); },
-    function onDone(full) {
-      finishAiResponse();
-      setAllActionsDisabled(false);
-      logInteraction(actionType, customQuestion || '', full);
-    },
-    function onError(e) {
+  callClaude(SYSTEM_PROMPT(_ctx), userMsg, 600)
+    .then(function(text) {
+      _currentAiText = text;
+      typewriterShow(text, function() {
+        setAllActionsDisabled(false);
+        logInteraction(actionType, customQuestion || '', text);
+      });
+    })
+    .catch(function(e) {
       showAiError(e);
       setAllActionsDisabled(false);
-    }
-  );
+    });
 }
 
 function sendCustom() {
@@ -698,113 +695,71 @@ function handleInputKey(e) {
 }
 
 // ── Streaming Claude ──────────────────────────────────────────────────────────
-function streamClaude(system, userMsg, maxTokens, onChunk, onDone, onError) {
-  if (_aiAbort) _aiAbort.abort();
-  _aiAbort = new AbortController();
-
+// ── Claude API call (non-streaming — reliable across all browsers/popups) ─────
+async function callClaude(system, userMsg, maxTokens) {
   var userId = _ctx ? _ctx.userId : '';
-
-  fetch('/api/claude', {
+  var res = await fetch('/api/claude', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-User-ID': userId
-    },
+    headers: { 'Content-Type': 'application/json', 'X-User-ID': userId },
     body: JSON.stringify({
       model: 'claude-haiku-4-5-20251001',
       messages: [{ role: 'user', content: userMsg }],
       system: system,
       max_tokens: maxTokens,
-      stream: true
-    }),
-    signal: _aiAbort.signal
-  })
-  .then(function(res) {
-    if (!res.ok) throw new Error('AI service error (' + res.status + ')');
-    var reader = res.body.getReader();
-    var decoder = new TextDecoder();
-    var buf = '';
-    var full = '';
-
-    function pump() {
-      reader.read().then(function(ref) {
-        if (ref.done) { onDone && onDone(full); return; }
-        buf += decoder.decode(ref.value, { stream: true });
-        var lines = buf.split('\n');
-        buf = lines.pop();
-        for (var i = 0; i < lines.length; i++) {
-          var line = lines[i];
-          if (!line.startsWith('data: ')) continue;
-          var data = line.slice(6);
-          if (data === '[DONE]') { onDone && onDone(full); return; }
-          try {
-            var j = JSON.parse(data);
-            if (j.type === 'content_block_delta' && j.delta && j.delta.type === 'text_delta') {
-              var chunk = j.delta.text;
-              full += chunk;
-              onChunk && onChunk(chunk);
-            }
-          } catch(ex) {}
-        }
-        pump();
-      }).catch(function(e) {
-        if (e.name !== 'AbortError') onError && onError(e);
-      });
-    }
-    pump();
-  })
-  .catch(function(e) {
-    if (e.name !== 'AbortError') onError && onError(e);
+      stream: false
+    })
   });
+  var data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'AI error ' + res.status);
+  return (data.content && data.content[0] && data.content[0].text) || '';
 }
 
 // ── AI Panel helpers ──────────────────────────────────────────────────────────
-var _aiCursorEl = null;
+var _typewriterTimer = null;
 
 function showThinking(label) {
   _currentAiText = '';
+  if (_typewriterTimer) { clearInterval(_typewriterTimer); _typewriterTimer = null; }
   var body = document.getElementById('ai-body');
   body.innerHTML =
     '<div class="ai-thinking"><div class="thinking-dots"><span></span><span></span><span></span></div>' +
     esc(label) + '</div>';
-  document.getElementById('ai-placeholder').classList.add('hidden');
 }
 
-function appendAiChunk(chunk) {
-  _currentAiText += chunk;
+// Animate full text with typewriter effect, then fire onDone callback
+function typewriterShow(text, onDone) {
+  if (_typewriterTimer) { clearInterval(_typewriterTimer); _typewriterTimer = null; }
   var body = document.getElementById('ai-body');
-  // Clear thinking dots on first chunk
-  if (body.querySelector('.ai-thinking')) {
-    body.innerHTML = '';
-    _aiCursorEl = null;
-  }
-  // Remove old cursor
-  if (_aiCursorEl && _aiCursorEl.parentNode) {
-    _aiCursorEl.parentNode.removeChild(_aiCursorEl);
-  }
-  body.appendChild(document.createTextNode(chunk));
-  // Add cursor
-  _aiCursorEl = document.createElement('span');
-  _aiCursorEl.className = 'ai-cursor';
-  body.appendChild(_aiCursorEl);
-  // Auto-scroll
-  body.scrollTop = body.scrollHeight;
-}
+  body.innerHTML = '';
+  var i = 0;
+  var cursor = document.createElement('span');
+  cursor.className = 'ai-cursor';
+  body.appendChild(cursor);
 
-function finishAiResponse() {
-  if (_aiCursorEl && _aiCursorEl.parentNode) {
-    _aiCursorEl.parentNode.removeChild(_aiCursorEl);
-    _aiCursorEl = null;
-  }
+  _typewriterTimer = setInterval(function() {
+    // Add ~4 chars per tick for a fast but visible effect
+    var chunk = text.slice(i, i + 4);
+    if (!chunk) {
+      clearInterval(_typewriterTimer);
+      _typewriterTimer = null;
+      if (cursor.parentNode) cursor.parentNode.removeChild(cursor);
+      onDone && onDone();
+      return;
+    }
+    body.insertBefore(document.createTextNode(chunk), cursor);
+    i += 4;
+    body.scrollTop = body.scrollHeight;
+  }, 18);
 }
 
 function showAiError(e) {
+  if (_typewriterTimer) { clearInterval(_typewriterTimer); _typewriterTimer = null; }
   var body = document.getElementById('ai-body');
-  body.innerHTML = '<span style="color:var(--red);font-size:0.8rem">Could not get AI response. ' + esc(e.message) + '</span>';
+  body.innerHTML = '<span style="color:var(--red);font-size:0.8rem">⚠ ' + esc(e.message) + '</span>';
 }
 
 function clearAI() {
-  if (_aiAbort) { _aiAbort.abort(); _aiAbort = null; }
+  if (_typewriterTimer) { clearInterval(_typewriterTimer); _typewriterTimer = null; }
   _currentAiText = '';
   var body = document.getElementById('ai-body');
   body.innerHTML = '<span class="ai-placeholder" id="ai-placeholder">Use the actions below or type a question — AI response streams here.</span>';
@@ -867,7 +822,7 @@ async function endSession() {
   _isEnded = true;
   clearInterval(_timerInterval);
   if (_recognition) try { _recognition.stop(); } catch(e) {}
-  if (_aiAbort) _aiAbort.abort();
+  if (_typewriterTimer) { clearInterval(_typewriterTimer); _typewriterTimer = null; }
 
   setStatus('off');
   document.getElementById('pause-btn').disabled = true;
@@ -1089,7 +1044,7 @@ function showError(msg) {
 // Clean up on close
 window.addEventListener('beforeunload', function() {
   if (_recognition) try { _recognition.stop(); } catch(e) {}
-  if (_aiAbort) _aiAbort.abort();
+  if (_typewriterTimer) clearInterval(_typewriterTimer);
 });
 </script>
 </body>
