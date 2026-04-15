@@ -7,7 +7,6 @@
 const { getPool, ok, err, preflight } = require('./_db');
 const crypto = require('crypto');
 
-// Accepts UUID or email — backward compat for sessions where id was stored as email
 async function verifyUserFlex(db, userId) {
   if (!userId) return null;
   try {
@@ -27,82 +26,88 @@ async function verifyUserFlex(db, userId) {
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
 
-  const db = getPool();
+  try {
+    const db = getPool();
 
-  // ── POST: save notes ─────────────────────────────────────────────────────────
-  if (event.httpMethod === 'POST') {
-    let body;
-    try { body = JSON.parse(event.body || '{}'); } catch { return err('Invalid JSON', 400); }
+    // ── POST: save notes ───────────────────────────────────────────────────────
+    if (event.httpMethod === 'POST') {
+      let body;
+      try { body = JSON.parse(event.body || '{}'); } catch { return err('Invalid JSON', 400); }
 
-    const { sessionId, userId, notesJson } = body;
-    if (!sessionId || !notesJson) return err('sessionId and notesJson required', 400);
+      const { sessionId, userId, notesJson } = body;
+      if (!sessionId || !notesJson) return err('sessionId and notesJson required', 400);
 
-    const user = await verifyUserFlex(db, userId);
-    if (!user) return err('Unauthorized', 401);
+      const user = await verifyUserFlex(db, userId);
+      if (!user) return err('Unauthorized', 401);
 
-    // Verify the session belongs to this user (use resolved UUID from flex lookup)
-    const check = await db.query(
-      'SELECT id FROM copilot_sessions WHERE id=$1 AND user_id=$2',
-      [sessionId, user.id]
-    );
-    if (!check.rows[0]) return err('Session not found', 404);
-
-    // Upsert
-    const existing = await db.query(
-      'SELECT id, share_token FROM meeting_notes WHERE session_id=$1',
-      [sessionId]
-    );
-
-    if (existing.rows[0]) {
-      await db.query(
-        'UPDATE meeting_notes SET notes_json=$1 WHERE session_id=$2',
-        [JSON.stringify(notesJson), sessionId]
+      // Verify session belongs to this user
+      const check = await db.query(
+        'SELECT id FROM copilot_sessions WHERE id=$1 AND user_id=$2',
+        [sessionId, user.id]
       );
-      return ok({ notesId: existing.rows[0].id, shareToken: existing.rows[0].share_token });
+      if (!check.rows[0]) return err('Session not found', 404);
+
+      // Upsert
+      const existing = await db.query(
+        'SELECT id, share_token FROM meeting_notes WHERE session_id=$1',
+        [sessionId]
+      );
+
+      if (existing.rows[0]) {
+        await db.query(
+          'UPDATE meeting_notes SET notes_json=$1 WHERE session_id=$2',
+          [JSON.stringify(notesJson), sessionId]
+        );
+        return ok({ notesId: existing.rows[0].id, shareToken: existing.rows[0].share_token });
+      }
+
+      const shareToken = crypto.randomBytes(32).toString('hex');
+      const r = await db.query(
+        `INSERT INTO meeting_notes (session_id, user_id, notes_json, share_token)
+         VALUES ($1,$2,$3,$4)
+         RETURNING id, share_token`,
+        [sessionId, user.id, JSON.stringify(notesJson), shareToken]
+      );
+      return ok({ notesId: r.rows[0].id, shareToken: r.rows[0].share_token });
     }
 
-    const shareToken = crypto.randomBytes(32).toString('hex');
-    const r = await db.query(
-      `INSERT INTO meeting_notes (session_id, user_id, notes_json, share_token)
-       VALUES ($1,$2,$3,$4)
-       RETURNING id, share_token`,
-      [sessionId, userId, JSON.stringify(notesJson), shareToken]
-    );
-    return ok({ notesId: r.rows[0].id, shareToken: r.rows[0].share_token });
-  }
+    // ── GET: retrieve notes ────────────────────────────────────────────────────
+    if (event.httpMethod === 'GET') {
+      const p = event.queryStringParameters || {};
 
-  // ── GET: retrieve notes ──────────────────────────────────────────────────────
-  if (event.httpMethod === 'GET') {
-    const p = event.queryStringParameters || {};
+      let r;
+      if (p.token) {
+        r = await db.query(
+          `SELECT n.id, n.notes_json, n.share_token, n.created_at,
+                  s.company_name, s.job_title, s.started_at, s.duration_seconds,
+                  s.full_transcript
+           FROM meeting_notes n
+           JOIN copilot_sessions s ON s.id = n.session_id
+           WHERE n.share_token = $1`,
+          [p.token]
+        );
+      } else if (p.sessionId) {
+        r = await db.query(
+          `SELECT n.id, n.notes_json, n.share_token, n.created_at,
+                  s.company_name, s.job_title, s.started_at, s.duration_seconds,
+                  s.full_transcript
+           FROM meeting_notes n
+           JOIN copilot_sessions s ON s.id = n.session_id
+           WHERE n.session_id = $1`,
+          [p.sessionId]
+        );
+      } else {
+        return err('sessionId or token required', 400);
+      }
 
-    let r;
-    if (p.token) {
-      r = await db.query(
-        `SELECT n.id, n.notes_json, n.share_token, n.created_at,
-                s.company_name, s.job_title, s.started_at, s.duration_seconds,
-                s.full_transcript
-         FROM meeting_notes n
-         JOIN copilot_sessions s ON s.id = n.session_id
-         WHERE n.share_token = $1`,
-        [p.token]
-      );
-    } else if (p.sessionId) {
-      r = await db.query(
-        `SELECT n.id, n.notes_json, n.share_token, n.created_at,
-                s.company_name, s.job_title, s.started_at, s.duration_seconds,
-                s.full_transcript
-         FROM meeting_notes n
-         JOIN copilot_sessions s ON s.id = n.session_id
-         WHERE n.session_id = $1`,
-        [p.sessionId]
-      );
-    } else {
-      return err('sessionId or token required', 400);
+      if (!r.rows[0]) return err('Notes not found', 404);
+      return ok({ notes: r.rows[0] });
     }
 
-    if (!r.rows[0]) return err('Notes not found', 404);
-    return ok({ notes: r.rows[0] });
-  }
+    return err('Method not allowed', 405);
 
-  return err('Method not allowed', 405);
+  } catch (e) {
+    console.error('[copilot-notes] unhandled error:', e.message);
+    return err('Server error: ' + e.message, 500);
+  }
 };
