@@ -65,7 +65,6 @@ window.addEventListener('load',()=>track('page_view','resume'));
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;background:#fff;color:#1e293b}
@@ -1592,38 +1591,69 @@ function downloadTxt() {
   triggerBlobDownload(blob, `Resume_${name}.txt`, 'Plain text downloaded — use this with Jobscan, Resume Worded, or any ATS scanner');
 }
 
+function buildWordHtml(md) {
+  // Convert markdown → Word-safe HTML using inline styles only.
+  // Inline styles are far more reliable in Word than class-based CSS.
+  const esc = String(md)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+
+  let html = esc
+    // Headers
+    .replace(/^# (.+)$/gm,  '<h1 style="font-size:18pt;font-weight:700;text-align:center;margin:0 0 4px 0;color:#0f172a;font-family:Calibri,Arial,sans-serif">$1</h1>')
+    .replace(/^## (.+)$/gm, '<h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1pt solid #333;margin:10px 0 3px 0;padding-bottom:2px;color:#0f172a;font-family:Calibri,Arial,sans-serif">$1</h2>')
+    .replace(/^### (.+)$/gm,'<h3 style="font-size:11pt;font-weight:700;margin:4px 0 2px 0;color:#1e293b;font-family:Calibri,Arial,sans-serif">$1</h3>')
+    // Horizontal rule
+    .replace(/^---$/gm, '<hr style="border:none;border-top:1pt solid #999;margin:6px 0"/>')
+    // Bold + italic
+    .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*([^*]+)\*/g,   '<em style="font-style:italic;color:#555">$1</em>')
+    // Bullet lists
+    .replace(/(?:^|\n)((?:[ \t]*[-•] .+\n?)+)/g, (_m, list) => {
+      const items = list.trim().split('\n').map(l => {
+        const content = l.replace(/^[ \t]*[-•] /, '').trim();
+        return `<li style="font-size:10.5pt;margin:0 0 2px 0;color:#1a1a1a;font-family:Calibri,Arial,sans-serif">${content}</li>`;
+      }).join('');
+      return `<ul style="margin:0 0 4px 0;padding-left:18px">${items}</ul>`;
+    })
+    // Links — show text only (Word HTML link rendering is unreliable)
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    // Paragraphs — any non-tagged line
+    .replace(/^(?!<[hul/]|<li|<hr)(.+)$/gm,
+      '<p style="font-size:10.5pt;margin:0 0 2px 0;color:#1a1a1a;font-family:Calibri,Arial,sans-serif">$1</p>')
+    // Strip stray empty paragraphs
+    .replace(/<p[^>]*>\s*<\/p>/g, '');
+
+  return html;
+}
+
 async function downloadDocx() {
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
-  const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const userName = (Auth.getUser()?.name || 'Resume').replace(/\s+/g, '_');
 
-  const htmlContent = `<!DOCTYPE html><html><head><meta charset="utf-8"/>
-<style>
-${css}
-body{margin:0;padding:0;font-family:'Calibri',Arial,sans-serif}
-</style></head><body>${renderMarkdown(generatedMarkdown)}</body></html>`;
+  const bodyHtml = buildWordHtml(generatedMarkdown);
 
-  // Use html-docx-js for proper .docx if available
-  if (typeof htmlDocx !== 'undefined') {
-    try {
-      const blob = htmlDocx.asBlob(htmlContent, {
-        orientation: 'portrait',
-        margins: { top: 720, right: 864, bottom: 720, left: 864 } // 0.5in top/bottom, 0.6in left/right (in twentieths of a point)
-      });
-      triggerBlobDownload(blob, `Resume_${userName}_${tplName}.docx`, `Word document downloaded (${tplName} template)!`);
-      return;
-    } catch(e) {
-      console.warn('[resume] html-docx-js error, falling back:', e.message);
-    }
-  }
+  // Word HTML format — opens natively in Microsoft Word and Google Docs.
+  // Uses inline styles + Word XML namespaces for maximum compatibility.
+  const wordDoc = [
+    '<html xmlns:o="urn:schemas-microsoft-com:office:office"',
+    ' xmlns:w="urn:schemas-microsoft-com:office:word"',
+    ' xmlns="http://www.w3.org/TR/REC-html40">',
+    '<head><meta charset="utf-8">',
+    '<style>',
+    '@page { margin: 0.55in 0.65in; }',
+    'body { font-family: Calibri, Arial, sans-serif; font-size: 10.5pt; color: #1a1a1a; line-height: 1.35; }',
+    '</style></head>',
+    '<body>',
+    bodyHtml,
+    '</body></html>'
+  ].join('');
 
-  // Fallback: Word HTML format (opens in Word but shows compatibility warning)
-  const wordHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
-<body>${renderMarkdown(generatedMarkdown)}</body></html>`;
-  const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword' });
-  triggerBlobDownload(blob, `Resume_${userName}_${tplName}.doc`, `Resume downloaded (${tplName} template)!`);
+  const blob = new Blob(['\ufeff' + wordDoc], { type: 'application/msword' });
+  triggerBlobDownload(blob, `Resume_${userName}_${tplName}.doc`, 'Word document downloaded — open in Microsoft Word or Google Docs!');
 }
 
 /* ═══════════════════════════════════════════
