@@ -380,12 +380,15 @@ button,input,textarea,select{font-family:inherit}
 .sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;width:100%}
 /* Mobile dock */
 .mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.07);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
-.mob-dock-item{display:flex;flex-direction:column;align-items:center;gap:3px;color:#1e293b;text-decoration:none;font-size:0.55rem;font-weight:600;padding:6px 10px;border-radius:10px;transition:color 0.15s;border:none;background:none;cursor:pointer;font-family:inherit}
-.mob-dock-item.active,.mob-dock-item:hover{color:#818CF8}
-.mob-more-drawer{display:none;position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.1);z-index:199;padding:16px;display:none;flex-wrap:wrap;gap:8px;justify-content:center}
-.mob-more-drawer.open{display:flex}
-.mob-more-item{display:flex;flex-direction:column;align-items:center;gap:4px;color:#475569;text-decoration:none;font-size:0.6rem;font-weight:600;padding:10px 14px;border-radius:12px;background:#E2E8F0;min-width:60px;text-align:center}
-.mob-more-item:hover{background:rgba(37,99,235,0.08);color:#2563EB}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
+.md-item.active{color:#60a5fa}
+.md-item:hover{color:rgba(255,255,255,0.85)}
+.mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:199;max-height:70vh;overflow-y:auto}
+.mob-more-drawer.hidden{display:none}
+.mob-drawer-inner{padding:16px}
+.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mdg-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:10px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.62rem;font-weight:600;text-align:center;transition:background 0.15s,color 0.15s}
+.mdg-item:hover{background:rgba(99,102,241,0.15);color:#a5b4fc}
 /* ── Page layout shift ───────────────────────────────────────────────────────*/
 body{padding-left:72px}
 @media(max-width:768px){
@@ -431,27 +434,33 @@ body{padding-left:72px}
 
 <!-- Mobile dock -->
 <div class="mob-dock" id="mob-dock">
-  <a href="/jobs" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
-  <a href="/resume" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
-  <a href="/interview" class="mob-dock-item active"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Interview</span></a>
-  <a href="/dashboard" class="mob-dock-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
-  <button class="mob-dock-item" onclick="toggleMobMore()"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+  <a href="/jobs" class="md-item" title="Jobs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+  <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
+  <a href="/interview" class="md-item" title="Interview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Interview</span></a>
+  <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+  <button class="md-item" id="mob-more-btn" onclick="toggleMobMore()" title="More"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
 </div>
-<div class="mob-more-drawer" id="mob-more-drawer">
-  <a href="/resume-builder" class="mob-more-item"><span>✏️</span>Tailor</a>
-  <a href="/cover-letter" class="mob-more-item"><span>📝</span>Cover</a>
-  <a href="/email" class="mob-more-item"><span>✉️</span>Email</a>
-  <a href="/linkedin" class="mob-more-item"><span>💼</span>LinkedIn</a>
-  <a href="/ats-score" class="mob-more-item"><span>🎯</span>ATS</a>
-  <a href="/coding" class="mob-more-item"><span>💻</span>Coding</a>
-  <a href="/english" class="mob-more-item"><span>📖</span>English</a>
-  <a href="/project" class="mob-more-item"><span>🛠</span>Project</a>
-  <a href="/learn" class="mob-more-item"><span>🎓</span>Learn</a>
-  <a href="/portfolio" class="mob-more-item"><span>🌐</span>Portfolio</a>
-  <a href="/coaching" class="mob-more-item"><span>🏆</span>Coaching</a>
-  <a href="/help" class="mob-more-item"><span>❓</span>Help</a>
-  <a href="/feedback" class="mob-more-item"><span>💬</span>Feedback</a>
-  <button onclick="logout();toggleMobMore()" class="mob-more-item"><span>🚪</span>Log Out</button>
+<div class="mob-more-drawer hidden" id="mob-more-drawer">
+  <div class="mob-drawer-inner">
+    <div class="mob-drawer-grid">
+      <a href="/resume-builder" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
+      <a href="/cover-letter" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
+      <a href="/email" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+      <a href="/linkedin" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+      <a href="/ats-score" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
+      <a href="/coding" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
+      <a href="/english" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
+      <a href="/project" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+      <a href="/learn" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Learn</span></a>
+      <a href="/portfolio" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Portfolio</span></a>
+      <a href="/coaching" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg><span>Coaching</span></a>
+      <a href="/community" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Community</span></a>
+      <a href="/help" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
+    </div>
+    <div style="padding:4px 0 0">
+      <button onclick="logout()" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;font-size:0.85rem;font-weight:600;cursor:pointer;">Log Out</button>
+    </div>
+  </div>
 </div>
 <!-- PROMO BANNER -->
 <div id="promo-banner" style="background:linear-gradient(90deg,#312e81,#1e3a5f);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;flex-wrap:wrap;position:relative">
@@ -1796,8 +1805,17 @@ function showToast(msg){
   setTimeout(()=>t.remove(),5000);
 }
 
-function toggleMobMore(){const d=document.getElementById('mob-more-drawer');d.classList.toggle('open');}
-document.addEventListener('click',function(e){const d=document.getElementById('mob-more-drawer');if(d&&d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.mob-dock')){d.classList.remove('open');}});
+function toggleMobMore(){
+  var d=document.getElementById('mob-more-drawer');
+  d.classList.toggle('hidden');
+}
+document.addEventListener('click',function(e){
+  var drawer=document.getElementById('mob-more-drawer');
+  var btn=document.getElementById('mob-more-btn');
+  if(drawer&&!drawer.classList.contains('hidden')&&!drawer.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){
+    drawer.classList.add('hidden');
+  }
+});
 
 /* ═══════════════════════════════════════════
    BOOT — runs immediately (script is at end of body, DOM is ready)
@@ -1807,5 +1825,14 @@ if (Auth.getUser()) {
 } else {
   window.location.href = '/?auth=login&redirect=/interview&msg=Please+log+in+to+access+this+feature';
 }
+
+// ── Auto-highlight active nav item ────────────────────────────────────────────
+(function(){
+  var path=window.location.pathname.replace(/\/$/,'');
+  document.querySelectorAll('.sb-item,.md-item').forEach(function(el){
+    var href=(el.getAttribute('href')||'').replace(/\/$/,'');
+    if(href&&href===path)el.classList.add('active');
+  });
+})();
 </script></body>
 </html>

@@ -17,9 +17,9 @@ body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif
 .sb-logo{width:42px;height:42px;background:#000;border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity .15s}
 .sb-logo:hover{opacity:.85}
 .sb-nav{display:flex;flex-direction:column;gap:4px;flex:1;width:100%;padding:0 8px}
-.sb-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 4px;border-radius:10px;text-decoration:none;color:#64748B;font-size:.58rem;font-weight:600;cursor:pointer;border:none;background:none;width:100%;transition:all .15s;text-align:center;line-height:1.2}
-.sb-item:hover{background:#E2E8F0;color:#CBD5E1}
-.sb-item.active{background:rgba(79,70,229,.15);color:#818CF8}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 2px;font-family:inherit}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9)}
+.sb-item.active{background:rgba(99,102,241,0.25);color:#a5b4fc}
 .sb-item svg{flex-shrink:0}
 .sb-logout{color:rgba(239,68,68,.6)!important}
 .sb-logout:hover{background:rgba(239,68,68,.08)!important;color:#ef4444!important}
@@ -63,9 +63,16 @@ body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif
 .empty-col{text-align:center;padding:28px 12px;color:#94A3B8;font-size:.78rem}
 
 /* Mobile dock */
-.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.07);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
-.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:6px 8px;border-radius:8px;text-decoration:none;color:rgba(255,255,255,0.45);font-size:.58rem;font-weight:600;background:none;border:none;cursor:pointer;min-width:44px;transition:color .15s}
-.md-item:hover,.md-item.active{color:#60a5fa}
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
+.md-item.active{color:#60a5fa}
+.md-item:hover{color:rgba(255,255,255,0.85)}
+.mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:199;max-height:70vh;overflow-y:auto}
+.mob-more-drawer.hidden{display:none}
+.mob-drawer-inner{padding:16px}
+.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mdg-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:10px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.62rem;font-weight:600;text-align:center;transition:background 0.15s,color 0.15s}
+.mdg-item:hover{background:rgba(99,102,241,0.15);color:#a5b4fc}
 @media(max-width:768px){
   .sb{display:none}
   .main{margin-left:0;padding:16px;padding-bottom:80px}
@@ -163,7 +170,30 @@ body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif
   <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
   <a href="/interview" class="md-item" title="Interview"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/></svg><span>Interview</span></a>
   <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
+  <button class="md-item" onclick="toggleMobMore()" id="mob-more-btn" title="More"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
 </nav>
+<div class="mob-more-drawer hidden" id="mob-more-drawer">
+  <div class="mob-drawer-inner">
+    <div class="mob-drawer-grid">
+      <a href="/resume-builder" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
+      <a href="/cover-letter" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
+      <a href="/email" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+      <a href="/linkedin" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+      <a href="/ats-score" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
+      <a href="/coding" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
+      <a href="/english" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
+      <a href="/project" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+      <a href="/learn" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Learn</span></a>
+      <a href="/portfolio" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Portfolio</span></a>
+      <a href="/coaching" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg><span>Coaching</span></a>
+      <a href="/community" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Community</span></a>
+      <a href="/help" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
+    </div>
+    <div style="padding:4px 0 0">
+      <button onclick="logout()" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;font-size:0.85rem;font-weight:600;cursor:pointer;">Log Out</button>
+    </div>
+  </div>
+</div>
 
 <script>
 // Auth guard
@@ -175,6 +205,25 @@ body{background:var(--bg);color:#1e293b;font-family:'Inter',system-ui,sans-serif
 })();
 
 function logout(){localStorage.removeItem('ambore_user');window.location.href='/';}
+
+function toggleMobMore(){
+  var d=document.getElementById('mob-more-drawer');
+  d.classList.toggle('hidden');
+}
+document.addEventListener('click',function(e){
+  var drawer=document.getElementById('mob-more-drawer');
+  var btn=document.getElementById('mob-more-btn');
+  if(drawer&&!drawer.classList.contains('hidden')&&!drawer.contains(e.target)&&e.target!==btn&&!btn.contains(e.target)){
+    drawer.classList.add('hidden');
+  }
+});
+(function(){
+  var path=window.location.pathname.replace(/\/$/,'');
+  document.querySelectorAll('.sb-item,.md-item').forEach(function(el){
+    var href=(el.getAttribute('href')||'').replace(/\/$/,'');
+    if(href&&href===path)el.classList.add('active');
+  });
+})();
 
 var SUPA_URL='https://mqonctgrvppdbjcuawue.supabase.co';
 var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1xb25jdGdydnBwZGJqY3Vhd3VlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQwNTUwMzMsImV4cCI6MjA4OTYzMTAzM30.xc47ksXn5lLzF9w70U5BpCI86yzivsjbHUsJCk2ZseU';
