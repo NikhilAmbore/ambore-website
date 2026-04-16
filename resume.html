@@ -65,6 +65,7 @@ window.addEventListener('load',()=>track('page_view','resume'));
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;background:#fff;color:#1e293b}
@@ -1591,69 +1592,116 @@ function downloadTxt() {
   triggerBlobDownload(blob, `Resume_${name}.txt`, 'Plain text downloaded — use this with Jobscan, Resume Worded, or any ATS scanner');
 }
 
-function buildWordHtml(md) {
-  // Convert markdown → Word-safe HTML using inline styles only.
-  // Inline styles are far more reliable in Word than class-based CSS.
-  const esc = String(md)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+// ── OOXML helpers ─────────────────────────────────────────────────────────────
+function _xe(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function _runs(text) {
+  // Parse **bold**, *italic*, ***bold+italic*** inline and return OOXML runs
+  let out = '';
+  const re = /\*\*\*([^*]+)\*\*\*|\*\*([^*]+)\*\*|\*([^*]+)\*|(\[([^\]]+)\]\([^)]+\))|([^*[\]]+)/g;
+  let m;
+  while ((m = re.exec(text)) !== null) {
+    if (m[1]) out += `<w:r><w:rPr><w:b/><w:bCs/><w:i/><w:iCs/></w:rPr><w:t xml:space="preserve">${_xe(m[1])}</w:t></w:r>`;
+    else if (m[2]) out += `<w:r><w:rPr><w:b/><w:bCs/></w:rPr><w:t xml:space="preserve">${_xe(m[2])}</w:t></w:r>`;
+    else if (m[3]) out += `<w:r><w:rPr><w:i/><w:iCs/><w:color w:val="555555"/></w:rPr><w:t xml:space="preserve">${_xe(m[3])}</w:t></w:r>`;
+    else if (m[4]) out += `<w:r><w:t xml:space="preserve">${_xe(m[5])}</w:t></w:r>`; // link → text only
+    else if (m[6]) out += `<w:r><w:t xml:space="preserve">${_xe(m[6])}</w:t></w:r>`;
+  }
+  return out;
+}
+function _p(runs, opts={}) {
+  const { center=false, before=0, after=80, sz=21, border=false, indent=false } = opts;
+  let pPr = `<w:spacing w:before="${before}" w:after="${after}"/>`;
+  if (center) pPr += '<w:jc w:val="center"/>';
+  if (border) pPr += '<w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="444444"/></w:pBdr>';
+  if (indent) pPr += '<w:ind w:left="360" w:hanging="180"/>';
+  return `<w:p><w:pPr>${pPr}</w:pPr>${runs}</w:p>`;
+}
+function _r(text, bold=false, sz=21, color='') {
+  const rPr = [bold?'<w:b/><w:bCs/>':'', sz!==21?`<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/>`:'' , color?`<w:color w:val="${color}"/>`:''].join('');
+  return `<w:r>${rPr?`<w:rPr>${rPr}</w:rPr>`:''}<w:t xml:space="preserve">${_xe(text)}</w:t></w:r>`;
+}
 
-  let html = esc
-    // Headers
-    .replace(/^# (.+)$/gm,  '<h1 style="font-size:18pt;font-weight:700;text-align:center;margin:0 0 4px 0;color:#0f172a;font-family:Calibri,Arial,sans-serif">$1</h1>')
-    .replace(/^## (.+)$/gm, '<h2 style="font-size:11pt;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1pt solid #333;margin:10px 0 3px 0;padding-bottom:2px;color:#0f172a;font-family:Calibri,Arial,sans-serif">$1</h2>')
-    .replace(/^### (.+)$/gm,'<h3 style="font-size:11pt;font-weight:700;margin:4px 0 2px 0;color:#1e293b;font-family:Calibri,Arial,sans-serif">$1</h3>')
-    // Horizontal rule
-    .replace(/^---$/gm, '<hr style="border:none;border-top:1pt solid #999;margin:6px 0"/>')
-    // Bold + italic
-    .replace(/\*\*\*([^*]+)\*\*\*/g, '<strong><em>$1</em></strong>')
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-    .replace(/\*([^*]+)\*/g,   '<em style="font-style:italic;color:#555">$1</em>')
-    // Bullet lists
-    .replace(/(?:^|\n)((?:[ \t]*[-•] .+\n?)+)/g, (_m, list) => {
-      const items = list.trim().split('\n').map(l => {
-        const content = l.replace(/^[ \t]*[-•] /, '').trim();
-        return `<li style="font-size:10.5pt;margin:0 0 2px 0;color:#1a1a1a;font-family:Calibri,Arial,sans-serif">${content}</li>`;
-      }).join('');
-      return `<ul style="margin:0 0 4px 0;padding-left:18px">${items}</ul>`;
-    })
-    // Links — show text only (Word HTML link rendering is unreliable)
-    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
-    // Paragraphs — any non-tagged line
-    .replace(/^(?!<[hul/]|<li|<hr)(.+)$/gm,
-      '<p style="font-size:10.5pt;margin:0 0 2px 0;color:#1a1a1a;font-family:Calibri,Arial,sans-serif">$1</p>')
-    // Strip stray empty paragraphs
-    .replace(/<p[^>]*>\s*<\/p>/g, '');
-
-  return html;
+function mdToOoxml(md) {
+  const lines = String(md).split('\n');
+  let body = '';
+  for (const line of lines) {
+    if (/^# /.test(line)) {
+      const t = line.replace(/^# /,'').trim();
+      body += _p(_r(t,true,40,'0f172a'), {center:true, before:0, after:60, sz:40});
+    } else if (/^## /.test(line)) {
+      const t = line.replace(/^## /,'').trim().toUpperCase();
+      body += _p(_r(t,true,22,'111111'), {before:180, after:40, border:true});
+    } else if (/^### /.test(line)) {
+      const t = line.replace(/^### /,'').trim();
+      body += _p(_runs(t), {before:80, after:20});
+    } else if (/^---$/.test(line.trim())) {
+      body += `<w:p><w:pPr><w:pBdr><w:bottom w:val="single" w:sz="4" w:space="1" w:color="aaaaaa"/></w:pBdr><w:spacing w:before="60" w:after="60"/></w:pPr></w:p>`;
+    } else if (/^[ \t]*[-•] /.test(line)) {
+      const t = line.replace(/^[ \t]*[-•] /,'').trim();
+      const bullet = `<w:r><w:rPr><w:sz w:val="21"/></w:rPr><w:t xml:space="preserve">• </w:t></w:r>`;
+      body += _p(bullet + _runs(t), {before:0, after:40, indent:true});
+    } else if (line.trim() === '') {
+      body += `<w:p><w:pPr><w:spacing w:before="0" w:after="60"/></w:pPr></w:p>`;
+    } else {
+      body += _p(_runs(line.trim()), {before:0, after:40});
+    }
+  }
+  return body;
 }
 
 async function downloadDocx() {
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
+  if (typeof JSZip === 'undefined') { showToast('Export library not loaded yet — please try again in a moment.'); return; }
+
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
   const userName = (Auth.getUser()?.name || 'Resume').replace(/\s+/g, '_');
 
-  const bodyHtml = buildWordHtml(generatedMarkdown);
+  const bodyXml = mdToOoxml(generatedMarkdown);
 
-  // Word HTML format — opens natively in Microsoft Word and Google Docs.
-  // Uses inline styles + Word XML namespaces for maximum compatibility.
-  const wordDoc = [
-    '<html xmlns:o="urn:schemas-microsoft-com:office:office"',
-    ' xmlns:w="urn:schemas-microsoft-com:office:word"',
-    ' xmlns="http://www.w3.org/TR/REC-html40">',
-    '<head><meta charset="utf-8">',
-    '<style>',
-    '@page { margin: 0.55in 0.65in; }',
-    'body { font-family: Calibri, Arial, sans-serif; font-size: 10.5pt; color: #1a1a1a; line-height: 1.35; }',
-    '</style></head>',
-    '<body>',
-    bodyHtml,
-    '</body></html>'
-  ].join('');
+  // ── OOXML file contents ──────────────────────────────────────────────────────
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="xml" ContentType="application/xml"/>
+  <Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>
+</Types>`;
 
-  const blob = new Blob(['\ufeff' + wordDoc], { type: 'application/msword' });
-  triggerBlobDownload(blob, `Resume_${userName}_${tplName}.doc`, 'Word document downloaded — open in Microsoft Word or Google Docs!');
+  const relsRoot = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>
+</Relationships>`;
+
+  const wordRels = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+</Relationships>`;
+
+  const documentXml = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+            xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006">
+  <w:body>
+    ${bodyXml}
+    <w:sectPr>
+      <w:pgSz w:w="12240" w:h="15840"/>
+      <w:pgMar w:top="720" w:right="864" w:bottom="720" w:left="864" w:header="709" w:footer="709" w:gutter="0"/>
+    </w:sectPr>
+  </w:body>
+</w:document>`;
+
+  // ── Build ZIP ────────────────────────────────────────────────────────────────
+  const zip = new JSZip();
+  zip.file('[Content_Types].xml', contentTypes);
+  zip.file('_rels/.rels', relsRoot);
+  zip.file('word/document.xml', documentXml);
+  zip.file('word/_rels/document.xml.rels', wordRels);
+
+  const blob = await zip.generateAsync({
+    type: 'blob',
+    mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+  });
+  triggerBlobDownload(blob, `Resume_${userName}_${tplName}.docx`, 'Word document downloaded — open in Microsoft Word, Pages, or Google Docs!');
 }
 
 /* ═══════════════════════════════════════════
