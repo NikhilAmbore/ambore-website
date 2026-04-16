@@ -65,6 +65,7 @@ window.addEventListener('load',()=>track('page_view','resume'));
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;background:#fff;color:#1e293b}
@@ -424,9 +425,9 @@ button,input,textarea,select{font-family:inherit}
 
 /* ── Mobile dock ─────────────────────────────────────────────────────────────*/
 .mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
-.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:#1e293b;text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
-.md-item.active{color:#2563EB}
-.md-item:hover{color:#1e293b}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
+.md-item.active{color:#60a5fa}
+.md-item:hover{color:rgba(255,255,255,0.85)}
 .mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:199;max-height:70vh;overflow-y:auto}
 .mob-more-drawer.hidden{display:none}
 .mob-drawer-inner{padding:16px}
@@ -1595,12 +1596,34 @@ async function downloadDocx() {
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
   const tplName = activeTemplate.charAt(0).toUpperCase() + activeTemplate.slice(1);
-  const htmlContent = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
-<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style>
-</head>
+  const userName = (Auth.getUser()?.name || 'Resume').replace(/\s+/g, '_');
+
+  const htmlContent = `<!DOCTYPE html><html><head><meta charset="utf-8"/>
+<style>
+${css}
+body{margin:0;padding:0;font-family:'Calibri',Arial,sans-serif}
+</style></head><body>${renderMarkdown(generatedMarkdown)}</body></html>`;
+
+  // Use html-docx-js for proper .docx if available
+  if (typeof htmlDocx !== 'undefined') {
+    try {
+      const blob = htmlDocx.asBlob(htmlContent, {
+        orientation: 'portrait',
+        margins: { top: 720, right: 864, bottom: 720, left: 864 } // 0.5in top/bottom, 0.6in left/right (in twentieths of a point)
+      });
+      triggerBlobDownload(blob, `Resume_${userName}_${tplName}.docx`, `Word document downloaded (${tplName} template)!`);
+      return;
+    } catch(e) {
+      console.warn('[resume] html-docx-js error, falling back:', e.message);
+    }
+  }
+
+  // Fallback: Word HTML format (opens in Word but shows compatibility warning)
+  const wordHtml = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="utf-8"/><style>${css}body{margin:0.5in 0.6in}</style></head>
 <body>${renderMarkdown(generatedMarkdown)}</body></html>`;
-  const blob = new Blob(['\ufeff' + htmlContent], { type: 'application/msword' });
-  triggerBlobDownload(blob, `Resume_${tplName}.doc`, `Resume downloaded (${tplName} template)! Open with Word to save as DOCX.`);
+  const blob = new Blob(['\ufeff' + wordHtml], { type: 'application/msword' });
+  triggerBlobDownload(blob, `Resume_${userName}_${tplName}.doc`, `Resume downloaded (${tplName} template)!`);
 }
 
 /* ═══════════════════════════════════════════
