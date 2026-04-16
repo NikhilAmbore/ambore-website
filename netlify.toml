@@ -44,17 +44,17 @@
     Content-Security-Policy   = "default-src 'self'; script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdnjs.cloudflare.com https://cdn.jsdelivr.net https://accounts.google.com; worker-src blob: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net; connect-src 'self' https://ambore.org https://api.anthropic.com https://mqonctgrvppdbjcuawue.supabase.co https://web-production-d62ab.up.railway.app https://www.google-analytics.com https://region1.google-analytics.com https://analytics.google.com https://www.googleapis.com https://accounts.google.com https://ingesteer.services-prod.nsvcs.net https://cdn.jsdelivr.net https://api.github.com; font-src 'self' https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; img-src 'self' data: blob: https://www.google-analytics.com https://lh3.googleusercontent.com; frame-src 'self' blob: https://accounts.google.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self'"
     Vary                      = "Accept-Encoding"
 
-# ── HTML pages: aggressive edge caching ──────────────────────────────────────
+# ── HTML pages: always fresh — no CDN cache, browser revalidates every request ─
 [[headers]]
   for = "/*.html"
   [headers.values]
-    Cache-Control = "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # ── Root (index) ──────────────────────────────────────────────────────────────
 [[headers]]
   for = "/"
   [headers.values]
-    Cache-Control = "public, max-age=0, s-maxage=3600, stale-while-revalidate=86400, stale-if-error=604800"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
 # ── Jobs JSON: 5-min CDN cache, serve stale up to 10 min ─────────────────────
 [[headers]]
@@ -73,16 +73,16 @@
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# ── CSS & JS: cache 30 days (immutable) ──────────────────────────────────────
+# ── CSS & JS: short cache so updates propagate quickly ───────────────────────
 [[headers]]
   for = "*.css"
   [headers.values]
-    Cache-Control = "public, max-age=2592000, immutable"
+    Cache-Control = "public, max-age=300, must-revalidate"
 
 [[headers]]
   for = "*.js"
   [headers.values]
-    Cache-Control = "public, max-age=2592000, immutable"
+    Cache-Control = "public, max-age=300, must-revalidate"
 
 # ── Community PDFs: serve with correct content-type, short cache ──────────────
 [[headers]]
