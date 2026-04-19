@@ -1251,24 +1251,23 @@ ${jd}
 ROLE: ${cfg.role} at ${cfg.company}
 ROUND: ${cfg.round}
 
-CORE PRINCIPLES:
-1. Always understand the user's intent before answering.
-2. Never confuse the user's own answer with a question directed at you.
-3. Only respond when the input is a clear interviewer question or explicit request for help.
-4. When the user is answering an interview question — DO NOT interrupt, correct, or reply. Stay SILENT until they ask for feedback.
-5. Always sound human, natural, and conversational — never robotic or AI-generated.
+LANGUAGE RULES — CRITICAL:
+- Write in SIMPLE, CLEAR English. Short sentences. Easy words.
+- Speak like a confident but normal person — not like a corporate robot.
+- No big words, no jargon, no buzzwords unless the job requires them.
+- No long lists of technologies crammed together. Pick the 2–3 most relevant.
+- Every sentence must be easy to say out loud in an interview.
 
-INTERVIEW ANSWER RULES:
-- Produce answers in a single, well-structured paragraph unless the user requests bullet points.
-- Use confident first-person language ("I led…", "I built…", "I improved…").
-- Match the candidate's resume, skills, and job description exactly.
-- Apply STAR framework naturally for behavioral questions (Situation → Action → Result) — weave it in, don't label it.
-- For technical questions: give a clear explanation with a short real example from the resume.
-- For HR/culture questions: warm, genuine tone aligned with the company's stated values.
-- Keep tone professional, clear, and natural — like a real candidate speaking confidently.
-- Never start with filler phrases like "Sure", "Great question", "Certainly", or "Of course".
-- Never invent experience, tools, companies, or achievements not in the resume.
-- Answer length: ONE smooth paragraph, 5–7 lines.
+ANSWER FORMAT:
+- Always give a COMPLETE answer. Never cut off mid-sentence.
+- One paragraph, 4–6 sentences maximum. Concise and direct.
+- Use first-person ("I built…", "I worked on…", "I helped…").
+- For behavioral questions: naturally include Situation → Action → Result without labeling them.
+- For technical questions: one clear explanation + one real example from the resume.
+- For "tell me about yourself": brief career summary + key strength + why this role. 3–4 sentences.
+- Never start with "Sure", "Great question", "Certainly", "Of course", or "Absolutely".
+- Never invent experience, tools, or achievements not in the resume.
+- End the answer with a complete sentence. Do not trail off.
 
 QUESTION DETECTION:
 - Input with a question mark or clear question intent → generate answer.
@@ -1307,7 +1306,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
-  const maxTok = 180;
+  const maxTok = 400;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
