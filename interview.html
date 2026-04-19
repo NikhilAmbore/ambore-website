@@ -232,7 +232,7 @@ button,input,textarea,select{font-family:inherit}
 .ans-badge{font-size:0.62rem;font-weight:700;color:#60a5fa;background:rgba(37,99,235,0.15);padding:2px 8px;border-radius:9px;white-space:nowrap;flex-shrink:0;border:1px solid rgba(37,99,235,0.2)}
 
 /* Streaming answer text — large and readable */
-.streaming-text{padding:16px 18px;font-size:0.97rem;line-height:1.85;color:#e2e8f0}
+.streaming-text{padding:16px 18px;font-size:0.97rem;line-height:1.85;color:#e2e8f0;max-height:55vh;overflow-y:auto}
 .streaming-text p{margin-bottom:10px}
 .streaming-text p:last-child{margin-bottom:0}
 
@@ -1236,10 +1236,10 @@ JOB: ${jd}
 RULES:
 - First word = substance. NEVER open with "Sure", "Great question", "Absolutely", "Certainly", "Of course", or any filler.
 - Simple clear English. Short sentences. Easy to say out loud.
-- 350–500 words total. 3–4 paragraphs.
+- 150–200 words. 2–3 short paragraphs. Complete sentences only.
 - First person ("I built…", "I led…").
-- Behavioral: Situation → Action → Result with specific numbers/outcomes.
-- Technical: clear explanation + real example from resume + tradeoffs.
+- Behavioral: Situation → Action → Result with one concrete outcome or number.
+- Technical: one clear explanation + one real example from resume.
 - Never invent anything not in the resume. End with a complete sentence.
 
 DETECTION: If input is the user speaking their own answer (not a question) → reply exactly: SILENT`;
@@ -1276,7 +1276,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
-  const maxTok = 900;
+  const maxTok = 420;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
