@@ -368,6 +368,26 @@ button,input,textarea,select{font-family:inherit}
   .panel.transcript-panel{height:150px}
 }
 
+/* ══ MODE BAR ════════════════════════════════════════════════════════════════ */
+.mode-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 16px;border-bottom:1px solid var(--border);flex-shrink:0;transition:background 0.3s}
+.mode-bar.iv{background:rgba(37,99,235,0.07)}
+.mode-bar.me{background:rgba(34,197,94,0.06)}
+.mode-bar-left{display:flex;align-items:center;gap:10px}
+.mode-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.mode-bar.iv .mode-dot{background:#60a5fa;box-shadow:0 0 6px rgba(96,165,250,0.6);animation:blink-dot 1.5s infinite}
+.mode-bar.me .mode-dot{background:#4ade80}
+.mode-label{font-size:0.78rem;font-weight:700;letter-spacing:0.02em}
+.mode-bar.iv .mode-label{color:#60a5fa}
+.mode-bar.me .mode-label{color:#4ade80}
+.mode-hint{font-size:0.72rem;color:#64748B}
+.mode-switch{padding:5px 14px;border-radius:8px;font-size:0.75rem;font-weight:700;cursor:pointer;border:none;transition:all 0.2s;white-space:nowrap}
+.mode-bar.iv .mode-switch{background:rgba(34,197,94,0.12);color:#4ade80;border:1px solid rgba(34,197,94,0.25)}
+.mode-bar.iv .mode-switch:hover{background:rgba(34,197,94,0.22)}
+.mode-bar.me .mode-switch{background:rgba(37,99,235,0.12);color:#60a5fa;border:1px solid rgba(37,99,235,0.25)}
+.mode-bar.me .mode-switch:hover{background:rgba(37,99,235,0.22)}
+.mode-countdown{font-size:0.68rem;color:#64748B;font-variant-numeric:tabular-nums}
+@media(max-width:640px){.mode-hint{display:none}.mode-bar{padding:6px 10px}}
+
 /* ══ SIDEBAR ══════════════════════════════════════════════════════════════════ */
 .sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200;overflow:hidden}
 .sb:hover{overflow-y:auto}
@@ -814,6 +834,19 @@ body{padding-left:72px}
     </div>
   </div>
 
+  <!-- ── Mode Bar ── -->
+  <div class="mode-bar iv" id="mode-bar">
+    <div class="mode-bar-left">
+      <div class="mode-dot"></div>
+      <span class="mode-label" id="mode-label">INTERVIEWER SPEAKING</span>
+      <span class="mode-hint" id="mode-hint">— AI is listening for questions</span>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span class="mode-countdown hidden" id="mode-countdown"></span>
+      <button class="mode-switch" id="mode-switch" onclick="toggleSpeaker()">🙋 Switch to My Answer</button>
+    </div>
+  </div>
+
   <div class="sess-body">
     <!-- Top: Transcript -->
     <div class="panel transcript-panel">
@@ -844,10 +877,9 @@ body{padding-left:72px}
   </div>
 
   <div class="sess-bottom">
-    <button class="speaker-toggle iv" id="speaker-toggle" onclick="toggleSpeaker()">🎤 Interviewer</button>
     <div class="manual-wrap">
-      <input class="manual-input" id="manual-q" placeholder="Type your answer or ask your coach anything..."/>
-      <button class="btn-send" onclick="handleManual()">→ Answer</button>
+      <input class="manual-input" id="manual-q" placeholder="Type the interviewer's question here — or speak it and click Get Answer"/>
+      <button class="btn-send" onclick="handleManual()">Get Answer →</button>
     </div>
   </div>
 </div>
@@ -1127,6 +1159,10 @@ function startSession() {
   </div>`;
   document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong> to speak — your mic will capture the interviewer\'s question.<br><br>Or <strong style="color:var(--accent)">type the question below</strong> to practice in text mode.</div>';
 
+  speakerIsIV = true;
+  clearTimeout(autoFlipTimer);
+  clearInterval(meCountdownInt);
+  updateModeBar();
   track('session_start', 'app');
   startCountdown();
   initSpeech();
@@ -1208,8 +1244,8 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  const resume = (cfg.resume || '').slice(0, 4000);
-  const jd     = (cfg.jd     || '').slice(0, 3000);
+  const resume = (cfg.resume || '').slice(0, 2500);
+  const jd     = (cfg.jd     || '').slice(0, 2000);
   return `You are Ambore AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
 
 CANDIDATE RESUME:
@@ -1277,7 +1313,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
-  const maxTok = 220;
+  const maxTok = 180;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
@@ -1357,6 +1393,8 @@ async function streamAnswer(question) {
       .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
+    // Auto-flip to "My Answer" mode so user's spoken answer doesn't trigger AI again
+    setMeMode();
   } catch(err) {
     textDiv.innerHTML = `<p style="color:var(--red);font-size:0.83rem;padding:12px 14px">⚠️ Error: ${err.message}<br><br><small style="opacity:0.6">Check internet connection or try the text box below.</small></p>`;
     setStatus('',''); console.error('Ambore AI error:',err);
@@ -1822,15 +1860,6 @@ function drainQueue() {
 }
 
 /* ═══════════════════════════════════════════
-   QUESTION DETECTION
-═══════════════════════════════════════════ */
-function isQuestion(txt){
-  // Only trigger for speech that is at least 4 words (avoids single words / noise)
-  const words = txt.trim().split(/\s+/).filter(Boolean);
-  return words.length >= 4;
-}
-
-/* ═══════════════════════════════════════════
    SPEECH RECOGNITION — professional grade
 ═══════════════════════════════════════════ */
 // Noise/filler words that should never trigger answers on their own
@@ -1853,20 +1882,30 @@ function cleanTranscript(text) {
     .trim();
 }
 
-const QUESTION_TRIGGERS = new Set([
-  'what','why','how','tell','walk','describe','explain','can','could','have',
+// Words that start genuine interview questions (asked by the interviewer)
+const QUESTION_STARTERS = new Set([
+  'what','why','how','tell','walk','describe','explain','can','could',
   'did','do','would','give','share','talk','when','where','who','which',
   'define','compare','discuss','show','demonstrate','elaborate','mention',
-  'name','list','think','feel','handled','faced','managed','achieved',
-  'experience','background','strength','weakness','challenge','project',
-  'situation','example','time','role','responsibility','approach','strategy'
+  'name','list'
 ]);
 
 function isQuestion(txt){
-  const words = txt.toLowerCase().trim().split(/\s+/).filter(Boolean);
-  if (words.length < 1) return false;
-  // Trigger immediately if ANY question keyword is found
-  return words.some(w => QUESTION_TRIGGERS.has(w.replace(/[^a-z]/g,'')));
+  const t = txt.toLowerCase().trim();
+  const words = t.split(/\s+/).filter(Boolean);
+  // Need at least 5 words — single words / short phrases are noise
+  if (words.length < 5) return false;
+  // If the utterance starts with first-person pronouns → it's the user answering, not a question
+  if (/^(i |i'm |i've |i was |i have |i did |i worked |i led |i built |my |we |our )/.test(t)) return false;
+  // Explicit question mark → always a question
+  if (txt.includes('?')) return true;
+  // Starts with a genuine question word → likely a question from the interviewer
+  const first = words[0].replace(/[^a-z]/g,'');
+  const second = words[1]?.replace(/[^a-z]/g,'') || '';
+  if (QUESTION_STARTERS.has(first)) return true;
+  // "can you", "could you", "would you", "have you", "did you"
+  if (['can','could','would','have','did','do'].includes(first) && second === 'you') return true;
+  return false;
 }
 
 let speechErrorCount = 0;
@@ -1964,13 +2003,65 @@ function stopListen(){
 function toggleListen(){ isListening?stopListen():startListen(); }
 
 /* ═══════════════════════════════════════════
-   SPEAKER TOGGLE
+   SPEAKER TOGGLE + MODE BAR
 ═══════════════════════════════════════════ */
-function toggleSpeaker(){
-  speakerIsIV=!speakerIsIV;
-  const btn=document.getElementById('speaker-toggle');
-  btn.textContent=speakerIsIV?'🎤 Interviewer':'🙋 Me (talking)';
-  btn.className='speaker-toggle'+(speakerIsIV?' iv':'');
+let autoFlipTimer = null;
+let meCountdownInt = null;
+
+function updateModeBar() {
+  const bar   = document.getElementById('mode-bar');
+  const label = document.getElementById('mode-label');
+  const hint  = document.getElementById('mode-hint');
+  const btn   = document.getElementById('mode-switch');
+  const cd    = document.getElementById('mode-countdown');
+  if (!bar) return;
+  if (speakerIsIV) {
+    bar.className   = 'mode-bar iv';
+    label.textContent = 'INTERVIEWER SPEAKING';
+    hint.textContent  = '— AI is listening for questions';
+    btn.textContent   = '🙋 Switch to My Answer';
+    cd.classList.add('hidden');
+  } else {
+    bar.className   = 'mode-bar me';
+    label.textContent = 'YOUR TURN TO ANSWER';
+    hint.textContent  = '— AI is quiet, speak freely';
+    btn.textContent   = '🎤 Switch to Interviewer';
+    cd.classList.remove('hidden');
+  }
+}
+
+function toggleSpeaker() {
+  clearTimeout(autoFlipTimer);
+  clearInterval(meCountdownInt);
+  speakerIsIV = !speakerIsIV;
+  updateModeBar();
+  // If manually switched to Me mode, auto-flip back after 90s
+  if (!speakerIsIV) startMeCountdown(90);
+}
+
+function setMeMode() {
+  // Called automatically after AI finishes an answer
+  clearTimeout(autoFlipTimer);
+  clearInterval(meCountdownInt);
+  speakerIsIV = false;
+  updateModeBar();
+  startMeCountdown(90); // auto-flip back after 90s
+}
+
+function startMeCountdown(secs) {
+  let remaining = secs;
+  const cd = document.getElementById('mode-countdown');
+  if (cd) cd.textContent = `(back in ${remaining}s)`;
+  clearInterval(meCountdownInt);
+  meCountdownInt = setInterval(() => {
+    remaining--;
+    if (cd) cd.textContent = `(back in ${remaining}s)`;
+    if (remaining <= 0) {
+      clearInterval(meCountdownInt);
+      speakerIsIV = true;
+      updateModeBar();
+    }
+  }, 1000);
 }
 
 /* ═══════════════════════════════════════════
