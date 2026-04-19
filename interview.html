@@ -1356,8 +1356,7 @@ async function streamAnswer(question) {
       .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
-    // Auto-flip to "My Answer" mode so user's spoken answer doesn't trigger AI again
-    setMeMode();
+    // Stay in IV mode — mic keeps listening for the next question immediately
   } catch(err) {
     textDiv.innerHTML = `<p style="color:var(--red);font-size:0.83rem;padding:12px 14px">⚠️ Error: ${err.message}<br><br><small style="opacity:0.6">Check internet connection or try the text box below.</small></p>`;
     setStatus('',''); console.error('Ambore AI error:',err);
@@ -1928,8 +1927,8 @@ function initSpeech(){
           return; // don't show in transcript, don't send to AI
         }
 
-        // IV mode — treat this as the interviewer speaking
-        if (isQuestion(text)) enqueueQuestion(text); // queue — never drops
+        // IV mode — send all speech to AI; system prompt returns SILENT for non-questions
+        if (text.split(/\s+/).length >= 4) enqueueQuestion(text);
       }, 1000);
     }
   };
