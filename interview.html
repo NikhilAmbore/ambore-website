@@ -1264,7 +1264,7 @@ function safeMd(text) {
    STREAM ANSWER — INTERVIEW QUESTION
 ═══════════════════════════════════════════ */
 async function streamAnswer(question) {
-  if (isGenerating) return;
+  if (isGenerating) { questionQueue.push(question); return; } // safety — enqueue instead of drop
   isGenerating = true;
   // Safety: always unlock after 90s even if something goes wrong
   const _ctrl = new AbortController();
@@ -1928,8 +1928,11 @@ function initSpeech(){
         }
 
         // IV mode — send all speech to AI; system prompt returns SILENT for non-questions
-        if (text.split(/\s+/).length >= 4) enqueueQuestion(text);
-      }, 1000);
+        if (text.split(/\s+/).length >= 3) {
+          if (bar) { bar.textContent = '✦ Question received — getting answer…'; setTimeout(()=>{ if(bar) bar.textContent=''; },2500); }
+          enqueueQuestion(text);
+        }
+      }, 1500);
     }
   };
 
