@@ -397,6 +397,81 @@ body{padding-left:72px}
   body{padding-left:0;padding-bottom:60px}
 }
 .logo-img{height:28px!important;width:28px!important;max-height:28px!important;max-width:28px!important;object-fit:contain;display:block;flex-shrink:0}
+
+/* ══ CLUELY-STYLE COMPONENTS ══════════════════════════════════════════════════ */
+
+/* Shared fade-up animation */
+.cl-fade-up{opacity:0;transform:translateY(20px);transition:opacity 0.5s ease,transform 0.5s ease}
+.cl-fade-up.cl-visible{opacity:1;transform:translateY(0)}
+.cl-fade-up[data-delay="1"]{transition-delay:0.1s}
+.cl-fade-up[data-delay="2"]{transition-delay:0.2s}
+.cl-fade-up[data-delay="3"]{transition-delay:0.3s}
+
+/* Landing wrapper — sits above the setup form */
+.cl-landing{width:100%;background:#f8fafc}
+
+/* ── 1. Gradient Hero ── */
+.cl-hero-wrap{max-width:1160px;margin:0 auto;padding:72px 24px 56px;text-align:center}
+.cl-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#8C929D;margin-bottom:18px}
+.cl-h1{font-family:'Inter',sans-serif;font-size:clamp(2rem,4.5vw,3.5rem);font-weight:900;line-height:1.1;letter-spacing:-0.04em;background:linear-gradient(to right,#19191D,#626275);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0 0 18px}
+.cl-sub{font-size:1rem;color:#8C929D;line-height:1.75;max-width:540px;margin:0 auto 28px}
+.cl-hero-cta{display:inline-flex;align-items:center;gap:8px;padding:13px 26px;border-radius:12px;background:#19191D;color:#fff;font-size:0.9rem;font-weight:700;letter-spacing:-0.01em;border:none;cursor:pointer;text-decoration:none;transition:opacity 0.2s}
+.cl-hero-cta:hover{opacity:0.78}
+
+/* ── 2. Stats Section ── */
+.cl-stats-wrap{max-width:1160px;margin:0 auto;padding:0 24px 72px}
+.cl-stats-lbl{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#8C929D;margin-bottom:32px}
+.cl-stat-row{display:flex;align-items:flex-start;gap:40px;padding:28px 0;border-top:1px solid rgba(113,113,122,0.18)}
+.cl-stat-row:last-child{border-bottom:1px solid rgba(113,113,122,0.18)}
+.cl-stat-num{font-size:2.8rem;font-weight:900;line-height:1;letter-spacing:-0.04em;background:linear-gradient(to right,#19191D,#626275);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;min-width:180px;flex-shrink:0}
+.cl-stat-body{display:flex;flex-direction:column;gap:5px;padding-top:4px}
+.cl-stat-title{font-size:0.95rem;font-weight:700;color:#19191D;letter-spacing:-0.02em}
+.cl-stat-desc{font-size:0.87rem;color:#8C929D;line-height:1.6;max-width:460px}
+
+/* ── 3. Cards Grid ── */
+.cl-cards-wrap{max-width:1160px;margin:0 auto;padding:0 24px 72px}
+.cl-cards-hd{text-align:center;margin-bottom:40px}
+.cl-cards-hd-title{font-size:clamp(1.5rem,3vw,2.2rem);font-weight:900;letter-spacing:-0.04em;background:linear-gradient(to right,#19191D,#626275);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0 0 10px}
+.cl-cards-hd-sub{font-size:0.9rem;color:#8C929D;line-height:1.6}
+.cl-card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.cl-card{border-radius:22px;background:radial-gradient(92% 126% at 50% 100%,#DDE2EE 58%,#BBC5DD 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.55);overflow:hidden;display:flex;flex-direction:column;min-height:300px;transition:transform 0.22s ease,box-shadow 0.22s ease}
+.cl-card:hover{transform:translateY(-4px);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.75),0 16px 40px rgba(100,116,160,0.16)}
+.cl-card-body{padding:28px 28px 16px;flex:1}
+.cl-card-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.7rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:#626275;background:rgba(255,255,255,0.55);border:1px solid rgba(255,255,255,0.75);border-radius:100px;padding:3px 11px;margin-bottom:16px}
+.cl-card-title{font-size:1.15rem;font-weight:800;letter-spacing:-0.03em;color:#19191D;line-height:1.3;margin-bottom:8px}
+.cl-card-desc{font-size:0.85rem;color:#626275;line-height:1.65}
+.cl-card-foot{margin-top:auto;padding:0 28px 28px;display:flex;align-items:center;gap:8px;font-size:0.8rem;font-weight:700;color:#19191D;opacity:0.65}
+
+/* ── 4. Two-column How it Works ── */
+.cl-howto-wrap{max-width:1160px;margin:0 auto;padding:0 24px 80px;display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center}
+.cl-howto-visual{border-radius:22px;background:radial-gradient(92% 126% at 50% 100%,#DDE2EE 58%,#BBC5DD 100%);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.55);aspect-ratio:4/3;display:flex;align-items:center;justify-content:center;font-size:4.5rem}
+.cl-howto-content{display:flex;flex-direction:column;gap:18px}
+.cl-howto-tag{font-size:0.72rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:#8C929D}
+.cl-howto-h{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:900;letter-spacing:-0.04em;line-height:1.15;background:linear-gradient(to right,#19191D,#626275);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin:0}
+.cl-howto-p{font-size:0.9rem;color:#8C929D;line-height:1.75;margin:0}
+.cl-step-list{list-style:none;padding:0;margin:0;display:flex;flex-direction:column;gap:14px}
+.cl-step-list li{display:flex;align-items:flex-start;gap:12px;font-size:0.88rem;color:#626275;line-height:1.5}
+.cl-step-num{width:22px;height:22px;border-radius:50%;background:#19191D;color:#fff;font-size:0.65rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cl-howto-btn{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:10px;background:#19191D;color:#fff;font-size:0.88rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;width:fit-content;transition:opacity 0.2s}
+.cl-howto-btn:hover{opacity:0.78}
+
+/* Divider between landing and form */
+.cl-divider{width:100%;height:1px;background:rgba(113,113,122,0.15);max-width:1160px;margin:0 auto}
+
+/* ── Responsive ── */
+@media(max-width:900px){
+  .cl-card-grid{grid-template-columns:repeat(2,1fr)}
+  .cl-howto-wrap{grid-template-columns:1fr;gap:40px;padding-bottom:56px}
+  .cl-howto-visual{aspect-ratio:16/7}
+}
+@media(max-width:600px){
+  .cl-hero-wrap{padding:48px 20px 40px}
+  .cl-stats-wrap,.cl-cards-wrap{padding-left:20px;padding-right:20px}
+  .cl-card-grid{grid-template-columns:1fr}
+  .cl-stat-row{flex-direction:column;gap:10px}
+  .cl-stat-num{font-size:2.1rem;min-width:unset}
+  .cl-howto-wrap{grid-template-columns:1fr;padding:0 20px 48px;gap:32px}
+}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -510,7 +585,143 @@ body{padding-left:72px}
      SETUP SCREEN
 ══════════════════════════════════════ -->
 <div id="setup" class="setup-shell hidden">
-  <div class="setup-content">
+
+  <!-- ══ CLUELY-STYLE LANDING SECTIONS ══════════════════════════════════════ -->
+  <div class="cl-landing">
+
+    <!-- 1. Gradient Hero -->
+    <div class="cl-hero-wrap">
+      <div class="cl-eyebrow cl-fade-up">🎙 AI Interview Coach</div>
+      <h2 class="cl-h1 cl-fade-up" data-delay="1">
+        Ace every interview<br>with real-time AI coaching
+      </h2>
+      <p class="cl-sub cl-fade-up" data-delay="2">
+        Speak your answers aloud. AI listens, detects the question, and instantly
+        returns a polished STAR-format response — so you know exactly what to say.
+      </p>
+      <a href="#setup-form" class="cl-hero-cta cl-fade-up" data-delay="3"
+         onclick="document.getElementById('setup-form').scrollIntoView({behavior:'smooth'});return false">
+        Start Practicing Free →
+      </a>
+    </div>
+
+    <!-- 2. Stats Section -->
+    <div class="cl-stats-wrap">
+      <div class="cl-stats-lbl cl-fade-up">Why it works</div>
+
+      <div class="cl-stat-row cl-fade-up" data-delay="1">
+        <div class="cl-stat-num">8+</div>
+        <div class="cl-stat-body">
+          <div class="cl-stat-title">Interview round types</div>
+          <div class="cl-stat-desc">
+            HR screen, behavioral, technical, system design, coding assessment,
+            managerial, executive, and hackathon — pick the exact round you're facing.
+          </div>
+        </div>
+      </div>
+
+      <div class="cl-stat-row cl-fade-up" data-delay="2">
+        <div class="cl-stat-num">300ms</div>
+        <div class="cl-stat-body">
+          <div class="cl-stat-title">AI response time</div>
+          <div class="cl-stat-desc">
+            Coaching starts streaming back in under 300 milliseconds after a question
+            is detected — fast enough that you can read it before your next breath.
+          </div>
+        </div>
+      </div>
+
+      <div class="cl-stat-row cl-fade-up" data-delay="3">
+        <div class="cl-stat-num">STAR</div>
+        <div class="cl-stat-body">
+          <div class="cl-stat-title">Structured answer framework</div>
+          <div class="cl-stat-desc">
+            Every behavioral answer is broken into Situation, Task, Action, and Result
+            — the format top companies actually score candidates on.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. Feature Cards -->
+    <div class="cl-cards-wrap">
+      <div class="cl-cards-hd">
+        <div class="cl-cards-hd-title cl-fade-up">Three ways to practice</div>
+        <div class="cl-cards-hd-sub cl-fade-up" data-delay="1">
+          Voice, text, or coding — the same AI coach handles all of them.
+        </div>
+      </div>
+      <div class="cl-card-grid">
+
+        <div class="cl-card cl-fade-up" data-delay="1">
+          <div class="cl-card-body">
+            <div class="cl-card-tag">🎙 Voice</div>
+            <div class="cl-card-title">Speak your answers naturally</div>
+            <div class="cl-card-desc">
+              Just talk. The AI transcribes your words, detects when a question
+              is asked, and returns a coached answer instantly. No typing required.
+            </div>
+          </div>
+          <div class="cl-card-foot">Microphone · Real-time · Free →</div>
+        </div>
+
+        <div class="cl-card cl-fade-up" data-delay="2">
+          <div class="cl-card-body">
+            <div class="cl-card-tag">✦ STAR Coach</div>
+            <div class="cl-card-title">Structured answers that land offers</div>
+            <div class="cl-card-desc">
+              Every behavioral response is structured using the STAR method —
+              the exact format interviewers at Google, Amazon, and Meta score on.
+            </div>
+          </div>
+          <div class="cl-card-foot">Behavioral · Managerial · HR →</div>
+        </div>
+
+        <div class="cl-card cl-fade-up" data-delay="3">
+          <div class="cl-card-body">
+            <div class="cl-card-tag">💻 Coding</div>
+            <div class="cl-card-title">Live coding interview prep</div>
+            <div class="cl-card-desc">
+              Share your screen, paste a LeetCode problem, or type the question.
+              AI explains the approach, complexity, and edge cases step by step.
+            </div>
+          </div>
+          <div class="cl-card-foot">DSA · System Design · Live →</div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 4. How It Works (Two-column) -->
+    <div class="cl-howto-wrap">
+      <div class="cl-howto-visual cl-fade-up">🎤</div>
+      <div class="cl-howto-content">
+        <div class="cl-howto-tag cl-fade-up">How it works</div>
+        <h3 class="cl-howto-h cl-fade-up" data-delay="1">
+          Set up in 60 seconds,<br>practice for as long as you need
+        </h3>
+        <p class="cl-howto-p cl-fade-up" data-delay="2">
+          No account setup beyond what you already have. Fill in your role, paste
+          your resume and job description, and you're in — questions start immediately.
+        </p>
+        <ul class="cl-step-list cl-fade-up" data-delay="2">
+          <li><span class="cl-step-num">1</span>Choose your interview round and target role</li>
+          <li><span class="cl-step-num">2</span>Upload your resume and paste the job description</li>
+          <li><span class="cl-step-num">3</span>Click Begin — AI asks questions, you answer by voice or text</li>
+          <li><span class="cl-step-num">4</span>Get STAR-format coaching on every single answer</li>
+        </ul>
+        <a href="#setup-form" class="cl-howto-btn cl-fade-up" data-delay="3"
+           onclick="document.getElementById('setup-form').scrollIntoView({behavior:'smooth'});return false">
+          Start Your Session →
+        </a>
+      </div>
+    </div>
+
+    <div class="cl-divider"></div>
+  </div>
+  <!-- ══ END CLUELY SECTIONS ══════════════════════════════════════════════════ -->
+
+  <div id="setup-form" class="setup-content">
     <!-- Mock Interview CTA -->
     <!-- Mock Interview CTA -->
     <a href="/mock-interview" style="display:flex;align-items:center;gap:14px;background:linear-gradient(135deg,#0f172a,#1e3a5f);border:1px solid rgba(96,165,250,0.25);border-radius:14px;padding:16px 20px;margin-bottom:22px;text-decoration:none;width:100%;transition:transform 0.2s,box-shadow 0.2s;box-shadow:0 2px 12px rgba(0,0,0,0.12)" onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 24px rgba(0,0,0,0.18)'" onmouseout="this.style.transform='';this.style.boxShadow='0 2px 12px rgba(0,0,0,0.12)'">
@@ -1833,6 +2044,26 @@ if (Auth.getUser()) {
     var href=(el.getAttribute('href')||'').replace(/\/$/,'');
     if(href&&href===path)el.classList.add('active');
   });
+})();
+
+/* ── Cluely scroll animations ────────────────────────────────────────────── */
+(function(){
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('cl-visible');
+        obs.unobserve(entry.target);
+      }
+    });
+  },{rootMargin:'-50px'});
+  function initCl(){
+    document.querySelectorAll('.cl-fade-up').forEach(function(el){ obs.observe(el); });
+  }
+  if(document.readyState==='loading'){
+    document.addEventListener('DOMContentLoaded',initCl);
+  } else {
+    initCl();
+  }
 })();
 </script></body>
 </html>
