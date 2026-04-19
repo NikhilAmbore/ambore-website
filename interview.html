@@ -218,7 +218,8 @@ button,input,textarea,select{font-family:inherit}
 .chat-bubble{font-size:0.82rem;line-height:1.5;color:rgba(255,255,255,0.75);background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:6px 10px}
 .chat-bubble.q-detected{border-color:rgba(37,99,235,0.35);background:rgba(37,99,235,0.08);color:rgba(255,255,255,0.9)}
 .q-chip{display:inline-block;font-size:0.6rem;font-weight:700;color:#60a5fa;background:rgba(37,99,235,0.15);padding:1px 6px;border-radius:4px;margin-bottom:3px}
-.interim-bar{padding:6px 16px 8px;font-size:0.75rem;color:rgba(255,255,255,0.35);font-style:italic;border-top:1px solid rgba(255,255,255,0.06);flex-shrink:0;min-height:28px;background:#070d1c}
+.interim-bar{padding:5px 16px;font-size:0.75rem;color:rgba(255,255,255,0.35);font-style:italic;border-bottom:1px solid rgba(255,255,255,0.06);flex-shrink:0;min-height:0;background:#070d1c;transition:min-height 0.2s}
+.interim-bar:empty{padding:0;border:none}
 
 /* AI Answer panel — main focus */
 .answers-body{flex:1;overflow-y:auto;padding:16px 20px;display:flex;flex-direction:column;gap:14px;min-height:0;background:#070d1c}
@@ -846,29 +847,14 @@ body{padding-left:72px}
   </div>
 
   <div class="sess-body">
-    <!-- Top: Transcript -->
-    <div class="panel transcript-panel">
-      <div class="panel-title">🎙 Your Practice Answers</div>
-      <div id="transcript-body" class="transcript-body">
-        <div class="t-empty" id="t-empty">
-          Click <strong style="color:#fff">Start Listening</strong>, then switch to<br>
-          <strong style="color:var(--accent)">🎤 Interviewer</strong> mode when they speak.<br><br>
-          Questions are detected automatically.
-        </div>
-      </div>
-      <div class="interim-bar" id="interim-bar"></div>
-    </div>
+    <!-- Live speech indicator only — no transcript history -->
+    <div class="interim-bar" id="interim-bar"></div>
 
-    <!-- Bottom: Answers -->
-    <div class="panel">
-      <div class="panel-title">
-        ✦ Ambore Coach
-        <span class="ai-status" id="ai-status"></span>
-      </div>
+    <!-- Full-height answers panel -->
+    <div class="panel" style="flex:1;min-height:0">
       <div id="answers-body" class="answers-body">
         <div class="a-empty" id="a-empty">
-          Your coach's guidance, questions, and feedback appear here.<br><br>
-          <strong style="color:#fff">Type your answers</strong> below or speak them aloud.
+          Start the mic and speak the interviewer's question — answers appear here instantly.
         </div>
       </div>
     </div>
@@ -876,9 +862,10 @@ body{padding-left:72px}
 
   <div class="sess-bottom">
     <div class="manual-wrap">
-      <input class="manual-input" id="manual-q" placeholder="Type the interviewer's question here — or speak it and click Get Answer"/>
-      <button class="btn-send" onclick="handleManual()">Get Answer →</button>
+      <input class="manual-input" id="manual-q" placeholder="Type a question here…"/>
+      <button class="btn-send" onclick="handleManual()">Answer →</button>
     </div>
+    <span class="ai-status" id="ai-status" style="margin-left:8px;flex-shrink:0"></span>
   </div>
 </div>
 
@@ -1151,7 +1138,7 @@ function startSession() {
       Type a question below or speak it aloud.
     </div>
   </div>`;
-  document.getElementById('transcript-body').innerHTML = '<div class="t-empty" id="t-empty">Click <strong style="color:#fff">Start Listening</strong> to speak — your mic will capture the interviewer\'s question.<br><br>Or <strong style="color:var(--accent)">type the question below</strong> to practice in text mode.</div>';
+  // transcript panel removed — answers panel is the only feed now
 
   speakerIsIV = true;
   clearTimeout(autoFlipTimer);
@@ -1942,9 +1929,7 @@ function initSpeech(){
         }
 
         // IV mode — treat this as the interviewer speaking
-        const isQ = isQuestion(text);
-        addMsg(text, isQ);
-        if (isQ) enqueueQuestion(text); // queue — never drops
+        if (isQuestion(text)) enqueueQuestion(text); // queue — never drops
       }, 1000);
     }
   };
@@ -2098,8 +2083,8 @@ function addMsg(text,isQ){
 function handleManual(){
   const input=document.getElementById('manual-q');
   const text=input.value.trim(); if(!text)return;
-  addMsg(text,true); input.value=''; input.focus();
-  enqueueQuestion(text); // queue so manual questions don't get dropped either
+  input.value=''; input.focus();
+  enqueueQuestion(text);
 }
 document.getElementById('manual-q').addEventListener('keydown',e=>{ if(e.key==='Enter')handleManual(); });
 
