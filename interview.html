@@ -1259,15 +1259,16 @@ LANGUAGE RULES — CRITICAL:
 - Every sentence must be easy to say out loud in an interview.
 
 ANSWER FORMAT:
-- Always give a COMPLETE answer. Never cut off mid-sentence.
-- One paragraph, 4–6 sentences maximum. Concise and direct.
+- Start your answer IMMEDIATELY. First word = substance. No preamble, no intro, no transition phrases.
+- NEVER start with "Sure", "Great question", "Certainly", "Of course", "Absolutely", "That's a great", "I'd be happy", or any similar opener. Jump straight into the answer.
+- Write 350–500 words. This is a spoken answer that takes 3–5 minutes to say out loud.
+- Use clear paragraphs. Each paragraph = one idea. 3–5 sentences per paragraph.
 - Use first-person ("I built…", "I worked on…", "I helped…").
-- For behavioral questions: naturally include Situation → Action → Result without labeling them.
-- For technical questions: one clear explanation + one real example from the resume.
-- For "tell me about yourself": brief career summary + key strength + why this role. 3–4 sentences.
-- Never start with "Sure", "Great question", "Certainly", "Of course", or "Absolutely".
+- For behavioral questions: tell a real story. Situation → what you did → what happened. Include specific numbers or outcomes where possible.
+- For technical questions: explain clearly, give a real example from the resume, cover tradeoffs.
+- For "tell me about yourself": career arc + key strength + why this company. 4–5 sentences.
 - Never invent experience, tools, or achievements not in the resume.
-- End the answer with a complete sentence. Do not trail off.
+- End with a complete sentence that wraps up the answer naturally.
 
 QUESTION DETECTION:
 - Input with a question mark or clear question intent → generate answer.
@@ -1306,7 +1307,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
-  const maxTok = 400;
+  const maxTok = 900;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
@@ -1938,12 +1939,28 @@ function initSpeech(){
     if (finalAdded) {
       speechErrorCount = 0; // reset error streak on successful speech
       clearTimeout(silenceTimer);
-      // 800ms silence — trigger fast as soon as question word heard
       silenceTimer = setTimeout(() => {
         const text = cleanTranscript(buf); buf = '';
         if (bar) bar.textContent = '';
         if (text.length < 2) return; // discard pure noise
-        const isQ = speakerIsIV && isQuestion(text);
+
+        if (!speakerIsIV) {
+          // Me mode — user is speaking their own answer.
+          // Discard the text silently. Start an 8s silence timer:
+          // if user stops talking for 8s we assume their answer is done → flip to IV mode.
+          clearTimeout(meFlipTimer);
+          meFlipTimer = setTimeout(() => {
+            if (!speakerIsIV) {
+              clearInterval(meCountdownInt);
+              speakerIsIV = true;
+              updateModeBar();
+            }
+          }, 8000);
+          return; // don't show in transcript, don't send to AI
+        }
+
+        // IV mode — treat this as the interviewer speaking
+        const isQ = isQuestion(text);
         addMsg(text, isQ);
         if (isQ) enqueueQuestion(text); // queue — never drops
       }, 2500);
@@ -2002,6 +2019,7 @@ function toggleListen(){ isListening?stopListen():startListen(); }
 ═══════════════════════════════════════════ */
 let autoFlipTimer = null;
 let meCountdownInt = null;
+let meFlipTimer = null;
 
 function updateModeBar() {
   const bar   = document.getElementById('mode-bar');
@@ -2027,27 +2045,28 @@ function updateModeBar() {
 
 function toggleSpeaker() {
   clearTimeout(autoFlipTimer);
+  clearTimeout(meFlipTimer);
   clearInterval(meCountdownInt);
   speakerIsIV = !speakerIsIV;
   updateModeBar();
   if (!speakerIsIV) {
-    // Switched to Me mode — stop mic completely so user's answer isn't captured
-    stopListen();
+    // Switched to Me mode — mic STAYS ON but speech is silently discarded
+    // Countdown just shows the user we'll auto-flip back after 90s of no activity
     startMeCountdown(90);
-  } else {
-    // Switched back to Interviewer mode — restart mic
-    startListen();
   }
+  // In IV mode, mic is already running — nothing to do
 }
 
 function setMeMode() {
-  // Called automatically after AI finishes an answer
+  // Called automatically after AI finishes an answer.
+  // Mic STAYS ON — we keep listening but discard speech in Me mode.
+  // The onresult handler checks !speakerIsIV and silently drops speech,
+  // starting an 8s silence timer that auto-flips back to IV mode.
   clearTimeout(autoFlipTimer);
+  clearTimeout(meFlipTimer);
   clearInterval(meCountdownInt);
   speakerIsIV = false;
   updateModeBar();
-  // Stop mic — user is about to speak their answer, we don't want to capture it
-  stopListen();
   startMeCountdown(90);
 }
 
@@ -2061,10 +2080,10 @@ function startMeCountdown(secs) {
     if (cd) cd.textContent = `(back in ${remaining}s)`;
     if (remaining <= 0) {
       clearInterval(meCountdownInt);
+      clearTimeout(meFlipTimer);
       speakerIsIV = true;
       updateModeBar();
-      // Automatically restart mic when countdown ends
-      startListen();
+      // Mic is already running — no need to restart
     }
   }, 1000);
 }
