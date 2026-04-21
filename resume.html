@@ -298,9 +298,9 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview .entry-title-row{display:flex;justify-content:space-between;align-items:baseline;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-bottom:1px}
 .resume-preview .entry-title-row em{font-style:italic;color:#000}
 .resume-preview .entry-date{white-space:nowrap;color:#000;font-size:10pt}
-/* ── Skills table layout — CSS table so columns auto-size to widest label ── */
-.resume-preview .skill-row{display:table;width:100%;table-layout:auto;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt}
-.resume-preview .skill-label{display:table-cell;white-space:nowrap;font-weight:700;color:#000;padding-right:10px;vertical-align:top}
+/* ── Skills — fixed 140px label column, content wraps cleanly ── */
+.resume-preview .skill-row{display:table;width:100%;table-layout:fixed;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt}
+.resume-preview .skill-label{display:table-cell;width:140px;font-weight:700;color:#000;padding-right:8px;vertical-align:top;word-break:break-word}
 .resume-preview .skill-desc{display:table-cell;color:#000;line-height:1.45;vertical-align:top;word-break:break-word}
 
 /* Streaming cursor */
@@ -350,8 +350,8 @@ button,input,textarea,select{font-family:inherit}
   .resume-preview .entry-company{font-weight:700!important;color:#000!important;font-size:10pt!important;margin-top:5px!important}
   .resume-preview .entry-title-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-bottom:1px!important}
   .resume-preview .entry-date{color:#000!important}
-  .resume-preview .skill-row{display:table!important;width:100%!important;table-layout:auto!important;margin-bottom:3px!important;font-size:10pt!important}
-  .resume-preview .skill-label{display:table-cell!important;white-space:nowrap!important;font-weight:700!important;padding-right:10px!important;vertical-align:top!important}
+  .resume-preview .skill-row{display:table!important;width:100%!important;table-layout:fixed!important;margin-bottom:3px!important;font-size:10pt!important}
+  .resume-preview .skill-label{display:table-cell!important;width:140px!important;font-weight:700!important;padding-right:8px!important;vertical-align:top!important;word-break:break-word!important}
   .resume-preview .skill-desc{display:table-cell!important;vertical-align:top!important;word-break:break-word!important}
   .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
   .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
@@ -1447,12 +1447,22 @@ function renderMarkdown(md) {
   let contactRowHtml = null;
   md = String(md).replace(/^([^#\-\n*].+?\|\|.+)$/m, (match, line) => {
     const sep = line.indexOf('||');
-    const left  = line.slice(0, sep).trim().replace(/&/g,'&amp;');
-    const right = line.slice(sep + 2).trim()
-      .replace(/&/g,'&amp;')
-      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
-      .replace(/ \| /g, '<br>');
-    contactRowHtml = `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right}</div></div>`;
+    const left = line.slice(0, sep).trim().replace(/&/g,'&amp;');
+    // Split right on " | ", separate plain-text items from markdown links
+    const rightParts = line.slice(sep + 2).trim().split(' | ');
+    const textLines = [], linkParts = [];
+    rightParts.forEach(p => {
+      p = p.trim();
+      if (p.startsWith('[')) {
+        linkParts.push(p.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'));
+      } else {
+        textLines.push(p.replace(/&/g,'&amp;'));
+      }
+    });
+    // Phone/Email each on own line; all links together on one line
+    if (linkParts.length) textLines.push(linkParts.join(' &nbsp;|&nbsp; '));
+    const rightHtml = textLines.join('<br>');
+    contactRowHtml = `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${rightHtml}</div></div>`;
     return 'AMBORE_CONTACT_PLACEHOLDER';
   });
 
