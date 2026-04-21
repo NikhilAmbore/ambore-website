@@ -255,10 +255,18 @@ button,input,textarea,select{font-family:inherit}
 .tpl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
 /* ── TEMPLATE DARK PREVIEW VARIANTS ── */
-/* Classic — default (grey accent) */
-.resume-preview.tpl-classic h1{color:#1e293b}
-.resume-preview.tpl-classic h2{color:#9ca3af;border-bottom-color:rgba(156,163,175,0.25)}
-.resume-preview.tpl-classic h3{color:#1e293b}
+/* Classic — black professional (matches standard resume format) */
+.resume-preview.tpl-classic h1{color:#000;font-size:15pt}
+.resume-preview.tpl-classic h2{color:#000;border-bottom:1.5px solid #000;font-size:11pt;letter-spacing:0.06em}
+.resume-preview.tpl-classic h3{color:#000;font-weight:700}
+.resume-preview.tpl-classic p{color:#000}
+.resume-preview.tpl-classic li{color:#000}
+.resume-preview.tpl-classic strong{color:#000}
+.resume-preview.tpl-classic em{color:#000}
+/* Two-column contact layout */
+.resume-preview .contact-row{display:flex;justify-content:space-between;align-items:flex-start;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-top:2px}
+.resume-preview .contact-left{text-align:left}
+.resume-preview .contact-right{text-align:right}
 /* Modern — blue accent */
 .resume-preview.tpl-modern{font-family:Inter,-apple-system,sans-serif!important}
 .resume-preview.tpl-modern *{font-family:Inter,-apple-system,sans-serif!important}
@@ -324,7 +332,10 @@ button,input,textarea,select{font-family:inherit}
   }
   .resume-preview .resume-header{text-align:center!important;margin-bottom:6px!important}
   .resume-preview h1{color:#000!important;text-align:center!important;font-size:14pt!important;margin-bottom:1px!important}
-  .resume-preview h2{color:#000!important;border-bottom:1px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
+  .resume-preview h2{color:#000!important;border-bottom:1.5px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
+  .resume-preview .contact-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-top:2px!important}
+  .resume-preview .contact-left{text-align:left!important}
+  .resume-preview .contact-right{text-align:right!important}
   .resume-preview h3{color:#000!important;font-size:10pt!important;margin-top:4px!important;margin-bottom:1px!important}
   .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
   .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
@@ -1010,7 +1021,9 @@ MARKDOWN STRUCTURE
 -----------------------------------------
 
 - # for the candidate full name
-- Contact line: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
+- Contact line (exactly this format, two parts separated by " || "):
+  Street Address, City, State || Phone: XXX-XXX-XXXX | Email: xxx@xxx.com${linkLine ? ' | ' + linkLine : ''}
+  If no street address is in the resume, use just: City, State || Phone: XXX | Email: xxx${linkLine ? ' | ' + linkLine : ''}
 - The candidate professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
 - ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS)
 - ### for each job entry: Job Title | Company Name | Location
@@ -1458,8 +1471,14 @@ function renderMarkdown(md) {
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
 
+  // Convert two-column contact line (contains " || ") into a flex row
+  // Format: "Street Address, City State || Phone: XXX | Email: XXX"
+  html = html.replace(/<p>([^<]*\|\|[^<]*)<\/p>/g, (match, content) => {
+    const [left, right] = content.split('||').map(s => s.trim());
+    return `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right.replace(/\s*\|\s*/g, '<br>')}</div></div>`;
+  });
+
   // Wrap everything before the first <h2> in a centered header div
-  // This centers: name (h1), job title, contact info, links
   const firstH2 = html.indexOf('<h2>');
   if (firstH2 > 0) {
     const headerPart = html.slice(0, firstH2);
