@@ -1437,8 +1437,22 @@ function escapeHtml(str) {
 }
 
 function renderMarkdown(md) {
-  // Escape raw HTML from AI output first — prevents XSS via injected tags
-  let safe = String(md)
+  // Pre-process: extract the contact line (contains ||) BEFORE HTML escaping.
+  // We handle it separately so <a> link tags don't break the split regex.
+  let contactRowHtml = null;
+  md = String(md).replace(/^([^#\-\n*].+?\|\|.+)$/m, (match, line) => {
+    const sep = line.indexOf('||');
+    const left  = line.slice(0, sep).trim().replace(/&/g,'&amp;');
+    const right = line.slice(sep + 2).trim()
+      .replace(/&/g,'&amp;')
+      .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>')
+      .replace(/ \| /g, '<br>');
+    contactRowHtml = `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right}</div></div>`;
+    return 'AMBORE_CONTACT_PLACEHOLDER';
+  });
+
+  // Escape raw HTML from AI output (md now has AMBORE_CONTACT_PLACEHOLDER instead of contact line)
+  let safe = md
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -1471,17 +1485,10 @@ function renderMarkdown(md) {
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
 
-  // Convert two-column contact line (contains "||") into a flex row.
-  // Use negative-lookahead so we never cross a </p> boundary.
-  // The contact line may contain <a> tags (links), so [^<] won't work — use (?:(?!<\/p>)[\s\S])* instead.
-  html = html.replace(/<p>((?:(?!<\/p>)[\s\S])*\|\|(?:(?!<\/p>)[\s\S])*)<\/p>/g, (match, content) => {
-    const idx = content.indexOf('||');
-    const left  = content.slice(0, idx).trim();
-    const right = content.slice(idx + 2).trim()
-      // Replace bare | separators (not inside tags) with <br>
-      .replace(/\s*\|\s*(?=[^<]*(?:<a\s|$))/g, '<br>');
-    return `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right}</div></div>`;
-  });
+  // Restore the pre-processed contact row (placeholder was set above before escaping)
+  if (contactRowHtml) {
+    html = html.replace('<p>AMBORE_CONTACT_PLACEHOLDER</p>', contactRowHtml);
+  }
 
   // Wrap everything before the first <h2> in a centered header div
   const firstH2 = html.indexOf('<h2>');
