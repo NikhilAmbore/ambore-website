@@ -263,10 +263,8 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview.tpl-classic li{color:#000}
 .resume-preview.tpl-classic strong{color:#000}
 .resume-preview.tpl-classic em{color:#000}
-/* Two-column contact layout */
-.resume-preview .contact-row{display:flex;justify-content:space-between;align-items:flex-start;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-top:2px}
-.resume-preview .contact-left{text-align:left}
-.resume-preview .contact-right{text-align:right}
+/* Single-line contact */
+.resume-preview .contact-single{text-align:center;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-top:3px;color:#000}
 /* Modern — blue accent */
 .resume-preview.tpl-modern{font-family:Inter,-apple-system,sans-serif!important}
 .resume-preview.tpl-modern *{font-family:Inter,-apple-system,sans-serif!important}
@@ -298,9 +296,9 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview .entry-title-row{display:flex;justify-content:space-between;align-items:baseline;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-bottom:1px}
 .resume-preview .entry-title-row em{font-style:italic;color:#000}
 .resume-preview .entry-date{white-space:nowrap;color:#000;font-size:10pt}
-/* ── Skills — fixed 140px label column, content wraps cleanly ── */
+/* ── Skills — 170px label column so labels never wrap ── */
 .resume-preview .skill-row{display:table;width:100%;table-layout:fixed;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt}
-.resume-preview .skill-label{display:table-cell;width:140px;font-weight:700;color:#000;padding-right:8px;vertical-align:top;word-break:break-word}
+.resume-preview .skill-label{display:table-cell;width:170px;font-weight:700;color:#000;padding-right:6px;vertical-align:top;word-break:break-word}
 .resume-preview .skill-desc{display:table-cell;color:#000;line-height:1.45;vertical-align:top;word-break:break-word}
 
 /* Streaming cursor */
@@ -343,15 +341,13 @@ button,input,textarea,select{font-family:inherit}
   .resume-preview .resume-header{text-align:center!important;margin-bottom:6px!important}
   .resume-preview h1{color:#000!important;text-align:center!important;font-size:14pt!important;margin-bottom:1px!important}
   .resume-preview h2{color:#000!important;border-bottom:1.5px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
-  .resume-preview .contact-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-top:2px!important}
-  .resume-preview .contact-left{text-align:left!important}
-  .resume-preview .contact-right{text-align:right!important}
+  .resume-preview .contact-single{text-align:center!important;font-size:10pt!important;margin-top:3px!important}
   .resume-preview h3{color:#000!important;font-size:10pt!important;margin-top:4px!important;margin-bottom:1px!important}
   .resume-preview .entry-company{font-weight:700!important;color:#000!important;font-size:10pt!important;margin-top:5px!important}
   .resume-preview .entry-title-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-bottom:1px!important}
   .resume-preview .entry-date{color:#000!important}
   .resume-preview .skill-row{display:table!important;width:100%!important;table-layout:fixed!important;margin-bottom:3px!important;font-size:10pt!important}
-  .resume-preview .skill-label{display:table-cell!important;width:140px!important;font-weight:700!important;padding-right:8px!important;vertical-align:top!important;word-break:break-word!important}
+  .resume-preview .skill-label{display:table-cell!important;width:170px!important;font-weight:700!important;padding-right:6px!important;vertical-align:top!important;word-break:break-word!important}
   .resume-preview .skill-desc{display:table-cell!important;vertical-align:top!important;word-break:break-word!important}
   .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
   .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
@@ -1448,21 +1444,18 @@ function renderMarkdown(md) {
   md = String(md).replace(/^([^#\-\n*].+?\|\|.+)$/m, (match, line) => {
     const sep = line.indexOf('||');
     const left = line.slice(0, sep).trim().replace(/&/g,'&amp;');
-    // Split right on " | ", separate plain-text items from markdown links
+    // Combine left + right into one single centered line separated by " | "
     const rightParts = line.slice(sep + 2).trim().split(' | ');
-    const textLines = [], linkParts = [];
+    const allParts = [left];
     rightParts.forEach(p => {
       p = p.trim();
       if (p.startsWith('[')) {
-        linkParts.push(p.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'));
+        allParts.push(p.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'));
       } else {
-        textLines.push(p.replace(/&/g,'&amp;'));
+        allParts.push(p.replace(/&/g,'&amp;'));
       }
     });
-    // Phone/Email each on own line; all links together on one line
-    if (linkParts.length) textLines.push(linkParts.join(' &nbsp;|&nbsp; '));
-    const rightHtml = textLines.join('<br>');
-    contactRowHtml = `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${rightHtml}</div></div>`;
+    contactRowHtml = `<div class="contact-single">${allParts.join(' &nbsp;|&nbsp; ')}</div>`;
     return 'AMBORE_CONTACT_PLACEHOLDER';
   });
 
