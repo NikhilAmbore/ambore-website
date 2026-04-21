@@ -1042,8 +1042,10 @@ MARKDOWN STRUCTURE
   If no street address is in the resume, use just: City, State || Phone: XXX | Email: xxx${linkLine ? ' | ' + linkLine : ''}
 - The candidate professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
 - ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS)
-- ### for each job entry: Job Title | Company Name | Location
-- Italic line for dates: *Month Year - Month Year*
+- ### for each job/experience entry: Job Title | Company Name | Location
+- Italic line for job dates: *Month Year – Month Year*
+- ### for each education entry: Degree | Institution Name, Location
+- Italic line for education: *GPA: X.X/4.0 | Year (or expected)*
 - - for bullet points
 - **Bold** for key metrics, numbers, and critical skills within bullets
 
@@ -1271,6 +1273,7 @@ Output Format:
 ${linksStr ? `- Include these professional links in the header: ${linksStr}` : ''}
 - Rewrite ONLY the Professional Summary and Professional Experience sections.
 - Use standard Markdown resume format starting with # Name.
+- Contact line MUST use this exact format: Address, City State || Phone: XXX | Email: xxx${linksStr ? ' | ' + linksStr : ''}
 - Do not include explanations or notes — only the final polished resume.`;
 }
 
@@ -1522,17 +1525,29 @@ function renderMarkdown(md) {
       `<div class="entry-company">${company.trim()}</div>` +
       `<div class="entry-title-row"><em>${title.trim()}</em><span class="entry-date">${date.trim()}</span></div>`
   );
-  // Any remaining bare <h3> (no pipe) — keep as bold company line
+  // Fallback: h3 with two pipes but no date line following
+  html = html.replace(/<h3>([^|<]+)\|([^|<]+)\|([^<]+)<\/h3>/g,
+    (_, title, company, loc) =>
+      `<div class="entry-company">${company.trim()}, ${loc.trim()}</div>` +
+      `<div class="entry-title-row"><em>${title.trim()}</em></div>`
+  );
+  // Fallback: h3 with one pipe but no date line
+  html = html.replace(/<h3>([^|<]+)\|([^<]+)<\/h3>/g,
+    (_, title, company) =>
+      `<div class="entry-company">${company.trim()}</div>` +
+      `<div class="entry-title-row"><em>${title.trim()}</em></div>`
+  );
+  // Any remaining bare h3 — bold company line
   html = html.replace(/<h3>([^<]+)<\/h3>/g, '<div class="entry-company">$1</div>');
 
   // ── Skills table layout ─────────────────────────────────────────────────
-  // Pattern: <p><strong>Label:</strong> description</p>
-  // Render as two-column row matching the screenshot table layout
-  html = html.replace(
-    /<p>(<strong>[^<]+:<\/strong>)([^<]*(?:<[^>]+>[^<]*)*?)<\/p>/g,
-    (match, label, desc) =>
-      `<div class="skill-row"><div class="skill-label">${label}</div><div class="skill-desc">${desc.trim()}</div></div>`
-  );
+  // Pattern: <p><strong>Label:</strong> description text</p>
+  // Use a simple split on </strong> to avoid complex regex
+  html = html.replace(/<p>(<strong>[^<]+<\/strong>)([\s\S]*?)<\/p>/g, (match, label, desc) => {
+    // Only convert if the strong tag ends with a colon (skill label pattern)
+    if (!label.includes(':')) return match;
+    return `<div class="skill-row"><div class="skill-label">${label}</div><div class="skill-desc">${desc.trim()}</div></div>`;
+  });
 
   // Wrap everything before the first <h2> in a centered header div
   const firstH2 = html.indexOf('<h2>');
