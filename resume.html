@@ -1471,11 +1471,16 @@ function renderMarkdown(md) {
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
 
-  // Convert two-column contact line (contains " || ") into a flex row
-  // Format: "Street Address, City State || Phone: XXX | Email: XXX"
-  html = html.replace(/<p>([^<]*\|\|[^<]*)<\/p>/g, (match, content) => {
-    const [left, right] = content.split('||').map(s => s.trim());
-    return `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right.replace(/\s*\|\s*/g, '<br>')}</div></div>`;
+  // Convert two-column contact line (contains "||") into a flex row.
+  // Use negative-lookahead so we never cross a </p> boundary.
+  // The contact line may contain <a> tags (links), so [^<] won't work — use (?:(?!<\/p>)[\s\S])* instead.
+  html = html.replace(/<p>((?:(?!<\/p>)[\s\S])*\|\|(?:(?!<\/p>)[\s\S])*)<\/p>/g, (match, content) => {
+    const idx = content.indexOf('||');
+    const left  = content.slice(0, idx).trim();
+    const right = content.slice(idx + 2).trim()
+      // Replace bare | separators (not inside tags) with <br>
+      .replace(/\s*\|\s*(?=[^<]*(?:<a\s|$))/g, '<br>');
+    return `<div class="contact-row"><div class="contact-left">${left}</div><div class="contact-right">${right}</div></div>`;
   });
 
   // Wrap everything before the first <h2> in a centered header div
