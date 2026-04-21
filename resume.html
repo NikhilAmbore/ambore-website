@@ -1041,23 +1041,25 @@ MARKDOWN STRUCTURE
   Street Address, City, State || Phone: XXX-XXX-XXXX | Email: xxx@xxx.com${linkLine ? ' | ' + linkLine : ''}
   If no street address is in the resume, use just: City, State || Phone: XXX | Email: xxx${linkLine ? ' | ' + linkLine : ''}
 - The candidate professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
-- ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS)
-- ### for each job/experience entry: Job Title | Company Name | Location
+- ## for section headers — use EXACTLY these names in ALL CAPS:
+  EDUCATION, RELEVANT SKILLS, EXPERIENCE, LEADERSHIP, INTERESTS AND ACTIVITIES, HONORS AND ACHIEVEMENTS
+- ### for each job/experience entry: Job Title | Company Name, Location
 - Italic line for job dates: *Month Year – Month Year*
 - ### for each education entry: Degree | Institution Name, Location
 - Italic line for education: *GPA: X.X/4.0 | Year (or expected)*
 - - for bullet points
 - **Bold** for key metrics, numbers, and critical skills within bullets
 
-SECTION ORDER:
+SECTION ORDER — FOLLOW EXACTLY, NO EXCEPTIONS:
 1. Name & Contact Info
-2. Professional Summary
-3. Skills
-4. Professional Experience (most recent first)
-5. Education
-6. Certifications (if any)
-7. Projects (if relevant)
-8. Key Achievements (ALWAYS include — exactly 3 bullets at the very bottom)
+2. EDUCATION (most recent first)
+3. RELEVANT SKILLS (two-column table: **Category:** skills, one category per line)
+4. EXPERIENCE (most recent first)
+5. LEADERSHIP (bullet points with bold role names)
+6. INTERESTS AND ACTIVITIES (single line, items separated by ✦)
+7. HONORS AND ACHIEVEMENTS (single paragraph, items separated by ✦)
+
+Do NOT include a Professional Summary section. Do NOT include a Key Achievements section. Do NOT include Certifications or Projects as separate sections unless the user's resume has them — in that case add after EXPERIENCE and before LEADERSHIP.
 
 -----------------------------------------
 SKILLS INTEGRITY — NEVER VIOLATE
@@ -1068,22 +1070,6 @@ SKILLS INTEGRITY — NEVER VIOLATE
 - Final Skills = (all original resume skills) + (new JD skills not already present).
 - Run a mental skills audit before outputting: extract every skill from the original resume and verify it appears in your output.
 - REMINDER: Each skill category on its OWN line formatted as **Category:** skill1, skill2 — never all categories jammed into one paragraph.
-
------------------------------------------
-KEY ACHIEVEMENTS SECTION — ALWAYS INCLUDE
------------------------------------------
-
-- Always add ## KEY ACHIEVEMENTS as the very last section.
-- Exactly 3 bullet points — no more, no less.
-- Each bullet: Action verb + specific achievement + measurable metric + business impact.
-- Align each achievement to the JD's top requirements.
-- Use only facts from the original resume — do NOT fabricate.
-- Format: - **[Achievement title]:** description with metric.
-
-Example:
-- **Reduced Pipeline Latency:** Redesigned Spark job processing, cutting data latency from 4h to 20min for 50M+ daily records.
-- **Improved ATS Match Rate:** Integrated 30+ JD keywords into skills and bullets, increasing ATS pass-through by 40%.
-- **Led Cross-Functional Migration:** Spearheaded AWS → Azure migration for 12-member team, delivering 3 weeks ahead of schedule.
 
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble — just the resume content starting with # Name.`;
 }
