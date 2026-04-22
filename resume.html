@@ -296,10 +296,10 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview .entry-title-row{display:flex;justify-content:space-between;align-items:baseline;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-bottom:1px}
 .resume-preview .entry-title-row em{font-style:italic;color:#000}
 .resume-preview .entry-date{white-space:nowrap;color:#000;font-size:10pt}
-/* ── Skills — auto layout: label shrinks to fit, desc takes rest ── */
-.resume-preview .skill-row{display:table;width:100%;table-layout:auto;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt}
-.resume-preview .skill-label{display:table-cell;width:1%;white-space:nowrap;font-weight:700;color:#000;padding-right:10px;vertical-align:top}
-.resume-preview .skill-desc{display:table-cell;color:#000;line-height:1.45;vertical-align:top;word-break:break-word}
+/* ── Skills — inline: bold label + content flow together, no column gaps ── */
+.resume-preview .skill-row{display:block;margin-bottom:4px;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.45;color:#000}
+.resume-preview .skill-label{display:inline;font-weight:700;color:#000}
+.resume-preview .skill-desc{display:inline;color:#000}
 
 /* Streaming cursor */
 .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
@@ -346,9 +346,9 @@ button,input,textarea,select{font-family:inherit}
   .resume-preview .entry-company{font-weight:700!important;color:#000!important;font-size:10pt!important;margin-top:5px!important}
   .resume-preview .entry-title-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-bottom:1px!important}
   .resume-preview .entry-date{color:#000!important}
-  .resume-preview .skill-row{display:table!important;width:100%!important;table-layout:auto!important;margin-bottom:3px!important;font-size:10pt!important}
-  .resume-preview .skill-label{display:table-cell!important;width:1%!important;white-space:nowrap!important;font-weight:700!important;padding-right:10px!important;vertical-align:top!important}
-  .resume-preview .skill-desc{display:table-cell!important;vertical-align:top!important;word-break:break-word!important}
+  .resume-preview .skill-row{display:block!important;margin-bottom:3px!important;font-size:10pt!important;line-height:1.45!important}
+  .resume-preview .skill-label{display:inline!important;font-weight:700!important}
+  .resume-preview .skill-desc{display:inline!important}
   .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
   .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
   .resume-preview ul{margin-bottom:3px!important;padding-left:16px!important}
@@ -1546,7 +1546,7 @@ function renderMarkdown(md) {
     const safeDesc = content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
     html = html.replace(
       `<p>SKILL_ROW_${i}</p>`,
-      `<div class="skill-row"><div class="skill-label"><strong>${safeLbl}</strong></div><div class="skill-desc">${safeDesc}</div></div>`
+      `<div class="skill-row"><span class="skill-label"><strong>${safeLbl}</strong></span> <span class="skill-desc">${safeDesc}</span></div>`
     );
   });
 
