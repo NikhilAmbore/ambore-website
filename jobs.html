@@ -123,6 +123,30 @@ a{text-decoration:none;color:inherit}
 .cat-pill:hover{border-color:#2563EB;color:var(--accent)}
 .cat-pill.active{background:rgba(37,99,235,0.08);border-color:#2563EB;color:var(--accent)}
 
+/* ══ PLATFORM STRIP ══ */
+.platform-strip{
+  max-width:1200px;margin:0 auto;padding:0 24px 24px;
+}
+.platform-strip-title{
+  font-size:0.72rem;font-weight:700;color:#94A3B8;text-transform:uppercase;
+  letter-spacing:0.07em;margin-bottom:10px;
+}
+.platform-row{
+  display:flex;gap:8px;flex-wrap:wrap;
+}
+.plat-card{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:7px 14px;border-radius:10px;border:1px solid var(--border);
+  background:#F8FAFC;cursor:pointer;transition:all 0.15s;
+  font-size:0.78rem;font-weight:600;color:#475569;white-space:nowrap;
+  text-decoration:none;
+}
+.plat-card:hover{border-color:#2563EB;background:rgba(37,99,235,0.06);color:#2563EB}
+.plat-card.active{border-color:#2563EB;background:rgba(37,99,235,0.1);color:#2563EB}
+.plat-card.external::after{content:'↗';font-size:0.68rem;opacity:0.6;margin-left:2px}
+.plat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.plat-count{font-size:0.68rem;color:#94A3B8;font-weight:400;margin-left:2px}
+
 /* ══ MAIN LAYOUT ══ */
 .main-layout{
   display:flex;gap:20px;max-width:1200px;margin:0 auto;padding:20px 24px 48px;
@@ -530,6 +554,12 @@ body{padding-left:72px}
   <div class="category-pills" id="category-pills"></div>
 </div>
 
+<!-- ══ PLATFORM STRIP ══ -->
+<div class="platform-strip">
+  <div class="platform-strip-title">Browse live jobs by platform</div>
+  <div class="platform-row" id="platform-row"></div>
+</div>
+
 <!-- ══ MAIN LAYOUT ══ -->
 <div class="main-layout">
   <!-- Sidebar Filters -->
@@ -683,6 +713,79 @@ async function loadJobsData() {
   }
   window._jobsData = _allJobs; // expose for tracking
   return true;
+}
+
+/* ═══════════════════════════════════════════
+   PLATFORM STRIP
+═══════════════════════════════════════════ */
+const PLATFORMS = [
+  // ── Jobs already in our database (filter in-place) ─────────────────────
+  { name:'LinkedIn',       ats:'linkedin',    color:'#0077B5', url:null },
+  { name:'Greenhouse',     ats:'greenhouse',  color:'#3CAA59', url:null },
+  { name:'Workday',        ats:'workday',     color:'#E87722', url:null },
+  { name:'Lever',          ats:'lever',       color:'#7B61FF', url:null },
+  { name:'Ashby',          ats:'ashby',       color:'#2563EB', url:null },
+  { name:'The Muse',       ats:'themuse',     color:'#5C2D91', url:null },
+  { name:'USAJobs',        ats:'usajobs',     color:'#003087', url:null },
+  { name:'Adzuna',         ats:'adzuna',      color:'#FF5630', url:null },
+  { name:'WeWorkRemotely', ats:'weworkremotely', color:'#1FB488', url:null },
+  { name:'RemoteOK',       ats:'remoteok',    color:'#00B2FF', url:null },
+  { name:'HN Jobs',        ats:'hackernews',  color:'#FF6600', url:null },
+  { name:'Taleo',          ats:'taleo',       color:'#E3242B', url:null },
+  // ── External platforms — opens live search in new tab ──────────────────
+  { name:'Indeed',       ats:null, color:'#003A9B', url:'https://www.indeed.com/jobs?q=software+engineer&l=United+States&sort=date' },
+  { name:'Dice',         ats:null, color:'#C21E56', url:'https://www.dice.com/jobs?q=software+engineer&l=United+States' },
+  { name:'SimplyHired',  ats:null, color:'#444444', url:'https://www.simplyhired.com/search?q=software+engineer&l=united+states' },
+  { name:'ZipRecruiter', ats:null, color:'#4CAF50', url:'https://www.ziprecruiter.com/jobs-search?search=software+engineer&location=United+States' },
+  { name:'Monster',      ats:null, color:'#6ABD45', url:'https://www.monster.com/jobs/search?q=software+engineer&where=United+States' },
+  { name:'Workable',     ats:null, color:'#1A73E8', url:'https://jobs.workable.com/' },
+  { name:'iCIMS',        ats:null, color:'#2B547E', url:'https://www.icims.com/hiring-insights/for-employers/find-a-job/' },
+  { name:'CareerBuilder',ats:null, color:'#0068B5', url:'https://www.careerbuilder.com/jobs?keywords=software+engineer&location=United+States' },
+  { name:'Glassdoor',    ats:null, color:'#0CAA41', url:'https://www.glassdoor.com/Job/software-engineer-jobs-SRCH_KO0,17.htm?locT=N&locId=1&countryRedirect=true' },
+  { name:'Company Pages', ats:'html', color:'#64748B', url:null },
+];
+
+let _activePlatform = null;
+
+function buildPlatformStrip() {
+  const row = document.getElementById('platform-row');
+  if (!row) return;
+  // Count per ats from loaded data
+  const counts = {};
+  _allJobs.forEach(j => { counts[j.ats] = (counts[j.ats] || 0) + 1; });
+
+  row.innerHTML = PLATFORMS.map(p => {
+    const cnt = p.ats ? (counts[p.ats] || 0) : null;
+    if (p.url) {
+      // External link
+      return `<a class="plat-card external" href="${p.url}" target="_blank" rel="noopener noreferrer">
+        <span class="plat-dot" style="background:${p.color}"></span>
+        ${p.name}
+      </a>`;
+    } else {
+      // In-page filter
+      const label = cnt !== null ? `${p.name} <span class="plat-count">${cnt.toLocaleString()}</span>` : p.name;
+      return `<button class="plat-card" id="plat-${p.ats}" onclick="filterByPlatform('${p.ats}')">
+        <span class="plat-dot" style="background:${p.color}"></span>
+        ${label}
+      </button>`;
+    }
+  }).join('');
+}
+
+function filterByPlatform(ats) {
+  if (_activePlatform === ats) {
+    // Toggle off
+    _activePlatform = null;
+    document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
+  } else {
+    _activePlatform = ats;
+    document.querySelectorAll('.plat-card').forEach(c => c.classList.remove('active'));
+    const btn = document.getElementById('plat-' + ats);
+    if (btn) btn.classList.add('active');
+  }
+  currentPage = 1;
+  applyFilters();
 }
 
 function computeStats() {
@@ -858,6 +961,8 @@ function applyAndRender() {
       const wt = j.is_remote ? 'remote' : 'onsite';
       if (!workTypes.includes(wt)) return false;
     }
+    // ── Platform strip filter
+    if (_activePlatform && j.ats !== _activePlatform) return false;
     // ── ATS source
     if (sourceFilter && j.ats !== sourceFilter) return false;
     // ── Minimum salary
@@ -1227,6 +1332,7 @@ window.addEventListener('load', async () => {
 
   computeStats();
   buildCategoryPills();
+  buildPlatformStrip();
   buildStateDropdown();
   applyAndRender();
   showProfileBanner();
