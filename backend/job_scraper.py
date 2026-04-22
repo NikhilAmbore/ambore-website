@@ -2108,6 +2108,94 @@ class WorkableScraper(BaseScraper):
         return jobs
 
 
+class BreezyHRScraper(BaseScraper):
+    """
+    BreezyHR public JSON API — https://{slug}.breezy.hr/json
+    No auth. target.company = BreezyHR account slug.
+    Apply URL: https://{slug}.breezy.hr/p/{position_id}
+    """
+    ATS_NAME = "breezyhr"
+
+    def fetch_jobs(self) -> list[Job]:
+        slug = self.target.company
+        url  = f"https://{slug}.breezy.hr/json"
+        log.info("[BreezyHR] %s — fetching %s", self.target.company_name, url)
+        try:
+            resp = self.client.get(url)
+            data = _safe_json(resp)
+        except Exception as exc:
+            log.error("[BreezyHR] %s — %s", self.target.company_name, exc)
+            return []
+
+        jobs: list[Job] = []
+        for raw in data if isinstance(data, list) else []:
+            city    = (raw.get("location") or {}).get("city",    "") or ""
+            state   = ((raw.get("location") or {}).get("state")  or {}).get("name", "") or ""
+            country = ((raw.get("location") or {}).get("country") or {}).get("name", "") or ""
+            is_remote = (raw.get("type", {}).get("name", "") or "").lower() == "remote"
+            location = ", ".join(p for p in [city, state, country] if p) or ("Remote" if is_remote else "")
+            is_usa, is_rem = _classify_location(location)
+            if is_remote:
+                is_rem = True; is_usa = True
+            if not is_usa and country.lower() in ("united states", "us", "usa"):
+                is_usa = True
+            if not is_usa:
+                continue
+            pos_id = raw.get("_id", "")
+            job = self._make_job(
+                title=raw.get("name", ""),
+                location=location or "US",
+                url=f"https://{slug}.breezy.hr/p/{pos_id}",
+                department=(raw.get("department") or {}).get("name"),
+                employment_type=(raw.get("type") or {}).get("name"),
+                posted_at=raw.get("published_at"),
+            )
+            if job:
+                jobs.append(job)
+        log.info("[BreezyHR] %s — %d US jobs", slug, len(jobs))
+        return jobs
+
+
+class JazzHRScraper(BaseScraper):
+    """
+    JazzHR company career pages — https://{slug}.applytojob.com/apply/
+    HTML scraper. target.company = applytojob subdomain slug.
+    """
+    ATS_NAME = "jazzhr"
+
+    def fetch_jobs(self) -> list[Job]:
+        slug     = self.target.company
+        base_url = f"https://{slug}.applytojob.com/apply/"
+        log.info("[JazzHR] %s — fetching %s", self.target.company_name, base_url)
+        try:
+            resp = self.client.get(base_url)
+            soup = BeautifulSoup(resp.text, "html.parser")
+        except Exception as exc:
+            log.error("[JazzHR] %s — %s", self.target.company_name, exc)
+            return []
+
+        jobs: list[Job] = []
+        for row in soup.select("a.details-title, .job a, li.job a, .opening a, a[href*='/apply/']"):
+            title = row.get_text(strip=True)
+            href  = row.get("href", "")
+            if not title or not href:
+                continue
+            if not href.startswith("http"):
+                href = urljoin(base_url, href)
+            # find location near the link
+            parent  = row.parent or row
+            loc_el  = parent.find(class_=lambda c: c and "location" in c.lower()) if hasattr(parent, "find") else None
+            location = loc_el.get_text(strip=True) if loc_el else "United States"
+            is_usa, is_rem = _classify_location(location)
+            if not is_usa:
+                continue
+            job = self._make_job(title=title, location=location or "US", url=href)
+            if job:
+                jobs.append(job)
+        log.info("[JazzHR] %s — %d US jobs", slug, len(jobs))
+        return jobs
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 # Adzuna  (free developer API — register at https://developer.adzuna.com/)
 # ─────────────────────────────────────────────────────────────────────────────
@@ -4202,6 +4290,8 @@ SCRAPER_REGISTRY: dict[str, type[BaseScraper]] = {
     "linkedin":        LinkedInGuestScraper, # LinkedIn guest API — no key needed
     "indeed":          IndeedRSSScraper,     # Indeed RSS feeds — no key needed
     "jobvite":         JobviteScraper,       # Jobvite company boards — no key needed
+    "breezyhr":  BreezyHRScraper,   # BreezyHR public JSON API — no key needed
+    "jazzhr":    JazzHRScraper,     # JazzHR/applytojob HTML scraper — no key needed
     "jobicy":          JobicyScraper,        # Jobicy remote aggregator — no key needed
     "dice":            DiceScraper,          # Dice tech jobs JSON API — no key needed
     "ziprecruiter":    ZipRecruiterScraper,  # ZipRecruiter RSS feeds — no key needed
@@ -4683,6 +4773,316 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "greenhouse", "company": "bonusly",          "company_name": "Bonusly"},
     {"ats": "greenhouse", "company": "whoop",            "company_name": "WHOOP"},
 
+    # ── More Greenhouse targets ──────────────────────────────────────────────
+    {"ats": "greenhouse", "company": "anthropic",        "company_name": "Anthropic"},
+    {"ats": "greenhouse", "company": "openai",           "company_name": "OpenAI (GH)"},
+    {"ats": "greenhouse", "company": "gemini",           "company_name": "Gemini (Crypto)"},
+    {"ats": "greenhouse", "company": "anchorage",        "company_name": "Anchorage Digital"},
+    {"ats": "greenhouse", "company": "robinhood",        "company_name": "Robinhood (GH)"},
+    {"ats": "greenhouse", "company": "nerdwallet",       "company_name": "NerdWallet"},
+    {"ats": "greenhouse", "company": "loancore",         "company_name": "LoanCore"},
+    {"ats": "greenhouse", "company": "clear",            "company_name": "CLEAR"},
+    {"ats": "greenhouse", "company": "blend",            "company_name": "Blend"},
+    {"ats": "greenhouse", "company": "better",           "company_name": "Better.com"},
+    {"ats": "greenhouse", "company": "opendoor",         "company_name": "Opendoor"},
+    {"ats": "greenhouse", "company": "flatiron",         "company_name": "Flatiron Health"},
+    {"ats": "greenhouse", "company": "navan",            "company_name": "Navan"},
+    {"ats": "greenhouse", "company": "chime",            "company_name": "Chime"},
+    {"ats": "greenhouse", "company": "sofi",             "company_name": "SoFi"},
+    {"ats": "greenhouse", "company": "wealthfront",      "company_name": "Wealthfront"},
+    {"ats": "greenhouse", "company": "betterment",       "company_name": "Betterment"},
+    {"ats": "greenhouse", "company": "acorns",           "company_name": "Acorns"},
+    {"ats": "greenhouse", "company": "toast",            "company_name": "Toast"},
+    {"ats": "greenhouse", "company": "dutchie",          "company_name": "Dutchie"},
+    {"ats": "greenhouse", "company": "carta",            "company_name": "Carta"},
+    {"ats": "greenhouse", "company": "brainware",        "company_name": "Brainware"},
+    {"ats": "greenhouse", "company": "verkada",          "company_name": "Verkada"},
+    {"ats": "greenhouse", "company": "figma",            "company_name": "Figma"},
+    {"ats": "greenhouse", "company": "canva",            "company_name": "Canva"},
+    {"ats": "greenhouse", "company": "sendoso",          "company_name": "Sendoso"},
+    {"ats": "greenhouse", "company": "alation",          "company_name": "Alation"},
+    {"ats": "greenhouse", "company": "atlan",            "company_name": "Atlan"},
+    {"ats": "greenhouse", "company": "collibra",         "company_name": "Collibra"},
+    {"ats": "greenhouse", "company": "immuta",           "company_name": "Immuta"},
+    {"ats": "greenhouse", "company": "securiti",         "company_name": "Securiti"},
+    {"ats": "greenhouse", "company": "privacera",        "company_name": "Privacera"},
+    {"ats": "greenhouse", "company": "coupa",            "company_name": "Coupa Software"},
+    {"ats": "greenhouse", "company": "netsol",           "company_name": "NetSol Technologies"},
+    {"ats": "greenhouse", "company": "payscale",         "company_name": "PayScale"},
+    {"ats": "greenhouse", "company": "complyadvantage",  "company_name": "ComplyAdvantage"},
+    {"ats": "greenhouse", "company": "socure",           "company_name": "Socure"},
+    {"ats": "greenhouse", "company": "sift",             "company_name": "Sift"},
+    {"ats": "greenhouse", "company": "forter",           "company_name": "Forter"},
+    {"ats": "greenhouse", "company": "signifyd",         "company_name": "Signifyd"},
+    {"ats": "greenhouse", "company": "unit21",           "company_name": "Unit21"},
+    {"ats": "greenhouse", "company": "sardine",          "company_name": "Sardine"},
+    {"ats": "greenhouse", "company": "featurespace",     "company_name": "Featurespace"},
+    {"ats": "greenhouse", "company": "persona",          "company_name": "Persona"},
+    {"ats": "greenhouse", "company": "middesk",          "company_name": "Middesk"},
+    {"ats": "greenhouse", "company": "alloy",            "company_name": "Alloy"},
+    {"ats": "greenhouse", "company": "hummingbird",      "company_name": "Hummingbird"},
+    {"ats": "greenhouse", "company": "comply",           "company_name": "ComplySci"},
+    {"ats": "greenhouse", "company": "jumpcloud",        "company_name": "JumpCloud"},
+    {"ats": "greenhouse", "company": "auth0",            "company_name": "Auth0"},
+    {"ats": "greenhouse", "company": "1password",        "company_name": "1Password"},
+    {"ats": "greenhouse", "company": "bitwarden",        "company_name": "Bitwarden"},
+    {"ats": "greenhouse", "company": "hashicorp",        "company_name": "HashiCorp"},
+    {"ats": "greenhouse", "company": "teleport",         "company_name": "Teleport"},
+    {"ats": "greenhouse", "company": "scoutapm",         "company_name": "Scout APM"},
+    {"ats": "greenhouse", "company": "bugsnag",          "company_name": "Bugsnag"},
+    {"ats": "greenhouse", "company": "sentry",           "company_name": "Sentry (GH)"},
+    {"ats": "greenhouse", "company": "rollbar",          "company_name": "Rollbar"},
+    {"ats": "greenhouse", "company": "logrocket",        "company_name": "LogRocket"},
+    {"ats": "greenhouse", "company": "appsignal",        "company_name": "AppSignal"},
+    {"ats": "greenhouse", "company": "logdna",           "company_name": "LogDNA"},
+    {"ats": "greenhouse", "company": "observe",          "company_name": "Observe Inc"},
+    {"ats": "greenhouse", "company": "lightstep",        "company_name": "Lightstep"},
+    {"ats": "greenhouse", "company": "nobl9",            "company_name": "Nobl9"},
+    {"ats": "greenhouse", "company": "sleuth",           "company_name": "Sleuth"},
+    {"ats": "greenhouse", "company": "cortex",           "company_name": "Cortex"},
+    {"ats": "greenhouse", "company": "opslevel",         "company_name": "OpsLevel"},
+    {"ats": "greenhouse", "company": "getport",          "company_name": "Port"},
+    {"ats": "greenhouse", "company": "roadie",           "company_name": "Roadie"},
+    {"ats": "greenhouse", "company": "shippo",           "company_name": "Shippo"},
+    {"ats": "greenhouse", "company": "easypost",         "company_name": "EasyPost"},
+    {"ats": "greenhouse", "company": "stamps",           "company_name": "Stamps.com"},
+    {"ats": "greenhouse", "company": "narvar",           "company_name": "Narvar"},
+    {"ats": "greenhouse", "company": "convey",           "company_name": "Convey"},
+    {"ats": "greenhouse", "company": "bringg",           "company_name": "Bringg"},
+    {"ats": "greenhouse", "company": "onfleet",          "company_name": "Onfleet"},
+    {"ats": "greenhouse", "company": "brinc",            "company_name": "Brinc"},
+    {"ats": "greenhouse", "company": "gelato",           "company_name": "Gelato"},
+    {"ats": "greenhouse", "company": "printify",         "company_name": "Printify"},
+    {"ats": "greenhouse", "company": "zazzle",           "company_name": "Zazzle"},
+    {"ats": "greenhouse", "company": "redbubble",        "company_name": "Redbubble"},
+    {"ats": "greenhouse", "company": "society6",         "company_name": "Society6"},
+    {"ats": "greenhouse", "company": "framebridge",      "company_name": "Framebridge"},
+    {"ats": "greenhouse", "company": "casper",           "company_name": "Casper"},
+    {"ats": "greenhouse", "company": "saatva",           "company_name": "Saatva"},
+    {"ats": "greenhouse", "company": "burrow",           "company_name": "Burrow"},
+    {"ats": "greenhouse", "company": "outer",            "company_name": "Outer"},
+    {"ats": "greenhouse", "company": "article",          "company_name": "Article"},
+    {"ats": "greenhouse", "company": "wayfair",          "company_name": "Wayfair"},
+    {"ats": "greenhouse", "company": "overstock",        "company_name": "Overstock"},
+    {"ats": "greenhouse", "company": "vroom",            "company_name": "Vroom"},
+    {"ats": "greenhouse", "company": "carvana",          "company_name": "Carvana"},
+    {"ats": "greenhouse", "company": "shift",            "company_name": "Shift Technologies"},
+    {"ats": "greenhouse", "company": "fair",             "company_name": "Fair"},
+    {"ats": "greenhouse", "company": "ridgeline",        "company_name": "Ridgeline"},
+    {"ats": "greenhouse", "company": "addepar",          "company_name": "Addepar"},
+    {"ats": "greenhouse", "company": "yodlee",           "company_name": "Yodlee"},
+    {"ats": "greenhouse", "company": "mx",               "company_name": "MX Technologies"},
+    {"ats": "greenhouse", "company": "tink",             "company_name": "Tink"},
+    {"ats": "greenhouse", "company": "finicity",         "company_name": "Finicity"},
+    {"ats": "greenhouse", "company": "akoya",            "company_name": "Akoya"},
+    {"ats": "greenhouse", "company": "socifi",           "company_name": "Socifi"},
+    {"ats": "greenhouse", "company": "branch",           "company_name": "Branch"},
+    {"ats": "greenhouse", "company": "marqeta",          "company_name": "Marqeta"},
+    {"ats": "greenhouse", "company": "paylocity",        "company_name": "Paylocity"},
+    {"ats": "greenhouse", "company": "paychex",          "company_name": "Paychex"},
+    {"ats": "greenhouse", "company": "bamboohr",         "company_name": "BambooHR"},
+    {"ats": "greenhouse", "company": "namely",           "company_name": "Namely"},
+    {"ats": "greenhouse", "company": "lattice",          "company_name": "Lattice"},
+    {"ats": "greenhouse", "company": "leapsome",         "company_name": "Leapsome"},
+    {"ats": "greenhouse", "company": "hibob",            "company_name": "HiBob"},
+    {"ats": "greenhouse", "company": "humaans",          "company_name": "Humaans"},
+    {"ats": "greenhouse", "company": "pave",             "company_name": "Pave"},
+    {"ats": "greenhouse", "company": "levels",           "company_name": "Levels.fyi"},
+    {"ats": "greenhouse", "company": "jumpstart",        "company_name": "Jumpstart"},
+    {"ats": "greenhouse", "company": "handshake",        "company_name": "Handshake"},
+    {"ats": "greenhouse", "company": "forage",           "company_name": "Forage"},
+    {"ats": "greenhouse", "company": "pathrise",         "company_name": "Pathrise"},
+    {"ats": "greenhouse", "company": "codepath",         "company_name": "CodePath"},
+    {"ats": "greenhouse", "company": "reforge",          "company_name": "Reforge"},
+    {"ats": "greenhouse", "company": "maven",            "company_name": "Maven Clinic"},
+    {"ats": "greenhouse", "company": "carrot",           "company_name": "Carrot Fertility"},
+    {"ats": "greenhouse", "company": "progyny",          "company_name": "Progyny"},
+    {"ats": "greenhouse", "company": "kindbody",         "company_name": "Kindbody"},
+    {"ats": "greenhouse", "company": "alma",             "company_name": "Alma"},
+    {"ats": "greenhouse", "company": "talkspace",        "company_name": "Talkspace"},
+    {"ats": "greenhouse", "company": "cerebral",         "company_name": "Cerebral"},
+    {"ats": "greenhouse", "company": "noom",             "company_name": "Noom"},
+    {"ats": "greenhouse", "company": "whoop",            "company_name": "WHOOP"},
+    {"ats": "greenhouse", "company": "oura",             "company_name": "Oura"},
+    {"ats": "greenhouse", "company": "garmin",           "company_name": "Garmin"},
+    {"ats": "greenhouse", "company": "peloton",          "company_name": "Peloton"},
+    {"ats": "greenhouse", "company": "mirror",           "company_name": "Mirror"},
+    {"ats": "greenhouse", "company": "bowflex",          "company_name": "Bowflex"},
+    {"ats": "greenhouse", "company": "hydrow",           "company_name": "Hydrow"},
+    {"ats": "greenhouse", "company": "lululemon",        "company_name": "Lululemon"},
+    {"ats": "greenhouse", "company": "allbirds",         "company_name": "Allbirds"},
+    {"ats": "greenhouse", "company": "warbyparker",      "company_name": "Warby Parker"},
+    {"ats": "greenhouse", "company": "glossier",         "company_name": "Glossier"},
+    {"ats": "greenhouse", "company": "curology",         "company_name": "Curology"},
+    {"ats": "greenhouse", "company": "function-of-beauty", "company_name": "Function of Beauty"},
+    {"ats": "greenhouse", "company": "prose",            "company_name": "Prose"},
+    {"ats": "greenhouse", "company": "madison-reed",     "company_name": "Madison Reed"},
+    {"ats": "greenhouse", "company": "birchbox",         "company_name": "Birchbox"},
+    {"ats": "greenhouse", "company": "ipsy",             "company_name": "IPSY"},
+    {"ats": "greenhouse", "company": "fabfitfun",        "company_name": "FabFitFun"},
+    {"ats": "greenhouse", "company": "thrive-market",    "company_name": "Thrive Market"},
+    {"ats": "greenhouse", "company": "grove-collaborative", "company_name": "Grove Collaborative"},
+    {"ats": "greenhouse", "company": "imperfect-foods",  "company_name": "Imperfect Foods"},
+    {"ats": "greenhouse", "company": "hungryroot",       "company_name": "Hungryroot"},
+    {"ats": "greenhouse", "company": "sunbasket",        "company_name": "Sun Basket"},
+    {"ats": "greenhouse", "company": "freshly",          "company_name": "Freshly"},
+    {"ats": "greenhouse", "company": "factor",           "company_name": "Factor Meals"},
+    {"ats": "greenhouse", "company": "sweet-green",      "company_name": "Sweetgreen"},
+    {"ats": "greenhouse", "company": "tender-food",      "company_name": "Tender"},
+    {"ats": "greenhouse", "company": "nextgen-healthcare","company_name": "NextGen Healthcare"},
+    {"ats": "greenhouse", "company": "inovalon",         "company_name": "Inovalon"},
+    {"ats": "greenhouse", "company": "privia",           "company_name": "Privia Health"},
+    {"ats": "greenhouse", "company": "healthedge",       "company_name": "HealthEdge"},
+    {"ats": "greenhouse", "company": "waystar",          "company_name": "Waystar"},
+    {"ats": "greenhouse", "company": "change-healthcare","company_name": "Change Healthcare"},
+    {"ats": "greenhouse", "company": "availity",         "company_name": "Availity"},
+    {"ats": "greenhouse", "company": "zelis",            "company_name": "Zelis Healthcare"},
+    {"ats": "greenhouse", "company": "arcadian",         "company_name": "Arcadian Corporation"},
+    {"ats": "greenhouse", "company": "netsmart",         "company_name": "Netsmart Technologies"},
+    {"ats": "greenhouse", "company": "healthstream",     "company_name": "HealthStream"},
+    {"ats": "greenhouse", "company": "advancedmd",       "company_name": "AdvancedMD"},
+    {"ats": "greenhouse", "company": "drchrono",         "company_name": "DrChrono"},
+    {"ats": "greenhouse", "company": "nimblr",           "company_name": "Nimblr Health"},
+    {"ats": "greenhouse", "company": "zocdoc",           "company_name": "Zocdoc"},
+    {"ats": "greenhouse", "company": "doximity",         "company_name": "Doximity"},
+    {"ats": "greenhouse", "company": "healthgrades",     "company_name": "Healthgrades"},
+    {"ats": "greenhouse", "company": "webmd",            "company_name": "WebMD"},
+    {"ats": "greenhouse", "company": "sharecare",        "company_name": "Sharecare"},
+    {"ats": "greenhouse", "company": "quantum-health",   "company_name": "Quantum Health"},
+    {"ats": "greenhouse", "company": "evolent",          "company_name": "Evolent Health"},
+    {"ats": "greenhouse", "company": "nuvation",         "company_name": "Nuvation Bio"},
+    {"ats": "greenhouse", "company": "codagenix",        "company_name": "CodaGenix"},
+    {"ats": "greenhouse", "company": "rally-health",     "company_name": "Rally Health"},
+    {"ats": "greenhouse", "company": "hims",             "company_name": "Hims & Hers"},
+    {"ats": "greenhouse", "company": "ro",               "company_name": "Ro Health"},
+    {"ats": "greenhouse", "company": "teladoc",          "company_name": "Teladoc"},
+    {"ats": "greenhouse", "company": "mdlive",           "company_name": "MDLive"},
+    {"ats": "greenhouse", "company": "amwell",           "company_name": "Amwell"},
+    {"ats": "greenhouse", "company": "accolade",         "company_name": "Accolade Health"},
+    {"ats": "greenhouse", "company": "omada",            "company_name": "Omada Health"},
+    {"ats": "greenhouse", "company": "virta",            "company_name": "Virta Health"},
+    {"ats": "greenhouse", "company": "livongo",          "company_name": "Livongo"},
+    {"ats": "greenhouse", "company": "castlight",        "company_name": "Castlight Health"},
+    {"ats": "greenhouse", "company": "transcarent",      "company_name": "Transcarent"},
+    {"ats": "greenhouse", "company": "apixio",           "company_name": "Apixio"},
+    {"ats": "greenhouse", "company": "veradigm",         "company_name": "Veradigm"},
+    {"ats": "greenhouse", "company": "carevoyance",      "company_name": "Carevoyance"},
+    {"ats": "greenhouse", "company": "codametrix",       "company_name": "CodaMetrix"},
+    {"ats": "greenhouse", "company": "hiphop-health",    "company_name": "HipHop Health"},
+    {"ats": "greenhouse", "company": "ambiance-health",  "company_name": "Ambiance Health"},
+    {"ats": "greenhouse", "company": "tempus",           "company_name": "Tempus AI"},
+    {"ats": "greenhouse", "company": "syapse",           "company_name": "Syapse"},
+    {"ats": "greenhouse", "company": "ontrak",           "company_name": "Ontrak"},
+    {"ats": "greenhouse", "company": "particle-health",  "company_name": "Particle Health"},
+    {"ats": "greenhouse", "company": "arcus-health",     "company_name": "Arcus Health"},
+    {"ats": "greenhouse", "company": "pager",            "company_name": "Pager Health"},
+    {"ats": "greenhouse", "company": "wellframe",        "company_name": "Wellframe"},
+    {"ats": "greenhouse", "company": "cityblock",        "company_name": "Cityblock Health"},
+    {"ats": "greenhouse", "company": "iora",             "company_name": "Iora Health"},
+    {"ats": "greenhouse", "company": "zus-health",       "company_name": "Zus Health"},
+    {"ats": "greenhouse", "company": "athenahealth",     "company_name": "athenahealth"},
+    {"ats": "greenhouse", "company": "carenx",           "company_name": "CareNX"},
+    {"ats": "greenhouse", "company": "nuvolo",           "company_name": "Nuvolo"},
+    {"ats": "greenhouse", "company": "arcadian-corp",    "company_name": "Arcadian Corp"},
+    {"ats": "greenhouse", "company": "axuall",           "company_name": "Axuall"},
+    {"ats": "greenhouse", "company": "medallion",        "company_name": "Medallion"},
+    {"ats": "greenhouse", "company": "modivcare",        "company_name": "ModivCare"},
+    {"ats": "greenhouse", "company": "ramp",             "company_name": "Ramp (GH)"},
+    {"ats": "greenhouse", "company": "expensify",        "company_name": "Expensify"},
+    {"ats": "greenhouse", "company": "samsara",          "company_name": "Samsara"},
+    {"ats": "greenhouse", "company": "motive",           "company_name": "Motive"},
+    {"ats": "greenhouse", "company": "keeptruckin",      "company_name": "KeepTruckin"},
+    {"ats": "greenhouse", "company": "fleet-complete",   "company_name": "Fleet Complete"},
+    {"ats": "greenhouse", "company": "fleetio",          "company_name": "Fleetio"},
+    {"ats": "greenhouse", "company": "lytx",             "company_name": "Lytx"},
+    {"ats": "greenhouse", "company": "verizon-connect",  "company_name": "Verizon Connect"},
+    {"ats": "greenhouse", "company": "geotab",           "company_name": "Geotab"},
+    {"ats": "greenhouse", "company": "trimble",          "company_name": "Trimble"},
+    {"ats": "greenhouse", "company": "platform-science", "company_name": "Platform Science"},
+    {"ats": "greenhouse", "company": "omnitracs",        "company_name": "Omnitracs"},
+    {"ats": "greenhouse", "company": "isaac-instruments","company_name": "Isaac Instruments"},
+    {"ats": "greenhouse", "company": "netradyne",        "company_name": "Netradyne"},
+    {"ats": "greenhouse", "company": "smartdrive",       "company_name": "SmartDrive"},
+    {"ats": "greenhouse", "company": "navistar",         "company_name": "Navistar"},
+    {"ats": "greenhouse", "company": "wabash-national",  "company_name": "Wabash National"},
+    {"ats": "greenhouse", "company": "waymo",            "company_name": "Waymo"},
+    {"ats": "greenhouse", "company": "cruise",           "company_name": "Cruise"},
+    {"ats": "greenhouse", "company": "argo-ai",          "company_name": "Argo AI"},
+    {"ats": "greenhouse", "company": "zoox",             "company_name": "Zoox"},
+    {"ats": "greenhouse", "company": "rivian",           "company_name": "Rivian"},
+    {"ats": "greenhouse", "company": "lucid-motors",     "company_name": "Lucid Motors"},
+    {"ats": "greenhouse", "company": "fisker",           "company_name": "Fisker Inc"},
+    {"ats": "greenhouse", "company": "canoo",            "company_name": "Canoo"},
+    {"ats": "greenhouse", "company": "lordstown",        "company_name": "Lordstown Motors"},
+    {"ats": "greenhouse", "company": "limelight-networks","company_name": "Limelight Networks"},
+    {"ats": "greenhouse", "company": "fastly",           "company_name": "Fastly"},
+    {"ats": "greenhouse", "company": "cloudflare",       "company_name": "Cloudflare"},
+    {"ats": "greenhouse", "company": "imperva",          "company_name": "Imperva"},
+    {"ats": "greenhouse", "company": "akamai",           "company_name": "Akamai"},
+    {"ats": "greenhouse", "company": "f5",               "company_name": "F5 Networks"},
+    {"ats": "greenhouse", "company": "radware",          "company_name": "Radware"},
+    {"ats": "greenhouse", "company": "citrix",           "company_name": "Citrix"},
+    {"ats": "greenhouse", "company": "vmware",           "company_name": "VMware"},
+    {"ats": "greenhouse", "company": "nutanix",          "company_name": "Nutanix"},
+    {"ats": "greenhouse", "company": "purestorage",      "company_name": "Pure Storage"},
+    {"ats": "greenhouse", "company": "cohesity",         "company_name": "Cohesity"},
+    {"ats": "greenhouse", "company": "rubrik",           "company_name": "Rubrik"},
+    {"ats": "greenhouse", "company": "commvault",        "company_name": "Commvault"},
+    {"ats": "greenhouse", "company": "veeam",            "company_name": "Veeam"},
+    {"ats": "greenhouse", "company": "zerto",            "company_name": "Zerto"},
+    {"ats": "greenhouse", "company": "astera-labs",      "company_name": "Astera Labs"},
+    {"ats": "greenhouse", "company": "ampere-computing", "company_name": "Ampere Computing"},
+    {"ats": "greenhouse", "company": "cavium",           "company_name": "Cavium"},
+    {"ats": "greenhouse", "company": "marvell",          "company_name": "Marvell Technology"},
+    {"ats": "greenhouse", "company": "mediatek",         "company_name": "MediaTek"},
+    {"ats": "greenhouse", "company": "arm",              "company_name": "Arm"},
+    {"ats": "greenhouse", "company": "xilinx",           "company_name": "AMD Xilinx"},
+    {"ats": "greenhouse", "company": "latticesemi",      "company_name": "Lattice Semiconductor"},
+    {"ats": "greenhouse", "company": "microchip",        "company_name": "Microchip Technology"},
+    {"ats": "greenhouse", "company": "onsemi",           "company_name": "onsemi"},
+    {"ats": "greenhouse", "company": "nxp",              "company_name": "NXP Semiconductors"},
+    {"ats": "greenhouse", "company": "renesas",          "company_name": "Renesas Electronics"},
+    {"ats": "greenhouse", "company": "silabs",           "company_name": "Silicon Labs"},
+    {"ats": "greenhouse", "company": "analogdevices",    "company_name": "Analog Devices"},
+    {"ats": "greenhouse", "company": "teradyne",         "company_name": "Teradyne"},
+    {"ats": "greenhouse", "company": "formfactor",       "company_name": "FormFactor"},
+    {"ats": "greenhouse", "company": "keysight",         "company_name": "Keysight Technologies"},
+    {"ats": "greenhouse", "company": "rohdeschwarz",     "company_name": "Rohde & Schwarz"},
+    {"ats": "greenhouse", "company": "spirent",          "company_name": "Spirent Communications"},
+    {"ats": "greenhouse", "company": "viavi",            "company_name": "VIAVI Solutions"},
+    {"ats": "greenhouse", "company": "lumentum",         "company_name": "Lumentum"},
+    {"ats": "greenhouse", "company": "coherent",         "company_name": "Coherent Corp"},
+    {"ats": "greenhouse", "company": "ii-vi",            "company_name": "II-VI Incorporated"},
+    {"ats": "greenhouse", "company": "macom",            "company_name": "MACOM Technology"},
+    {"ats": "greenhouse", "company": "sumitomo-electric","company_name": "Sumitomo Electric"},
+    {"ats": "greenhouse", "company": "inphi",            "company_name": "Marvell Inphi"},
+    {"ats": "greenhouse", "company": "skyworks",         "company_name": "Skyworks Solutions"},
+    {"ats": "greenhouse", "company": "qorvo",            "company_name": "Qorvo"},
+    {"ats": "greenhouse", "company": "wolfson",          "company_name": "Wolfson Microelectronics"},
+    {"ats": "greenhouse", "company": "cirrus-logic",     "company_name": "Cirrus Logic"},
+    {"ats": "greenhouse", "company": "microsemi",        "company_name": "Microsemi"},
+    {"ats": "greenhouse", "company": "vitesse-semi",     "company_name": "Vitesse Semiconductor"},
+    {"ats": "greenhouse", "company": "integrated-device","company_name": "IDT"},
+    {"ats": "greenhouse", "company": "maxim-integrated", "company_name": "Maxim Integrated"},
+    {"ats": "greenhouse", "company": "atmel",            "company_name": "Atmel"},
+    {"ats": "greenhouse", "company": "cypress-semi",     "company_name": "Cypress Semiconductor"},
+    {"ats": "greenhouse", "company": "semtech",          "company_name": "Semtech"},
+    {"ats": "greenhouse", "company": "diodes",           "company_name": "Diodes Inc"},
+    {"ats": "greenhouse", "company": "power-integrations","company_name": "Power Integrations"},
+    {"ats": "greenhouse", "company": "monolithic-power", "company_name": "Monolithic Power Systems"},
+    {"ats": "greenhouse", "company": "maxlinear",        "company_name": "MaxLinear"},
+    {"ats": "greenhouse", "company": "silicon-motion",   "company_name": "Silicon Motion"},
+    {"ats": "greenhouse", "company": "phison",           "company_name": "Phison Electronics"},
+    {"ats": "greenhouse", "company": "adata",            "company_name": "ADATA Technology"},
+    {"ats": "greenhouse", "company": "kioxia",           "company_name": "Kioxia America"},
+    {"ats": "greenhouse", "company": "seagate",          "company_name": "Seagate Technology"},
+    {"ats": "greenhouse", "company": "western-digital",  "company_name": "Western Digital"},
+    {"ats": "greenhouse", "company": "hitachi-vantara",  "company_name": "Hitachi Vantara"},
+    {"ats": "greenhouse", "company": "netapp",           "company_name": "NetApp"},
+    {"ats": "greenhouse", "company": "dell-emc",         "company_name": "Dell EMC"},
+    {"ats": "greenhouse", "company": "hpe-storage",      "company_name": "HPE Storage"},
+    {"ats": "greenhouse", "company": "ibm-storage",      "company_name": "IBM Storage"},
+
     # ── Lever (api.lever.co/v0/postings/{slug}) ──────────────────────────────
     {"ats": "lever", "company": "plaid",        "company_name": "Plaid"},
     {"ats": "lever", "company": "highspot",     "company_name": "Highspot"},
@@ -4736,6 +5136,116 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "lever", "company": "baseten",             "company_name": "Baseten"},
     {"ats": "lever", "company": "sambanova",           "company_name": "SambaNova Systems"},
     {"ats": "lever", "company": "writer",              "company_name": "Writer"},
+
+    # ── More Lever targets ────────────────────────────────────────────────────
+    {"ats": "lever", "company": "openai",         "company_name": "OpenAI (Lever)"},
+    {"ats": "lever", "company": "anthropic",      "company_name": "Anthropic (Lever)"},
+    {"ats": "lever", "company": "cohere",         "company_name": "Cohere (Lever)"},
+    {"ats": "lever", "company": "figma",          "company_name": "Figma (Lever)"},
+    {"ats": "lever", "company": "notion",         "company_name": "Notion (Lever)"},
+    {"ats": "lever", "company": "airtable",       "company_name": "Airtable (Lever)"},
+    {"ats": "lever", "company": "rippling",       "company_name": "Rippling"},
+    {"ats": "lever", "company": "brex",           "company_name": "Brex (Lever)"},
+    {"ats": "lever", "company": "chime",          "company_name": "Chime (Lever)"},
+    {"ats": "lever", "company": "plaid",          "company_name": "Plaid (Lever)"},
+    {"ats": "lever", "company": "robinhood",      "company_name": "Robinhood (Lever)"},
+    {"ats": "lever", "company": "coinbase",       "company_name": "Coinbase (Lever)"},
+    {"ats": "lever", "company": "stripe",         "company_name": "Stripe (Lever)"},
+    {"ats": "lever", "company": "square",         "company_name": "Square/Block"},
+    {"ats": "lever", "company": "lyft",           "company_name": "Lyft"},
+    {"ats": "lever", "company": "doordash",       "company_name": "DoorDash (Lever)"},
+    {"ats": "lever", "company": "affirm",         "company_name": "Affirm (Lever)"},
+    {"ats": "lever", "company": "toast",          "company_name": "Toast (Lever)"},
+    {"ats": "lever", "company": "lattice",        "company_name": "Lattice (Lever)"},
+    {"ats": "lever", "company": "gusto",          "company_name": "Gusto"},
+    {"ats": "lever", "company": "ripple",         "company_name": "Ripple"},
+    {"ats": "lever", "company": "blockchaincom",  "company_name": "Blockchain.com"},
+    {"ats": "lever", "company": "paradigm",       "company_name": "Paradigm"},
+    {"ats": "lever", "company": "lightspeed",     "company_name": "Lightspeed Commerce"},
+    {"ats": "lever", "company": "shopify",        "company_name": "Shopify (Lever)"},
+    {"ats": "lever", "company": "klaviyo",        "company_name": "Klaviyo (Lever)"},
+    {"ats": "lever", "company": "attentive",      "company_name": "Attentive"},
+    {"ats": "lever", "company": "postscript",     "company_name": "Postscript"},
+    {"ats": "lever", "company": "sendlane",       "company_name": "Sendlane"},
+    {"ats": "lever", "company": "iterable",       "company_name": "Iterable (Lever)"},
+    {"ats": "lever", "company": "braze",          "company_name": "Braze (Lever)"},
+    {"ats": "lever", "company": "contentful",     "company_name": "Contentful (Lever)"},
+    {"ats": "lever", "company": "netlify",        "company_name": "Netlify (Lever)"},
+    {"ats": "lever", "company": "vercel",         "company_name": "Vercel (Lever)"},
+    {"ats": "lever", "company": "supabase",       "company_name": "Supabase (Lever)"},
+    {"ats": "lever", "company": "planetscale",    "company_name": "PlanetScale"},
+    {"ats": "lever", "company": "neondb",         "company_name": "Neon DB"},
+    {"ats": "lever", "company": "cockroachlabs",  "company_name": "CockroachDB"},
+    {"ats": "lever", "company": "singlestore",    "company_name": "SingleStore"},
+    {"ats": "lever", "company": "tidb",           "company_name": "TiDB"},
+    {"ats": "lever", "company": "yugabyte",       "company_name": "YugabyteDB"},
+    {"ats": "lever", "company": "couchbase",      "company_name": "Couchbase"},
+    {"ats": "lever", "company": "datastax",       "company_name": "DataStax"},
+    {"ats": "lever", "company": "scylladb",       "company_name": "ScyllaDB"},
+    {"ats": "lever", "company": "mongodb",        "company_name": "MongoDB (Lever)"},
+    {"ats": "lever", "company": "elastic",        "company_name": "Elastic (Lever)"},
+    {"ats": "lever", "company": "influxdata",     "company_name": "InfluxData"},
+    {"ats": "lever", "company": "timescaledb",    "company_name": "Timescale"},
+    {"ats": "lever", "company": "questdb",        "company_name": "QuestDB"},
+    {"ats": "lever", "company": "duckdb",         "company_name": "DuckDB Labs"},
+    {"ats": "lever", "company": "databricks",     "company_name": "Databricks (Lever)"},
+    {"ats": "lever", "company": "cloudera",       "company_name": "Cloudera"},
+    {"ats": "lever", "company": "hortonworks",    "company_name": "Hortonworks"},
+    {"ats": "lever", "company": "mapr",           "company_name": "MapR"},
+    {"ats": "lever", "company": "palantir",       "company_name": "Palantir (Lever)"},
+    {"ats": "lever", "company": "c3ai",           "company_name": "C3.ai"},
+    {"ats": "lever", "company": "dataiku",        "company_name": "Dataiku"},
+    {"ats": "lever", "company": "sagemaker",      "company_name": "SageMaker (AWS)"},
+    {"ats": "lever", "company": "vertex-ai",      "company_name": "Vertex AI (Google)"},
+    {"ats": "lever", "company": "clearml",        "company_name": "ClearML"},
+    {"ats": "lever", "company": "weights-biases", "company_name": "Weights & Biases"},
+    {"ats": "lever", "company": "comet-ml",       "company_name": "Comet"},
+    {"ats": "lever", "company": "neptune-ai",     "company_name": "Neptune.ai"},
+    {"ats": "lever", "company": "determined-ai",  "company_name": "Determined AI"},
+    {"ats": "lever", "company": "modular",        "company_name": "Modular AI"},
+    {"ats": "lever", "company": "mx-technologies","company_name": "MX Technologies"},
+    {"ats": "lever", "company": "upstart",        "company_name": "Upstart"},
+    {"ats": "lever", "company": "lendingclub",    "company_name": "LendingClub (Lever)"},
+    {"ats": "lever", "company": "prosper",        "company_name": "Prosper Marketplace"},
+    {"ats": "lever", "company": "fundrise",       "company_name": "Fundrise"},
+    {"ats": "lever", "company": "cadre",          "company_name": "Cadre"},
+    {"ats": "lever", "company": "groundfloor",    "company_name": "Groundfloor"},
+    {"ats": "lever", "company": "yieldstreet",    "company_name": "YieldStreet"},
+    {"ats": "lever", "company": "republic",       "company_name": "Republic"},
+    {"ats": "lever", "company": "wefunder",       "company_name": "Wefunder"},
+    {"ats": "lever", "company": "crowdstreet",    "company_name": "CrowdStreet"},
+    {"ats": "lever", "company": "roofstock",      "company_name": "Roofstock"},
+    {"ats": "lever", "company": "arrived",        "company_name": "Arrived Homes"},
+    {"ats": "lever", "company": "homevest",       "company_name": "Homevest"},
+    {"ats": "lever", "company": "belong",         "company_name": "Belong"},
+    {"ats": "lever", "company": "mynd",           "company_name": "Mynd"},
+    {"ats": "lever", "company": "doorstead",      "company_name": "Doorstead"},
+    {"ats": "lever", "company": "marble",         "company_name": "Marble"},
+    {"ats": "lever", "company": "rentalutions",   "company_name": "Rentalutions"},
+    {"ats": "lever", "company": "stessa",         "company_name": "Stessa"},
+    {"ats": "lever", "company": "landlord-studio","company_name": "Landlord Studio"},
+    {"ats": "lever", "company": "avail",          "company_name": "Avail"},
+    {"ats": "lever", "company": "cozy",           "company_name": "Cozy"},
+    {"ats": "lever", "company": "apartments",     "company_name": "Apartments.com"},
+    {"ats": "lever", "company": "zumper",         "company_name": "Zumper"},
+    {"ats": "lever", "company": "furnished-finder","company_name": "Furnished Finder"},
+    {"ats": "lever", "company": "kasa",           "company_name": "Kasa Living"},
+    {"ats": "lever", "company": "sonder",         "company_name": "Sonder"},
+    {"ats": "lever", "company": "vacasa",         "company_name": "Vacasa"},
+    {"ats": "lever", "company": "evolve",         "company_name": "Evolve Vacation Rental"},
+    {"ats": "lever", "company": "turnkey",        "company_name": "TurnKey"},
+    {"ats": "lever", "company": "lodgify",        "company_name": "Lodgify"},
+    {"ats": "lever", "company": "hostaway",       "company_name": "Hostaway"},
+    {"ats": "lever", "company": "streamline",     "company_name": "Streamline"},
+    {"ats": "lever", "company": "rezfusion",      "company_name": "Rezfusion"},
+    {"ats": "lever", "company": "track",          "company_name": "Track Hospitality"},
+    {"ats": "lever", "company": "hostfully",      "company_name": "Hostfully"},
+    {"ats": "lever", "company": "guesty",         "company_name": "Guesty"},
+    {"ats": "lever", "company": "uplisting",      "company_name": "Uplisting"},
+    {"ats": "lever", "company": "your-porter",    "company_name": "Your Porter App"},
+    {"ats": "lever", "company": "smoobu",         "company_name": "Smoobu"},
+    {"ats": "lever", "company": "lodgix",         "company_name": "Lodgix"},
+    {"ats": "lever", "company": "foxms",          "company_name": "FoxMS"},
 
     # ── Ashby (api.ashbyhq.com/posting-api/job-board/{slug}) ─────────────────
     # All slugs verified 2026-02
@@ -4801,6 +5311,40 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     {"ats": "ashby", "company": "glean",        "company_name": "Glean"},
     {"ats": "ashby", "company": "whylabs",      "company_name": "WhyLabs"},
     {"ats": "ashby", "company": "predibase",    "company_name": "Predibase"},
+
+    # ── BreezyHR (/{slug}.breezy.hr/json — no auth) ──────────────────────────
+    {"ats": "breezyhr", "company": "kentik",        "company_name": "Kentik"},
+    {"ats": "breezyhr", "company": "cision",        "company_name": "Cision"},
+    {"ats": "breezyhr", "company": "brightcove",    "company_name": "Brightcove"},
+    {"ats": "breezyhr", "company": "outbrain",      "company_name": "Outbrain"},
+    {"ats": "breezyhr", "company": "appsflyer",     "company_name": "AppsFlyer"},
+    {"ats": "breezyhr", "company": "yext",          "company_name": "Yext"},
+    {"ats": "breezyhr", "company": "demandbase",    "company_name": "Demandbase"},
+    {"ats": "breezyhr", "company": "terminus",      "company_name": "Terminus"},
+    {"ats": "breezyhr", "company": "ceros",         "company_name": "Ceros"},
+    {"ats": "breezyhr", "company": "smartly",       "company_name": "Smartly.io"},
+    {"ats": "breezyhr", "company": "unanet",        "company_name": "Unanet"},
+    {"ats": "breezyhr", "company": "ometria",       "company_name": "Ometria"},
+    {"ats": "breezyhr", "company": "cogility",      "company_name": "Cogility"},
+    {"ats": "breezyhr", "company": "drillinginfo",  "company_name": "Enverus"},
+    {"ats": "breezyhr", "company": "mydbsync",      "company_name": "DBSync"},
+    {"ats": "breezyhr", "company": "simcoedci",     "company_name": "Simco EDC"},
+    {"ats": "breezyhr", "company": "swiftly",       "company_name": "Swiftly"},
+    {"ats": "breezyhr", "company": "findem",        "company_name": "Findem"},
+    {"ats": "breezyhr", "company": "iguazio",       "company_name": "Iguazio"},
+    {"ats": "breezyhr", "company": "veritone",      "company_name": "Veritone"},
+
+    # ── JazzHR / ApplyToJob (HTML scraper — applytojob.com) ──────────────────
+    {"ats": "jazzhr", "company": "simplymac",       "company_name": "Simply Mac"},
+    {"ats": "jazzhr", "company": "safelite",        "company_name": "Safelite"},
+    {"ats": "jazzhr", "company": "cardlytics",      "company_name": "Cardlytics"},
+    {"ats": "jazzhr", "company": "zipline",         "company_name": "Zipline"},
+    {"ats": "jazzhr", "company": "praxis",          "company_name": "Praxis"},
+    {"ats": "jazzhr", "company": "clearvoice",      "company_name": "ClearVoice"},
+    {"ats": "jazzhr", "company": "welocalize",      "company_name": "Welocalize"},
+    {"ats": "jazzhr", "company": "healthstream",    "company_name": "HealthStream"},
+    {"ats": "jazzhr", "company": "vaultworks",      "company_name": "VaultWorks"},
+    {"ats": "jazzhr", "company": "thinoptix",       "company_name": "ThinOptix"},
 
     # ── Workable (apply.workable.com/api/v3/accounts/{slug}/jobs) ────────────
     # Note: Typeform and Hotjar are EU-based; they return 0 US jobs — disabled.
@@ -5045,6 +5589,238 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
     # microsoft (wd1/External_Microsoft_Careers_Portal), oracle (wd1/External),
     # cisco (wd5/*), apple (wd5/*), nike (wd1/*), target (wd12/External_Careers)
 
+    # ── Additional Workday targets ────────────────────────────────────────────
+    {
+        "ats": "workday", "company": "tesla",
+        "company_name": "Tesla",
+        "wd_tenant": "tesla", "wd_site": "Tesla_External_Site", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "intel",
+        "company_name": "Intel",
+        "wd_tenant": "intel", "wd_site": "External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "amd",
+        "company_name": "AMD",
+        "wd_tenant": "amd", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "nvidia",
+        "company_name": "NVIDIA",
+        "wd_tenant": "nvidia", "wd_site": "NVIDIAExternalCareerSite", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "qualcomm",
+        "company_name": "Qualcomm",
+        "wd_tenant": "qualcomm", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "uber",
+        "company_name": "Uber",
+        "wd_tenant": "uber", "wd_site": "Uber_ext", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "hp",
+        "company_name": "HP Inc",
+        "wd_tenant": "hp", "wd_site": "ExternalCareerSite", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "broadcom",
+        "company_name": "Broadcom",
+        "wd_tenant": "broadcom", "wd_site": "External_Career_Site", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "servicenow",
+        "company_name": "ServiceNow",
+        "wd_tenant": "servicenow", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "intuit",
+        "company_name": "Intuit",
+        "wd_tenant": "intuit", "wd_site": "jobs", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "workday",
+        "company_name": "Workday",
+        "wd_tenant": "workday", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "progressive",
+        "company_name": "Progressive Insurance",
+        "wd_tenant": "progressive", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "cigna",
+        "company_name": "Cigna",
+        "wd_tenant": "cigna", "wd_site": "Cigna_Careers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "mckesson",
+        "company_name": "McKesson",
+        "wd_tenant": "mckesson", "wd_site": "External_Careers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "fedex",
+        "company_name": "FedEx",
+        "wd_tenant": "fedex", "wd_site": "FedEx_External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "att-workday",
+        "company_name": "AT&T (Workday)",
+        "wd_tenant": "att", "wd_site": "ATTExternal", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "starbucks",
+        "company_name": "Starbucks",
+        "wd_tenant": "starbucks", "wd_site": "StarbucksExternalCareerSite", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "hilton",
+        "company_name": "Hilton",
+        "wd_tenant": "hilton", "wd_site": "Corporate", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "marriott",
+        "company_name": "Marriott International",
+        "wd_tenant": "marriott", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "disney",
+        "company_name": "The Walt Disney Company",
+        "wd_tenant": "disney", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "ford",
+        "company_name": "Ford Motor Company",
+        "wd_tenant": "ford", "wd_site": "Ford_Experienced_Professionals", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "gm",
+        "company_name": "General Motors",
+        "wd_tenant": "gm", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "target",
+        "company_name": "Target",
+        "wd_tenant": "target", "wd_site": "External_Careers", "wd_instance": "wd12",
+    },
+    {
+        "ats": "workday", "company": "lowes-wd",
+        "company_name": "Lowe's (Corporate)",
+        "wd_tenant": "lowes", "wd_site": "Lowes_External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "walgreens",
+        "company_name": "Walgreens Boots Alliance",
+        "wd_tenant": "walgreens", "wd_site": "Walgreens_Ext_Careers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "aetna",
+        "company_name": "Aetna (CVS Health subsidiary)",
+        "wd_tenant": "aetna", "wd_site": "Aetna_External_Career_Site", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "comcast-wd",
+        "company_name": "Comcast",
+        "wd_tenant": "comcast", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "t-mobile",
+        "company_name": "T-Mobile",
+        "wd_tenant": "tmobile", "wd_site": "Careers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "sprint",
+        "company_name": "Sprint (T-Mobile)",
+        "wd_tenant": "sprint", "wd_site": "External_Career_Site", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "sysco",
+        "company_name": "Sysco",
+        "wd_tenant": "sysco", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "caterpillar",
+        "company_name": "Caterpillar",
+        "wd_tenant": "caterpillar", "wd_site": "CatCareers", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "3m",
+        "company_name": "3M",
+        "wd_tenant": "3m", "wd_site": "3M_US", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "hpe",
+        "company_name": "Hewlett Packard Enterprise",
+        "wd_tenant": "hpe", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "oracle",
+        "company_name": "Oracle",
+        "wd_tenant": "oracle", "wd_site": "External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "sap",
+        "company_name": "SAP",
+        "wd_tenant": "sap", "wd_site": "SAP_Experienced", "wd_instance": "wd3",
+    },
+    {
+        "ats": "workday", "company": "citi",
+        "company_name": "Citigroup",
+        "wd_tenant": "citi", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "morganstanley",
+        "company_name": "Morgan Stanley",
+        "wd_tenant": "morganstanley", "wd_site": "Experienced_Non-MS_Professionals", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "goldmansachs",
+        "company_name": "Goldman Sachs",
+        "wd_tenant": "goldmansachs", "wd_site": "External_Career_Site", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "schwab",
+        "company_name": "Charles Schwab",
+        "wd_tenant": "schwab", "wd_site": "Schwab_External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "ameriprise",
+        "company_name": "Ameriprise Financial",
+        "wd_tenant": "ameriprise", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "fidelity",
+        "company_name": "Fidelity Investments",
+        "wd_tenant": "fidelityinvestments", "wd_site": "External", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "travelers",
+        "company_name": "Travelers Insurance",
+        "wd_tenant": "travelers", "wd_site": "External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "allstate",
+        "company_name": "Allstate",
+        "wd_tenant": "allstate", "wd_site": "allstate_ext", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "cigna",
+        "company_name": "Cigna",
+        "wd_tenant": "cigna", "wd_site": "Cigna_External", "wd_instance": "wd5",
+    },
+    {
+        "ats": "workday", "company": "lockheed",
+        "company_name": "Lockheed Martin (Alt)",
+        "wd_tenant": "lmc", "wd_site": "LMCareers", "wd_instance": "wd1",
+    },
+    {
+        "ats": "workday", "company": "raytheon",
+        "company_name": "Raytheon Technologies",
+        "wd_tenant": "rtx", "wd_site": "RTX_External", "wd_instance": "wd1",
+    },
+
     # ── SmartRecruiters (api.smartrecruiters.com/v1/companies/{slug}/postings)
     # NOTE: SmartRecruiters now requires a company-specific smart_token for all
     # public API access — the public listings endpoint returns totalFound=0 for
@@ -5105,6 +5881,68 @@ _SAMPLE_TARGETS: list[dict[str, Any]] = [
         "ats": "taleo", "company": "mcdonalds",
         "company_name": "McDonald's",
         "careers_url": "https://mcdonalds.taleo.net/careersection/External/jobsearch.ftl?lang=en",
+    },
+
+    # ── iCIMS (HTML scraper — major US employers with iCIMS portals) ──────────
+    {
+        "ats": "icims", "company": "synchrony",
+        "company_name": "Synchrony Financial",
+        "careers_url": "https://synchrony.icims.com/jobs/search?ss=1&searchRelation=keyword_all",
+    },
+    {
+        "ats": "icims", "company": "manpowergroup",
+        "company_name": "ManpowerGroup",
+        "careers_url": "https://manpowergroup.icims.com/jobs/search?ss=1&searchRelation=keyword_all",
+    },
+    {
+        "ats": "icims", "company": "homedepot",
+        "company_name": "The Home Depot",
+        "careers_url": "https://careers.homedepot.com/search-jobs",
+    },
+    {
+        "ats": "icims", "company": "lowes",
+        "company_name": "Lowe's",
+        "careers_url": "https://careers.lowes.com/search-jobs",
+    },
+    {
+        "ats": "icims", "company": "fedex-ground",
+        "company_name": "FedEx Ground",
+        "careers_url": "https://careers.fedex.com/ground/jobs",
+    },
+    {
+        "ats": "icims", "company": "adp",
+        "company_name": "ADP",
+        "careers_url": "https://jobs.adp.com/search-jobs",
+    },
+    {
+        "ats": "icims", "company": "dollar-general",
+        "company_name": "Dollar General",
+        "careers_url": "https://careers.dollargeneral.com/jobs/search?ss=1",
+    },
+    {
+        "ats": "icims", "company": "dollar-tree",
+        "company_name": "Dollar Tree",
+        "careers_url": "https://jobs.dollartree.com/search-jobs",
+    },
+    {
+        "ats": "icims", "company": "tysonfoods",
+        "company_name": "Tyson Foods",
+        "careers_url": "https://careers.tysonfoods.com/jobs/search",
+    },
+    {
+        "ats": "icims", "company": "pepsico",
+        "company_name": "PepsiCo",
+        "careers_url": "https://www.pepsicojobs.com/main/jobs",
+    },
+    {
+        "ats": "icims", "company": "kraftheinz",
+        "company_name": "Kraft Heinz",
+        "careers_url": "https://careers.kraftheinzcompany.com/jobs",
+    },
+    {
+        "ats": "icims", "company": "generalmills",
+        "company_name": "General Mills",
+        "careers_url": "https://careers.generalmills.com/jobs/search",
     },
 
     # ── Aggregator APIs (single entry = many companies) ───────────────────────
