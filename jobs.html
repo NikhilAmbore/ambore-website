@@ -147,6 +147,37 @@ a{text-decoration:none;color:inherit}
 .plat-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .plat-count{font-size:0.68rem;color:#94A3B8;font-weight:400;margin-left:2px}
 
+/* ══ EMAIL ALERTS BANNER ══ */
+.alert-banner{
+  max-width:1200px;margin:0 auto 24px;padding:0 24px;
+}
+.alert-card{
+  background:linear-gradient(135deg,rgba(37,99,235,0.06) 0%,rgba(99,102,241,0.06) 100%);
+  border:1px solid rgba(37,99,235,0.18);border-radius:16px;
+  padding:20px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.alert-icon{font-size:1.8rem;flex-shrink:0}
+.alert-text{flex:1;min-width:160px}
+.alert-text strong{font-size:0.95rem;color:#1e293b;display:block;margin-bottom:2px}
+.alert-text span{font-size:0.8rem;color:#64748B}
+.alert-form{display:flex;gap:8px;flex-wrap:wrap;align-items:center;flex:2;min-width:260px}
+.alert-input{
+  flex:1;min-width:140px;padding:9px 13px;
+  border:1px solid var(--border);border-radius:9px;
+  background:#fff;color:#1e293b;font-size:0.85rem;outline:none;
+  transition:border-color 0.2s;font-family:inherit;
+}
+.alert-input:focus{border-color:#2563EB}
+.alert-input::placeholder{color:#94A3B8}
+.alert-btn{
+  padding:9px 20px;background:var(--accent);border:none;border-radius:9px;
+  color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;white-space:nowrap;
+  transition:opacity 0.2s;font-family:inherit;
+}
+.alert-btn:hover{opacity:0.88}
+.alert-btn:disabled{opacity:0.5;cursor:not-allowed}
+.alert-success{font-size:0.85rem;color:#15803d;font-weight:600;display:none}
+
 /* ══ MAIN LAYOUT ══ */
 .main-layout{
   display:flex;gap:20px;max-width:1200px;margin:0 auto;padding:20px 24px 48px;
@@ -560,6 +591,25 @@ body{padding-left:72px}
   <div class="platform-row" id="platform-row"></div>
 </div>
 
+<!-- ══ EMAIL ALERTS BANNER ══ -->
+<div class="alert-banner">
+  <div class="alert-card">
+    <div class="alert-icon">🔔</div>
+    <div class="alert-text">
+      <strong>Get job alerts in your inbox</strong>
+      <span>New jobs matching your search — delivered daily.</span>
+    </div>
+    <form class="alert-form" name="job-alerts" netlify netlify-honeypot="bot-field" onsubmit="submitAlert(event)">
+      <input type="hidden" name="form-name" value="job-alerts"/>
+      <input type="hidden" name="bot-field" style="display:none"/>
+      <input type="email" class="alert-input" id="alert-email" name="email" placeholder="your@email.com" required/>
+      <input type="text"  class="alert-input" id="alert-keywords" name="keywords" placeholder="e.g. Software Engineer" style="min-width:150px"/>
+      <button type="submit" class="alert-btn" id="alert-btn">Notify Me</button>
+    </form>
+    <span class="alert-success" id="alert-success">✓ You're subscribed!</span>
+  </div>
+</div>
+
 <!-- ══ MAIN LAYOUT ══ -->
 <div class="main-layout">
   <!-- Sidebar Filters -->
@@ -788,6 +838,33 @@ function filterByPlatform(ats) {
   }
   currentPage = 1;
   applyFilters();
+}
+
+/* ── EMAIL ALERTS ── */
+async function submitAlert(e) {
+  e.preventDefault();
+  const btn     = document.getElementById('alert-btn');
+  const success = document.getElementById('alert-success');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  try {
+    const formData = new FormData(e.target);
+    const res = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData).toString()
+    });
+    if (res.ok) {
+      document.querySelector('.alert-form').style.display = 'none';
+      success.style.display = 'block';
+    } else {
+      btn.disabled = false;
+      btn.textContent = 'Notify Me';
+    }
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'Notify Me';
+  }
 }
 
 function computeStats() {

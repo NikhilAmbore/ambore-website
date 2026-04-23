@@ -204,6 +204,20 @@ button,input,textarea,select{font-family:inherit}
 .ach-close-btn{background:#E2E8F0;border:1px solid #E2E8F0;color:#64748B;padding:8px 18px;border-radius:9px;font-size:0.85rem;cursor:pointer}
 .ach-close-btn:hover{color:#1e293b}
 
+/* ══ SCORE MODAL ══ */
+.score-ring-wrap{display:flex;flex-direction:column;align-items:center;padding:24px 0 16px;gap:8px}
+.score-ring{position:relative;width:110px;height:110px}
+.score-ring svg{transform:rotate(-90deg)}
+.score-ring-bg{fill:none;stroke:#E2E8F0;stroke-width:10}
+.score-ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset 1s ease}
+.score-number{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:1.8rem;font-weight:900;color:#1e293b}
+.score-grade{font-size:0.9rem;font-weight:700;padding:3px 14px;border-radius:20px}
+.score-tips{padding:0 22px 20px}
+.score-tips h4{font-size:0.82rem;font-weight:800;color:#64748B;text-transform:uppercase;letter-spacing:0.06em;margin-bottom:10px}
+.score-tip-item{display:flex;gap:10px;margin-bottom:10px;font-size:0.88rem;line-height:1.5;color:#334155}
+.score-tip-icon{flex-shrink:0;font-size:1rem;margin-top:1px}
+.score-streaming{padding:20px 22px;font-size:0.88rem;line-height:1.7;color:#334155;min-height:80px}
+
 /* ══ RESULT SECTION ══ */
 .result-section{flex:1;display:flex;flex-direction:column;max-width:960px;margin:0 auto;width:100%;padding:24px 20px 48px}
 .result-topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -701,6 +715,7 @@ body{padding-left:72px}
         <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
         <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
         <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(37,99,235,0.3);color:#2563EB">💾 Save to Dashboard</button>
+        <button class="action-btn" id="score-btn" onclick="scoreResume()" style="border-color:rgba(245,158,11,0.4);color:#D97706">⭐ Score My Resume</button>
       </div>
     </div>
     <!-- TEMPLATE PICKER -->
@@ -1183,6 +1198,138 @@ function closeAchievementsModal() {
 function copyAchievements() {
   if (!achMarkdown) return;
   navigator.clipboard.writeText(achMarkdown).then(() => showToast('Key Achievements copied!'));
+}
+
+/* ── RESUME SCORE ── */
+function buildScorePrompt() {
+  return `You are an expert resume reviewer and ATS specialist. Analyze the provided resume and return a structured score.
+
+SCORING CRITERIA (total 100 points):
+- ATS keyword optimization (25 pts): strong action verbs, measurable results, relevant technical skills
+- Impact & metrics (25 pts): quantified achievements (%, $, numbers), concrete outcomes
+- Structure & format (20 pts): clean sections, correct order, no red flags for ATS
+- Skills completeness (15 pts): breadth and relevance of skills listed
+- Summary / Objective quality (15 pts): clear positioning, concise, role-aligned
+
+OUTPUT FORMAT — respond with EXACTLY this structure, nothing else:
+SCORE: [number 0-100]
+GRADE: [Excellent|Good|Average|Needs Work]
+TIP1: [specific, actionable improvement — 1 sentence]
+TIP2: [specific, actionable improvement — 1 sentence]
+TIP3: [specific, actionable improvement — 1 sentence]
+TIP4: [specific, actionable improvement — 1 sentence]
+TIP5: [specific, actionable improvement — 1 sentence]
+
+Keep each tip concrete and actionable. Never be vague like "improve your resume." Say exactly what to fix.`;
+}
+
+let _scoreAbort = null;
+
+async function scoreResume() {
+  const resume = generatedMarkdown || (resumeMode === 'paste' ? document.getElementById('resume-text').value.trim() : resumeText);
+  if (!resume) { showToast('Generate or upload a resume first.'); return; }
+
+  const modal = document.getElementById('score-modal');
+  const body  = document.getElementById('score-body');
+  modal.classList.remove('hidden');
+  body.innerHTML = '<div class="score-streaming">Analyzing your resume…</div>';
+
+  const btn = document.getElementById('score-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Scoring…';
+
+  if (_scoreAbort) _scoreAbort.abort();
+  _scoreAbort = new AbortController();
+  const timer = setTimeout(() => _scoreAbort.abort(), 60000);
+
+  try {
+    const res = await fetch('/api/claude', {
+      signal: _scoreAbort.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 600,
+        stream: true,
+        system: buildScorePrompt(),
+        messages: [{ role: 'user', content: 'Resume to score:\n\n' + resume }]
+      })
+    });
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+
+    const reader = res.body.getReader();
+    const dec = new TextDecoder();
+    let buf = '', full = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop();
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const d = line.slice(6).trim();
+        if (!d || d === '[DONE]') continue;
+        try {
+          const p = JSON.parse(d);
+          if (p.type === 'content_block_delta' && p.delta?.text) {
+            full += p.delta.text;
+            body.innerHTML = '<div class="score-streaming">' + full.replace(/\n/g,'<br>') + '</div>';
+          }
+        } catch(e){ if(!(e instanceof SyntaxError)) throw e; }
+      }
+    }
+    renderScoreResult(full, body);
+  } catch(err) {
+    body.innerHTML = `<div class="score-streaming" style="color:var(--red)">Error: ${err.message}</div>`;
+  } finally {
+    clearTimeout(timer);
+    btn.disabled = false;
+    btn.textContent = '⭐ Score My Resume';
+  }
+}
+
+function renderScoreResult(text, body) {
+  const scoreMatch = text.match(/SCORE:\s*(\d+)/);
+  const gradeMatch = text.match(/GRADE:\s*(\w+)/);
+  const tips = [];
+  for (let i = 1; i <= 5; i++) {
+    const m = text.match(new RegExp(`TIP${i}:\\s*(.+)`));
+    if (m) tips.push(m[1].trim());
+  }
+  if (!scoreMatch) { body.innerHTML = '<div class="score-streaming">' + text + '</div>'; return; }
+
+  const score = parseInt(scoreMatch[1]);
+  const grade = gradeMatch ? gradeMatch[1] : '';
+  const color = score >= 80 ? '#22c55e' : score >= 60 ? '#f59e0b' : '#ef4444';
+  const r = 45, circ = 2 * Math.PI * r;
+  const dash = circ * (score / 100);
+
+  const gradeColors = { Excellent:'rgba(34,197,94,0.12)', Good:'rgba(245,158,11,0.12)', Average:'rgba(251,191,36,0.12)', 'Needs Work':'rgba(239,68,68,0.12)' };
+  const gradeText   = { Excellent:'#15803d', Good:'#b45309', Average:'#92400e', 'Needs Work':'#b91c1c' };
+
+  body.innerHTML = `
+    <div class="score-ring-wrap">
+      <div class="score-ring">
+        <svg width="110" height="110" viewBox="0 0 110 110">
+          <circle class="score-ring-bg" cx="55" cy="55" r="${r}"/>
+          <circle class="score-ring-fill" cx="55" cy="55" r="${r}"
+            stroke="${color}"
+            stroke-dasharray="${circ}"
+            stroke-dashoffset="${circ - dash}"
+            id="score-arc"/>
+        </svg>
+        <div class="score-number">${score}</div>
+      </div>
+      ${grade ? `<span class="score-grade" style="background:${gradeColors[grade]||'#f1f5f9'};color:${gradeText[grade]||'#475569'}">${grade}</span>` : ''}
+    </div>
+    <div class="score-tips">
+      <h4>How to improve</h4>
+      ${tips.map(t => `<div class="score-tip-item"><span class="score-tip-icon">💡</span><span>${t}</span></div>`).join('')}
+    </div>`;
+}
+
+function closeScoreModal() {
+  document.getElementById('score-modal').classList.add('hidden');
 }
 
 /* ── TRANSFORM MODE ── */
@@ -1842,6 +1989,20 @@ document.addEventListener('click',function(e){
 });
 
 </script>
+
+<!-- SCORE MODAL -->
+<div id="score-modal" class="ach-overlay hidden">
+  <div class="ach-box" style="max-width:440px">
+    <div class="ach-head">
+      <h3>⭐ Resume Score</h3>
+      <button class="ach-close" onclick="closeScoreModal()">✕</button>
+    </div>
+    <div id="score-body" style="overflow-y:auto;max-height:70vh"></div>
+    <div class="ach-footer">
+      <button class="ach-close-btn" onclick="closeScoreModal()">Close</button>
+    </div>
+  </div>
+</div>
 
 <!-- KEY ACHIEVEMENTS MODAL -->
 <div id="ach-modal" class="ach-overlay hidden">
