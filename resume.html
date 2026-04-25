@@ -1057,6 +1057,10 @@ HUMANIZATION — THIS IS NON-NEGOTIABLE
 
 The resume MUST read like a real person wrote it, not an AI. Recruiters and HR tools (Workday, Greenhouse, LinkedIn) now flag AI-written resumes. Follow every rule below.
 
+BANNED SYMBOLS — never use any of these in the resume output:
+✦ ✧ ✨ ★ ⭐ → ← ➤ ➡ ► ● ◆ ■ ✓ ✔ 🔹 🔸 💡 🎯 🚀 💼 🏆 📌 ⚡ or any emoji
+Use plain ASCII only: hyphens (-) for bullets, plain text for everything else.
+
 BANNED WORDS — never use any of these (instant AI flag):
 spearheaded, leveraged, utilized, orchestrated, pioneered, revolutionized, synergized,
 cutting-edge, robust, seamless, scalable (as a buzzword), game-changing, innovative,
@@ -1591,6 +1595,23 @@ function escapeHtml(str) {
 
 function renderMarkdown(md) {
   md = String(md);
+
+  // Strip AI-generated symbols that make resumes look machine-written
+  md = md
+    .replace(/[✦✧✨✩✪✫✬✭✮✯✰★☆⭐🌟💫]/g, '')   // decorative stars
+    .replace(/[→←↑↓↗↘↙↖➤➜➡➢➣►▶◀▷◁]/g, '')     // arrows
+    .replace(/[●○◆◇■□▪▫▸▹◦‣⁃]/g, '')            // decorative bullets
+    .replace(/[✓✔✗✘☑☒]/g, '')                    // check/cross marks
+    .replace(/[🔹🔸🔷🔶💡🎯🚀💼🏆📌📍⚡🔑]/g, '') // common AI emojis
+    .replace(/[═━─┄┅┈┉╌╍]/g, '')                 // decorative lines/borders
+    .replace(/[«»""'']/g, (m) =>                  // smart quotes → straight
+      m === '“' || m === '«' ? '"' :
+      m === '”' || m === '»' ? '"' :
+      m === '‘' ? "'" : "'")
+    .replace(/–/g, '-')                       // en-dash → hyphen
+    .replace(/—/g, '-')                       // em-dash → hyphen
+    .replace(/[ \t]+$/gm, '')                      // trailing whitespace per line
+    .replace(/\n{3,}/g, '\n\n');                   // max one blank line between sections
 
   // Pre-process skill lines: **Label:** skills on SAME line → placeholder
   const skillRows = [];
