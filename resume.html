@@ -269,16 +269,10 @@ button,input,textarea,select{font-family:inherit}
 .tpl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
 
 /* ── TEMPLATE DARK PREVIEW VARIANTS ── */
-/* Classic — black professional (matches standard resume format) */
-.resume-preview.tpl-classic h1{color:#000;font-size:15pt}
-.resume-preview.tpl-classic h2{color:#000;border-bottom:1.5px solid #000;font-size:11pt;letter-spacing:0.06em}
-.resume-preview.tpl-classic h3{color:#000;font-weight:700}
-.resume-preview.tpl-classic p{color:#000}
-.resume-preview.tpl-classic li{color:#000}
-.resume-preview.tpl-classic strong{color:#000}
-.resume-preview.tpl-classic em{color:#000}
-/* Single-line contact */
-.resume-preview .contact-single{text-align:center;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-top:3px;color:#000}
+/* Classic — default (grey accent) */
+.resume-preview.tpl-classic h1{color:#1e293b}
+.resume-preview.tpl-classic h2{color:#9ca3af;border-bottom-color:rgba(156,163,175,0.25)}
+.resume-preview.tpl-classic h3{color:#1e293b}
 /* Modern — blue accent */
 .resume-preview.tpl-modern{font-family:Inter,-apple-system,sans-serif!important}
 .resume-preview.tpl-modern *{font-family:Inter,-apple-system,sans-serif!important}
@@ -305,15 +299,6 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview.tpl-creative .resume-header{border-bottom:3px solid rgba(168,85,247,0.5);padding-bottom:8px;margin-bottom:8px}
 .resume-preview.tpl-creative em{color:#2563EB}
 
-/* ── Job / Education entry layout ── */
-.resume-preview .entry-company{font-size:10pt;font-weight:700;color:#000;margin-top:6px;margin-bottom:0;font-family:'Times New Roman',Times,serif}
-.resume-preview .entry-title-row{display:flex;justify-content:space-between;align-items:baseline;font-size:10pt;font-family:'Times New Roman',Times,serif;margin-bottom:1px}
-.resume-preview .entry-title-row em{font-style:italic;color:#000}
-.resume-preview .entry-date{white-space:nowrap;color:#000;font-size:10pt}
-/* ── Skills — inline: bold label + content flow together, no column gaps ── */
-.resume-preview .skill-row{display:block;margin-bottom:4px;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.45;color:#000}
-.resume-preview .skill-label{display:inline;font-weight:700;color:#000}
-.resume-preview .skill-desc{display:inline;color:#000}
 
 /* Streaming cursor */
 .cursor{display:inline-block;width:2px;height:1em;background:var(--accent);animation:blink 0.7s infinite;vertical-align:text-bottom;margin-left:1px}
@@ -354,15 +339,8 @@ button,input,textarea,select{font-family:inherit}
   }
   .resume-preview .resume-header{text-align:center!important;margin-bottom:6px!important}
   .resume-preview h1{color:#000!important;text-align:center!important;font-size:14pt!important;margin-bottom:1px!important}
-  .resume-preview h2{color:#000!important;border-bottom:1.5px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
-  .resume-preview .contact-single{text-align:center!important;font-size:10pt!important;margin-top:3px!important}
+  .resume-preview h2{color:#000!important;border-bottom:1px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
   .resume-preview h3{color:#000!important;font-size:10pt!important;margin-top:4px!important;margin-bottom:1px!important}
-  .resume-preview .entry-company{font-weight:700!important;color:#000!important;font-size:10pt!important;margin-top:5px!important}
-  .resume-preview .entry-title-row{display:flex!important;justify-content:space-between!important;font-size:10pt!important;margin-bottom:1px!important}
-  .resume-preview .entry-date{color:#000!important}
-  .resume-preview .skill-row{display:block!important;margin-bottom:3px!important;font-size:10pt!important;line-height:1.45!important}
-  .resume-preview .skill-label{display:inline!important;font-weight:700!important}
-  .resume-preview .skill-desc{display:inline!important}
   .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
   .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
   .resume-preview ul{margin-bottom:3px!important;padding-left:16px!important}
@@ -1037,7 +1015,7 @@ STRICT FORMATTING RULES
 - NEVER delete existing skills from the original resume — only add new ones from the JD.
 
 6. LENGTH
-- Resume must be within 2 pages maximum.
+- Resume MUST fit on exactly ONE page. Be concise — trim every redundant word. Keep bullets tight and punchy. If skills are long, abbreviate where safe. If experience is extensive, keep only the most recent/relevant 3–4 bullets per role.
 
 7. OUTPUT FORMAT
 - Output ONLY the final resume in clean Markdown.
@@ -1048,29 +1026,23 @@ MARKDOWN STRUCTURE
 -----------------------------------------
 
 - # for the candidate full name
-- Contact line (exactly this format, two parts separated by " || "):
-  Street Address, City, State || Phone: XXX-XXX-XXXX | Email: xxx@xxx.com
-  If no street address is in the resume, use just: City, State || Phone: XXX | Email: xxx
-- Use ONLY the contact info found in the uploaded resume. Do NOT fabricate or add links not present in the resume.${linkLine ? '\n- The resume owner has provided these professional links — include them ONLY if they appear to belong to the same person as the resume: ' + linkLine : ''}
-- ## for section headers — use EXACTLY these names in ALL CAPS:
-  EDUCATION, RELEVANT SKILLS, EXPERIENCE, LEADERSHIP, INTERESTS AND ACTIVITIES, HONORS AND ACHIEVEMENTS
-- ### for each job/experience entry: Job Title | Company Name, Location
-- Italic line for job dates: *Month Year – Month Year*
-- ### for each education entry: Degree | Institution Name, Location
-- Italic line for education: *GPA: X.X/4.0 | Year (or expected)*
+- Contact line: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
+- The candidate professional links are already embedded above. Use them EXACTLY as provided — do NOT alter or fabricate any URLs.
+- ## for section headers (all caps: PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS)
+- ### for each job entry: Job Title | Company Name | Location
+- Italic line for dates: *Month Year - Month Year*
 - - for bullet points
 - **Bold** for key metrics, numbers, and critical skills within bullets
 
-SECTION ORDER — FOLLOW EXACTLY, NO EXCEPTIONS:
+SECTION ORDER:
 1. Name & Contact Info
-2. EDUCATION (most recent first)
-3. RELEVANT SKILLS (two-column table: **Category:** skills, one category per line)
-4. EXPERIENCE (most recent first)
-5. LEADERSHIP (bullet points with bold role names)
-6. INTERESTS AND ACTIVITIES (single line, items separated by ✦)
-7. HONORS AND ACHIEVEMENTS (single paragraph, items separated by ✦)
-
-Do NOT include a Professional Summary section. Do NOT include a Key Achievements section. Do NOT include Certifications or Projects as separate sections unless the user's resume has them — in that case add after EXPERIENCE and before LEADERSHIP.
+2. Professional Summary
+3. Skills
+4. Professional Experience (most recent first)
+5. Education
+6. Certifications (if any)
+7. Projects (if relevant)
+8. Key Achievements (ALWAYS include — exactly 3 bullets at the very bottom)
 
 -----------------------------------------
 SKILLS INTEGRITY — NEVER VIOLATE
@@ -1081,6 +1053,22 @@ SKILLS INTEGRITY — NEVER VIOLATE
 - Final Skills = (all original resume skills) + (new JD skills not already present).
 - Run a mental skills audit before outputting: extract every skill from the original resume and verify it appears in your output.
 - REMINDER: Each skill category on its OWN line formatted as **Category:** skill1, skill2 — never all categories jammed into one paragraph.
+
+-----------------------------------------
+KEY ACHIEVEMENTS SECTION — ALWAYS INCLUDE
+-----------------------------------------
+
+- Always add ## KEY ACHIEVEMENTS as the very last section.
+- Exactly 3 bullet points — no more, no less.
+- Each bullet: Action verb + specific achievement + measurable metric + business impact.
+- Align each achievement to the JD's top requirements.
+- Use only facts from the original resume — do NOT fabricate.
+- Format: - **[Achievement title]:** description with metric.
+
+Example:
+- **Reduced Pipeline Latency:** Redesigned Spark job processing, cutting data latency from 4h to 20min for 50M+ daily records.
+- **Improved ATS Match Rate:** Integrated 30+ JD keywords into skills and bullets, increasing ATS pass-through by 40%.
+- **Led Cross-Functional Migration:** Spearheaded AWS → Azure migration for 12-member team, delivering 3 weeks ahead of schedule.
 
 CRITICAL: Return ONLY the final tailored resume in Markdown. No explanations, no notes, no preamble — just the resume content starting with # Name.`;
 }
@@ -1585,39 +1573,8 @@ function escapeHtml(str) {
 }
 
 function renderMarkdown(md) {
-  md = String(md);
-
-  // Pre-process skill lines: **Label:** content → placeholder (before HTML escaping)
-  const skillRows = [];
-  md = md.replace(/^\*\*([^*\n]+:)\*\*[ \t]*(.+)$/gm, (match, label, content) => {
-    const idx = skillRows.length;
-    skillRows.push({ label, content });
-    return `SKILL_ROW_${idx}`;
-  });
-
-  // Pre-process: extract the contact line (contains ||) BEFORE HTML escaping.
-  // We handle it separately so <a> link tags don't break the split regex.
-  let contactRowHtml = null;
-  md = md.replace(/^([^#\-\n*].+?\|\|.+)$/m, (match, line) => {
-    const sep = line.indexOf('||');
-    const left = line.slice(0, sep).trim().replace(/&/g,'&amp;');
-    // Combine left + right into one single centered line separated by " | "
-    const rightParts = line.slice(sep + 2).trim().split(' | ');
-    const allParts = [left];
-    rightParts.forEach(p => {
-      p = p.trim();
-      if (p.startsWith('[')) {
-        allParts.push(p.replace(/\[([^\]]+)\]\(([^)]+)\)/g,'<a href="$2" target="_blank" rel="noopener">$1</a>'));
-      } else {
-        allParts.push(p.replace(/&/g,'&amp;'));
-      }
-    });
-    contactRowHtml = `<div class="contact-single">${allParts.join(' &nbsp;|&nbsp; ')}</div>`;
-    return 'AMBORE_CONTACT_PLACEHOLDER';
-  });
-
-  // Escape raw HTML from AI output (md now has AMBORE_CONTACT_PLACEHOLDER instead of contact line)
-  let safe = md
+  // Escape raw HTML from AI output first — prevents XSS via injected tags
+  let safe = String(md)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -1649,53 +1606,6 @@ function renderMarkdown(md) {
     .replace(/^(?!<[hul1-9/]|<li|<hr)(.+)$/gm, '<p>$1</p>')
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
-
-  // Restore the pre-processed contact row
-  if (contactRowHtml) {
-    html = html.replace('<p>AMBORE_CONTACT_PLACEHOLDER</p>', contactRowHtml);
-  }
-
-  // ── Job / Education entries ──────────────────────────────────────────────
-  // Pattern: <h3>Title | Company | Location</h3> followed by <p><em>Date</em></p>
-  // Render as: Company, Location (bold) on top; italic Title + right-aligned Date on next line
-  html = html.replace(
-    /<h3>([^|<]+)\|([^|<]+)\|([^<]+)<\/h3>\s*<p><em>([^<]+)<\/em><\/p>/g,
-    (_, title, company, loc, date) =>
-      `<div class="entry-company">${company.trim()}, ${loc.trim()}</div>` +
-      `<div class="entry-title-row"><em>${title.trim()}</em><span class="entry-date">${date.trim()}</span></div>`
-  );
-  // Fallback: <h3>Title | Company</h3> (no location pipe) + date
-  html = html.replace(
-    /<h3>([^|<]+)\|([^<]+)<\/h3>\s*<p><em>([^<]+)<\/em><\/p>/g,
-    (_, title, company, date) =>
-      `<div class="entry-company">${company.trim()}</div>` +
-      `<div class="entry-title-row"><em>${title.trim()}</em><span class="entry-date">${date.trim()}</span></div>`
-  );
-  // Fallback: h3 with two pipes but no date line following
-  html = html.replace(/<h3>([^|<]+)\|([^|<]+)\|([^<]+)<\/h3>/g,
-    (_, title, company, loc) =>
-      `<div class="entry-company">${company.trim()}, ${loc.trim()}</div>` +
-      `<div class="entry-title-row"><em>${title.trim()}</em></div>`
-  );
-  // Fallback: h3 with one pipe but no date line
-  html = html.replace(/<h3>([^|<]+)\|([^<]+)<\/h3>/g,
-    (_, title, company) =>
-      `<div class="entry-company">${company.trim()}</div>` +
-      `<div class="entry-title-row"><em>${title.trim()}</em></div>`
-  );
-  // Any remaining bare h3 — bold company line
-  html = html.replace(/<h3>([^<]+)<\/h3>/g, '<div class="entry-company">$1</div>');
-
-  // ── Skills table layout ─────────────────────────────────────────────────
-  // Restore pre-processed skill rows (captured before HTML escaping)
-  skillRows.forEach(({ label, content }, i) => {
-    const safeLbl = label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    const safeDesc = content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-    html = html.replace(
-      `<p>SKILL_ROW_${i}</p>`,
-      `<div class="skill-row"><span class="skill-label"><strong>${safeLbl}</strong></span> <span class="skill-desc">${safeDesc}</span></div>`
-    );
-  });
 
   // Wrap everything before the first <h2> in a centered header div
   const firstH2 = html.indexOf('<h2>');
