@@ -259,6 +259,9 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview em{color:#64748B;font-style:italic}
 .resume-preview hr{border:none;border-top:1px solid var(--border);margin:8px 0}
 .resume-preview a{color:var(--accent);text-decoration:underline;font-size:10pt}
+.resume-preview .skill-row{display:block;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.5;color:#1e293b}
+.resume-preview .skill-label{display:inline;font-weight:700;color:#1e293b}
+.resume-preview .skill-desc{display:inline;color:#334155}
 
 /* ── TEMPLATE PICKER ── */
 .template-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -349,6 +352,9 @@ button,input,textarea,select{font-family:inherit}
   .resume-preview em{color:#333!important}
   .resume-preview hr{border-top-color:#999!important;margin:4px 0!important}
   .resume-preview a{color:#000!important;text-decoration:none!important}
+  .resume-preview .skill-row{display:block!important;margin-bottom:2px!important;font-size:10pt!important;line-height:1.4!important}
+  .resume-preview .skill-label{display:inline!important;font-weight:700!important;color:#000!important}
+  .resume-preview .skill-desc{display:inline!important;color:#000!important}
 }
 
 /* ══ MOBILE RESPONSIVE ══ */
@@ -1584,8 +1590,18 @@ function escapeHtml(str) {
 }
 
 function renderMarkdown(md) {
+  md = String(md);
+
+  // Pre-process skill lines: **Label:** skills on SAME line → placeholder
+  const skillRows = [];
+  md = md.replace(/^\*\*([^*\n]+:)\*\*[ \t]+(.+)$/gm, (_, label, content) => {
+    const idx = skillRows.length;
+    skillRows.push({ label, content });
+    return `SKILL_ROW_${idx}`;
+  });
+
   // Escape raw HTML from AI output first — prevents XSS via injected tags
-  let safe = String(md)
+  let safe = md
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;');
@@ -1617,6 +1633,22 @@ function renderMarkdown(md) {
     .replace(/^(?!<[hul1-9/]|<li|<hr)(.+)$/gm, '<p>$1</p>')
     // Clean up empty paragraphs
     .replace(/<p>\s*<\/p>/g, '');
+
+  // Restore same-line skill rows captured before escaping
+  skillRows.forEach(({ label, content }, i) => {
+    const safeLbl  = label.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    const safeCont = content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    html = html.replace(
+      `<p>SKILL_ROW_${i}</p>`,
+      `<div class="skill-row"><span class="skill-label"><strong>${safeLbl}</strong></span> <span class="skill-desc">${safeCont}</span></div>`
+    );
+  });
+
+  // Catch split skill lines: <p><strong>Label:</strong></p> immediately followed by <p>content</p>
+  html = html.replace(
+    /<p><strong>([^<]+:)<\/strong><\/p>\s*<p>([^<]+)<\/p>/g,
+    '<div class="skill-row"><span class="skill-label"><strong>$1</strong></span> <span class="skill-desc">$2</span></div>'
+  );
 
   // Wrap everything before the first <h2> in a centered header div
   const firstH2 = html.indexOf('<h2>');
