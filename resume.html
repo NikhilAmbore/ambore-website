@@ -1014,8 +1014,14 @@ STRICT FORMATTING RULES
 - Every required skill listed in the JD MUST appear at least once in both the Skills section AND experience bullets.
 - NEVER delete existing skills from the original resume — only add new ones from the JD.
 
-6. LENGTH
-- Resume MUST fit on exactly ONE page. Be concise — trim every redundant word. Keep bullets tight and punchy. If skills are long, abbreviate where safe. If experience is extensive, keep only the most recent/relevant 3–4 bullets per role.
+6. LENGTH — THIS IS THE MOST IMPORTANT RULE. DO NOT VIOLATE.
+- The resume MUST fit on exactly ONE printed page. This is non-negotiable.
+- Maximum 3 bullet points per job role. Cut any 4th or 5th bullets ruthlessly.
+- Professional Summary: 2–3 sentences only. No more.
+- Skills: list only the top 4–5 most relevant categories. Skip minor tools.
+- Education: one line per degree — no extra details.
+- If you are about to exceed one page, STOP and shorten what you have written so far.
+- A shorter resume that fits one page is ALWAYS better than a longer resume that spills onto two pages.
 
 7. OUTPUT FORMAT
 - Output ONLY the final resume in clean Markdown.
@@ -1446,7 +1452,7 @@ async function generateResume() {
 },
           body: JSON.stringify({
             model: modelToUse,
-            max_tokens: 4000,
+            max_tokens: 1500,
             stream: true,
             system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
             messages: [{
