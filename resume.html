@@ -251,6 +251,7 @@ button,input,textarea,select{font-family:inherit}
 .resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center}
 .resume-preview h2{font-size:11pt;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-top:5px;margin-bottom:2px;padding-bottom:2px;border-bottom:1.5px solid rgba(129,140,248,0.6);font-family:'Times New Roman',Times,serif}
 .resume-preview h3{font-size:10pt;font-weight:700;color:#1e293b;margin-top:4px;margin-bottom:1px;font-family:'Times New Roman',Times,serif}
+.resume-preview h3 em{font-style:italic;font-weight:400;color:#555}
 .resume-preview p{font-size:10pt;color:#334155;margin-top:0;margin-bottom:4px;font-family:'Times New Roman',Times,serif;line-height:1.5}
 .resume-preview ul{padding-left:16px;margin-top:0;margin-bottom:3px}
 .resume-preview li{font-size:10pt;color:#475569;margin-top:0;margin-bottom:1px;list-style:disc;font-family:'Times New Roman',Times,serif}
@@ -1029,8 +1030,9 @@ OUTPUT FORMAT
 - Contact: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
 ${linkLine ? '- Use the professional links above EXACTLY as provided — do not alter URLs.' : ''}
 - ## section headers (ALL CAPS): PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION
-- ### job entries: Job Title | Company Name | Location
-- *Month Year - Month Year* for dates (italic)
+- ### for each job entry — put EVERYTHING on ONE line in this exact format:
+  ### Job Title — Company Name | Location | *Month Year – Month Year*
+  (the date goes at the end of the ### line, italic with asterisks, NOT on a separate line)
 - **bold** key metrics and JD keywords inside bullets
 - Bullet points with -
 
