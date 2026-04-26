@@ -1024,6 +1024,7 @@ Categories examples: Languages, Cloud Platforms, Databases, Frameworks, Tools, D
 Reverse chronological order — most recent job first.
 Each job entry header on ONE line: ### Company Name | Job Title | City, State | *Month Year - Month Year*
 Under each role write 4 to 6 bullet points.
+EVERY bullet MUST begin with "- " (hyphen + space) — this is mandatory Markdown syntax. Never write bullets as plain paragraphs.
 Every bullet must:
 - Start with a strong past-tense action verb (Built, Designed, Led, Reduced, Automated, Delivered, Grew, Wrote, Ran, Fixed, Cut, Shipped)
 - Never start with: "Responsible for", "Helped with", "Worked on", "I", "My"
@@ -1057,7 +1058,7 @@ ALWAYS include exactly 2 projects. This section is mandatory — never skip it.
 If the resume has explicit projects, pick the 2 most relevant to the JD.
 If no projects are listed, extract 2 meaningful pieces of work from their experience and present as projects.
 Each project: ### Project Name | *Tool1, Tool2, Tool3*
-Then exactly 2 bullets per project:
+Then exactly 2 bullets per project (each MUST start with "- "):
 - Bullet 1: what was built and which JD-relevant tools were used
 - Bullet 2: the measurable outcome (speed, scale, cost saved, users, accuracy)
 Project names must be specific: "Real-Time Fraud Detection Pipeline" not "Project A"
@@ -1659,6 +1660,23 @@ function renderMarkdown(md) {
     /<p><strong>([^<]+:)<\/strong><\/p>\s*<p>([^<]+)<\/p>/g,
     '<div class="skill-row"><span class="skill-label"><strong>$1</strong></span> <span class="skill-desc">$2</span></div>'
   );
+
+  // Convert <p> elements immediately after <h3> (job/project entries) into <ul><li> bullet points.
+  // The AI sometimes omits the "- " markdown prefix and outputs bullets as plain paragraphs.
+  const h3parts = html.split(/(<\/h3>)/);
+  for (let i = 1; i < h3parts.length; i += 2) {
+    // h3parts[i] === '</h3>', h3parts[i+1] is the following content
+    if (i + 1 < h3parts.length) {
+      h3parts[i + 1] = h3parts[i + 1].replace(
+        /^((?:\s*<p>[\s\S]*?<\/p>)+)/,
+        (block) => {
+          const lis = block.replace(/<p>([\s\S]*?)<\/p>/g, '<li>$1</li>');
+          return '<ul>' + lis.trim() + '</ul>';
+        }
+      );
+    }
+  }
+  html = h3parts.join('');
 
   // Mark the headline/title line (p right after h1 containing | or ·) with special class
   html = html.replace(
