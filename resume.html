@@ -246,22 +246,30 @@ button,input,textarea,select{font-family:inherit}
   font-family:'Times New Roman',Times,serif;
 }
 @media(max-width:700px){.resume-preview{padding:20px 16px}}
-.resume-preview .resume-header{text-align:center;margin-bottom:6px}
-.resume-preview h1{font-size:14pt;font-weight:900;color:#1e293b;margin-bottom:1px;text-align:center;font-family:'Times New Roman',Times,serif}
-.resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center}
-.resume-preview h2{font-size:11pt;font-weight:800;color:var(--accent);text-transform:uppercase;letter-spacing:0.04em;margin-top:5px;margin-bottom:2px;padding-bottom:2px;border-bottom:1.5px solid rgba(129,140,248,0.6);font-family:'Times New Roman',Times,serif}
-.resume-preview h3{font-size:10pt;font-weight:700;color:#1e293b;margin-top:4px;margin-bottom:1px;font-family:'Times New Roman',Times,serif}
-.resume-preview h3 em{font-style:italic;font-weight:400;color:#555}
-.resume-preview p{font-size:10pt;color:#334155;margin-top:0;margin-bottom:4px;font-family:'Times New Roman',Times,serif;line-height:1.5}
+.resume-preview .resume-header{text-align:center;margin-bottom:4px}
+/* Name — largest text, dark navy, Calibri */
+.resume-preview h1{font-size:22pt;font-weight:700;color:#1F3864;margin-bottom:2px;text-align:center;font-family:Calibri,Arial,sans-serif;letter-spacing:0.5px}
+/* Headline / contact lines under name — centered */
+.resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center;font-size:10pt;color:#444;font-family:Calibri,Arial,sans-serif;margin-bottom:2px}
+/* Headline title line — slightly larger, dark navy */
+.resume-preview .headline-line{text-align:center;font-size:11pt;font-weight:600;color:#1F3864;font-family:Calibri,Arial,sans-serif;margin-bottom:3px}
+/* Section headers — dark navy, bold, bottom border */
+.resume-preview h2{font-size:11pt;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:0.06em;margin-top:7px;margin-bottom:2px;padding-bottom:2px;border-bottom:1.5px solid #1F3864;font-family:Calibri,Arial,sans-serif}
+/* Job title / company line */
+.resume-preview h3{font-size:10.5pt;font-weight:700;color:#1e293b;margin-top:5px;margin-bottom:1px;font-family:Calibri,Arial,sans-serif}
+.resume-preview h3 em{font-style:italic;font-weight:400;color:#444444;font-size:10pt}
+/* Body text */
+.resume-preview p{font-size:10pt;color:#222;margin-top:0;margin-bottom:3px;font-family:Calibri,Arial,sans-serif;line-height:1.35}
 .resume-preview ul{padding-left:16px;margin-top:0;margin-bottom:3px}
-.resume-preview li{font-size:10pt;color:#475569;margin-top:0;margin-bottom:1px;list-style:disc;font-family:'Times New Roman',Times,serif}
-.resume-preview strong{color:#1e293b}
-.resume-preview em{color:#64748B;font-style:italic}
-.resume-preview hr{border:none;border-top:1px solid var(--border);margin:8px 0}
-.resume-preview a{color:var(--accent);text-decoration:underline;font-size:10pt}
-.resume-preview .skill-row{display:block;margin-bottom:3px;font-family:'Times New Roman',Times,serif;font-size:10pt;line-height:1.5;color:#1e293b}
+.resume-preview li{font-size:10pt;color:#222;margin-top:0;margin-bottom:2px;list-style:disc;font-family:Calibri,Arial,sans-serif;line-height:1.35}
+.resume-preview strong{color:#1e293b;font-weight:700}
+.resume-preview em{color:#444444;font-style:italic}
+.resume-preview hr{border:none;border-top:1px solid #ccc;margin:5px 0}
+.resume-preview a{color:#1F3864;text-decoration:underline;font-size:10pt}
+/* Skills inline */
+.resume-preview .skill-row{display:block;margin-bottom:3px;font-family:Calibri,Arial,sans-serif;font-size:10pt;line-height:1.35;color:#222}
 .resume-preview .skill-label{display:inline;font-weight:700;color:#1e293b}
-.resume-preview .skill-desc{display:inline;color:#334155}
+.resume-preview .skill-desc{display:inline;color:#333}
 
 /* ── TEMPLATE PICKER ── */
 .template-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -338,21 +346,24 @@ button,input,textarea,select{font-family:inherit}
   .resume-preview{
     background:#fff!important;border:none!important;border-radius:0!important;
     padding:0!important;color:#000!important;
-    font-family:'Times New Roman',Times,serif!important;
-    line-height:1.3!important;overflow:visible!important;
+    font-family:Calibri,Arial,sans-serif!important;
+    font-size:10pt!important;line-height:1.35!important;overflow:visible!important;
   }
-  .resume-preview .resume-header{text-align:center!important;margin-bottom:6px!important}
-  .resume-preview h1{color:#000!important;text-align:center!important;font-size:14pt!important;margin-bottom:1px!important}
-  .resume-preview h2{color:#000!important;border-bottom:1px solid #000!important;font-size:11pt!important;margin-top:5px!important;margin-bottom:2px!important;padding-bottom:1px!important}
-  .resume-preview h3{color:#000!important;font-size:10pt!important;margin-top:4px!important;margin-bottom:1px!important}
-  .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important}
-  .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important}
+  .resume-preview .resume-header{text-align:center!important;margin-bottom:4px!important}
+  .resume-preview h1{color:#1F3864!important;text-align:center!important;font-size:22pt!important;font-weight:700!important;margin-bottom:2px!important;letter-spacing:0.5px!important}
+  .resume-preview h1+p,.resume-preview h1+p+p{text-align:center!important;color:#444!important;font-size:10pt!important;margin-bottom:2px!important}
+  .resume-preview .headline-line{text-align:center!important;font-size:11pt!important;font-weight:600!important;color:#1F3864!important;margin-bottom:3px!important}
+  .resume-preview h2{color:#1F3864!important;border-bottom:1.5px solid #1F3864!important;font-size:11pt!important;font-weight:700!important;margin-top:6px!important;margin-bottom:2px!important;padding-bottom:1px!important}
+  .resume-preview h3{color:#000!important;font-size:10.5pt!important;font-weight:700!important;margin-top:4px!important;margin-bottom:1px!important}
+  .resume-preview h3 em{color:#444!important;font-weight:400!important}
+  .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important;line-height:1.35!important}
+  .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important;line-height:1.35!important}
   .resume-preview ul{margin-bottom:3px!important;padding-left:16px!important}
-  .resume-preview strong{color:#000!important}
-  .resume-preview em{color:#333!important}
-  .resume-preview hr{border-top-color:#999!important;margin:4px 0!important}
+  .resume-preview strong{color:#000!important;font-weight:700!important}
+  .resume-preview em{color:#444!important}
+  .resume-preview hr{border-top-color:#bbb!important;margin:4px 0!important}
   .resume-preview a{color:#000!important;text-decoration:none!important}
-  .resume-preview .skill-row{display:block!important;margin-bottom:2px!important;font-size:10pt!important;line-height:1.4!important}
+  .resume-preview .skill-row{display:block!important;margin-bottom:2px!important;font-size:10pt!important;line-height:1.35!important}
   .resume-preview .skill-label{display:inline!important;font-weight:700!important;color:#000!important}
   .resume-preview .skill-desc{display:inline!important;color:#000!important}
 }
@@ -968,133 +979,100 @@ function buildResumeSystemPrompt(links) {
     links.portfolio ? `[Portfolio](${links.portfolio})` : '',
   ].filter(Boolean).join(' | ');
 
-  return `You are an elite resume writer and ATS specialist. Your goal: produce a full, dense, ONE-PAGE resume that passes every ATS filter and makes an HR manager immediately want to call this candidate.
+  return `You are an elite resume writer. Write a complete, professional resume that will pass ATS systems and make a recruiter immediately want to call this candidate. Every word must feel written by a real human, not generated by AI.
 
-═══════════════════════════════════════════
-STEP 1 — ANALYZE THE JD BEFORE WRITING
-═══════════════════════════════════════════
+STEP 1 — READ THE JD CAREFULLY FIRST
+Extract: exact job title, every required skill/tool, top 5 responsibilities, seniority level, domain keywords and metrics used.
 
-Extract from the JD:
-A. The EXACT job title (copy word-for-word — ATS matches this first)
-B. Every required skill, tool, technology, certification
-C. Top 5 responsibilities (first 5 duties = what they care most about)
-D. Exact domain language, scale, metrics (e.g. "10M+ records", "microservices", "Agile/Scrum")
-E. Seniority level and years of experience required
+STEP 2 — WRITE EACH SECTION IN THIS EXACT ORDER AND FORMAT
 
-═══════════════════════════════════════════
-STEP 2 — WRITE EACH SECTION EXACTLY AS SPECIFIED
-═══════════════════════════════════════════
+━━━ SECTION 1: HEADER ━━━
+# FULL NAME (all caps, this is the largest text on the page)
+One clean line: phone | professional email | City, State${linkLine ? ' | ' + linkLine : ''}
+Never include a full street address. No decorative symbols.
 
-━━━ PROFESSIONAL SUMMARY — EXACTLY 6 BULLET POINTS ━━━
-Write 6 punchy bullet points (NOT a paragraph). Each bullet must:
-- Be a single powerful sentence that would make an HR manager stop and read more
-- Directly match one of the top requirements from the JD
-- Include the candidate's BEST proof: a tool, a metric, or a concrete outcome
-- Open with the EXACT job title from the JD in bullet 1
-- Cover: role fit, technical depth, scale of work, impact, domain expertise, differentiator
-- BANNED words: "results-driven", "detail-oriented", "passionate", "team player", "hard worker", "seeking"
-- Format: use bullet points (-)
+━━━ SECTION 2: HEADLINE / TITLE LINE ━━━
+Write exactly ONE line directly under the contact info:
+Exact Job Title from JD | Top Skill · Top Skill · Top Skill · Top Skill · Top Skill
+Use the pipe | and middle dots · as separators. This line is critical for ATS keyword scanning.
+Example: Senior Data Engineer | PySpark · Kafka · Airflow · AWS · Azure
 
-━━━ SKILLS — EXACTLY 5 CATEGORIES ━━━
-- Write exactly 5 skill categories
-- Include EVERY tool, language, framework, and platform from the JD the candidate has used
-- Use the EXACT spelling from the JD (JD says "CI/CD" → write CI/CD)
-- Each category must have 4–7 skills
-- Format: **Category Name:** skill1, skill2, skill3 (one category per line)
+━━━ SECTION 3: PROFESSIONAL SUMMARY ━━━
+## PROFESSIONAL SUMMARY
+Write exactly 3 to 4 lines as a short paragraph (NOT bullet points).
+Answer three things: who this person is, how many years of experience they have, what specific value they bring to THIS role.
+Never use the word "I". Never use: results-driven, detail-oriented, passionate, team player, hard worker, seeking.
+Tailor every word to this specific JD. Think of it as a pitch, not a biography.
 
-━━━ PROFESSIONAL EXPERIENCE — 5 / 4 / 3 BULLETS ━━━
-- Most recent job: EXACTLY 5 bullets
-- Second job: EXACTLY 4 bullets
-- Third/oldest job: EXACTLY 3 bullets
-- Every bullet MUST contain: (1) a strong action verb, (2) a JD keyword verbatim, (3) a number/metric
-- Formula: [Action verb] + [what you did using JD's exact language] + [quantified result]
-- Rewrite every bullet specifically for this JD — do NOT reuse generic bullets
-- Job entry format: ### Job Title — Company | Location | *Month Year – Month Year*
+━━━ SECTION 4: CORE SKILLS ━━━
+## CORE SKILLS
+List 10 to 16 skills grouped in categories matching the JD.
+Use the EXACT spelling from the JD for every tool and technology.
+Pure technical skills only — no soft skills like "communication" or "teamwork".
+Format: **Category:** skill1, skill2, skill3 (one category per line)
+Categories examples: Languages, Cloud Platforms, Databases, Frameworks, Tools, DevOps
 
-━━━ EDUCATION ━━━
-- One line: Degree, Major | University | Year
-- No GPA, no coursework
+━━━ SECTION 5: WORK EXPERIENCE ━━━
+## WORK EXPERIENCE
+Reverse chronological order — most recent job first.
+Each job entry header on ONE line: ### Company Name | Job Title | City, State | *Month Year - Month Year*
+Under each role write 4 to 6 bullet points.
+Every bullet must:
+- Start with a strong past-tense action verb (Built, Designed, Led, Reduced, Automated, Delivered, Grew, Wrote, Ran, Fixed, Cut, Shipped)
+- Never start with: "Responsible for", "Helped with", "Worked on", "I", "My"
+- Follow STAR format: what was the situation, what did you do, what was the result
+- Include at least one number, percentage, dollar amount, or scale metric
+- Contain at least one keyword copied verbatim from the JD
 
-━━━ CERTIFICATIONS (if candidate has any) ━━━
-- List up to 3 relevant certifications, one per line
-- Format: - Certification Name | Issuer | Year
+━━━ SECTION 6: KEY ACHIEVEMENTS ━━━
+## KEY ACHIEVEMENTS
+Pull the 3 to 5 most impressive quantified wins from the experience above.
+Format each as a single line: - **Achievement title:** specific result with a number.
+These must be purely factual and quantified. No vague claims.
+Examples: "Saved $50K annually in compute costs" or "Scaled platform to 14,000 users with 99.9% uptime"
+This section makes recruiters stop scrolling.
 
-━━━ PROJECTS — ALWAYS INCLUDE, EXACTLY 2 PROJECTS ━━━
-- ALWAYS generate exactly 2 projects — this section is mandatory, never skip it
-- If the candidate's resume has explicit projects, use those (pick the 2 most relevant to the JD)
-- If the resume has NO listed projects, extract 2 meaningful pieces of work from their experience and present them as standalone projects (e.g. a pipeline they built, a dashboard they shipped, a system they automated)
-- Each project gets EXACTLY 2 bullets — no more, no less
-- Bullet 1: what was built, which JD-relevant technologies were used
-- Bullet 2: the measurable outcome (performance, scale, time saved, users, cost)
-- Project name should be specific and real-sounding (not "Project A" — e.g. "Customer Churn Prediction Pipeline" or "Real-Time Inventory Dashboard")
-- Format: ### Project Name | *Tech Stack (3-4 tools)*
+━━━ SECTION 7: EDUCATION ━━━
+## EDUCATION
+Degree, Field of Study | University Name | Year
+Include GPA only if 3.5 or above. No coursework, no clubs, no activities.
 
-═══════════════════════════════════════════
-STEP 3 — ATS COMPLIANCE CHECK
-═══════════════════════════════════════════
+━━━ SECTION 8: CERTIFICATIONS ━━━
+## CERTIFICATIONS
+List each certification on its own line: - Certification Name | Issuing Organization | Year
+Most relevant to the JD first. Skip certifications older than 5 years unless still actively recognized.
+If the candidate has no certifications, skip this section entirely.
 
-Before outputting, verify:
-- Exact job title from JD is in summary bullet 1
-- Every required JD skill/tool appears in Skills section
+━━━ SECTION 9: PROJECTS ━━━
+## PROJECTS
+ALWAYS include exactly 2 projects. This section is mandatory — never skip it.
+If the resume has explicit projects, pick the 2 most relevant to the JD.
+If no projects are listed, extract 2 meaningful pieces of work from their experience and present as projects.
+Each project: ### Project Name | *Tool1, Tool2, Tool3*
+Then exactly 2 bullets per project:
+- Bullet 1: what was built and which JD-relevant tools were used
+- Bullet 2: the measurable outcome (speed, scale, cost saved, users, accuracy)
+Project names must be specific: "Real-Time Fraud Detection Pipeline" not "Project A"
+Include a GitHub or live link if the candidate provided one.
+
+STEP 3 — HUMANIZATION (non-negotiable)
+BANNED SYMBOLS: never use ✦ ✧ ★ → ← ► ● ◆ ■ ✓ ✔ or any emoji. Plain ASCII only.
+BANNED WORDS: spearheaded, leveraged, utilized, orchestrated, pioneered, synergized, cutting-edge, robust, seamless, game-changing, demonstrated expertise, collaborated cross-functionally, passionate, dynamic, proactive, best-in-class
+USE INSTEAD: built, wrote, set up, shipped, cut, saved, reduced, grew, fixed, led, ran, launched, automated, tested, rewrote, handled
+VARY sentence length and structure — some bullets short and punchy, some detailed
+Use specific non-round numbers: 43% reads as real, 50% reads as AI
+At least 1 bullet per job should include a specific human detail: team size, deadline, tool version, client type
+Read each bullet aloud — if it sounds like a press release, rewrite it
+
+STEP 4 — ATS FINAL CHECK
+Before writing the final output, confirm:
+- Exact job title from JD appears in the Headline and Summary
+- Every required JD skill appears in Core Skills
 - At least 6 JD keywords appear verbatim in experience bullets
-- Every bullet has a metric (number, %, $, time, scale)
-- No bullet is longer than 2 printed lines
+- Every experience bullet has a metric
+- Projects section has exactly 2 entries with 2 bullets each
 
-═══════════════════════════════════════════
-OUTPUT FORMAT
-═══════════════════════════════════════════
-
-- # Candidate Full Name
-- Contact line: email | phone | City, State${linkLine ? ' | ' + linkLine : ''}
-${linkLine ? '- Use professional links EXACTLY as provided — do not alter URLs.' : ''}
-- ## section headers (ALL CAPS): PROFESSIONAL SUMMARY, SKILLS, PROFESSIONAL EXPERIENCE, EDUCATION, CERTIFICATIONS, PROJECTS
-- ### job entries: Job Title — Company | Location | *Month Year – Month Year* (date on same line, italic)
-- **bold** all metrics and JD keywords inside bullets
-- Bullet points with -
-
-SECTION ORDER: Name/Contact → PROFESSIONAL SUMMARY → SKILLS → PROFESSIONAL EXPERIENCE → EDUCATION → CERTIFICATIONS → PROJECTS
-
-═══════════════════════════════════════════
-HUMANIZATION — THIS IS NON-NEGOTIABLE
-═══════════════════════════════════════════
-
-The resume MUST read like a real person wrote it, not an AI. Recruiters and HR tools (Workday, Greenhouse, LinkedIn) now flag AI-written resumes. Follow every rule below.
-
-BANNED SYMBOLS — never use any of these in the resume output:
-✦ ✧ ✨ ★ ⭐ → ← ➤ ➡ ► ● ◆ ■ ✓ ✔ 🔹 🔸 💡 🎯 🚀 💼 🏆 📌 ⚡ or any emoji
-Use plain ASCII only: hyphens (-) for bullets, plain text for everything else.
-
-BANNED WORDS — never use any of these (instant AI flag):
-spearheaded, leveraged, utilized, orchestrated, pioneered, revolutionized, synergized,
-cutting-edge, robust, seamless, scalable (as a buzzword), game-changing, innovative,
-demonstrated expertise, collaborated cross-functionally, drove significant improvements,
-delivered impactful results, passionate about, detail-oriented, results-driven,
-dynamic, proactive, strategic thinker, value-added, best-in-class, world-class
-
-USE THESE INSTEAD — natural, specific, human verbs:
-built, wrote, set up, shipped, cut, saved, reduced, grew, fixed, led, ran, moved,
-launched, replaced, connected, automated, tested, monitored, trained, rewrote, handled
-
-SENTENCE VARIETY RULES:
-- Never start 2 bullets in a row with the same verb
-- Mix bullet lengths: some short (8–10 words), some detailed (20–25 words)
-- Vary structure — not every bullet follows the same formula
-- Occasionally use specific context that proves real experience:
-  ("on a team of 3", "before the Q2 deadline", "after the system kept failing overnight")
-- Use specific non-round numbers where possible: "43%" feels real, "50%" feels made-up
-
-SUMMARY HUMANIZATION:
-- Write like the candidate is talking to the hiring manager, not performing for a robot
-- Each bullet should sound like something a real person would actually say about themselves
-- At least 2 bullets should be specific enough that they could ONLY apply to this candidate
-- Do NOT make every bullet the same length or structure
-
-EXPERIENCE BULLET RULES:
-- Read each bullet aloud — if it sounds like a corporate press release, rewrite it
-- At least 1 bullet per job should include a small specific detail (team size, tool version, time pressure, client type)
-- Numbers must feel real: use specific figures from the candidate's resume; if estimating, use non-round numbers
-
-CRITICAL: Output ONLY the resume in Markdown. No preamble, no commentary. Start with # Name.`;
+CRITICAL: Output ONLY the resume in Markdown. No preamble, no commentary, no notes. Start immediately with # FULL NAME.`;
 }
 
 /* ── KEY ACHIEVEMENTS ── */
@@ -1672,6 +1650,12 @@ function renderMarkdown(md) {
   html = html.replace(
     /<p><strong>([^<]+:)<\/strong><\/p>\s*<p>([^<]+)<\/p>/g,
     '<div class="skill-row"><span class="skill-label"><strong>$1</strong></span> <span class="skill-desc">$2</span></div>'
+  );
+
+  // Mark the headline/title line (p right after h1 containing | or ·) with special class
+  html = html.replace(
+    /(<h1>[^<]+<\/h1>)\s*(<p>([^<]*[|·][^<]*)<\/p>)/,
+    '$1<p class="headline-line">$3</p>'
   );
 
   // Wrap everything before the first <h2> in a centered header div
