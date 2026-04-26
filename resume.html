@@ -242,34 +242,40 @@ button,input,textarea,select{font-family:inherit}
 /* Resume preview card */
 .resume-preview{
   flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;
-  overflow-y:auto;padding:32px 40px;line-height:1.3;
-  font-family:'Times New Roman',Times,serif;
+  overflow-y:auto;padding:32px 40px;
+  font-family:Calibri,Arial,sans-serif;font-size:10.5pt;line-height:1.25;color:#111111;
 }
 @media(max-width:700px){.resume-preview{padding:20px 16px}}
-.resume-preview .resume-header{text-align:center;margin-bottom:4px}
-/* Name — largest text, dark navy, Calibri */
-.resume-preview h1{font-size:22pt;font-weight:700;color:#1F3864;margin-bottom:2px;text-align:center;font-family:Calibri,Arial,sans-serif;letter-spacing:0.5px}
-/* Headline / contact lines under name — centered */
-.resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{text-align:center;font-size:10pt;color:#444;font-family:Calibri,Arial,sans-serif;margin-bottom:2px}
-/* Headline title line — slightly larger, dark navy */
-.resume-preview .headline-line{text-align:center;font-size:11pt;font-weight:600;color:#1F3864;font-family:Calibri,Arial,sans-serif;margin-bottom:3px}
-/* Section headers — dark navy, bold, bottom border */
-.resume-preview h2{font-size:11pt;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:0.06em;margin-top:7px;margin-bottom:2px;padding-bottom:2px;border-bottom:1.5px solid #1F3864;font-family:Calibri,Arial,sans-serif}
-/* Job title / company line */
-.resume-preview h3{font-size:10.5pt;font-weight:700;color:#1e293b;margin-top:5px;margin-bottom:1px;font-family:Calibri,Arial,sans-serif}
-.resume-preview h3 em{font-style:italic;font-weight:400;color:#444444;font-size:10pt}
-/* Body text */
-.resume-preview p{font-size:10pt;color:#222;margin-top:0;margin-bottom:3px;font-family:Calibri,Arial,sans-serif;line-height:1.35}
-.resume-preview ul{padding-left:16px;margin-top:0;margin-bottom:3px}
-.resume-preview li{font-size:10pt;color:#222;margin-top:0;margin-bottom:2px;list-style:disc;font-family:Calibri,Arial,sans-serif;line-height:1.35}
-.resume-preview strong{color:#1e293b;font-weight:700}
-.resume-preview em{color:#444444;font-style:italic}
-.resume-preview hr{border:none;border-top:1px solid #ccc;margin:5px 0}
-.resume-preview a{color:#1F3864;text-decoration:underline;font-size:10pt}
-/* Skills inline */
-.resume-preview .skill-row{display:block;margin-bottom:3px;font-family:Calibri,Arial,sans-serif;font-size:10pt;line-height:1.35;color:#222}
-.resume-preview .skill-label{display:inline;font-weight:700;color:#1e293b}
-.resume-preview .skill-desc{display:inline;color:#333}
+/* ── Header block ── */
+.resume-preview .resume-header{text-align:center;margin-bottom:5px}
+/* Name: 28pt bold dark navy center */
+.resume-preview h1{font-size:28pt;font-weight:700;color:#1F3864;text-align:center;margin:0 0 3px 0;font-family:Calibri,Arial,sans-serif;letter-spacing:0.2px}
+/* Headline title line: 13pt regular gray center */
+.resume-preview .headline-line{font-size:13pt;font-weight:400;color:#666666;text-align:center;margin:0 0 3px 0;font-family:Calibri,Arial,sans-serif}
+/* Contact info line: 10pt regular gray center */
+.resume-preview h1+p,.resume-preview h1+p+p,.resume-preview h1+p+p+p{font-size:10pt;font-weight:400;color:#666666;text-align:center;margin:0 0 2px 0;font-family:Calibri,Arial,sans-serif}
+/* ── Section headers: 11pt bold dark navy ALL CAPS bottom border ── */
+.resume-preview h2{font-size:11pt;font-weight:700;color:#1F3864;text-transform:uppercase;letter-spacing:0.07em;margin:8px 0 2px 0;padding-bottom:2px;border-bottom:1px solid #1F3864;font-family:Calibri,Arial,sans-serif;line-height:1.2}
+/* ── Job/Project/Cert entry line: 12pt bold black ── */
+.resume-preview h3{font-size:12pt;font-weight:700;color:#111111;margin:8px 0 2px 0;font-family:Calibri,Arial,sans-serif;line-height:1.2}
+/* Date portion inside h3: 10pt regular gray */
+.resume-preview h3 em{font-size:10pt;font-weight:400;font-style:normal;color:#666666}
+/* ── Body: bullets, summary, skills — 10.5pt regular black ── */
+.resume-preview p{font-size:10.5pt;font-weight:400;color:#111111;margin:0 0 3px 0;font-family:Calibri,Arial,sans-serif;line-height:1.25}
+/* Bullet list with hanging indent */
+.resume-preview ul{padding-left:20px;margin:0 0 3px 0}
+.resume-preview li{font-size:10.5pt;font-weight:400;color:#111111;margin:0 0 3px 0;list-style:disc;font-family:Calibri,Arial,sans-serif;line-height:1.25}
+/* Bold: name/headers/titles/company only — not in bullets */
+.resume-preview strong{font-weight:700;color:#111111}
+/* Italic (dates inside h3 handled above) */
+.resume-preview em{font-style:italic;color:#666666}
+.resume-preview hr{border:none;border-top:1px solid #cccccc;margin:5px 0}
+/* Links: dark navy, no underline in body */
+.resume-preview a{color:#1F3864;text-decoration:none;font-size:10pt}
+/* ── Skills inline: label dark navy bold, content black regular ── */
+.resume-preview .skill-row{display:block;margin-bottom:3px;font-size:10.5pt;line-height:1.25;color:#111111;font-family:Calibri,Arial,sans-serif}
+.resume-preview .skill-label{display:inline;font-weight:700;color:#1F3864}
+.resume-preview .skill-desc{display:inline;font-weight:400;color:#111111}
 
 /* ── TEMPLATE PICKER ── */
 .template-row{display:flex;align-items:center;gap:12px;margin-bottom:16px;flex-wrap:wrap}
@@ -345,27 +351,26 @@ button,input,textarea,select{font-family:inherit}
   .result-section{padding:0!important;max-width:100%!important}
   .resume-preview{
     background:#fff!important;border:none!important;border-radius:0!important;
-    padding:0!important;color:#000!important;
-    font-family:Calibri,Arial,sans-serif!important;
-    font-size:10pt!important;line-height:1.35!important;overflow:visible!important;
+    padding:0!important;font-family:Calibri,Arial,sans-serif!important;
+    font-size:10.5pt!important;line-height:1.25!important;color:#111111!important;overflow:visible!important;
   }
-  .resume-preview .resume-header{text-align:center!important;margin-bottom:4px!important}
-  .resume-preview h1{color:#1F3864!important;text-align:center!important;font-size:22pt!important;font-weight:700!important;margin-bottom:2px!important;letter-spacing:0.5px!important}
-  .resume-preview h1+p,.resume-preview h1+p+p{text-align:center!important;color:#444!important;font-size:10pt!important;margin-bottom:2px!important}
-  .resume-preview .headline-line{text-align:center!important;font-size:11pt!important;font-weight:600!important;color:#1F3864!important;margin-bottom:3px!important}
-  .resume-preview h2{color:#1F3864!important;border-bottom:1.5px solid #1F3864!important;font-size:11pt!important;font-weight:700!important;margin-top:6px!important;margin-bottom:2px!important;padding-bottom:1px!important}
-  .resume-preview h3{color:#000!important;font-size:10.5pt!important;font-weight:700!important;margin-top:4px!important;margin-bottom:1px!important}
-  .resume-preview h3 em{color:#444!important;font-weight:400!important}
-  .resume-preview p{color:#000!important;font-size:10pt!important;margin-bottom:2px!important;line-height:1.35!important}
-  .resume-preview li{color:#000!important;font-size:10pt!important;margin-bottom:1px!important;line-height:1.35!important}
-  .resume-preview ul{margin-bottom:3px!important;padding-left:16px!important}
-  .resume-preview strong{color:#000!important;font-weight:700!important}
-  .resume-preview em{color:#444!important}
-  .resume-preview hr{border-top-color:#bbb!important;margin:4px 0!important}
-  .resume-preview a{color:#000!important;text-decoration:none!important}
-  .resume-preview .skill-row{display:block!important;margin-bottom:2px!important;font-size:10pt!important;line-height:1.35!important}
-  .resume-preview .skill-label{display:inline!important;font-weight:700!important;color:#000!important}
-  .resume-preview .skill-desc{display:inline!important;color:#000!important}
+  .resume-preview .resume-header{text-align:center!important;margin-bottom:5px!important}
+  .resume-preview h1{font-size:28pt!important;font-weight:700!important;color:#1F3864!important;text-align:center!important;margin:0 0 3px 0!important;letter-spacing:0.2px!important}
+  .resume-preview .headline-line{font-size:13pt!important;font-weight:400!important;color:#666666!important;text-align:center!important;margin:0 0 3px 0!important}
+  .resume-preview h1+p,.resume-preview h1+p+p{font-size:10pt!important;font-weight:400!important;color:#666666!important;text-align:center!important;margin:0 0 2px 0!important}
+  .resume-preview h2{font-size:11pt!important;font-weight:700!important;color:#1F3864!important;border-bottom:1px solid #1F3864!important;text-transform:uppercase!important;letter-spacing:0.07em!important;margin:8px 0 2px 0!important;padding-bottom:2px!important}
+  .resume-preview h3{font-size:12pt!important;font-weight:700!important;color:#111111!important;margin:8px 0 2px 0!important;line-height:1.2!important}
+  .resume-preview h3 em{font-size:10pt!important;font-weight:400!important;font-style:normal!important;color:#666666!important}
+  .resume-preview p{font-size:10.5pt!important;font-weight:400!important;color:#111111!important;margin:0 0 3px 0!important;line-height:1.25!important}
+  .resume-preview ul{padding-left:20px!important;margin:0 0 3px 0!important}
+  .resume-preview li{font-size:10.5pt!important;font-weight:400!important;color:#111111!important;margin:0 0 3px 0!important;line-height:1.25!important}
+  .resume-preview strong{font-weight:700!important;color:#111111!important}
+  .resume-preview em{font-style:italic!important;color:#666666!important}
+  .resume-preview hr{border-top-color:#cccccc!important;margin:5px 0!important;border-width:1px!important}
+  .resume-preview a{color:#1F3864!important;text-decoration:none!important}
+  .resume-preview .skill-row{display:block!important;margin-bottom:3px!important;font-size:10.5pt!important;line-height:1.25!important;color:#111111!important}
+  .resume-preview .skill-label{display:inline!important;font-weight:700!important;color:#1F3864!important}
+  .resume-preview .skill-desc{display:inline!important;font-weight:400!important;color:#111111!important}
 }
 
 /* ══ MOBILE RESPONSIVE ══ */
@@ -1023,6 +1028,8 @@ Every bullet must:
 - Follow STAR format: what was the situation, what did you do, what was the result
 - Include at least one number, percentage, dollar amount, or scale metric
 - Contain at least one keyword copied verbatim from the JD
+- NO bold formatting inside bullets — do not wrap any words in ** inside bullet points
+- Do not bold numbers, do not bold tool names, do not bold any phrase inside a bullet
 
 ━━━ SECTION 6: KEY ACHIEVEMENTS ━━━
 ## KEY ACHIEVEMENTS
