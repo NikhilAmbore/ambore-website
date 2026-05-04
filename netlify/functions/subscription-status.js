@@ -17,7 +17,7 @@
  */
 const { getPool, ok, err, preflight, verifyUser } = require('./_db');
 
-const FREE_LIMIT    = 1;
+const FREE_LIMIT    = 0;
 const PREMIUM_LIMIT = 100;
 
 exports.handler = async (event) => {

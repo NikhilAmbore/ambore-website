@@ -3,14 +3,14 @@
  * Checks whether the user is allowed to make an AI call, then atomically
  * increments their usage counter if allowed.
  *
- * Free tier  : 1 lifetime AI call per account.
+ * Free tier  : 0 AI calls — Premium required to use any AI tool.
  * Premium    : 100 AI calls per rolling 30-day period for $9/month.
  *
  * Called with POST { userId } — returns JSON { allowed, reason?, remaining? }
  */
 const { getPool, preflight } = require('./_db');
 
-const FREE_LIMIT    = 1;
+const FREE_LIMIT    = 0;   // No free AI calls — Premium subscription required
 const PREMIUM_LIMIT = 100;
 
 const CORS = {
