@@ -239,6 +239,23 @@ button,input,textarea,select{font-family:inherit}
 }
 .back-btn:hover{border-color:#94A3B8;color:#1e293b}
 
+/* Resume paywall preview lock */
+#resume-lock-wrap{position:relative}
+#resume-lock-overlay{display:none;position:absolute;left:0;right:0;bottom:0;height:68%;background:linear-gradient(to bottom,transparent 0%,rgba(248,250,252,.9) 26%,#f8fafc 50%);z-index:5;align-items:flex-end;justify-content:center;padding:0 20px 32px;border-radius:0 0 16px 16px}
+#resume-lock-overlay.rlock-on{display:flex}
+.rlock-card{background:#fff;border-radius:18px;padding:24px 28px;box-shadow:0 8px 48px rgba(0,0,0,.14),0 2px 12px rgba(0,0,0,.07);max-width:400px;width:100%;text-align:center}
+.rlock-icon{font-size:2.2rem;margin-bottom:10px}
+.rlock-title{font-size:1.07rem;font-weight:800;color:#0f172a;margin-bottom:5px}
+.rlock-sub{font-size:.84rem;color:#64748b;margin-bottom:16px;line-height:1.5}
+.rlock-perks{display:flex;flex-direction:column;gap:7px;margin-bottom:18px;text-align:left}
+.rlock-perk{display:flex;align-items:center;gap:9px;font-size:.82rem;color:#334155}
+.rlock-perk-ck{width:18px;height:18px;background:#eff6ff;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.rlock-perk-ck svg{color:#2563eb}
+.rlock-btn{width:100%;padding:13px 20px;background:linear-gradient(135deg,#1d4ed8,#2563eb);color:#fff;border:none;border-radius:11px;font-size:.94rem;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 14px rgba(37,99,235,.3);transition:all .15s;margin-bottom:9px;display:block}
+.rlock-btn:hover{opacity:.92;transform:translateY(-1px);box-shadow:0 6px 20px rgba(37,99,235,.42)}
+.rlock-note{font-size:.73rem;color:#94a3b8}
+.rlock-note a{color:#2563eb;text-decoration:underline;cursor:pointer}
+
 /* Resume preview card */
 .resume-preview{
   flex:1;background:var(--card);border:1px solid var(--border);border-radius:16px;
@@ -748,7 +765,23 @@ body{padding-left:72px}
       <div class="gen-step" id="gstep-3"><div class="step-dot">✓</div>Writing resume</div>
     </div>
 
-    <div class="resume-preview tpl-classic" id="resume-output"></div>
+    <div id="resume-lock-wrap">
+      <div class="resume-preview tpl-classic" id="resume-output"></div>
+      <div id="resume-lock-overlay">
+        <div class="rlock-card">
+          <div class="rlock-icon">🔒</div>
+          <div class="rlock-title">Your AI-Tailored Resume Is Ready</div>
+          <div class="rlock-sub">Upgrade to Premium to copy, download and print your fully optimised resume.</div>
+          <div class="rlock-perks">
+            <div class="rlock-perk"><span class="rlock-perk-ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Sections rewritten to match this specific role</div>
+            <div class="rlock-perk"><span class="rlock-perk-ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Missing ATS keywords injected automatically</div>
+            <div class="rlock-perk"><span class="rlock-perk-ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Bullet points reframed with STAR format</div>
+          </div>
+          <button class="rlock-btn" id="rlock-upgrade-btn" onclick="window.AmborePaywall&&window.AmborePaywall._checkout()">Upgrade to Premium — $9/mo →</button>
+          <div class="rlock-note">Cancel anytime · <a onclick="if(window.AmborePaywall)window.AmborePaywall.show()">Already Premium? Restore access</a></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1426,6 +1459,9 @@ async function generateResume() {
 
   isGenerating = true;
   generatedMarkdown = '';
+  // Clear any previous paywall lock
+  const _lockEl = document.getElementById('resume-lock-overlay');
+  if (_lockEl) _lockEl.classList.remove('rlock-on');
   const btn = document.getElementById('gen-btn');
   const btnText = document.getElementById('gen-btn-text');
   btn.disabled = true;
@@ -1572,6 +1608,30 @@ function saveToDashboard() {
   }
   window.location.href = 'dashboard.html?tab=resumes';
 }
+
+/* ═══════════════════════════════════════════
+   RESUME PREVIEW LOCK (shown on 402 paywall)
+═══════════════════════════════════════════ */
+function showResumePreviewLock() {
+  const resume = resumeMode === 'paste'
+    ? (document.getElementById('resume-text') ? document.getElementById('resume-text').value.trim() : '')
+    : resumeText;
+  showResultView();
+  hideGenSteps();
+  setGenStatus('', '');
+  const output = document.getElementById('resume-output');
+  if (resume) {
+    output.innerHTML = renderMarkdown(resume);
+  }
+  document.getElementById('resume-lock-overlay').classList.add('rlock-on');
+}
+
+// Register paywall hook — intercept 402 with preview lock instead of popup modal.
+// Returns true so paywall.js skips its own modal on this page.
+window.__onApiPaywall = function() {
+  showResumePreviewLock();
+  return true;
+};
 
 /* ═══════════════════════════════════════════
    MARKDOWN RENDERER
@@ -1760,7 +1820,13 @@ function hideGenSteps() {
 /* ═══════════════════════════════════════════
    EXPORT ACTIONS
 ═══════════════════════════════════════════ */
+function _isResumeLocked() {
+  const el = document.getElementById('resume-lock-overlay');
+  return el && el.classList.contains('rlock-on');
+}
+
 function copyResume() {
+  if (_isResumeLocked()) { if (window.AmborePaywall) window.AmborePaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to copy.'); return; }
   const plain = document.getElementById('resume-output').innerText;
   navigator.clipboard.writeText(plain).then(() => {
@@ -1769,6 +1835,7 @@ function copyResume() {
 }
 
 function printResume() {
+  if (_isResumeLocked()) { if (window.AmborePaywall) window.AmborePaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to print.'); return; }
   const html = renderMarkdown(generatedMarkdown);
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
@@ -1804,6 +1871,7 @@ function triggerBlobDownload(blob, filename, toastMsg) {
 }
 
 function downloadTxt() {
+  if (_isResumeLocked()) { if (window.AmborePaywall) window.AmborePaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   // Strip markdown to produce clean plain text — best for ATS parsers
   let txt = generatedMarkdown
@@ -1880,6 +1948,7 @@ function mdToOoxml(md) {
 }
 
 async function downloadDocx() {
+  if (_isResumeLocked()) { if (window.AmborePaywall) window.AmborePaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   if (typeof JSZip === 'undefined') { showToast('Export library not loaded yet — please try again in a moment.'); return; }
 

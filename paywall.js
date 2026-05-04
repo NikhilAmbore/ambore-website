@@ -291,13 +291,18 @@
 
     return _fetch.apply(global, args).then(function (res) {
       if (res.status === 402 && url.indexOf('/api/claude') !== -1) {
-        // Show modal immediately and swallow the response so the page's own
-        // error handler never fires (no "API error 402" message shown).
+        // Show modal and swallow the response so the page's own error handler
+        // never fires (no "API error 402" message shown).
+        // Pages can register window.__onApiPaywall(reason) to handle 402 themselves
+        // (e.g. resume page shows a preview lock). If it returns true, skip the modal.
         res.clone().json().then(function (data) {
           var reason = (data && data.reason) ? data.reason : 'free_limit_reached';
-          _showForReason(data && data.code === 'UPGRADE_REQUIRED' ? reason : 'free_limit_reached');
+          var resolvedReason = (data && data.code === 'UPGRADE_REQUIRED') ? reason : 'free_limit_reached';
+          var handled = typeof global.__onApiPaywall === 'function' && global.__onApiPaywall(resolvedReason, data);
+          if (!handled) _showForReason(resolvedReason);
         }).catch(function () {
-          _showForReason('free_limit_reached');
+          var handled = typeof global.__onApiPaywall === 'function' && global.__onApiPaywall('free_limit_reached', null);
+          if (!handled) _showForReason('free_limit_reached');
         });
         return new Promise(function () {}); // never resolves — page error handler skipped
       }
