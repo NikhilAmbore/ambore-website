@@ -89,6 +89,27 @@
     '.apw-pill-sub{color:#64748b;font-size:.74rem}',
     '.apw-pill-tag{background:#2563eb;color:#fff;padding:2px 9px;border-radius:10px;',
     'font-size:.7rem;font-weight:700;margin-left:2px;white-space:nowrap}',
+
+    /* ── Mobile responsive ── */
+    '@media(max-width:480px){',
+    '#apw-overlay{padding:12px;align-items:flex-end}',
+    '#apw-box{border-radius:20px 20px 14px 14px;max-height:92dvh;overflow-y:auto}',
+    '.apw-head{padding:22px 20px 18px}',
+    '.apw-emoji{font-size:1.9rem;margin-bottom:7px}',
+    '.apw-head h2{font-size:1.06rem}',
+    '.apw-body{padding:18px 20px 22px}',
+    '.apw-feats{gap:9px;margin-bottom:14px}',
+    '.apw-feat-txt{font-size:.82rem}',
+    '.apw-price-row{padding:11px 14px;margin-bottom:14px}',
+    '.apw-price-val{font-size:1.7rem}',
+    '.apw-btn-up{padding:14px;font-size:.92rem}',
+    '.apw-btn-later{padding:11px;font-size:.83rem}',
+    '}',
+    /* pill — hide sub-text on very narrow screens */
+    '@media(max-width:380px){',
+    '#apw-pill{bottom:14px;right:14px;padding:7px 11px;gap:7px}',
+    '.apw-pill-sub{display:none}',
+    '}',
   ].join('');
 
   function injectStyles() {

@@ -433,6 +433,13 @@ body{padding-left:72px}
 .sub-upgrade-btn:hover{opacity:.88}
 .sub-manage-link{font-size:.8rem;color:#64748b;font-weight:500;text-decoration:none}
 .sub-manage-link:hover{color:#2563eb;text-decoration:underline}
+@media(max-width:560px){
+  .sub-banner{padding:14px 16px;flex-direction:column;align-items:flex-start;gap:10px}
+  .sub-banner-right{width:100%}
+  .sub-upgrade-btn{width:100%;text-align:center;padding:10px}
+  .sub-bar-wrap{width:100%}
+  .sub-banner-info{font-size:.82rem}
+}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -2388,9 +2395,7 @@ document.addEventListener('keydown', e => {
       badge.textContent='Free';
       var freeUsed = s.freeUsed || 0;
       var freeRem  = s.freeRemaining != null ? s.freeRemaining : Math.max(0, 1 - freeUsed);
-      main.textContent = freeRem > 0
-        ? freeRem + ' free AI request remaining — try any tool!'
-        : 'Free AI request used — upgrade to continue using AI tools';
+      main.textContent = 'AI tools require Premium — upgrade to unlock all features';
       sub.textContent = 'Premium: 100 AI requests/month for $9 · Already paid? ';
       var restoreLink = document.createElement('button');
       restoreLink.textContent = 'Restore access';
