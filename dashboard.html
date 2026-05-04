@@ -2391,7 +2391,12 @@ document.addEventListener('keydown', e => {
       main.textContent = freeRem > 0
         ? freeRem + ' free AI request remaining — try any tool!'
         : 'Free AI request used — upgrade to continue using AI tools';
-      sub.textContent = 'Premium: 100 AI requests/month for $9';
+      sub.textContent = 'Premium: 100 AI requests/month for $9 · Already paid? ';
+      var restoreLink = document.createElement('button');
+      restoreLink.textContent = 'Restore access';
+      restoreLink.style.cssText = 'background:none;border:none;color:#2563eb;font-size:inherit;cursor:pointer;text-decoration:underline;padding:0';
+      restoreLink.onclick = restoreSubscription;
+      sub.appendChild(restoreLink);
       right.innerHTML='<a href="/pricing" class="sub-upgrade-btn" onclick="if(typeof startPremiumFromDash===\'function\')startPremiumFromDash(event)">Upgrade to Premium →</a>';
     }
     banner.classList.remove('hidden');
@@ -2400,6 +2405,29 @@ document.addEventListener('keydown', e => {
   function showToastMsg(msg){
     var t=document.getElementById('toast');
     if(t){t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},5000);}
+  }
+
+  function restoreSubscription(){
+    var sub = document.getElementById('sub-info-sub');
+    if(sub) sub.textContent = 'Checking your subscription with Dodo Payments…';
+    fetch('/.netlify/functions/verify-payment',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({userId:user.id})
+    })
+    .then(function(r){return r.json();})
+    .then(function(d){
+      if(d.plan==='premium'){
+        showToastMsg('✅ Premium restored! Refreshing your account…');
+        setTimeout(function(){location.reload();},1200);
+      } else {
+        if(sub) sub.textContent='No active subscription found. If you just paid, wait 1–2 min and try again.';
+        showToastMsg('No active subscription found for your account.');
+      }
+    })
+    .catch(function(){
+      if(sub) sub.textContent='Could not connect — please try again.';
+    });
   }
 
   // When returning from checkout, verify payment directly with Dodo API
