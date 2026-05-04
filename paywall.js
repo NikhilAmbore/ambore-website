@@ -133,6 +133,9 @@
     '</div>',
     '<button class="apw-btn-up" id="apw-upgrade-btn">Upgrade to Premium &rarr;</button>',
     '<button class="apw-btn-later" id="apw-later-btn">Maybe later</button>',
+    '<p style="text-align:center;margin:10px 0 0;font-size:.75rem;color:#94a3b8">',
+    'Already paid? <button id="apw-restore-btn" style="background:none;border:none;color:#2563eb;font-size:.75rem;cursor:pointer;text-decoration:underline;padding:0">Restore access</button>',
+    '</p>',
     '</div>',
     '</div>',
     '</div>',
@@ -147,6 +150,7 @@
     document.getElementById('apw-close-btn').addEventListener('click', hide);
     document.getElementById('apw-later-btn').addEventListener('click', hide);
     document.getElementById('apw-upgrade-btn').addEventListener('click', doCheckout);
+    document.getElementById('apw-restore-btn').addEventListener('click', doRestore);
     document.getElementById('apw-overlay').addEventListener('click', function (e) {
       if (e.target === this) hide();
     });
@@ -250,6 +254,40 @@
     } catch (e) {
       if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Premium →'; }
       alert('Payment error: ' + e.message + '\n\nVisit ambore.org/pricing to upgrade.');
+    }
+  }
+
+  // ── Restore access (for users who already paid) ───────────────────────
+  async function doRestore() {
+    var btn = document.getElementById('apw-restore-btn');
+    if (btn) { btn.disabled = true; btn.textContent = 'Checking…'; }
+
+    try {
+      var user = null;
+      try { user = JSON.parse(localStorage.getItem('ambore_user') || 'null'); } catch (e) {}
+      if (!user || !user.id) {
+        window.location.href = '/?auth=login&redirect=' + encodeURIComponent(window.location.pathname);
+        return;
+      }
+
+      var res = await _fetch('/.netlify/functions/verify-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.id }),
+      });
+      var data = await res.json();
+
+      if (data.plan === 'premium') {
+        hide();
+        // Reload the page so the user can proceed without the paywall
+        window.location.reload();
+      } else {
+        if (btn) { btn.disabled = false; btn.textContent = 'Restore access'; }
+        alert('No active Premium subscription found for ' + (user.email || 'your account') + '.\n\nIf you just paid, please wait 1–2 minutes and try again, or contact support at amborenikhil46@gmail.com.');
+      }
+    } catch (e) {
+      if (btn) { btn.disabled = false; btn.textContent = 'Restore access'; }
+      alert('Could not verify subscription: ' + e.message);
     }
   }
 

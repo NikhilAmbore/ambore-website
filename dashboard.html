@@ -2347,67 +2347,107 @@ document.addEventListener('keydown', e => {
   try{user=JSON.parse(localStorage.getItem('ambore_user')||'null');}catch(e){}
   if(!user||!user.id) return;
 
-  fetch('/.netlify/functions/subscription-status?userId='+encodeURIComponent(user.id))
-    .then(function(r){return r.json();})
-    .then(function(s){
-      var banner  = document.getElementById('sub-banner');
-      var badge   = document.getElementById('sub-badge');
-      var main    = document.getElementById('sub-info-main');
-      var sub     = document.getElementById('sub-info-sub');
-      var barWrap = document.getElementById('sub-bar-wrap');
-      var barFill = document.getElementById('sub-bar-fill');
-      var right   = document.getElementById('sub-banner-right');
-      if(!banner) return;
+  var _upgraded = new URLSearchParams(location.search).get('upgraded')==='1';
+  if(_upgraded) history.replaceState({},'','/dashboard');
 
-      if(s.plan==='premium'){
-        banner.className='sub-banner sub-banner-premium';
-        badge.className='sub-plan-badge sub-plan-badge-prem';
-        badge.textContent='Premium';
+  function renderBanner(s){
+    var banner  = document.getElementById('sub-banner');
+    var badge   = document.getElementById('sub-badge');
+    var main    = document.getElementById('sub-info-main');
+    var sub     = document.getElementById('sub-info-sub');
+    var barWrap = document.getElementById('sub-bar-wrap');
+    var barFill = document.getElementById('sub-bar-fill');
+    var right   = document.getElementById('sub-banner-right');
+    if(!banner) return;
 
-        var used  = s.monthlyUsed  || 0;
-        var limit = s.monthlyLimit || 100;
-        var pct   = Math.min(100, Math.round(used / limit * 100));
-        main.textContent = used + ' / ' + limit + ' AI requests used this month';
+    if(s.plan==='premium'){
+      banner.className='sub-banner sub-banner-premium';
+      badge.className='sub-plan-badge sub-plan-badge-prem';
+      badge.textContent='Premium';
 
-        if(s.resetsAt){
-          var d=new Date(s.resetsAt);
-          sub.textContent='Resets ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
-        }
-        if(s.expiresAt){
-          var exp=new Date(s.expiresAt);
-          sub.textContent=(sub.textContent?sub.textContent+' · ':'')+'Renews '+exp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-        }
-        barWrap.classList.remove('hidden');
-        barFill.style.width = pct + '%';
-        if(pct > 85) barFill.className = 'sub-bar-fill sub-bar-fill-warn';
+      var used  = s.monthlyUsed  || 0;
+      var limit = s.monthlyLimit || 100;
+      var pct   = Math.min(100, Math.round(used / limit * 100));
+      main.textContent = used + ' / ' + limit + ' AI requests used this month';
 
-        right.innerHTML='<a href="/pricing" class="sub-manage-link">Manage plan →</a>';
-      } else {
-        banner.className='sub-banner sub-banner-free';
-        badge.className='sub-plan-badge sub-plan-badge-free';
-        badge.textContent='Free';
-
-        var freeUsed = s.freeUsed || 0;
-        var freeRem  = s.freeRemaining != null ? s.freeRemaining : Math.max(0, 1 - freeUsed);
-        main.textContent = freeRem > 0
-          ? freeRem + ' free AI request remaining — try any tool!'
-          : 'Free AI request used — upgrade to continue using AI tools';
-        sub.textContent = 'Premium: 100 AI requests/month for $9';
-        right.innerHTML='<a href="/pricing" class="sub-upgrade-btn" onclick="if(typeof startPremiumFromDash===\'function\')startPremiumFromDash(event)">Upgrade to Premium →</a>';
+      if(s.resetsAt){
+        var d=new Date(s.resetsAt);
+        sub.textContent='Resets ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
       }
-
-      banner.classList.remove('hidden');
-
-      // Handle ?upgraded=1 from Dodo success redirect
-      if(new URLSearchParams(location.search).get('upgraded')==='1'){
-        setTimeout(function(){
-          var t=document.getElementById('toast');
-          if(t){t.textContent='🎉 Welcome to Premium! Your subscription is now active.';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},4000);}
-        }, 500);
-        history.replaceState({},'','/dashboard');
+      if(s.expiresAt){
+        var exp=new Date(s.expiresAt);
+        sub.textContent=(sub.textContent?sub.textContent+' · ':'')+'Renews '+exp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
       }
-    })
-    .catch(function(){});
+      barWrap.classList.remove('hidden');
+      barFill.style.width = pct + '%';
+      if(pct > 85) barFill.className = 'sub-bar-fill sub-bar-fill-warn';
+      right.innerHTML='<a href="/pricing" class="sub-manage-link">Manage plan →</a>';
+    } else {
+      banner.className='sub-banner sub-banner-free';
+      badge.className='sub-plan-badge sub-plan-badge-free';
+      badge.textContent='Free';
+      var freeUsed = s.freeUsed || 0;
+      var freeRem  = s.freeRemaining != null ? s.freeRemaining : Math.max(0, 1 - freeUsed);
+      main.textContent = freeRem > 0
+        ? freeRem + ' free AI request remaining — try any tool!'
+        : 'Free AI request used — upgrade to continue using AI tools';
+      sub.textContent = 'Premium: 100 AI requests/month for $9';
+      right.innerHTML='<a href="/pricing" class="sub-upgrade-btn" onclick="if(typeof startPremiumFromDash===\'function\')startPremiumFromDash(event)">Upgrade to Premium →</a>';
+    }
+    banner.classList.remove('hidden');
+  }
+
+  function showToastMsg(msg){
+    var t=document.getElementById('toast');
+    if(t){t.textContent=msg;t.classList.add('show');setTimeout(function(){t.classList.remove('show');},5000);}
+  }
+
+  // When returning from checkout, verify payment directly with Dodo API
+  // and poll until premium is confirmed (handles webhook delay / failure).
+  function activateAfterCheckout(){
+    var banner  = document.getElementById('sub-banner');
+    var main    = document.getElementById('sub-info-main');
+    var right   = document.getElementById('sub-banner-right');
+    if(banner){ banner.className='sub-banner sub-banner-premium'; banner.classList.remove('hidden'); }
+    if(main)  main.textContent = '⏳ Activating your Premium subscription…';
+    if(right) right.innerHTML  = '';
+
+    var attempts = 0;
+    var MAX = 8;
+    function poll(){
+      fetch('/.netlify/functions/verify-payment',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({userId:user.id})
+      })
+      .then(function(r){return r.json();})
+      .then(function(d){
+        if(d.plan==='premium'){
+          showToastMsg('🎉 Welcome to Premium! You now have 100 AI requests/month.');
+          // Reload full status from DB to update all banner fields
+          fetch('/.netlify/functions/subscription-status?userId='+encodeURIComponent(user.id))
+            .then(function(r){return r.json();}).then(renderBanner).catch(function(){});
+        } else if(attempts < MAX){
+          attempts++;
+          setTimeout(poll, 2500);
+        } else {
+          if(main) main.textContent = 'Payment processing — may take a moment. Refresh in a minute.';
+          if(right) right.innerHTML='<button onclick="location.reload()" style="background:#2563eb;color:#fff;border:none;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600">Refresh →</button>';
+        }
+      })
+      .catch(function(){ if(attempts<MAX){attempts++;setTimeout(poll,2500);} });
+    }
+    poll();
+  }
+
+  if(_upgraded){
+    activateAfterCheckout();
+  } else {
+    fetch('/.netlify/functions/subscription-status?userId='+encodeURIComponent(user.id))
+      .then(function(r){return r.json();})
+      .then(renderBanner)
+      .catch(function(){});
+  }
 })();
 
 function startPremiumFromDash(e){
