@@ -2393,8 +2393,6 @@ document.addEventListener('keydown', e => {
       banner.className='sub-banner sub-banner-free';
       badge.className='sub-plan-badge sub-plan-badge-free';
       badge.textContent='Free';
-      var freeUsed = s.freeUsed || 0;
-      var freeRem  = s.freeRemaining != null ? s.freeRemaining : Math.max(0, 1 - freeUsed);
       main.textContent = 'AI tools require Premium — upgrade to unlock all features';
       sub.textContent = 'Premium: 100 AI requests/month for $9 · Already paid? ';
       var restoreLink = document.createElement('button');

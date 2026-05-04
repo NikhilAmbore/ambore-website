@@ -13,9 +13,9 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <link rel="canonical" href="https://ambore.org/pricing"/>
-<meta name="description" content="Ambore Pricing — 1 free AI use, then upgrade to Premium for $9/month and unlock 100 AI requests monthly."/>
+<meta name="description" content="Ambore Premium — $9/month for 100 AI requests. Resume builder, cover letter generator, interview prep, and every AI tool unlocked."/>
 <meta property="og:title" content="Ambore Pricing"/>
-<meta property="og:description" content="Start free, upgrade when you need more AI power. $9/month for 100 AI requests."/>
+<meta property="og:description" content="AI tools require Premium. $9/month for 100 AI requests — resume builder, interview prep, cover letters, and more."/>
 <meta property="og:url" content="https://ambore.org/pricing"/>
 <meta property="og:type" content="website"/>
 <title>Ambore — Pricing</title>
@@ -160,8 +160,8 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
     <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
     Simple, transparent pricing
   </div>
-  <h1>Start free.<br/><span>Upgrade when you're ready.</span></h1>
-  <p>Every account gets 1 free AI use to try the platform. Unlock more with Premium.</p>
+  <h1>Simple pricing.<br/><span>Unlock every AI tool.</span></h1>
+  <p>AI tools require Premium. The job board, application tracker, and community are always free.</p>
 </section>
 
 <!-- ── Status bar (logged-in users) ── -->
@@ -185,14 +185,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <span class="card-price-val">$0</span>
       <span class="card-price-period">/ forever</span>
     </div>
-    <p class="card-desc">Try Ambore's AI once — no credit card needed.</p>
-    <button class="card-cta cta-free" id="btn-free" onclick="window.location.href='/'">Get Started Free</button>
+    <p class="card-desc">Job board, tracker &amp; community — no credit card needed.</p>
+    <button class="card-cta cta-free" id="btn-free" onclick="window.location.href='/'">Create Free Account</button>
     <hr class="divider"/>
     <ul class="features">
-      <li>
-        <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="currentColor"><path d="M10 3L5 8.5 2 5.5"/><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M10 3L5 8.5 2 5.5"/></svg></span>
-        <span class="feat-label"><strong>1 AI request</strong> (lifetime)</span>
-      </li>
       <li>
         <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8.5 2 5.5"/></svg></span>
         <span class="feat-label">Full job board access</span>
@@ -200,6 +196,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <li>
         <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8.5 2 5.5"/></svg></span>
         <span class="feat-label">Application tracker</span>
+      </li>
+      <li>
+        <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8.5 2 5.5"/></svg></span>
+        <span class="feat-label">Community access</span>
       </li>
       <li>
         <span class="feat-icon feat-no"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l8 8M10 2l-8 8"/></svg></span>
@@ -306,10 +306,10 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">
-      What happens after my free request runs out?
+      Do I need Premium to use AI tools?
       <span class="faq-arrow">▾</span>
     </button>
-    <div class="faq-a">You can continue using all non-AI features (job board, application tracker, etc.) for free. To use AI features again, upgrade to Premium for $9/month.</div>
+    <div class="faq-a">Yes — all AI-powered tools (resume builder, cover letter generator, interview prep, ATS scorer, LinkedIn optimizer, and more) require an active Premium subscription. Non-AI features like the job board, application tracker, and community are always free.</div>
   </div>
 </section>
 
@@ -317,7 +317,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 <div id="upgrade-modal">
   <div class="modal-box">
     <div class="modal-icon">⚡</div>
-    <h2>You've used your free AI request</h2>
+    <h2>Premium required for AI tools</h2>
     <p>Upgrade to <strong>Premium</strong> for $9/month and get <strong>100 AI requests every month</strong> — resume builder, interview prep, cover letters, and more.</p>
     <div class="modal-actions">
       <button class="modal-btn-primary" onclick="startCheckout()">Upgrade — $9/month</button>
@@ -461,9 +461,8 @@ async function loadStatus(){
     }else{
       badge.className='badge-plan badge-free';
       badge.textContent='Free';
-      var used=s.freeUsed||0;
-      usageTxt.textContent=used+' / 1 free AI request used';
-      fill.style.width=(used*100)+'%';
+      usageTxt.textContent='AI tools require Premium';
+      fill.style.width='0%';
       right.innerHTML='<a href="/pricing">Upgrade to Premium →</a>';
     }
   }catch(e){
