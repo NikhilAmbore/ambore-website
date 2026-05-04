@@ -641,6 +641,7 @@ button,input,textarea,select{font-family:inherit}
 </div>
 
 <script src="/ambore-api.js" defer></script>
+<script src="/protect.js" defer></script>
 <script>
 // ═══════════════════════════════════════════════════════════════════════════════
 // STATE
@@ -728,6 +729,7 @@ async function callClaude(system, userMsg, maxTokens) {
       max_tokens: maxTokens
     })
   });
+  if(resp.status === 402) { if(window.AmborePaywall) window.AmborePaywall.show(); throw new Error('PAYWALL'); }
   if(!resp.ok) throw new Error('AI request failed: ' + resp.status);
   var data = await resp.json();
   return data.content[0].text;
@@ -780,6 +782,7 @@ async function startInterview() {
     _state.numQ = _state.questions.length;
     startSession();
   } catch(e) {
+    if(e.message === 'PAYWALL') return;
     showScreen('setup');
     alert('Could not generate questions. Please check your connection and try again.\n\nError: ' + e.message);
   }
@@ -1023,6 +1026,7 @@ async function submitAnswer() {
     speakFeedback(result);
 
   } catch(e) {
+    if(e.message === 'PAYWALL') return;
     document.getElementById('eval-loading').classList.add('hidden');
     document.getElementById('mic-area').classList.remove('hidden');
     document.getElementById('submit-row').classList.remove('hidden');
