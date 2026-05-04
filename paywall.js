@@ -269,11 +269,25 @@
     } catch (e) {}
   }
 
-  // ── Fetch interceptor — catches 402 from /api/claude ─────────────────
+  // ── Fetch interceptor ─────────────────────────────────────────────────
+  // 1. Auto-injects X-User-ID on every /api/claude call so the edge function
+  //    can identify the user for subscription enforcement.
+  // 2. Catches 402 UPGRADE_REQUIRED and shows the paywall modal.
   global.fetch = function () {
     var args = Array.prototype.slice.call(arguments);
     var url  = typeof args[0] === 'string' ? args[0]
              : (args[0] && args[0].url ? args[0].url : '');
+
+    if (url.indexOf('/api/claude') !== -1) {
+      var uid = global.AmboreSecurity ? global.AmboreSecurity.getUserId() : '';
+      if (uid) {
+        var opts = args[1] ? Object.assign({}, args[1]) : {};
+        var hdrs = new Headers(opts.headers || {});
+        if (!hdrs.has('X-User-ID')) hdrs.set('X-User-ID', uid);
+        opts.headers = hdrs;
+        args[1] = opts;
+      }
+    }
 
     return _fetch.apply(global, args).then(function (res) {
       if (res.status === 402 && url.indexOf('/api/claude') !== -1) {
