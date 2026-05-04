@@ -164,6 +164,36 @@ export default async function handler(req, context) {
         'Retry-After': String(retryAfter),
       });
     }
+
+    // ── Subscription / usage check ────────────────────────────────────────
+    // Calls the subscription-check Netlify function which reads the DB and
+    // atomically increments the usage counter when the call is allowed.
+    try {
+      const siteUrl  = Deno.env.get('URL') || 'https://ambore.org';
+      const subResp  = await fetch(`${siteUrl}/.netlify/functions/subscription-check`, {
+        method  : 'POST',
+        headers : { 'Content-Type': 'application/json' },
+        body    : JSON.stringify({ userId }),
+      });
+      if (subResp.ok) {
+        const subData = await subResp.json();
+        if (!subData.allowed) {
+          return new Response(
+            JSON.stringify({
+              error      : subData.reason === 'monthly_limit_reached'
+                ? 'Monthly AI limit reached. Your requests reset at the end of your billing period.'
+                : 'You\'ve used your 1 free AI request. Upgrade to Premium for $9/month to continue.',
+              code       : 'UPGRADE_REQUIRED',
+              reason     : subData.reason,
+              upgradeUrl : '/pricing',
+            }),
+            { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+          );
+        }
+      }
+    } catch (_subErr) {
+      // Fail open — a temporary DB outage should not block the user
+    }
   }
 
   // ── Parse request body ───────────────────────────────────────────────────────

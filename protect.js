@@ -163,3 +163,12 @@ window.AmboreSecurity = (function () {
     proxyHeaders   : proxyHeaders,
   };
 }());
+
+// Auto-load paywall on every page that includes protect.js
+(function(){
+  if (window.__amborePWLoaded) return;
+  window.__amborePWLoaded = true;
+  var s = document.createElement('script');
+  s.src = '/paywall.js';
+  (document.head || document.documentElement).appendChild(s);
+}());

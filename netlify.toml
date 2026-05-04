@@ -5,6 +5,10 @@
 [functions]
   directory = "netlify/functions"
 
+# Dodo Payments webhook — raw body must be preserved for signature verification
+[functions."dodo-webhook"]
+  included_files = []
+
 # ── Edge Functions ────────────────────────────────────────────────────────────
 # claude-proxy — serverless AI proxy that keeps the Anthropic key server-side.
 # Mounted at /api/claude; all HTML pages POST here instead of calling

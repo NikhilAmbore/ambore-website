@@ -1438,50 +1438,77 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
 <!-- PRICING -->
 <section id="pricing" style="background:#fff">
   <div class="container">
-    <div class="tc rev" style="max-width:520px;margin:0 auto 48px">
+    <div class="tc rev" style="max-width:540px;margin:0 auto 48px">
       <div class="sec-lbl">Simple Pricing</div>
-      <h2 class="sec-h">Powerful tools, permanently free</h2>
-      <p class="sec-sub">Core career tools are free forever. Pro for power users — no surprise charges.</p>
+      <h2 class="sec-h">Start free. Upgrade when you need more.</h2>
+      <p class="sec-sub">1 free AI request to try every tool — then Premium for $9/month unlocks 100 AI requests every 30 days.</p>
     </div>
     <div class="pricing-grid rev">
+
+      <!-- FREE -->
       <div class="price-card">
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--text-s);margin-bottom:10px">Free — Forever</div>
         <div style="font-size:3rem;font-weight:900;color:var(--text);line-height:1;margin-bottom:4px">$0</div>
-        <div style="font-size:.83rem;color:var(--text-s);margin-bottom:24px">No credit card · No trial limits</div>
-        <button class="btn-hero-p" onclick="ctaAction()" id="pricing-cta-btn" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px;justify-content:center">Start Free →</button>
+        <div style="font-size:.83rem;color:var(--text-s);margin-bottom:24px">No credit card · Try every tool once</div>
+        <button class="btn-hero-p" onclick="ctaAction()" id="pricing-cta-btn" style="width:100%;min-height:46px;font-size:.9rem;margin-bottom:24px;justify-content:center">Get Started Free →</button>
         <div style="display:flex;flex-direction:column;gap:9px">
-          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);margin-bottom:4px">What's included</div>
-          <div class="price-feat"><span class="price-ck">✓</span> AI Resume Tailor (unlimited)</div>
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-s);margin-bottom:4px">Included</div>
+          <div class="price-feat"><span class="price-ck">✓</span> <strong>1 free AI request</strong> (try any tool)</div>
           <div class="price-feat"><span class="price-ck">✓</span> 50,000+ live job listings</div>
-          <div class="price-feat"><span class="price-ck">✓</span> AI Mock Interview Practice</div>
-          <div class="price-feat"><span class="price-ck">✓</span> ATS Score Checker</div>
-          <div class="price-feat"><span class="price-ck">✓</span> Cover Letter Generator</div>
-          <div class="price-feat"><span class="price-ck">✓</span> LinkedIn Optimizer</div>
-          <div class="price-feat"><span class="price-ck">✓</span> Resume Builder</div>
-          <div class="price-feat"><span class="price-ck">✓</span> Career Score Dashboard</div>
-          <div class="price-feat"><span class="price-ck">✓</span> All 14 AI tools</div>
+          <div class="price-feat"><span class="price-ck">✓</span> Application tracker &amp; career score</div>
+          <div class="price-feat"><span class="price-ck">✓</span> Community &amp; coaching access</div>
+          <div class="price-feat" style="color:var(--text-s)"><span style="flex-shrink:0">✗</span> &nbsp;Unlimited AI tools (Premium only)</div>
         </div>
       </div>
+
+      <!-- PREMIUM -->
       <div class="price-card featured rev r1" style="position:relative">
-        <div style="position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#4F46E5,#7C3AED);color:#fff;font-size:.65rem;font-weight:800;padding:4px 16px;border-radius:20px;white-space:nowrap;letter-spacing:.08em;text-transform:uppercase">Coming Soon</div>
-        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#a5b4fc;margin-bottom:10px">Ambore Pro</div>
-        <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$9<span style="font-size:1rem;font-weight:500;color:rgba(255,255,255,.4)">/mo</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.35);margin-bottom:24px">Early access · Cancel anytime</div>
-        <button onclick="openAuth('signup');track('pro_waitlist_clicked','index',{})" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:rgba(79,70,229,.3);color:#a5b4fc;border:1px solid rgba(79,70,229,.5);border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:24px" onmouseover="this.style.background='rgba(79,70,229,.45)'" onmouseout="this.style.background='rgba(79,70,229,.3)'">Join Waitlist →</button>
+        <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#2563eb,#1d4ed8);color:#fff;font-size:.65rem;font-weight:800;padding:5px 18px;border-radius:20px;white-space:nowrap;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 4px 14px rgba(37,99,235,.4)">Most Popular</div>
+        <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#93c5fd;margin-bottom:10px">Ambore Premium</div>
+        <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$9<span style="font-size:1rem;font-weight:500;color:rgba(255,255,255,.45)">/mo</span></div>
+        <div style="font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:24px">Billed monthly · Cancel anytime</div>
+        <button id="pricing-premium-btn" onclick="startPremiumCheckout()" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:24px;box-shadow:0 4px 16px rgba(37,99,235,.4)" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Upgrade to Premium →</button>
         <div style="display:flex;flex-direction:column;gap:9px">
-          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.3);margin-bottom:4px">Everything in Free, plus</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Priority AI processing (instant)</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Unlimited resume versions saved</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> 1-click apply (auto-tailor + send)</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Job match alerts (real-time)</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> LinkedIn outreach AI writer</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Salary negotiation coach</div>
-          <div class="price-feat dark"><span class="price-ck dark">⚡</span> Priority support</div>
+          <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:4px">Everything in Free, plus</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> <strong style="color:#fff">100 AI requests / month</strong></div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> AI resume builder &amp; optimizer</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> Interview co-pilot (mock + live)</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> Cover letter &amp; email generator</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> LinkedIn &amp; portfolio optimizer</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> ATS score checker &amp; coding AI</div>
+          <div class="price-feat dark"><span class="price-ck dark">✓</span> Resets every 30 days automatically</div>
         </div>
       </div>
+
     </div>
+    <p style="text-align:center;font-size:.8rem;color:var(--text-s);margin-top:20px">
+      Payments securely processed by <strong>Dodo Payments</strong> &nbsp;·&nbsp; PCI-DSS compliant &nbsp;·&nbsp; <a href="/pricing" style="color:var(--blue);font-weight:600">See full pricing details →</a>
+    </p>
   </div>
 </section>
+<script>
+function startPremiumCheckout(){
+  var user=null;
+  try{user=JSON.parse(localStorage.getItem('ambore_user')||'null');}catch(e){}
+  if(!user){openAuth('signup');return;}
+  var btn=document.getElementById('pricing-premium-btn');
+  if(btn){btn.disabled=true;btn.textContent='Redirecting…';}
+  fetch('/.netlify/functions/create-checkout',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({userId:user.id}),
+  }).then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};});})
+  .then(function(r){
+    if(r.status===409){alert('You already have an active Premium subscription!');if(btn){btn.disabled=false;btn.textContent='Upgrade to Premium →';}return;}
+    if(!r.ok) throw new Error(r.data.error||'Failed');
+    if(r.data.url){window.location.href=r.data.url;}
+  })
+  .catch(function(e){
+    alert('Payment error: '+e.message);
+    if(btn){btn.disabled=false;btn.textContent='Upgrade to Premium →';}
+  });
+}
+</script>
 
 <!-- FAQ -->
 <section id="faq" class="faq-sec">
@@ -1489,7 +1516,7 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
     <div class="tc rev"><div class="sec-lbl">FAQ</div><h2 class="sec-h">Common questions</h2></div>
     <div class="faq-list rev r1">
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is Ambore?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore is a free, all-in-one AI career platform with 14 tools: a Job Portal (50,000+ hourly-updated jobs from 97 companies), AI Resume Tailor, Cover Letter Generator, Email Generator, LinkedIn Optimizer, Portfolio Builder, and an AI Mock Interview tool for practicing answers.</div></div></div>
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it really free?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Yes, completely free. No credit card, no trial limits, no paywalls on core features. A Pro plan is coming for power users who want priority AI and advanced features, but the free plan gives you everything you need to land a job.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it really free?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Every new account gets <strong>1 free AI request</strong> — enough to try any tool with no credit card needed. After that, upgrade to <strong>Premium for $9/month</strong> to unlock 100 AI requests per month. Non-AI features (job board, application tracker, community) are always free and unlimited.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How does the AI Resume Tailor work?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Upload your existing resume and paste the job description. The AI analyzes both, rewrites your resume to highlight relevant skills, match keywords, and optimize formatting for ATS systems. You get a tailored resume in under 60 seconds.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Where do the job listings come from?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Jobs are automatically sourced from LinkedIn, Indeed, USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour across 97 top companies.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is my data private and secure?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Your account is stored in a secure cloud database (PostgreSQL). Your browser's localStorage is only used to cache your session for speed — clearing it just logs you out, your account and saved data remain intact. We use Google Analytics with IP anonymization and never sell your data.</div></div></div>

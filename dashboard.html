@@ -413,6 +413,26 @@ body{padding-left:72px}
   .mob-dock{display:flex}
   body{padding-left:0;padding-bottom:60px}
 }
+
+/* ── Subscription banner ─────────────────────────────────────────────────────*/
+.sub-banner{border-radius:14px;padding:16px 20px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;border:1.5px solid}
+.sub-banner-free{background:#fffbeb;border-color:#fde68a}
+.sub-banner-premium{background:#eff6ff;border-color:#bfdbfe}
+.sub-banner-left{display:flex;align-items:center;gap:12px;min-width:0}
+.sub-plan-badge{padding:3px 12px;border-radius:20px;font-size:.72rem;font-weight:800;letter-spacing:.4px;flex-shrink:0}
+.sub-plan-badge-free{background:#fef3c7;color:#92400e;border:1px solid #fde68a}
+.sub-plan-badge-prem{background:#dbeafe;color:#1d4ed8;border:1px solid #93c5fd}
+.sub-banner-info{font-size:.87rem;color:#1e293b;line-height:1.4}
+.sub-banner-info strong{color:#0f172a}
+.sub-banner-info small{display:block;font-size:.76rem;color:#64748b;margin-top:2px}
+.sub-bar-wrap{width:120px;height:6px;background:#e2e8f0;border-radius:3px;overflow:hidden;flex-shrink:0}
+.sub-bar-fill{height:100%;background:linear-gradient(90deg,#2563eb,#3b82f6);border-radius:3px;transition:width .4s}
+.sub-bar-fill-warn{background:linear-gradient(90deg,#f97316,#fbbf24)}
+.sub-banner-right{display:flex;align-items:center;gap:10px;flex-shrink:0}
+.sub-upgrade-btn{padding:8px 18px;border-radius:9px;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;font-size:.82rem;font-weight:700;border:none;cursor:pointer;white-space:nowrap;transition:opacity .15s;text-decoration:none;display:inline-block}
+.sub-upgrade-btn:hover{opacity:.88}
+.sub-manage-link{font-size:.8rem;color:#64748b;font-weight:500;text-decoration:none}
+.sub-manage-link:hover{color:#2563eb;text-decoration:underline}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -498,6 +518,21 @@ body{padding-left:72px}
   <div class="dash-header">
     <h1 id="greeting">Job Search Dashboard</h1>
     <p>Track resumes, applications, and your progress — all in one place.</p>
+  </div>
+
+  <!-- Subscription Status Banner -->
+  <div id="sub-banner" class="sub-banner sub-banner-free hidden">
+    <div class="sub-banner-left">
+      <span id="sub-badge" class="sub-plan-badge sub-plan-badge-free">Free</span>
+      <div class="sub-banner-info">
+        <strong id="sub-info-main">Loading plan…</strong>
+        <small id="sub-info-sub"></small>
+      </div>
+      <div class="sub-bar-wrap hidden" id="sub-bar-wrap">
+        <div class="sub-bar-fill" id="sub-bar-fill" style="width:0%"></div>
+      </div>
+    </div>
+    <div class="sub-banner-right" id="sub-banner-right"></div>
   </div>
 
   <!-- Career Score Banner -->
@@ -2304,6 +2339,94 @@ document.addEventListener('keydown', e => {
     }).catch(function(){});
   }
 })();
+
+// ── Subscription banner ───────────────────────────────────────────────────────
+(function(){
+  var user=null;
+  try{user=JSON.parse(localStorage.getItem('ambore_user')||'null');}catch(e){}
+  if(!user||!user.id) return;
+
+  fetch('/.netlify/functions/subscription-status?userId='+encodeURIComponent(user.id))
+    .then(function(r){return r.json();})
+    .then(function(s){
+      var banner  = document.getElementById('sub-banner');
+      var badge   = document.getElementById('sub-badge');
+      var main    = document.getElementById('sub-info-main');
+      var sub     = document.getElementById('sub-info-sub');
+      var barWrap = document.getElementById('sub-bar-wrap');
+      var barFill = document.getElementById('sub-bar-fill');
+      var right   = document.getElementById('sub-banner-right');
+      if(!banner) return;
+
+      if(s.plan==='premium'){
+        banner.className='sub-banner sub-banner-premium';
+        badge.className='sub-plan-badge sub-plan-badge-prem';
+        badge.textContent='Premium';
+
+        var used  = s.monthlyUsed  || 0;
+        var limit = s.monthlyLimit || 100;
+        var pct   = Math.min(100, Math.round(used / limit * 100));
+        main.textContent = used + ' / ' + limit + ' AI requests used this month';
+
+        if(s.resetsAt){
+          var d=new Date(s.resetsAt);
+          sub.textContent='Resets ' + d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+        }
+        if(s.expiresAt){
+          var exp=new Date(s.expiresAt);
+          sub.textContent=(sub.textContent?sub.textContent+' · ':'')+'Renews '+exp.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+        }
+        barWrap.classList.remove('hidden');
+        barFill.style.width = pct + '%';
+        if(pct > 85) barFill.className = 'sub-bar-fill sub-bar-fill-warn';
+
+        right.innerHTML='<a href="/pricing" class="sub-manage-link">Manage plan →</a>';
+      } else {
+        banner.className='sub-banner sub-banner-free';
+        badge.className='sub-plan-badge sub-plan-badge-free';
+        badge.textContent='Free';
+
+        var freeUsed = s.freeUsed || 0;
+        var freeRem  = s.freeRemaining != null ? s.freeRemaining : Math.max(0, 1 - freeUsed);
+        main.textContent = freeRem > 0
+          ? freeRem + ' free AI request remaining — try any tool!'
+          : 'Free AI request used — upgrade to continue using AI tools';
+        sub.textContent = 'Premium: 100 AI requests/month for $9';
+        right.innerHTML='<a href="/pricing" class="sub-upgrade-btn" onclick="if(typeof startPremiumFromDash===\'function\')startPremiumFromDash(event)">Upgrade to Premium →</a>';
+      }
+
+      banner.classList.remove('hidden');
+
+      // Handle ?upgraded=1 from Dodo success redirect
+      if(new URLSearchParams(location.search).get('upgraded')==='1'){
+        setTimeout(function(){
+          var t=document.getElementById('toast');
+          if(t){t.textContent='🎉 Welcome to Premium! Your subscription is now active.';t.classList.add('show');setTimeout(function(){t.classList.remove('show');},4000);}
+        }, 500);
+        history.replaceState({},'','/dashboard');
+      }
+    })
+    .catch(function(){});
+})();
+
+function startPremiumFromDash(e){
+  e.preventDefault();
+  var user=null;
+  try{user=JSON.parse(localStorage.getItem('ambore_user')||'null');}catch(err){}
+  if(!user){window.location.href='/?auth=login&redirect=/pricing';return;}
+  var btn=e.currentTarget;
+  btn.textContent='Redirecting…';
+  fetch('/.netlify/functions/create-checkout',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({userId:user.id}),
+  }).then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};});})
+  .then(function(r){
+    if(r.data.url){window.location.href=r.data.url;}
+    else{alert(r.data.error||'Could not start checkout.');btn.textContent='Upgrade to Premium →';}
+  })
+  .catch(function(err){alert('Error: '+err.message);btn.textContent='Upgrade to Premium →';});
+}
 
 // ── Sidebar active state ──────────────────────────────────────────────────────
 (function(){
