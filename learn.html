@@ -1219,7 +1219,7 @@ async function callClaude({ system, messages, onChunk, onDone, maxTokens = 2000 
       })
     });
 
-    if (!res.ok) throw new Error(`API error: ${res.status}`);
+    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} throw new Error(`API error: ${res.status}`); }
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();

@@ -1317,7 +1317,7 @@ async function streamAnswer(question) {
         }]
       })
     });
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
 
     setStatus('thinking','✦ Writing...');
     const reader = res.body.getReader(), decoder = new TextDecoder();
@@ -1720,7 +1720,7 @@ async function streamCodeAnswer(base64) {
         ]}]
       })
     });
-    if (!res.ok) { const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
     setStatus('thinking','🖥 Solving...');
     const reader=res.body.getReader(), decoder=new TextDecoder(); let buf='';
     while(true){

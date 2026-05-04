@@ -1151,6 +1151,7 @@ async function generateAchievements() {
     });
 
     if (!res.ok) {
+      if (res.status === 402) { if (window.AmborePaywall) window.AmborePaywall.show(); return; }
       const e = await res.json().catch(() => ({}));
       throw new Error(e.error?.message || 'API error ' + res.status);
     }
@@ -1254,7 +1255,7 @@ async function scoreResume() {
         messages: [{ role: 'user', content: 'Resume to score:\n\n' + resume }]
       })
     });
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
 
     const reader = res.body.getReader();
     const dec = new TextDecoder();
@@ -1470,6 +1471,7 @@ async function generateResume() {
         });
 
         if (!res.ok) {
+          if (res.status === 402) { if (window.AmborePaywall) window.AmborePaywall.show(); return; }
           const e = await res.json().catch(() => ({}));
           throw new Error(e.error?.message || 'API error ' + res.status);
         }

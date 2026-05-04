@@ -959,7 +959,7 @@ async function callAI(prompt, onChunk) {
       system: 'You are a professional resume writer. Be concise, use strong action verbs, and focus on measurable impact. Output only the requested text — no explanation, no preamble.'
     })
   });
-  if (!res.ok) throw new Error('AI error ' + res.status);
+  if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} throw new Error('AI error ' + res.status); }
   const reader = res.body.getReader();
   const dec = new TextDecoder();
   let buf = '', full = '';

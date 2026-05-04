@@ -581,7 +581,7 @@ Rules:
 },
           body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:2500,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||'Optimize my LinkedIn profile for a software engineering role.'}]})
         });
-        if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
+        if(!res.ok){if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
         document.getElementById('output-section').classList.remove('hidden');
         const reader=res.body.getReader();const dec=new TextDecoder();

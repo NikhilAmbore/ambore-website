@@ -615,7 +615,7 @@ Generate the complete project plan now.`;
       })
     });
 
-    if (!res.ok) throw new Error('API error ' + res.status);
+    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} throw new Error('API error ' + res.status); }
 
     // Show output card while streaming
     stopProgress();

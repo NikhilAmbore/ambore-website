@@ -2042,6 +2042,7 @@ Be specific, use the actual company names and resume names from the data. Be enc
     });
 
     if (!res.ok) {
+      if (res.status === 402) { if (window.AmborePaywall) window.AmborePaywall.show(); return; }
       const e = await res.json().catch(() => ({}));
       throw new Error(e.error?.message || 'API error ' + res.status);
     }

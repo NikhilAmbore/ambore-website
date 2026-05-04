@@ -519,7 +519,7 @@ Output ONLY the letter text with no extra commentary or labels.`;
 },
           body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:1200,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
         });
-        if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
+        if(!res.ok){if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
         document.getElementById('spinner-row').classList.add('hidden');
         document.getElementById('output-section').classList.remove('hidden');
