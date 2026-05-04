@@ -291,14 +291,15 @@
 
     return _fetch.apply(global, args).then(function (res) {
       if (res.status === 402 && url.indexOf('/api/claude') !== -1) {
+        // Show modal immediately and swallow the response so the page's own
+        // error handler never fires (no "API error 402" message shown).
         res.clone().json().then(function (data) {
           var reason = (data && data.reason) ? data.reason : 'free_limit_reached';
-          if (data && data.code === 'UPGRADE_REQUIRED') {
-            setTimeout(function () { _showForReason(reason); }, 80);
-          }
+          _showForReason(data && data.code === 'UPGRADE_REQUIRED' ? reason : 'free_limit_reached');
         }).catch(function () {
-          setTimeout(function () { _showForReason('free_limit_reached'); }, 80);
+          _showForReason('free_limit_reached');
         });
+        return new Promise(function () {}); // never resolves — page error handler skipped
       }
       return res;
     });
