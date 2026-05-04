@@ -33,10 +33,10 @@ exports.handler = async (event) => {
 
   let webhookEvent;
   try {
-    webhookEvent = await dodo.webhooks.unwrap(
-      event.body,
-      event.headers
-    );
+    webhookEvent = dodo.webhooks.unwrap(event.body, {
+      headers : event.headers,
+      key     : process.env.DODO_PAYMENTS_WEBHOOK_KEY,
+    });
   } catch (e) {
     console.error('[dodo-webhook] Signature verification failed:', e.message);
     return { statusCode: 400, body: 'Invalid webhook signature' };
@@ -77,9 +77,7 @@ exports.handler = async (event) => {
 
     const subId     = sub.subscription_id || sub.id;
     const custId    = sub.customer?.customer_id || sub.customer_id;
-    const periodEnd = sub.current_period_end
-      ? new Date(sub.current_period_end * 1000).toISOString()
-      : null;
+    const periodEnd = sub.next_billing_date || null;
 
     await db.query(
       `UPDATE "User"
@@ -97,9 +95,7 @@ exports.handler = async (event) => {
     const userId = await findUserId(sub);
     if (!userId) return;
 
-    const periodEnd = sub.current_period_end
-      ? new Date(sub.current_period_end * 1000).toISOString()
-      : null;
+    const periodEnd = sub.next_billing_date || null;
 
     await db.query(
       `UPDATE "User"
