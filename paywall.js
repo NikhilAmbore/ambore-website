@@ -317,14 +317,25 @@
              : (args[0] && args[0].url ? args[0].url : '');
 
     if (url.indexOf('/api/claude') !== -1) {
-      var uid = global.AmboreSecurity ? global.AmboreSecurity.getUserId() : '';
-      if (uid) {
-        var opts = args[1] ? Object.assign({}, args[1]) : {};
-        var hdrs = new Headers(opts.headers || {});
-        if (!hdrs.has('X-User-ID')) hdrs.set('X-User-ID', uid);
-        opts.headers = hdrs;
-        args[1] = opts;
+      // Prefer AmboreSecurity, fall back to localStorage directly so mobile
+      // browsers that haven't fully loaded AmboreSecurity still get the header.
+      var uid = '';
+      try {
+        uid = (global.AmboreSecurity && global.AmboreSecurity.getUserId())
+              ? global.AmboreSecurity.getUserId()
+              : '';
+      } catch (e) {}
+      if (!uid) {
+        try {
+          var _u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+          uid = (_u && _u.id) ? String(_u.id) : '';
+        } catch (e) {}
       }
+      var opts = args[1] ? Object.assign({}, args[1]) : {};
+      var hdrs = new Headers(opts.headers || {});
+      if (!hdrs.has('X-User-ID')) hdrs.set('X-User-ID', uid || 'anonymous');
+      opts.headers = hdrs;
+      args[1] = opts;
     }
 
     return _fetch.apply(global, args).then(function (res) {

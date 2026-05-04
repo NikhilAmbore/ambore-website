@@ -153,47 +153,61 @@ export default async function handler(req, context) {
     });
   }
 
-  // ── User rate limiting (optional X-User-ID header set by authenticated pages) ─
+  // ── User identification — required for subscription enforcement ─────────────
   const userId = (req.headers.get('x-user-id') ?? '').slice(0, 64).replace(/[^\w@.-]/g, '');
-  if (userId) {
-    const userCheck = checkRate(userStore, userId, CFG.USER_LIMIT, CFG.USER_WINDOW);
-    if (!userCheck.allowed) {
-      const retryAfter = Math.ceil((userCheck.resetAt - Date.now()) / 1000);
-      return errResp(429, 'Hourly AI request limit reached. Try again later.', 'USER_RATE_LIMITED', {
-        ...corsHeaders,
-        'Retry-After': String(retryAfter),
-      });
-    }
 
-    // ── Subscription / usage check ────────────────────────────────────────
-    // Calls the subscription-check Netlify function which reads the DB and
-    // atomically increments the usage counter when the call is allowed.
-    try {
-      const siteUrl  = Deno.env.get('URL') || 'https://ambore.org';
-      const subResp  = await fetch(`${siteUrl}/.netlify/functions/subscription-check`, {
-        method  : 'POST',
-        headers : { 'Content-Type': 'application/json' },
-        body    : JSON.stringify({ userId }),
-      });
-      if (subResp.ok) {
-        const subData = await subResp.json();
-        if (!subData.allowed) {
-          return new Response(
-            JSON.stringify({
-              error      : subData.reason === 'monthly_limit_reached'
-                ? 'Monthly AI limit reached. Your requests reset at the end of your billing period.'
-                : 'You\'ve used your 1 free AI request. Upgrade to Premium for $9/month to continue.',
-              code       : 'UPGRADE_REQUIRED',
-              reason     : subData.reason,
-              upgradeUrl : '/pricing',
-            }),
-            { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-          );
-        }
+  // Block anonymous / missing user ID — all tool pages inject this header via
+  // paywall.js. If it's absent or 'anonymous', the request is not authenticated.
+  if (!userId || userId === 'anonymous') {
+    return new Response(
+      JSON.stringify({
+        error      : 'Authentication required. Please log in to use AI features.',
+        code       : 'UPGRADE_REQUIRED',
+        reason     : 'free_limit_reached',
+        upgradeUrl : '/?auth=login',
+      }),
+      { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  }
+
+  // ── User rate limiting ────────────────────────────────────────────────────────
+  const userCheck = checkRate(userStore, userId, CFG.USER_LIMIT, CFG.USER_WINDOW);
+  if (!userCheck.allowed) {
+    const retryAfter = Math.ceil((userCheck.resetAt - Date.now()) / 1000);
+    return errResp(429, 'Hourly AI request limit reached. Try again later.', 'USER_RATE_LIMITED', {
+      ...corsHeaders,
+      'Retry-After': String(retryAfter),
+    });
+  }
+
+  // ── Subscription / usage check ────────────────────────────────────────────────
+  // Calls the subscription-check Netlify function which reads the DB and
+  // atomically increments the usage counter when the call is allowed.
+  try {
+    const siteUrl  = Deno.env.get('URL') || 'https://ambore.org';
+    const subResp  = await fetch(`${siteUrl}/.netlify/functions/subscription-check`, {
+      method  : 'POST',
+      headers : { 'Content-Type': 'application/json' },
+      body    : JSON.stringify({ userId }),
+    });
+    if (subResp.ok) {
+      const subData = await subResp.json();
+      if (!subData.allowed) {
+        return new Response(
+          JSON.stringify({
+            error      : subData.reason === 'monthly_limit_reached'
+              ? 'Monthly AI limit reached. Your requests reset at the end of your billing period.'
+              : 'You\'ve used your 1 free AI request. Upgrade to Premium for $9/month to continue.',
+            code       : 'UPGRADE_REQUIRED',
+            reason     : subData.reason,
+            upgradeUrl : '/pricing',
+          }),
+          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        );
       }
-    } catch (_subErr) {
-      // Fail open — a temporary DB outage should not block the user
     }
+  } catch (_subErr) {
+    // Fail open — a temporary DB outage should not block the user
   }
 
   // ── Parse request body ───────────────────────────────────────────────────────
