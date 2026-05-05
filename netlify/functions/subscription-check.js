@@ -45,7 +45,7 @@ exports.handler = async (event) => {
 
   try {
     const r = await db.query(
-      `SELECT id, subscription_status, subscription_current_period_end,
+      `SELECT id, email, subscription_status, subscription_current_period_end,
               monthly_ai_calls, monthly_reset_at, ai_calls_total
        FROM "User"
        WHERE id::text = $1 OR email = $1
