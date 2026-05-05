@@ -128,13 +128,13 @@
     '<button class="apw-close" id="apw-close-btn" aria-label="Close">&times;</button>',
     '<span class="apw-emoji">&#9889;</span>',
     '<h2 id="apw-title">Premium required for AI tools</h2>',
-    '<p id="apw-desc">Upgrade to <strong>Premium</strong> for $9/month &mdash; 100 AI requests every month.</p>',
+    '<p id="apw-desc">Upgrade to <strong>Premium</strong> for $9/month &mdash; 300 AI requests every month.</p>',
     '</div>',
     '<div class="apw-body">',
     '<div class="apw-feats">',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
-    '<div class="apw-feat-txt"><strong>100 AI requests / month</strong> — resume builder, cover letters, interview prep &amp; more</div>',
+    '<div class="apw-feat-txt"><strong>300 AI requests / month</strong> — resume builder, cover letters, interview prep &amp; more</div>',
     '</div>',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
@@ -227,10 +227,10 @@
 
     if (reason === 'monthly_limit_reached') {
       if (title) title.textContent = 'Monthly AI limit reached';
-      if (desc)  desc.innerHTML = 'You\'ve used all <strong>100 AI requests</strong> this month. Your limit resets on your next billing date.';
+      if (desc)  desc.innerHTML = 'You\'ve used all <strong>300 AI requests</strong> this month. Your limit resets on your next billing date.';
     } else {
       if (title) title.textContent = 'Premium required for AI tools';
-      if (desc)  desc.innerHTML = 'AI features require a <strong>Premium</strong> subscription &mdash; $9/month for 100 AI requests.';
+      if (desc)  desc.innerHTML = 'AI features require a <strong>Premium</strong> subscription &mdash; $9/month for 300 AI requests.';
     }
     if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Premium →'; }
 

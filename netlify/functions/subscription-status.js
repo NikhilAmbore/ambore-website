@@ -18,7 +18,7 @@
 const { getPool, ok, err, preflight, verifyUser } = require('./_db');
 
 const FREE_LIMIT    = 0;
-const PREMIUM_LIMIT = 100;
+const PREMIUM_LIMIT = 300;
 
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();

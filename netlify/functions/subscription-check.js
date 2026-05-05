@@ -4,14 +4,14 @@
  * increments their usage counter if allowed.
  *
  * Free tier  : 0 AI calls — Premium required to use any AI tool.
- * Premium    : 100 AI calls per rolling 30-day period for $9/month.
+ * Premium    : 300 AI calls per rolling 30-day period for $9/month.
  *
  * Called with POST { userId } — returns JSON { allowed, reason?, remaining? }
  */
 const { getPool, preflight } = require('./_db');
 
 const FREE_LIMIT    = 0;   // No free AI calls — Premium subscription required
-const PREMIUM_LIMIT = 100;
+const PREMIUM_LIMIT = 300;
 
 const CORS = {
   'Content-Type': 'application/json',

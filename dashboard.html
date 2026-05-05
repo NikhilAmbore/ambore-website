@@ -2373,7 +2373,7 @@ document.addEventListener('keydown', e => {
       badge.textContent='Premium';
 
       var used  = s.monthlyUsed  || 0;
-      var limit = s.monthlyLimit || 100;
+      var limit = s.monthlyLimit || 300;
       var pct   = Math.min(100, Math.round(used / limit * 100));
       main.textContent = used + ' / ' + limit + ' AI requests used this month';
 
@@ -2394,7 +2394,7 @@ document.addEventListener('keydown', e => {
       badge.className='sub-plan-badge sub-plan-badge-free';
       badge.textContent='Free';
       main.textContent = 'AI tools require Premium — upgrade to unlock all features';
-      sub.textContent = 'Premium: 100 AI requests/month for $9 · Already paid? ';
+      sub.textContent = 'Premium: 300 AI requests/month for $9 · Already paid? ';
       var restoreLink = document.createElement('button');
       restoreLink.textContent = 'Restore access';
       restoreLink.style.cssText = 'background:none;border:none;color:#2563eb;font-size:inherit;cursor:pointer;text-decoration:underline;padding:0';
@@ -2454,7 +2454,7 @@ document.addEventListener('keydown', e => {
       .then(function(r){return r.json();})
       .then(function(d){
         if(d.plan==='premium'){
-          showToastMsg('🎉 Welcome to Premium! You now have 100 AI requests/month.');
+          showToastMsg('🎉 Welcome to Premium! You now have 300 AI requests/month.');
           // Reload full status from DB to update all banner fields
           fetch('/.netlify/functions/subscription-status?userId='+encodeURIComponent(user.id))
             .then(function(r){return r.json();}).then(renderBanner).catch(function(){});
