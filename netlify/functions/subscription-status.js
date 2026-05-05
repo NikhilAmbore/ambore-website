@@ -20,6 +20,11 @@ const { getPool, ok, err, preflight, verifyUser } = require('./_db');
 const FREE_LIMIT    = 0;
 const PREMIUM_LIMIT = 300;
 
+// Accounts with permanent free Premium access (owner / internal use)
+const FREE_ACCESS_EMAILS = new Set([
+  'amborenikhil46@gmail.com',
+]);
+
 exports.handler = async (event) => {
   if (event.httpMethod === 'OPTIONS') return preflight();
   if (event.httpMethod !== 'GET')    return err('Method not allowed', 405);
@@ -27,6 +32,20 @@ exports.handler = async (event) => {
   const userId = event.queryStringParameters?.userId;
   const user   = await verifyUser(userId);
   if (!user) return err('Not authenticated', 401);
+
+  // ── Permanent free access whitelist ────────────────────────────────────────
+  if (FREE_ACCESS_EMAILS.has(user.email)) {
+    return ok({
+      plan             : 'premium',
+      freeUsed         : 0,
+      freeRemaining    : null,
+      monthlyUsed      : 0,
+      monthlyLimit     : null,
+      monthlyRemaining : null,
+      resetsAt         : null,
+      expiresAt        : null,
+    });
+  }
 
   const db = getPool();
   try {

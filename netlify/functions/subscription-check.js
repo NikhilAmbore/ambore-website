@@ -13,6 +13,11 @@ const { getPool, preflight } = require('./_db');
 const FREE_LIMIT    = 0;   // No free AI calls — Premium subscription required
 const PREMIUM_LIMIT = 300;
 
+// Accounts with permanent free Premium access (owner / internal use)
+const FREE_ACCESS_EMAILS = new Set([
+  'amborenikhil46@gmail.com',
+]);
+
 const CORS = {
   'Content-Type': 'application/json',
   'Access-Control-Allow-Origin': 'https://ambore.org',
@@ -50,6 +55,11 @@ exports.handler = async (event) => {
 
     if (!r.rows.length) return respond({ error: 'User not found' }, 404);
     const user = r.rows[0];
+
+    // ── Permanent free access whitelist ──────────────────────────────────────
+    if (FREE_ACCESS_EMAILS.has(user.email)) {
+      return respond({ allowed: true, plan: 'premium', remaining: null });
+    }
 
     const now        = new Date();
     const status     = user.subscription_status || 'free';
