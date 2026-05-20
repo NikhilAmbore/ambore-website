@@ -3,17 +3,23 @@
  * Checks whether the user is allowed to make an AI call, then atomically
  * increments their usage counter if allowed.
  *
- * Free tier  : 0 AI calls — Premium required to use any AI tool.
- * Premium    : 300 AI calls per rolling 30-day period for $9/month.
+ * Free tier  : 0 AI calls — Premium required.
+ * Premium    : 1,000 AI calls per rolling 30-day period.
+ * Plans      : monthly ($29) | 3month ($75) | 6month ($139) | 1year ($249)
+ *
+ * Strict rules enforced:
+ *  - Suspended accounts are hard-blocked.
+ *  - Expired subscriptions are hard-blocked regardless of status field.
+ *  - Monthly call quota is per rolling 30-day window, not per calendar month.
  *
  * Called with POST { userId } — returns JSON { allowed, reason?, remaining? }
  */
 const { getPool, preflight } = require('./_db');
 
-const FREE_LIMIT    = 0;   // No free AI calls — Premium subscription required
-const PREMIUM_LIMIT = 300;
+const FREE_LIMIT    = 0;
+const PREMIUM_LIMIT = 1000; // AI calls per rolling 30-day window
 
-// Accounts with permanent free Premium access (owner / internal use)
+// Permanent free Premium access (owner / internal)
 const FREE_ACCESS_EMAILS = new Set([
   'amborenikhil46@gmail.com',
 ]);
@@ -45,8 +51,9 @@ exports.handler = async (event) => {
 
   try {
     const r = await db.query(
-      `SELECT id, email, subscription_status, subscription_current_period_end,
-              monthly_ai_calls, monthly_reset_at, ai_calls_total
+      `SELECT id, email, is_suspended, subscription_status, subscription_plan,
+              subscription_current_period_end, monthly_ai_calls, monthly_reset_at,
+              ai_calls_total
        FROM "User"
        WHERE id::text = $1 OR email = $1
        LIMIT 1`,
@@ -61,37 +68,49 @@ exports.handler = async (event) => {
       return respond({ allowed: true, plan: 'premium', remaining: null });
     }
 
-    const now        = new Date();
-    const status     = user.subscription_status || 'free';
-    const periodEnd  = user.subscription_current_period_end;
-    const isPremium  = status === 'premium' && (!periodEnd || new Date(periodEnd) > now);
+    // ── Hard block suspended accounts ────────────────────────────────────────
+    if (user.is_suspended) {
+      return respond({
+        allowed : false,
+        reason  : 'account_suspended',
+        message : 'Your account has been suspended. Contact support@ambore.org.',
+      });
+    }
 
-    if (isPremium) {
-      // ── Premium: rolling 30-day window ───────────────────────────────────────
+    const now       = new Date();
+    const status    = user.subscription_status || 'free';
+    const periodEnd = user.subscription_current_period_end;
+
+    // Premium = status is 'premium' OR 'cancelled' (still within paid period)
+    const activePremium =
+      (status === 'premium' || status === 'cancelled') &&
+      periodEnd &&
+      new Date(periodEnd) > now;
+
+    if (activePremium) {
+      // ── Rolling 30-day window ─────────────────────────────────────────────
       let monthlyCalls = user.monthly_ai_calls || 0;
       let resetAt      = user.monthly_reset_at ? new Date(user.monthly_reset_at) : null;
 
       if (!resetAt || now > resetAt) {
-        // Window expired — reset counter
         monthlyCalls = 0;
         resetAt      = new Date(now.getTime() + 30 * 24 * 60 * 60 * 1000);
         await db.query(
-          `UPDATE "User" SET monthly_ai_calls = 0, monthly_reset_at = $1
-           WHERE id = $2`,
+          `UPDATE "User" SET monthly_ai_calls = 0, monthly_reset_at = $1 WHERE id = $2`,
           [resetAt.toISOString(), user.id]
         );
       }
 
       if (monthlyCalls >= PREMIUM_LIMIT) {
         return respond({
-          allowed   : false,
-          reason    : 'monthly_limit_reached',
-          resetsAt  : resetAt.toISOString(),
-          remaining : 0,
+          allowed  : false,
+          reason   : 'monthly_limit_reached',
+          resetsAt : resetAt.toISOString(),
+          remaining: 0,
+          limit    : PREMIUM_LIMIT,
         });
       }
 
-      // Increment both counters atomically
       await db.query(
         `UPDATE "User"
          SET monthly_ai_calls = monthly_ai_calls + 1,
@@ -101,32 +120,18 @@ exports.handler = async (event) => {
       );
 
       return respond({
-        allowed   : true,
-        plan      : 'premium',
-        remaining : PREMIUM_LIMIT - monthlyCalls - 1,
+        allowed  : true,
+        plan     : user.subscription_plan || 'monthly',
+        remaining: PREMIUM_LIMIT - monthlyCalls - 1,
+        limit    : PREMIUM_LIMIT,
       });
     }
 
-    // ── Free tier ─────────────────────────────────────────────────────────────
-    const used = user.ai_calls_total || 0;
-
-    if (used >= FREE_LIMIT) {
-      return respond({
-        allowed : false,
-        reason  : 'free_limit_reached',
-        used,
-      });
-    }
-
-    await db.query(
-      `UPDATE "User" SET ai_calls_total = ai_calls_total + 1 WHERE id = $1`,
-      [user.id]
-    );
-
+    // ── Free tier — 0 calls allowed ───────────────────────────────────────────
     return respond({
-      allowed   : true,
-      plan      : 'free',
-      remaining : FREE_LIMIT - used - 1,
+      allowed: false,
+      reason : 'free_limit_reached',
+      message: 'Upgrade to Premium to use AI tools.',
     });
 
   } catch (e) {

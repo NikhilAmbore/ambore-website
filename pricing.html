@@ -75,16 +75,18 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .status-right a:hover{text-decoration:underline}
 
 /* ── Pricing cards ── */
-.cards{display:flex;justify-content:center;align-items:stretch;gap:24px;max-width:880px;margin:0 auto;padding:0 24px 80px;flex-wrap:wrap}
-.card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:380px;display:flex;flex-direction:column;transition:box-shadow .2s}
+.cards{display:flex;justify-content:center;align-items:stretch;gap:24px;max-width:960px;margin:0 auto;padding:0 24px 80px;flex-wrap:wrap}
+.card{background:#fff;border:1.5px solid var(--border);border-radius:20px;padding:36px 32px;width:100%;max-width:420px;display:flex;flex-direction:column;transition:box-shadow .2s}
 .card:hover{box-shadow:0 8px 32px rgba(0,0,0,.08)}
 .card-premium{border-color:var(--accent);position:relative;box-shadow:0 4px 24px rgba(37,99,235,.12)}
 .card-popular{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--grad);color:#fff;font-size:0.72rem;font-weight:700;padding:4px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.5px}
 .card-tier{font-size:0.8rem;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin-bottom:12px}
-.card-price{display:flex;align-items:flex-end;gap:4px;margin-bottom:8px}
+.card-price{display:flex;align-items:flex-end;gap:4px;margin-bottom:4px}
 .card-price-val{font-size:2.8rem;font-weight:900;color:#0f172a;line-height:1}
 .card-price-period{font-size:0.9rem;color:var(--muted);margin-bottom:6px}
-.card-desc{font-size:0.88rem;color:var(--muted);line-height:1.5;margin-bottom:24px;min-height:40px}
+.card-price-note{font-size:0.78rem;color:var(--muted);margin-bottom:16px;min-height:18px}
+.card-save{display:inline-block;background:#dcfce7;color:#166534;font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:20px;margin-left:6px}
+.card-desc{font-size:0.88rem;color:var(--muted);line-height:1.5;margin-bottom:20px;min-height:36px}
 .card-cta{width:100%;padding:13px;border-radius:10px;font-size:0.95rem;font-weight:700;transition:all .15s;margin-bottom:28px}
 .cta-free{background:#f1f5f9;color:#475569}
 .cta-free:hover{background:#e2e8f0}
@@ -92,6 +94,11 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .cta-premium:hover{opacity:.9;box-shadow:0 6px 20px rgba(37,99,235,.4)}
 .cta-premium:disabled{opacity:.55;cursor:not-allowed;box-shadow:none}
 .cta-current{background:#dcfce7;color:#166534;cursor:default}
+/* ── Plan selector tabs ── */
+.plan-tabs{display:flex;gap:3px;background:#f1f5f9;border-radius:10px;padding:4px;margin-bottom:20px}
+.plan-tab{flex:1;padding:8px 4px;border-radius:7px;border:none;background:transparent;font-size:0.75rem;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;font-family:inherit;text-align:center;line-height:1.3}
+.plan-tab.active{background:#fff;color:var(--accent);box-shadow:0 1px 4px rgba(0,0,0,.1)}
+.plan-tab-save{font-size:0.65rem;display:block;color:#22c55e;font-weight:700;margin-top:2px}
 .divider{border:none;border-top:1px solid var(--border);margin-bottom:24px}
 .features{list-style:none;display:flex;flex-direction:column;gap:12px}
 .features li{display:flex;align-items:flex-start;gap:10px;font-size:0.88rem;color:#334155;line-height:1.4}
@@ -135,7 +142,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 .modal-btn-sec{padding:11px 24px;border-radius:9px;font-size:0.9rem;font-weight:600;background:#f1f5f9;color:#475569;border:none;cursor:pointer;transition:background .15s}
 .modal-btn-sec:hover{background:#e2e8f0}
 
-@media(max-width:600px){.cards{padding:0 16px 64px}.card{max-width:100%}.hero{padding:48px 16px 32px}}
+@media(max-width:640px){.cards{padding:0 16px 64px}.card{max-width:100%}.hero{padding:48px 16px 32px}.plan-tab{font-size:0.7rem;padding:7px 2px}}
 </style>
 </head>
 <body>
@@ -185,6 +192,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       <span class="card-price-val">$0</span>
       <span class="card-price-period">/ forever</span>
     </div>
+    <p class="card-price-note">&nbsp;</p>
     <p class="card-desc">Job board, tracker &amp; community — no credit card needed.</p>
     <button class="card-cta cta-free" id="btn-free" onclick="window.location.href='/'">Create Free Account</button>
     <hr class="divider"/>
@@ -216,21 +224,32 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
     </ul>
   </div>
 
-  <!-- PREMIUM -->
+  <!-- PREMIUM — with billing period selector -->
   <div class="card card-premium">
     <div class="card-popular">MOST POPULAR</div>
     <div class="card-tier">Premium</div>
-    <div class="card-price">
-      <span class="card-price-val">$9</span>
-      <span class="card-price-period">/ month</span>
+
+    <!-- Plan tabs -->
+    <div class="plan-tabs" role="tablist">
+      <button class="plan-tab active" data-plan="monthly"   onclick="selectPlan('monthly',this)"  role="tab">Monthly<span class="plan-tab-save">&nbsp;</span></button>
+      <button class="plan-tab"        data-plan="3month"    onclick="selectPlan('3month',this)"   role="tab">3 Months<span class="plan-tab-save">Save 14%</span></button>
+      <button class="plan-tab"        data-plan="6month"    onclick="selectPlan('6month',this)"   role="tab">6 Months<span class="plan-tab-save">Save 21%</span></button>
+      <button class="plan-tab"        data-plan="1year"     onclick="selectPlan('1year',this)"    role="tab">1 Year<span class="plan-tab-save">Save 28%</span></button>
     </div>
-    <p class="card-desc">300 AI requests every 30 days — resume builder, interview prep, cover letters, and more.</p>
+
+    <div class="card-price">
+      <span class="card-price-val" id="plan-price">$29</span>
+      <span class="card-price-period" id="plan-period">/ month</span>
+    </div>
+    <p class="card-price-note" id="plan-note">&nbsp;</p>
+
+    <p class="card-desc">1,000 AI requests every 30 days — resume builder, interview prep, cover letters, and more.</p>
     <button class="card-cta cta-premium" id="btn-upgrade" onclick="startCheckout()">Upgrade to Premium</button>
     <hr class="divider"/>
     <ul class="features">
       <li>
         <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8.5 2 5.5"/></svg></span>
-        <span class="feat-label"><strong>300 AI requests / month</strong></span>
+        <span class="feat-label"><strong>1,000 AI requests / month</strong></span>
       </li>
       <li>
         <span class="feat-icon feat-yes"><svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 3L5 8.5 2 5.5"/></svg></span>
@@ -282,10 +301,18 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 
   <div class="faq-item">
     <button class="faq-q" onclick="toggleFaq(this)">
-      When do my 300 monthly requests reset?
+      When do my 1,000 monthly requests reset?
       <span class="faq-arrow">▾</span>
     </button>
-    <div class="faq-a">Your 300 AI requests reset on a rolling 30-day window from your upgrade date — not on the 1st of each month. So if you upgrade on the 15th, they reset on the 15th of the next month.</div>
+    <div class="faq-a">Your 1,000 AI requests reset on a rolling 30-day window from your upgrade date — not on the 1st of each month. So if you upgrade on the 15th, they reset on the 15th of the next month. This applies regardless of whether you're on a monthly, 3-month, 6-month, or annual plan.</div>
+  </div>
+
+  <div class="faq-item">
+    <button class="faq-q" onclick="toggleFaq(this)">
+      What is the difference between the billing plans?
+      <span class="faq-arrow">▾</span>
+    </button>
+    <div class="faq-a">All plans give you the same 1,000 AI requests per month and access to every AI tool. The only difference is the billing period and the total price you pay:<br/><br/>• <strong>Monthly</strong> — $29/month, billed monthly<br/>• <strong>3 Months</strong> — $75 total ($25/mo), save 14%<br/>• <strong>6 Months</strong> — $139 total ($23/mo), save 21%<br/>• <strong>1 Year</strong> — $249 total ($20.75/mo), save 28%</div>
   </div>
 
   <div class="faq-item">
@@ -318,9 +345,9 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
   <div class="modal-box">
     <div class="modal-icon">⚡</div>
     <h2>Premium required for AI tools</h2>
-    <p>Upgrade to <strong>Premium</strong> for $9/month and get <strong>300 AI requests every month</strong> — resume builder, interview prep, cover letters, and more.</p>
+    <p>Upgrade to <strong>Premium</strong> from <strong>$29/month</strong> and get <strong>1,000 AI requests every month</strong> — resume builder, interview prep, cover letters, and more.</p>
     <div class="modal-actions">
-      <button class="modal-btn-primary" onclick="startCheckout()">Upgrade — $9/month</button>
+      <button class="modal-btn-primary" onclick="closeModal();document.getElementById('btn-upgrade').scrollIntoView({behavior:'smooth'})">See Plans</button>
       <button class="modal-btn-sec" onclick="closeModal()">Maybe later</button>
     </div>
   </div>
@@ -335,6 +362,30 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 </footer>
 
 <script>
+// ── Plan config ────────────────────────────────────────────────────────────
+var PLANS = {
+  monthly : { price:'$29', period:'/ month',   note:'Billed monthly',                       btnLabel:'Upgrade — $29/month' },
+  '3month': { price:'$75', period:'/ 3 months', note:'$25/mo · Save 14% vs monthly',         btnLabel:'Upgrade — $75 for 3 months' },
+  '6month': { price:'$139',period:'/ 6 months', note:'$23/mo · Save 21% vs monthly',         btnLabel:'Upgrade — $139 for 6 months' },
+  '1year' : { price:'$249',period:'/ year',     note:'$20.75/mo · Save 28% vs monthly',      btnLabel:'Upgrade — $249/year' },
+};
+var selectedPlan = 'monthly';
+
+function selectPlan(plan, tabEl){
+  selectedPlan = plan;
+  // Update tabs
+  document.querySelectorAll('.plan-tab').forEach(function(t){ t.classList.remove('active'); });
+  tabEl.classList.add('active');
+  // Update price display
+  var cfg = PLANS[plan];
+  document.getElementById('plan-price').textContent  = cfg.price;
+  document.getElementById('plan-period').textContent = cfg.period;
+  document.getElementById('plan-note').textContent   = cfg.note;
+  // Update button label (unless already premium)
+  var btn = document.getElementById('btn-upgrade');
+  if(!btn.disabled) btn.textContent = cfg.btnLabel;
+}
+
 // ── Helpers ────────────────────────────────────────────────────────────────
 function getUser(){
   try{return JSON.parse(localStorage.getItem('ambore_user')||'null');}catch{return null;}
@@ -345,31 +396,29 @@ function toast(msg, isError){
   t.textContent=msg;
   t.className='toast'+(isError?' error':'');
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),3200);
+  setTimeout(function(){t.classList.remove('show');},3200);
 }
 
 function toggleFaq(btn){
-  var item=btn.closest('.faq-item');
-  item.classList.toggle('open');
+  btn.closest('.faq-item').classList.toggle('open');
 }
 
 function closeModal(){
   document.getElementById('upgrade-modal').classList.remove('open');
 }
 
-// ── Show upgrade modal from other pages ───────────────────────────────────
 window.AmborePaywall = {
   show: function(reason){
     var modal = document.getElementById('upgrade-modal');
     if(reason==='monthly_limit_reached'){
       modal.querySelector('h2').textContent = 'Monthly AI limit reached';
-      modal.querySelector('p').textContent  = 'You\'ve used all 300 AI requests for this month. Upgrade renews on your billing date.';
+      modal.querySelector('p').textContent  = 'You\'ve used all 1,000 AI requests for this month. They reset on your billing date.';
     }
     modal.classList.add('open');
   }
 };
 
-// ── Checkout flow ──────────────────────────────────────────────────────────
+// ── Checkout ───────────────────────────────────────────────────────────────
 async function startCheckout(){
   var user=getUser();
   if(!user){
@@ -386,15 +435,14 @@ async function startCheckout(){
     var res=await fetch('/.netlify/functions/create-checkout',{
       method:'POST',
       headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({userId:user.id}),
+      body:JSON.stringify({userId:user.id, plan:selectedPlan}),
     });
     var data=await res.json();
 
     if(!res.ok){
       if(res.status===409){
         toast('You already have an active Premium subscription!');
-        btn.disabled=false;
-        btn.textContent='Already Premium ✓';
+        btn.textContent='Current Plan ✓';
         btn.className='card-cta cta-current';
         return;
       }
@@ -409,20 +457,16 @@ async function startCheckout(){
   }
 }
 
-// ── Load subscription status for logged-in users ───────────────────────────
+// ── Load status for logged-in users ───────────────────────────────────────
 async function loadStatus(){
   var user=getUser();
-
-  // Fix nav button
   var navBtn=document.getElementById('nav-auth-btn');
-  if(user){
-    navBtn.textContent='Dashboard';
-    navBtn.href='/dashboard';
-  }
+  if(user){ navBtn.textContent='Dashboard'; navBtn.href='/dashboard'; }
 
-  // Handle ?upgraded=1 redirect from Dodo Payments success
-  if(new URLSearchParams(location.search).get('upgraded')==='1'){
-    toast('🎉 Welcome to Premium! Your subscription is active.');
+  var params=new URLSearchParams(location.search);
+  if(params.get('upgraded')==='1'){
+    var planLabel=PLANS[params.get('plan')]?params.get('plan'):'';
+    toast('Welcome to Premium' + (planLabel?' ('+planLabel+' plan)':'') + '! Your subscription is active.');
     history.replaceState({},'','/pricing');
   }
 
@@ -433,18 +477,18 @@ async function loadStatus(){
     if(!res.ok) return;
     var s=await res.json();
 
-    var bar     = document.getElementById('status-bar');
-    var badge   = document.getElementById('status-plan-badge');
-    var usageTxt= document.getElementById('status-usage-text');
-    var fill    = document.getElementById('status-bar-fill');
-    var right   = document.getElementById('status-right');
+    var bar     =document.getElementById('status-bar');
+    var badge   =document.getElementById('status-plan-badge');
+    var usageTxt=document.getElementById('status-usage-text');
+    var fill    =document.getElementById('status-bar-fill');
+    var right   =document.getElementById('status-right');
 
     bar.classList.remove('hidden');
 
     if(s.plan==='premium'){
       badge.className='badge-plan badge-premium';
       badge.textContent='Premium';
-      var pct=s.monthlyLimit>0 ? Math.round((s.monthlyUsed/s.monthlyLimit)*100) : 0;
+      var pct=s.monthlyLimit>0?Math.round((s.monthlyUsed/s.monthlyLimit)*100):0;
       usageTxt.textContent=s.monthlyUsed+' / '+s.monthlyLimit+' AI requests this month';
       fill.style.width=pct+'%';
       fill.style.background=pct>85?'#f97316':'';
@@ -452,12 +496,12 @@ async function loadStatus(){
         var exp=new Date(s.expiresAt).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
         right.innerHTML='<span style="font-size:.8rem;color:#64748b">Renews '+exp+'</span>';
       }
-
-      // Hide upgrade button, show "Current Plan"
       var btn=document.getElementById('btn-upgrade');
       btn.textContent='Current Plan ✓';
       btn.className='card-cta cta-current';
       btn.disabled=true;
+      // Disable plan tabs too
+      document.querySelectorAll('.plan-tab').forEach(function(t){t.disabled=true;t.style.opacity='.5';t.style.cursor='default';});
     }else{
       badge.className='badge-plan badge-free';
       badge.textContent='Free';
@@ -465,9 +509,7 @@ async function loadStatus(){
       fill.style.width='0%';
       right.innerHTML='<a href="/pricing">Upgrade to Premium →</a>';
     }
-  }catch(e){
-    // Non-critical — status bar stays hidden
-  }
+  }catch(e){ /* non-critical */ }
 }
 
 document.addEventListener('DOMContentLoaded',loadStatus);

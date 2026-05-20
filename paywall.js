@@ -128,13 +128,13 @@
     '<button class="apw-close" id="apw-close-btn" aria-label="Close">&times;</button>',
     '<span class="apw-emoji">&#9889;</span>',
     '<h2 id="apw-title">Premium required for AI tools</h2>',
-    '<p id="apw-desc">Upgrade to <strong>Premium</strong> for $9/month &mdash; 300 AI requests every month.</p>',
+    '<p id="apw-desc">Upgrade to <strong>Premium</strong> from $29/month &mdash; 1,000 AI requests every month.</p>',
     '</div>',
     '<div class="apw-body">',
     '<div class="apw-feats">',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
-    '<div class="apw-feat-txt"><strong>300 AI requests / month</strong> — resume builder, cover letters, interview prep &amp; more</div>',
+    '<div class="apw-feat-txt"><strong>1,000 AI requests / month</strong> — resume builder, cover letters, interview prep &amp; more</div>',
     '</div>',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
@@ -147,10 +147,10 @@
     '</div>',
     '<div class="apw-price-row">',
     '<div class="apw-price-left">',
-    '<span class="apw-price-val">$9</span>',
+    '<span class="apw-price-val">$29</span>',
     '<span class="apw-price-mo">&nbsp;/ month</span>',
     '</div>',
-    '<div class="apw-price-note">Billed monthly via<br/>Dodo Payments &bull; Cancel anytime</div>',
+    '<div class="apw-price-note">Save up to 28% with a longer plan &bull; <a href="/pricing" style="color:#2563eb">See all plans</a></div>',
     '</div>',
     '<button class="apw-btn-up" id="apw-upgrade-btn">Upgrade to Premium &rarr;</button>',
     '<button class="apw-btn-later" id="apw-later-btn">Maybe later</button>',
@@ -203,7 +203,7 @@
         '<span class="apw-dot apw-dot-free"></span>' +
         '<span class="apw-pill-name">Free Plan</span>' +
         '<span class="apw-pill-sub">Upgrade to unlock AI tools</span>' +
-        '<span class="apw-pill-tag">Upgrade $9/mo</span>';
+        '<span class="apw-pill-tag">Upgrade $29/mo</span>';
       pill.className = 'apw-pill-on';
     }
   }
@@ -227,10 +227,10 @@
 
     if (reason === 'monthly_limit_reached') {
       if (title) title.textContent = 'Monthly AI limit reached';
-      if (desc)  desc.innerHTML = 'You\'ve used all <strong>300 AI requests</strong> this month. Your limit resets on your next billing date.';
+      if (desc)  desc.innerHTML = 'You\'ve used all <strong>1,000 AI requests</strong> this month. Your limit resets on your next billing date.';
     } else {
       if (title) title.textContent = 'Premium required for AI tools';
-      if (desc)  desc.innerHTML = 'AI features require a <strong>Premium</strong> subscription &mdash; $9/month for 300 AI requests.';
+      if (desc)  desc.innerHTML = 'AI features require a <strong>Premium</strong> subscription &mdash; from $29/month for 1,000 AI requests.';
     }
     if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Premium →'; }
 
@@ -255,7 +255,7 @@
       var res = await _fetch('/.netlify/functions/create-checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userId: user.id }),
+        body: JSON.stringify({ userId: user.id, plan: 'monthly' }),
       });
 
       var data = await res.json();

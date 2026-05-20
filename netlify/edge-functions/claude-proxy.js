@@ -29,7 +29,7 @@ const userStore = new Map(); // key: user-ID str → { count, resetAt }
 const CFG = {
   IP_LIMIT    : 20,        // max requests per IP per minute
   IP_WINDOW   : 60_000,    // 1 minute in ms
-  USER_LIMIT  : 300,       // max requests per authenticated user per hour
+  USER_LIMIT  : 1000,      // max requests per authenticated user per hour
   USER_WINDOW : 3_600_000, // 1 hour in ms
 
   MAX_TOKENS  : 8000,      // hard ceiling on max_tokens

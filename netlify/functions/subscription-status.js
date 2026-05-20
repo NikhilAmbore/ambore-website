@@ -3,24 +3,12 @@
  * user's current plan and usage counters.
  *
  * GET /.netlify/functions/subscription-status?userId=<id>
- * Returns JSON:
- * {
- *   plan           : 'free' | 'premium',
- *   freeUsed       : number,
- *   freeRemaining  : number | null,
- *   monthlyUsed    : number | null,
- *   monthlyLimit   : number | null,
- *   monthlyRemaining: number | null,
- *   resetsAt       : ISO string | null,
- *   expiresAt      : ISO string | null,
- * }
  */
 const { getPool, ok, err, preflight, verifyUser } = require('./_db');
 
 const FREE_LIMIT    = 0;
-const PREMIUM_LIMIT = 300;
+const PREMIUM_LIMIT = 1000; // per rolling 30-day window
 
-// Accounts with permanent free Premium access (owner / internal use)
 const FREE_ACCESS_EMAILS = new Set([
   'amborenikhil46@gmail.com',
 ]);
@@ -33,10 +21,10 @@ exports.handler = async (event) => {
   const user   = await verifyUser(userId);
   if (!user) return err('Not authenticated', 401);
 
-  // ── Permanent free access whitelist ────────────────────────────────────────
   if (FREE_ACCESS_EMAILS.has(user.email)) {
     return ok({
       plan             : 'premium',
+      subscriptionPlan : 'owner',
       freeUsed         : 0,
       freeRemaining    : null,
       monthlyUsed      : 0,
@@ -50,8 +38,8 @@ exports.handler = async (event) => {
   const db = getPool();
   try {
     const r = await db.query(
-      `SELECT subscription_status, subscription_current_period_end,
-              monthly_ai_calls, monthly_reset_at, ai_calls_total
+      `SELECT subscription_status, subscription_plan, subscription_current_period_end,
+              monthly_ai_calls, monthly_reset_at, ai_calls_total, is_suspended
        FROM "User" WHERE id = $1`,
       [user.id]
     );
@@ -60,15 +48,21 @@ exports.handler = async (event) => {
     const now       = new Date();
     const status    = row.subscription_status || 'free';
     const periodEnd = row.subscription_current_period_end;
-    const isPremium = status === 'premium' && (!periodEnd || new Date(periodEnd) > now);
 
-    const used    = row.ai_calls_total    || 0;
-    const monthly = row.monthly_ai_calls  || 0;
-    const resetAt = row.monthly_reset_at  ? new Date(row.monthly_reset_at).toISOString() : null;
+    const isPremium =
+      (status === 'premium' || status === 'cancelled') &&
+      periodEnd &&
+      new Date(periodEnd) > now;
+
+    const used    = row.ai_calls_total   || 0;
+    const monthly = row.monthly_ai_calls || 0;
+    const resetAt = row.monthly_reset_at ? new Date(row.monthly_reset_at).toISOString() : null;
 
     if (isPremium) {
       return ok({
         plan             : 'premium',
+        subscriptionPlan : row.subscription_plan || 'monthly',
+        isSuspended      : row.is_suspended || false,
         freeUsed         : used,
         freeRemaining    : null,
         monthlyUsed      : monthly,
@@ -81,6 +75,8 @@ exports.handler = async (event) => {
 
     return ok({
       plan             : 'free',
+      subscriptionPlan : 'free',
+      isSuspended      : row.is_suspended || false,
       freeUsed         : used,
       freeRemaining    : Math.max(0, FREE_LIMIT - used),
       monthlyUsed      : null,
