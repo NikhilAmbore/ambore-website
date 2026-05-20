@@ -7,6 +7,8 @@
  *  - Suspended accounts hard-blocked
  *  - Subscription expiry hard-checked server-side
  *  - Rolling 30-day window reset is also atomic
+ *  - Rapid-consumption abuse detection: auto-suspend at 900+ calls in < 3 days
+ *    (≈ 9× normal daily rate — indicates scripted/bot abuse ahead of a chargeback)
  */
 const { getPool, preflight } = require('./_db');
 
@@ -135,6 +137,47 @@ exports.handler = async (event) => {
       remaining: 0,
       limit    : PREMIUM_LIMIT,
     });
+  }
+
+  // ── Rapid-consumption abuse detection ─────────────────────────────────────
+  // If a user burns 900+ AI calls within the first 3 days of a billing period
+  // that is a strong signal of scripted abuse before a planned chargeback.
+  // Normal usage ≈ 33 calls/day; 300+/day is 9× above that.
+  // Action: suspend immediately and block this call.
+  //
+  // Note: monthly_reset_at is the FUTURE reset timestamp (period_start + 30 days).
+  // So period_start = monthly_reset_at − 30 days.
+  try {
+    if (updatedRow.monthly_ai_calls >= 900 && updatedRow.monthly_reset_at) {
+      const resetAt     = new Date(updatedRow.monthly_reset_at);
+      const periodStart = new Date(resetAt.getTime() - 30 * 24 * 60 * 60 * 1000);
+      const daysElapsed = (Date.now() - periodStart.getTime()) / (24 * 60 * 60 * 1000);
+
+      if (daysElapsed < 3) {
+        await db.query(`UPDATE "User" SET is_suspended = true WHERE id = $1`, [user.id]);
+
+        // Audit log — fire-and-forget; failure must not block the suspend response
+        db.query(
+          `INSERT INTO "ActivityLog" (id, "userId", type, metadata, "createdAt")
+           VALUES (gen_random_uuid()::text, $1, 'abuse_auto_suspend', $2, NOW())`,
+          [user.id, JSON.stringify({
+            monthly_ai_calls: updatedRow.monthly_ai_calls,
+            days_elapsed    : Math.round(daysElapsed * 10) / 10,
+            trigger         : 'rapid_consumption',
+          })]
+        ).catch(() => {});
+
+        console.error(
+          '[subscription-check] RAPID ABUSE: user %s used %d calls in %.1f days — auto-suspended',
+          user.id, updatedRow.monthly_ai_calls, daysElapsed
+        );
+
+        return respond({ allowed: false, reason: 'account_suspended' });
+      }
+    }
+  } catch (abuseErr) {
+    // Never block a legitimate call due to abuse-check failure
+    console.error('[subscription-check] abuse check error (non-fatal):', abuseErr.message);
   }
 
   return respond({

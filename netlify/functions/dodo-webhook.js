@@ -9,6 +9,12 @@
  *   subscription.on_hold   → mark on_hold (non-premium)
  *   subscription.expired   → revert to free
  *
+ *   dispute.created              → SUSPEND account immediately (chargeback protection)
+ *   payment.dispute.created      → same (alias sent by some Dodo SDK versions)
+ *   payment.dispute.won          → keep suspended (dispute resolved in our favour)
+ *   payment.dispute.lost         → keep suspended (bank ruled for customer)
+ *   payment.dispute.needs_response → log; no action (awaiting our evidence)
+ *
  * Plan detection via metadata.plan set at checkout creation:
  *   monthly | 3month | 6month | 1year
  *
@@ -112,6 +118,50 @@ exports.handler = async (event) => {
     console.log('[dodo-webhook] set status=%s for user %s', status, userId);
   }
 
+  // Suspend account due to payment dispute — called immediately on dispute.created.
+  // The account stays suspended regardless of outcome so the user cannot keep
+  // consuming AI credits while a chargeback is in flight.
+  async function suspendForDispute(data) {
+    // Dispute events may embed payment/subscription or customer data directly.
+    // Try every known field path so we find the user regardless of SDK version.
+    const candidate = {
+      metadata   : data.metadata || data.payment?.metadata || data.subscription?.metadata,
+      customer   : data.customer || data.payment?.customer || {},
+      customer_id: data.customer_id || data.payment?.customer_id
+                    || data.customer?.customer_id,
+    };
+
+    const userId = await findUserId(candidate);
+    if (!userId) {
+      console.warn('[dodo-webhook] dispute: could not resolve user from event — raw:',
+        JSON.stringify(data).slice(0, 300));
+      return;
+    }
+
+    await db.query(
+      `UPDATE "User" SET is_suspended = true WHERE id = $1`,
+      [userId]
+    );
+
+    // Log the dispute in ActivityLog for audit trail / evidence export
+    const disputeId  = data.dispute_id || data.id || 'unknown';
+    const amount     = data.amount ?? data.payment?.amount ?? null;
+    const currency   = data.currency || data.payment?.currency || 'USD';
+    const reason     = data.reason || data.dispute_reason || 'unknown';
+    try {
+      await db.query(
+        `INSERT INTO "ActivityLog" (id, "userId", type, metadata, "createdAt")
+         VALUES (gen_random_uuid()::text, $1, 'payment_dispute', $2, NOW())`,
+        [userId, JSON.stringify({ disputeId, amount, currency, reason, evtType })]
+      );
+    } catch (logErr) {
+      console.error('[dodo-webhook] dispute log insert failed:', logErr.message);
+    }
+
+    console.error('[dodo-webhook] DISPUTE FILED — suspended user %s | disputeId=%s amount=%s %s reason=%s',
+      userId, disputeId, amount, currency, reason);
+  }
+
   // ── Event routing ─────────────────────────────────────────────────────────
   try {
     switch (evtType) {
@@ -140,7 +190,34 @@ exports.handler = async (event) => {
         await setStatus(data, 'free');
         break;
 
+      // ── Dispute / chargeback events ─────────────────────────────────────
+      case 'dispute.created':
+      case 'payment.dispute.created':
+        await suspendForDispute(data);
+        break;
+
+      // Dispute resolved in merchant's favour — account stays suspended;
+      // manual review needed before reinstating.
+      case 'dispute.won':
+      case 'payment.dispute.won':
+        console.log('[dodo-webhook] dispute WON for event', JSON.stringify(data).slice(0, 200));
+        break;
+
+      // Bank ruled for customer — account already suspended, nothing more to do.
+      case 'dispute.lost':
+      case 'payment.dispute.lost':
+        console.warn('[dodo-webhook] dispute LOST for event', JSON.stringify(data).slice(0, 200));
+        break;
+
+      case 'payment.dispute.needs_response':
+        console.warn('[dodo-webhook] dispute NEEDS RESPONSE:', JSON.stringify(data).slice(0, 300));
+        break;
+
       default:
+        // Log all unhandled events so we can identify the correct dispute event
+        // name the first time Dodo fires one in production.
+        console.log('[dodo-webhook] unhandled event type:', evtType,
+          JSON.stringify(data).slice(0, 200));
         break;
     }
   } catch (e) {

@@ -3,7 +3,9 @@ const { getPool, ok, err, preflight, verifyUser } = require('./_db');
 const VALID_TYPES = new Set([
   'account_created','resume_analyzed','job_saved','job_applied',
   'interview_practiced','score_updated','cover_letter_generated',
-  'linkedin_optimized','resume_saved'
+  'linkedin_optimized','resume_saved',
+  // AI usage & fraud audit trail (written directly by server-side functions)
+  'ai_call_used','payment_dispute','abuse_auto_suspend',
 ]);
 
 exports.handler = async (event) => {
