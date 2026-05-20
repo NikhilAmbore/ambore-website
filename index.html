@@ -1496,9 +1496,18 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
       <div class="price-card featured rev r1" style="position:relative">
         <div style="position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,#2563eb,#1d4ed8);color:#fff;font-size:.65rem;font-weight:800;padding:5px 18px;border-radius:20px;white-space:nowrap;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 4px 14px rgba(37,99,235,.4)">Most Popular</div>
         <div style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:#93c5fd;margin-bottom:10px">Ambore Premium</div>
-        <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:4px">$9<span style="font-size:1rem;font-weight:500;color:rgba(255,255,255,.45)">/mo</span></div>
-        <div style="font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:24px">Billed monthly · Cancel anytime</div>
-        <button id="pricing-premium-btn" onclick="startPremiumCheckout()" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:24px;box-shadow:0 4px 16px rgba(37,99,235,.4)" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Upgrade to Premium →</button>
+
+        <!-- Plan tabs -->
+        <div id="hp-plan-tabs" style="display:flex;gap:3px;background:rgba(255,255,255,.08);border-radius:9px;padding:3px;margin-bottom:14px">
+          <button onclick="hpSelectPlan('monthly',this)"  style="flex:1;padding:6px 3px;border-radius:6px;border:none;background:#2563eb;color:#fff;font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.2;transition:all .15s">Monthly<br><span style="font-size:.6rem;font-weight:500;opacity:.8">&nbsp;</span></button>
+          <button onclick="hpSelectPlan('3month',this)"   style="flex:1;padding:6px 3px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,.55);font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.2;transition:all .15s">3 Months<br><span style="font-size:.6rem;font-weight:600;color:#4ade80">Save 14%</span></button>
+          <button onclick="hpSelectPlan('6month',this)"   style="flex:1;padding:6px 3px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,.55);font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.2;transition:all .15s">6 Months<br><span style="font-size:.6rem;font-weight:600;color:#4ade80">Save 21%</span></button>
+          <button onclick="hpSelectPlan('1year',this)"    style="flex:1;padding:6px 3px;border-radius:6px;border:none;background:transparent;color:rgba(255,255,255,.55);font-size:.7rem;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.2;transition:all .15s">1 Year<br><span style="font-size:.6rem;font-weight:600;color:#4ade80">Save 28%</span></button>
+        </div>
+
+        <div style="font-size:3rem;font-weight:900;color:#fff;line-height:1;margin-bottom:2px"><span id="hp-price">$29</span><span id="hp-period" style="font-size:1rem;font-weight:500;color:rgba(255,255,255,.45)">/mo</span></div>
+        <div id="hp-note" style="font-size:.83rem;color:rgba(255,255,255,.45);margin-bottom:20px">Billed monthly · Cancel anytime</div>
+        <button id="pricing-premium-btn" onclick="startPremiumCheckout()" style="width:100%;min-height:46px;font-size:.9rem;font-weight:700;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;border:none;border-radius:10px;cursor:pointer;transition:all .15s;margin-bottom:24px;box-shadow:0 4px 16px rgba(37,99,235,.4)" onmouseover="this.style.opacity='.88'" onmouseout="this.style.opacity='1'">Upgrade — $29/month</button>
         <div style="display:flex;flex-direction:column;gap:9px">
           <div style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.35);margin-bottom:4px">Everything in Free, plus</div>
           <div class="price-feat dark"><span class="price-ck dark">✓</span> <strong style="color:#fff">1,000 AI requests / month</strong></div>
@@ -1518,6 +1527,24 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
   </div>
 </section>
 <script>
+var hpSelectedPlan='monthly';
+var HP_PLANS={
+  monthly:{price:'$29',period:'/mo',note:'Billed monthly · Cancel anytime',btn:'Upgrade — $29/month'},
+  '3month':{price:'$75',period:'/3 mo',note:'$25/mo · Save 14% vs monthly',btn:'Upgrade — $75 for 3 months'},
+  '6month':{price:'$139',period:'/6 mo',note:'$23/mo · Save 21% vs monthly',btn:'Upgrade — $139 for 6 months'},
+  '1year':{price:'$249',period:'/yr',note:'$20.75/mo · Save 28% vs monthly',btn:'Upgrade — $249/year'},
+};
+function hpSelectPlan(plan,tabEl){
+  hpSelectedPlan=plan;
+  document.querySelectorAll('#hp-plan-tabs button').forEach(function(b){b.style.background='transparent';b.style.color='rgba(255,255,255,.55)';});
+  tabEl.style.background='#2563eb';tabEl.style.color='#fff';
+  var cfg=HP_PLANS[plan];
+  document.getElementById('hp-price').textContent=cfg.price;
+  document.getElementById('hp-period').textContent=cfg.period;
+  document.getElementById('hp-note').textContent=cfg.note;
+  var btn=document.getElementById('pricing-premium-btn');
+  if(btn&&!btn.disabled)btn.textContent=cfg.btn;
+}
 function startPremiumCheckout(){
   var user=null;
   try{user=JSON.parse(localStorage.getItem('ambore_user')||'null');}catch(e){}
@@ -1527,16 +1554,16 @@ function startPremiumCheckout(){
   fetch('/.netlify/functions/create-checkout',{
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({userId:user.id}),
+    body:JSON.stringify({userId:user.id,plan:hpSelectedPlan}),
   }).then(function(r){return r.json().then(function(d){return{ok:r.ok,status:r.status,data:d};});})
   .then(function(r){
-    if(r.status===409){alert('You already have an active Premium subscription!');if(btn){btn.disabled=false;btn.textContent='Upgrade to Premium →';}return;}
+    if(r.status===409){alert('You already have an active Premium subscription!');if(btn){btn.disabled=false;btn.textContent=HP_PLANS[hpSelectedPlan].btn;}return;}
     if(!r.ok) throw new Error(r.data.error||'Failed');
     if(r.data.url){window.location.href=r.data.url;}
   })
   .catch(function(e){
     alert('Payment error: '+e.message);
-    if(btn){btn.disabled=false;btn.textContent='Upgrade to Premium →';}
+    if(btn){btn.disabled=false;btn.textContent=HP_PLANS[hpSelectedPlan].btn;}
   });
 }
 </script>
