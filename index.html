@@ -22,8 +22,8 @@
 <meta name="twitter:title" content="Ambore — Free AI Resume Optimizer"/>
 <meta name="twitter:description" content="Upload resume + paste job description → ATS-optimized resume in 60 seconds. Try free, no credit card. Premium from $29/mo."/>
 <meta name="twitter:image" content="https://ambore.org/og-image.png"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ambore","url":"https://ambore.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 14 tools, no credit card.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Ambore?","acceptedAnswer":{"@type":"Answer","text":"Ambore is a free, all-in-one AI career platform with 14 tools: a Job Portal (50,000+ hourly-updated jobs), AI Resume Tailor, Cover Letter Generator, LinkedIn Optimizer, and an AI Mock Interview tool."}},{"@type":"Question","name":"Does Ambore require payment to use AI tools?","acceptedAnswer":{"@type":"Answer","text":"Yes — all AI-powered tools require a Premium subscription from $29/month for 1,000 AI requests. The job board, application tracker, and community are always free. No credit card needed to create an account."}},{"@type":"Question","name":"How does the AI Resume Tailor work?","acceptedAnswer":{"@type":"Answer","text":"Upload your resume and paste the job description. The AI rewrites your resume to match keywords and optimize for ATS systems in under 60 seconds."}},{"@type":"Question","name":"Is my data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your account is stored in a secure cloud database. localStorage only caches your session. We use Google Analytics with IP anonymization and never sell your data."}},{"@type":"Question","name":"How secure is my password?","acceptedAnswer":{"@type":"Answer","text":"Passwords are hashed with bcrypt before storage. The actual password is never saved and cannot be recovered even if the database were breached."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Ambore","url":"https://ambore.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 15 tools, no credit card.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Ambore?","acceptedAnswer":{"@type":"Answer","text":"Ambore is a free, all-in-one AI career platform with 15 tools: a Job Portal (50,000+ hourly-updated jobs), AI Resume Tailor, Cover Letter Generator, LinkedIn Optimizer, AI Mock Interview, and Interview Preparation."}},{"@type":"Question","name":"Does Ambore require payment to use AI tools?","acceptedAnswer":{"@type":"Answer","text":"Yes — all AI-powered tools require a Premium subscription from $29/month for 1,000 AI requests. The job board, application tracker, and community are always free. No credit card needed to create an account."}},{"@type":"Question","name":"How does the AI Resume Tailor work?","acceptedAnswer":{"@type":"Answer","text":"Upload your resume and paste the job description. The AI rewrites your resume to match keywords and optimize for ATS systems in under 60 seconds."}},{"@type":"Question","name":"Is my data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your account is stored in a secure cloud database. localStorage only caches your session. We use Google Analytics with IP anonymization and never sell your data."}},{"@type":"Question","name":"How secure is my password?","acceptedAnswer":{"@type":"Answer","text":"Passwords are hashed with bcrypt before storage. The actual password is never saved and cannot be recovered even if the database were breached."}}]}</script>
 <link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet"/>
 <script>
@@ -618,6 +618,7 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
             <div class="dd-col">
               <div class="dd-head">Win the Interview</div>
               <a onclick="goToFeature('/interview')">AI Mock Interview</a>
+              <a onclick="goToFeature('/interview-prep')">Interview Preparation</a>
               <a onclick="goToFeature('/learn')">Learn AI</a>
               <a onclick="goToFeature('/project')">Build Projects</a>
               <a onclick="goToFeature('/dashboard')">Dashboard</a>
@@ -696,6 +697,7 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
   <a onclick="goToFeature('/certifications');toggleMenu()">🏆 Certifications</a>
   <div class="mob-sec">Win the Interview</div>
   <a onclick="goToFeature('/interview');toggleMenu()">🎙 AI Mock Interview</a>
+  <a onclick="goToFeature('/interview-prep');toggleMenu()">📋 Interview Preparation</a>
   <a onclick="goToFeature('/learn');toggleMenu()">📚 Learn AI</a>
   <a onclick="goToFeature('/dashboard');toggleMenu()">📊 Dashboard</a>
   <div class="mob-auth" id="mob-auth-guest">
@@ -948,7 +950,7 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
 <section class="tools-sec" id="features">
   <div class="container">
     <div class="tc rev" style="max-width:560px;margin:0 auto 40px">
-      <div class="sec-lbl">14 AI Career Tools</div>
+      <div class="sec-lbl">15 AI Career Tools</div>
       <h2 class="sec-h">Everything you need to land the job</h2>
       <p class="sec-sub">From resume tailoring to mock interviews — one platform. Try any tool free.</p>
     </div>
@@ -984,10 +986,15 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
       </div>
       <div class="tool-card rev r1" onclick="goToFeature('/interview')">
         <div class="tool-ico" style="background:#fdf4ff">🎙</div>
-        <div class="tool-info"><div class="tool-name">AI Mock Interview <span class="tool-badge-new">New</span></div><div class="tool-desc">Practice STAR answers with real-time AI coaching</div></div>
+        <div class="tool-info"><div class="tool-name">AI Mock Interview</div><div class="tool-desc">Practice STAR answers with real-time AI coaching</div></div>
         <span class="tool-arrow">→</span>
       </div>
-      <div class="tool-card rev r2" onclick="goToFeature('/cover-letter')">
+      <div class="tool-card rev r2" onclick="goToFeature('/interview-prep')">
+        <div class="tool-ico" style="background:#f0f9ff">📋</div>
+        <div class="tool-info"><div class="tool-name">Interview Preparation <span class="tool-badge-new">New</span></div><div class="tool-desc">50 tailored Q&amp;A with STAR &amp; CAAR storytelling answers</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r3" onclick="goToFeature('/cover-letter')">
         <div class="tool-ico" style="background:#fffbeb">✉️</div>
         <div class="tool-info"><div class="tool-name">Cover Letter Generator</div><div class="tool-desc">Tailored cover letter in under 2 minutes</div></div>
         <span class="tool-arrow">→</span>
@@ -1322,6 +1329,7 @@ footer{background:#f1f5f9;border-top:1px solid #e2e8f0;padding:56px 0 28px}
           <tr><td>AI Resume Tailor</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
           <tr><td>Job Portal (50k+ jobs)</td><td class="col-a">✅ Free</td><td>❌ None</td><td>Limited</td></tr>
           <tr><td>AI Mock Interview</td><td class="col-a">✅ Free</td><td>❌ None</td><td>💰 Paid</td></tr>
+          <tr><td>Interview Preparation (50 Q&amp;A)</td><td class="col-a">✅ Premium</td><td>❌ None</td><td>❌ None</td></tr>
           <tr><td>Cover Letter Generator</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
           <tr><td>LinkedIn Optimizer</td><td class="col-a">✅ Free</td><td>💰 Paid</td><td>💰 Paid</td></tr>
           <tr><td>No credit card required</td><td class="col-a">✅ Yes</td><td>❌ Required</td><td>❌ Required</td></tr>
@@ -1573,7 +1581,7 @@ function startPremiumCheckout(){
   <div class="container" style="max-width:780px">
     <div class="tc rev"><div class="sec-lbl">FAQ</div><h2 class="sec-h">Common questions</h2></div>
     <div class="faq-list rev r1">
-      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is Ambore?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore is a free, all-in-one AI career platform with 14 tools: a Job Portal (50,000+ hourly-updated jobs from 97 companies), AI Resume Tailor, Cover Letter Generator, Email Generator, LinkedIn Optimizer, Portfolio Builder, and an AI Mock Interview tool for practicing answers.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What is Ambore?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Ambore is a free, all-in-one AI career platform with 15 tools: a Job Portal (50,000+ hourly-updated jobs from 97 companies), AI Resume Tailor, Cover Letter Generator, Email Generator, LinkedIn Optimizer, Portfolio Builder, AI Mock Interview, and Interview Preparation (50 tailored Q&amp;A with STAR &amp; CAAR answers).</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do AI tools require a subscription?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Yes — all AI tools require <strong>Premium from $29/month</strong> (1,000 AI requests per month). Creating an account is always free with no credit card needed. Non-AI features — job board, application tracker, and community — are always free and unlimited.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">How does the AI Resume Tailor work?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Upload your existing resume and paste the job description. The AI analyzes both, rewrites your resume to highlight relevant skills, match keywords, and optimize formatting for ATS systems. You get a tailored resume in under 60 seconds.</div></div></div>
       <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Where do the job listings come from?<svg class="faq-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button><div class="faq-a"><div class="faq-ai">Jobs are automatically sourced from LinkedIn, Indeed, USAJobs.gov, Adzuna, The Muse, Remotive, and more. New listings are refreshed every hour across 97 top companies.</div></div></div>
@@ -1591,7 +1599,7 @@ function startPremiumCheckout(){
       <input type="email" id="ec-email" class="email-in" placeholder="Enter your email address..." required aria-label="Email address"/>
       <button type="submit" class="email-sub">Get Started Free →</button>
     </form>
-    <p class="email-note rev r2">No credit card · No trial limits · 14 free AI tools</p>
+    <p class="email-note rev r2">No credit card · No trial limits · 15 AI career tools</p>
     <div style="margin-top:22px;padding:16px 20px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.15);border-radius:12px;display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;justify-content:center" class="rev r2">
       <span style="font-size:.84rem;color:rgba(255,255,255,.6)">🎁 <strong style="color:#fff">Refer 3 friends</strong> → unlock priority AI access</span>
       <button onclick="doReferral()" style="padding:7px 16px;background:var(--orange);color:#fff;border:none;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;white-space:nowrap">Share Ambore →</button>
