@@ -4,217 +4,244 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
-<script>
-  window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
-  gtag('js',new Date());gtag('config','G-F3S7FLQRSM',{anonymize_ip:true,cookie_flags:'SameSite=None;Secure',cookie_expires:0});
-</script>
-<script>
-window.addEventListener('unhandledrejection',e=>{if(e.reason?.name==='AbortError'){e.preventDefault();return;}console.error('[Copilot]',e.reason);e.preventDefault();});
-window.onerror=(m,s,l,c,e)=>{if(e?.name==='AbortError')return true;console.error('[Copilot]',m);return true;};
-</script>
+<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-F3S7FLQRSM',{anonymize_ip:true,cookie_flags:'SameSite=None;Secure',cookie_expires:0});</script>
+<script>window.addEventListener('unhandledrejection',e=>{if(e.reason?.name==='AbortError'){e.preventDefault();return;}e.preventDefault();});window.onerror=(_,_s,_l,_c,e)=>{if(e?.name==='AbortError')return true;return true;};</script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ambore — Interview Copilot | Real-Time AI Interview Assistant</title>
-<meta name="description" content="Real-time AI interview copilot — live transcript, instant STAR-method coaching hints, resume context matching, and screen OCR. Ace every interview."/>
+<title>Ambore — Interview Copilot</title>
+<meta name="description" content="Real-time AI interview copilot with live transcript, instant STAR coaching, persona modes, and screenshot analysis. Built like Cluely."/>
 <link rel="icon" href="/logo.png">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
-<script>
-(function(){
-  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
-  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
-    localStorage.removeItem('ambore_user');
-    window.location.href='/?auth=login&redirect=/interview&msg=Please+log+in+to+access+Interview+Copilot';
-  }
-})();
-</script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script>(function(){var s=JSON.parse(localStorage.getItem('ambore_user')||'null');if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){localStorage.removeItem('ambore_user');window.location.href='/?auth=login&redirect=/interview&msg=Please+log+in+to+use+Interview+Copilot';}})();</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%;font-family:'Inter',sans-serif;background:#08080f;color:#e2e8f0;overflow:hidden}
 :root{
-  --bg:#08080f;--bg2:#0d0d1e;--bg3:#12122a;
-  --panel:#0f0f22;--panel2:#141430;
-  --border:rgba(99,102,241,0.15);--border2:rgba(99,102,241,0.25);
-  --green:#00ff88;--green2:rgba(0,255,136,0.12);
-  --blue:#4d9fff;--blue2:rgba(77,159,255,0.12);
-  --purple:#a78bfa;--purple2:rgba(167,139,250,0.12);
-  --amber:#fbbf24;--red:#f87171;
+  --bg:#08080f;--bg2:#0b0b18;--bg3:#0f0f22;
+  --glass:rgba(12,12,28,0.88);--glass2:rgba(15,15,35,0.92);
+  --border:rgba(255,255,255,0.07);--border2:rgba(99,102,241,0.2);
+  --accent:#6366f1;--accent-h:rgba(99,102,241,0.15);
+  --green:#00ff88;--green-h:rgba(0,255,136,0.12);
+  --blue:#60a5fa;--blue-h:rgba(96,165,250,0.12);
+  --amber:#fbbf24;--amber-h:rgba(251,191,36,0.1);
+  --red:#f87171;--purple:#a78bfa;
   --text:#e2e8f0;--text-m:#94a3b8;--text-s:#64748b;
-  --accent:#6366f1;--accent2:rgba(99,102,241,0.2);
   --grad:linear-gradient(135deg,#6366f1,#4f46e5);
+  --grad-g:linear-gradient(135deg,#059669,#00cc6a);
 }
-::-webkit-scrollbar{width:3px;height:3px}
-::-webkit-scrollbar-thumb{background:rgba(99,102,241,0.3);border-radius:2px}
-::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.1);border-radius:2px}
 .hidden{display:none!important}
 button,input,textarea,select{font-family:inherit}
 
-/* SIDEBAR */
-.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:300;overflow:hidden}
+/* ─── SIDEBAR ─── */
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0a0a18;border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:400;overflow:hidden}
 .sb:hover{overflow-y:auto}
-.sb-logo{width:52px;height:52px;background:#1e3a8a;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity .15s;overflow:hidden}
+.sb-logo{width:52px;height:52px;background:#1e3a8a;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;overflow:hidden}
 .sb-logo:hover{opacity:.85}
 .sb-nav{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;width:100%;padding-bottom:6px}
-.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,.55);text-decoration:none;font-size:.58rem;font-weight:600;letter-spacing:.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background .15s,color .15s;padding:6px 2px;font-family:inherit}
-.sb-item:hover{background:rgba(255,255,255,.08);color:rgba(255,255,255,.9)}
-.sb-item.active{background:rgba(99,102,241,.25);color:#a5b4fc}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,.45);text-decoration:none;font-size:.58rem;font-weight:600;gap:4px;cursor:pointer;background:none;border:none;transition:background .15s,color .15s;padding:6px 2px;font-family:inherit;letter-spacing:.01em}
+.sb-item:hover{background:rgba(255,255,255,.07);color:rgba(255,255,255,.85)}
+.sb-item.active{background:rgba(99,102,241,.2);color:#a5b4fc}
 .sb-item svg{flex-shrink:0}
-.sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid rgba(255,255,255,.08);flex-shrink:0;width:100%}
-.sb-logout{color:rgba(239,68,68,.6)!important}
-.sb-logout:hover{background:rgba(239,68,68,.08)!important;color:#ef4444!important}
+.sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid var(--border);flex-shrink:0;width:100%}
+.sb-logout{color:rgba(239,68,68,.55)!important}
+.sb-logout:hover{background:rgba(239,68,68,.08)!important;color:#f87171!important}
+body{padding-left:72px}
 
 /* MOBILE */
-.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,.08);z-index:300;align-items:center;justify-content:space-around;padding:0 4px}
-.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.45);text-decoration:none;font-size:.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color .15s}
-.md-item.active{color:#60a5fa}
-.mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,.08);z-index:299;max-height:70vh;overflow-y:auto}
-.mob-more-drawer.hidden{display:none}
-.mob-drawer-inner{padding:16px}
-.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
-.mdg-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:10px;background:rgba(255,255,255,.04);color:rgba(255,255,255,.6);text-decoration:none;font-size:.62rem;font-weight:600;text-align:center;transition:background .15s,color .15s}
-.mdg-item:hover{background:rgba(255,255,255,.1);color:#fff}
-body{padding-left:72px}
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0a0a18;border-top:1px solid var(--border);z-index:400;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,.4);text-decoration:none;font-size:.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color .15s}
+.md-item.active,.md-item:hover{color:#60a5fa}
+.mob-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0a0a18;border-top:1px solid var(--border);z-index:399;max-height:70vh;overflow-y:auto}
+.mob-drawer.hidden{display:none}
+.mob-drawer-inner{padding:14px}
+.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:10px}
+.mdg-item{display:flex;flex-direction:column;align-items:center;gap:5px;padding:11px 4px;border-radius:9px;background:rgba(255,255,255,.03);color:rgba(255,255,255,.55);text-decoration:none;font-size:.61rem;font-weight:600;text-align:center;transition:background .15s,color .15s}
+.mdg-item:hover{background:rgba(255,255,255,.08);color:#fff}
 @media(max-width:768px){.sb{display:none}.mob-dock{display:flex}body{padding-left:0;padding-bottom:60px}}
 
-/* MAIN SHELL */
-.copilot-shell{height:100vh;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
+/* ─── SHELL ─── */
+.shell{height:100vh;display:flex;flex-direction:column;background:var(--bg);overflow:hidden}
 
-/* TOP STATUS BAR */
-.status-bar{height:48px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;padding:0 16px;flex-shrink:0;overflow-x:auto}
-.status-bar::-webkit-scrollbar{display:none}
-.sb-brand{font-size:.72rem;font-weight:800;color:#a5b4fc;letter-spacing:.1em;text-transform:uppercase;white-space:nowrap;margin-right:6px}
-.status-pill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:20px;font-size:.66rem;font-weight:700;letter-spacing:.05em;white-space:nowrap;border:1px solid transparent;transition:all .3s}
-.pill-live{background:rgba(0,255,136,0.1);border-color:rgba(0,255,136,0.3);color:var(--green)}
-.pill-stt{background:var(--blue2);border-color:rgba(77,159,255,0.3);color:var(--blue)}
-.pill-stt.off{background:rgba(100,116,139,0.08);border-color:rgba(100,116,139,0.2);color:var(--text-s)}
-.pill-ctx{background:var(--purple2);border-color:rgba(167,139,250,0.3);color:var(--purple)}
-.pill-ai{background:rgba(251,191,36,0.1);border-color:rgba(251,191,36,0.25);color:var(--amber)}
-.pill-ai.thinking{animation:pulseAmber 1.2s ease infinite}
-@keyframes pulseAmber{0%,100%{opacity:1}50%{opacity:.45}}
-.dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
-.dot-green{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulseDot 1.4s ease infinite}
-.dot-blue{background:var(--blue);box-shadow:0 0 5px var(--blue)}
-.dot-purple{background:var(--purple)}
-.dot-amber{background:var(--amber)}
-.dot-grey{background:var(--text-s)}
-@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(.65)}}
-.sb-spacer{flex:1}
-.sb-btn{padding:4px 11px;border-radius:7px;font-size:.7rem;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text-m);transition:all .15s;white-space:nowrap}
-.sb-btn:hover{background:var(--accent2);border-color:var(--accent);color:#fff}
-.sb-btn.danger{border-color:rgba(248,113,113,0.3);color:var(--red)}
-.sb-btn.danger:hover{background:rgba(248,113,113,0.1)}
+/* ─── TOPBAR ─── */
+.topbar{height:46px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:8px;padding:0 14px;flex-shrink:0;overflow-x:auto}
+.topbar::-webkit-scrollbar{display:none}
+.brand{font-size:.72rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#a5b4fc;white-space:nowrap;margin-right:6px;display:flex;align-items:center;gap:6px}
+.brand-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 7px var(--green);animation:live-pulse 1.6s ease infinite}
+@keyframes live-pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.65)}}
+.pill{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:20px;font-size:.64rem;font-weight:700;letter-spacing:.04em;white-space:nowrap;border:1px solid transparent;cursor:default}
+.pill-live{background:var(--green-h);border-color:rgba(0,255,136,.25);color:var(--green)}
+.pill-stt{background:var(--blue-h);border-color:rgba(96,165,250,.25);color:var(--blue)}
+.pill-stt.off{background:rgba(100,116,139,.08);border-color:rgba(100,116,139,.15);color:var(--text-s)}
+.pill-ctx{background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.25);color:var(--purple)}
+.pill-ai{background:var(--amber-h);border-color:rgba(251,191,36,.25);color:var(--amber)}
+.pill-ai.on{animation:aiPulse 1s ease infinite}
+@keyframes aiPulse{0%,100%{opacity:1}50%{opacity:.5}}
+.pdot{width:5px;height:5px;border-radius:50%;flex-shrink:0}
+.pdot-g{background:var(--green)}
+.pdot-b{background:var(--blue)}
+.pdot-p{background:var(--purple)}
+.pdot-a{background:var(--amber)}
+.pdot-s{background:var(--text-s)}
+.tb-space{flex:1}
+.tb-btn{padding:4px 10px;border-radius:6px;font-size:.68rem;font-weight:600;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text-m);transition:all .15s;white-space:nowrap}
+.tb-btn:hover{background:var(--accent-h);border-color:var(--accent);color:#fff}
+.tb-btn.red{border-color:rgba(248,113,113,.25);color:var(--red)}
+.tb-btn.red:hover{background:rgba(248,113,113,.1)}
 
-/* MAIN SPLIT */
-.copilot-body{flex:1;display:grid;grid-template-columns:1fr 1fr;gap:0;overflow:hidden}
-@media(max-width:860px){.copilot-body{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
+/* ─── PERSONA BAR ─── */
+.persona-bar{height:38px;background:var(--bg3);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:4px;padding:0 14px;flex-shrink:0;overflow-x:auto}
+.persona-bar::-webkit-scrollbar{display:none}
+.persona-lbl{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-s);margin-right:6px;white-space:nowrap}
+.persona-tab{padding:4px 12px;border-radius:6px;font-size:.7rem;font-weight:600;cursor:pointer;border:1px solid transparent;background:transparent;color:var(--text-s);transition:all .15s;white-space:nowrap}
+.persona-tab:hover{background:rgba(255,255,255,.05);color:var(--text-m)}
+.persona-tab.on{background:var(--accent-h);border-color:var(--border2);color:#a5b4fc}
+.persona-sep{width:1px;height:18px;background:var(--border);flex-shrink:0;margin:0 6px}
 
-/* PANEL */
-.panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;position:relative}
+/* ─── MAIN BODY ─── */
+.body-split{flex:1;display:grid;grid-template-columns:1fr 1fr;overflow:hidden}
+@media(max-width:860px){.body-split{grid-template-columns:1fr;grid-template-rows:1fr 1fr}}
+
+/* ─── PANEL ─── */
+.panel{display:flex;flex-direction:column;border-right:1px solid var(--border);overflow:hidden;position:relative;background:var(--bg)}
 .panel:last-child{border-right:none}
-.panel-hdr{display:flex;align-items:center;gap:8px;padding:9px 14px;background:var(--panel);border-bottom:1px solid var(--border);flex-shrink:0}
-.panel-title{font-size:.68rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;color:var(--text-m)}
-.panel-meta{font-size:.63rem;color:var(--text-s);margin-left:auto}
-.panel-action{margin-left:6px;background:none;border:none;color:var(--text-s);cursor:pointer;font-size:.72rem;font-weight:600;padding:2px 6px;border-radius:5px;transition:color .15s}
-.panel-action:hover{color:#e2e8f0}
+.panel-hdr{display:flex;align-items:center;gap:7px;padding:8px 13px;background:var(--bg3);border-bottom:1px solid var(--border);flex-shrink:0}
+.panel-ttl{font-size:.66rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--text-m)}
+.panel-meta{font-size:.62rem;color:var(--text-s);margin-left:auto}
+.pa-btn{padding:2px 8px;border-radius:5px;border:none;background:none;color:var(--text-s);font-size:.68rem;font-weight:600;cursor:pointer;transition:color .15s}
+.pa-btn:hover{color:#e2e8f0}
 
-/* TRANSCRIPT */
-.transcript-feed{flex:1;overflow-y:auto;padding:12px 14px;display:flex;flex-direction:column;gap:7px;scroll-behavior:smooth}
-.tx-line{display:flex;gap:10px;animation:fadeSlide .2s ease}
-@keyframes fadeSlide{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-.tx-speaker{font-size:.6rem;font-weight:800;letter-spacing:.07em;white-space:nowrap;padding-top:3px;flex-shrink:0;min-width:72px}
-.tx-you{color:var(--blue)}
-.tx-them{color:var(--green)}
-.tx-system{color:var(--text-s)}
-.tx-text{font-size:.82rem;line-height:1.65;color:var(--text);font-family:'JetBrains Mono',monospace;flex:1}
-.tx-text.cursor::after{content:'▋';animation:blink .8s step-end infinite;color:var(--blue);font-size:.85em}
-.tx-time{font-size:.58rem;color:var(--text-s);padding-top:3px;white-space:nowrap;flex-shrink:0}
+/* ─── TRANSCRIPT ─── */
+.tx-feed{flex:1;overflow-y:auto;padding:10px 12px;display:flex;flex-direction:column;gap:6px;scroll-behavior:smooth}
+.tx-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text-s);text-align:center;padding:28px;min-height:160px}
+.tx-empty-ico{font-size:2rem;opacity:.3}
+.tx-empty-txt{font-size:.78rem;line-height:1.7}
+.tx-line{display:flex;gap:9px;animation:fadeUp .2s ease;cursor:pointer;border-radius:7px;padding:3px 5px;transition:background .15s;position:relative}
+.tx-line:hover{background:rgba(255,255,255,.03)}
+.tx-line:hover .tx-hint-btn{opacity:1}
+@keyframes fadeUp{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:translateY(0)}}
+.tx-sp{font-size:.58rem;font-weight:700;letter-spacing:.07em;padding-top:3px;flex-shrink:0;min-width:68px}
+.sp-you{color:var(--blue)}
+.sp-them{color:var(--green)}
+.sp-sys{color:var(--text-s)}
+.tx-txt{font-size:.81rem;line-height:1.65;color:var(--text);font-family:'JetBrains Mono',monospace;flex:1}
+.tx-txt.interim{color:var(--text-m);opacity:.7}
+.tx-txt.interim::after{content:'▋';animation:blink .8s step-end infinite;color:var(--blue)}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.tx-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;color:var(--text-s);text-align:center;padding:28px;min-height:180px}
-.tx-empty-icon{font-size:2.2rem;opacity:.35}
-.tx-empty-text{font-size:.8rem;line-height:1.7}
+.tx-time{font-size:.57rem;color:var(--text-s);padding-top:4px;white-space:nowrap;flex-shrink:0}
+.tx-hint-btn{position:absolute;right:8px;top:50%;transform:translateY(-50%);opacity:0;transition:opacity .15s;padding:2px 8px;border-radius:5px;border:1px solid var(--border2);background:var(--accent-h);color:#a5b4fc;font-size:.63rem;font-weight:700;cursor:pointer}
+.tx-hint-btn:hover{background:rgba(99,102,241,.25)}
 
 /* MANUAL INPUT */
-.tx-input-row{border-top:1px solid var(--border);padding:9px 12px;display:flex;gap:8px;flex-shrink:0;background:var(--panel)}
-.tx-input{flex:1;padding:7px 12px;background:#141430;border:1px solid var(--border2);border-radius:8px;color:#e2e8f0;font-size:.79rem;outline:none;transition:border-color .2s}
-.tx-input:focus{border-color:var(--accent)}
-.tx-input::placeholder{color:var(--text-s)}
-.tx-send{padding:7px 14px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:.73rem;font-weight:700;cursor:pointer;white-space:nowrap;transition:opacity .15s}
+.tx-inp-row{border-top:1px solid var(--border);padding:8px 12px;display:flex;gap:7px;flex-shrink:0;background:var(--bg3)}
+.tx-inp{flex:1;padding:7px 11px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:.78rem;outline:none;transition:border-color .2s}
+.tx-inp:focus{border-color:var(--border2)}
+.tx-inp::placeholder{color:var(--text-s)}
+.tx-send{padding:7px 13px;background:var(--grad);border:none;border-radius:8px;color:#fff;font-size:.72rem;font-weight:700;cursor:pointer;transition:opacity .15s;white-space:nowrap}
 .tx-send:hover{opacity:.85}
 
-/* AI HINT PANEL */
-.hint-glow{position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .4s;pointer-events:none;z-index:1}
-.hint-glow.active{opacity:1;animation:glowScan 2.5s linear infinite}
-@keyframes glowScan{0%{background-position:-200px 0}100%{background-position:200px 0}}
-.hint-panel{flex:1;overflow-y:auto;padding:14px;font-family:'JetBrains Mono',monospace;font-size:.81rem;line-height:1.8;color:var(--text)}
-.hint-now-btn{margin-left:auto;padding:4px 10px;background:var(--accent2);border:1px solid var(--accent);border-radius:7px;color:#a5b4fc;font-size:.66rem;font-weight:700;cursor:pointer;transition:all .15s}
-.hint-now-btn:hover{background:rgba(99,102,241,.35);color:#fff}
-.hint-section{margin-bottom:14px}
-.h-lbl{font-size:.6rem;font-weight:800;text-transform:uppercase;letter-spacing:.12em;margin-bottom:5px}
-.h-lbl.s{color:#f87171}
-.h-lbl.t{color:#fbbf24}
-.h-lbl.a{color:#4d9fff}
-.h-lbl.r{color:#00ff88}
-.h-lbl.k{color:#a78bfa}
-.h-lbl.tip{color:var(--text-m)}
-.h-body{font-size:.81rem;line-height:1.75;color:var(--text)}
-.h-bullet{display:flex;gap:7px;margin-bottom:4px;align-items:flex-start}
-.h-bullet::before{content:'›';color:var(--accent);font-weight:700;flex-shrink:0;line-height:1.75}
-.h-stream{white-space:pre-wrap}
-.h-cursor::after{content:'▋';animation:blink .8s step-end infinite;color:var(--blue);font-size:.88em}
-.hint-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--text-s);text-align:center;padding:24px;min-height:200px}
-.think-row{display:flex;align-items:center;gap:8px;padding:10px 14px;color:var(--text-s);font-size:.76rem;animation:fadeSlide .2s ease}
+/* ─── AI PANEL ─── */
+.ai-glow{position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),transparent);opacity:0;transition:opacity .4s;pointer-events:none}
+.ai-glow.on{opacity:1;animation:glowMove 3s linear infinite}
+@keyframes glowMove{0%{background-position:-400px 0}100%{background-position:400px 0}}
+
+/* ACTION PRESETS */
+.action-bar{padding:10px 12px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--bg3)}
+.action-btn{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:.69rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:rgba(255,255,255,.03);color:var(--text-m);transition:all .18s;white-space:nowrap}
+.action-btn:hover{border-color:var(--border2);background:var(--accent-h);color:#c7d2fe;transform:translateY(-1px)}
+.action-btn.loading{opacity:.5;pointer-events:none}
+.action-btn.ab-answer{border-color:rgba(99,102,241,.3);color:#a5b4fc;background:rgba(99,102,241,.08)}
+.action-btn.ab-code{border-color:rgba(96,165,250,.3);color:var(--blue);background:rgba(96,165,250,.08)}
+.action-btn.ab-points{border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.08)}
+.action-btn.ab-recap{border-color:rgba(251,191,36,.3);color:var(--amber);background:rgba(251,191,36,.08)}
+.action-btn.ab-followup{border-color:rgba(0,255,136,.3);color:var(--green);background:rgba(0,255,136,.08)}
+
+/* HINT CONTENT */
+.hint-panel{flex:1;overflow-y:auto;padding:12px}
+.hint-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;height:100%;color:var(--text-s);text-align:center;padding:24px;min-height:180px}
+.hint-empty-ico{font-size:2rem;opacity:.3}
+
+/* HINT SECTIONS (parsed) */
+.hint-sec{background:rgba(255,255,255,.025);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;overflow:hidden}
+.hint-sec-hdr{display:flex;align-items:center;gap:8px;padding:9px 12px;border-bottom:1px solid var(--border);cursor:pointer;user-select:none;transition:background .15s}
+.hint-sec-hdr:hover{background:rgba(255,255,255,.04)}
+.hint-sec-label{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em}
+.ls{color:#f87171}.lt{color:#fbbf24}.la{color:#60a5fa}.lr{color:#00ff88}.lk{color:#a78bfa}.lp{color:var(--text-m)}.lc{color:#34d399}
+.hint-sec-copy{margin-left:auto;padding:2px 7px;border-radius:5px;border:1px solid var(--border);background:none;color:var(--text-s);font-size:.62rem;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
+.hint-sec-copy:hover{border-color:var(--border2);color:#e2e8f0}
+.hint-sec-body{padding:10px 12px;font-size:.8rem;line-height:1.75;color:var(--text-m)}
+.hint-sec-body.collapsed{display:none}
+.h-bullet{display:flex;gap:7px;margin-bottom:5px;align-items:flex-start}
+.h-bullet::before{content:'›';color:var(--accent);font-weight:700;flex-shrink:0;line-height:1.75;font-size:.9rem}
+.h-txt{color:var(--text)}
+.think-row{display:flex;align-items:center;gap:8px;padding:12px;color:var(--text-s);font-size:.76rem;animation:fadeUp .2s ease}
 .think-dots span{animation:blink .8s step-end infinite}
 .think-dots span:nth-child(2){animation-delay:.2s}
 .think-dots span:nth-child(3){animation-delay:.4s}
+.stream-txt{white-space:pre-wrap;font-size:.8rem;line-height:1.75;color:var(--text-m);padding:12px;font-family:'JetBrains Mono',monospace}
+.stream-txt::after{content:'▋';animation:blink .8s step-end infinite;color:var(--blue);font-size:.88em}
 
-/* CONTROLS BAR */
-.ctrl-bar{height:54px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;gap:7px;padding:0 14px;flex-shrink:0}
-.ctrl-btn{display:flex;align-items:center;gap:5px;padding:7px 14px;border-radius:9px;font-size:.76rem;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text-m);transition:all .15s;white-space:nowrap}
-.ctrl-btn:hover{background:var(--accent2);border-color:var(--accent);color:#fff}
-.ctrl-btn.primary{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 0 18px rgba(99,102,241,.3)}
-.ctrl-btn.primary:hover{box-shadow:0 0 26px rgba(99,102,241,.5);transform:translateY(-1px)}
-.ctrl-btn.active-btn{background:rgba(0,255,136,.1);border-color:rgba(0,255,136,.3);color:var(--green)}
-.ctrl-btn.stop-btn{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.3);color:var(--red)}
+/* ─── CONTROLS BAR ─── */
+.ctrl-bar{height:52px;background:var(--bg2);border-top:1px solid var(--border);display:flex;align-items:center;gap:6px;padding:0 12px;flex-shrink:0}
+.ctrl-btn{display:inline-flex;align-items:center;gap:5px;padding:6px 13px;border-radius:8px;font-size:.74rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-m);transition:all .15s;white-space:nowrap}
+.ctrl-btn:hover{background:var(--accent-h);border-color:var(--border2);color:#fff}
+.ctrl-btn.prim{background:var(--grad);border-color:transparent;color:#fff;box-shadow:0 0 16px rgba(99,102,241,.3)}
+.ctrl-btn.prim:hover{box-shadow:0 0 24px rgba(99,102,241,.5);transform:translateY(-1px)}
+.ctrl-btn.stop-c{background:rgba(248,113,113,.1);border-color:rgba(248,113,113,.25);color:var(--red)}
+.ctrl-btn.auto-on{background:var(--green-h);border-color:rgba(0,255,136,.3);color:var(--green)}
 .ctrl-btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important;box-shadow:none!important}
-.ctrl-sep{width:1px;height:26px;background:var(--border);flex-shrink:0;margin:0 3px}
-.ctrl-spacer{flex:1}
+.ctrl-sep{width:1px;height:24px;background:var(--border);flex-shrink:0;margin:0 3px}
+.ctrl-space{flex:1}
 .mic-wrap{position:relative}
-.mic-ring{position:absolute;inset:-4px;border-radius:13px;border:2px solid var(--green);opacity:0;pointer-events:none}
-.mic-ring.active{animation:micRing 1.3s ease-out infinite}
-@keyframes micRing{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.45)}}
+.mic-ring{position:absolute;inset:-4px;border-radius:12px;border:2px solid var(--green);opacity:0;pointer-events:none}
+.mic-ring.on{animation:micRing 1.4s ease-out infinite}
+@keyframes micRing{0%{opacity:.9;transform:scale(1)}100%{opacity:0;transform:scale(1.5)}}
+.session-clock{font-size:.67rem;color:var(--text-s);font-family:'JetBrains Mono',monospace}
 
-/* CONTEXT BARS */
-.ctx-bar{margin:7px 14px 0;background:rgba(99,102,241,.08);border:1px solid rgba(99,102,241,.2);border-radius:7px;padding:7px 11px;font-size:.72rem;color:#a5b4fc;display:flex;align-items:center;gap:8px;flex-shrink:0}
-.ctx-bar.hidden{display:none}
-.ocr-bar{margin:0 14px 7px;background:rgba(167,139,250,.06);border:1px solid rgba(167,139,250,.2);border-radius:7px;padding:7px 11px;font-size:.7rem;color:var(--purple);display:none;align-items:center;gap:8px;flex-shrink:0}
-.ocr-bar.on{display:flex}
-.ctx-score{font-size:.68rem;font-weight:800;padding:2px 8px;border-radius:10px;background:rgba(99,102,241,.2);color:#a5b4fc;margin-left:auto;white-space:nowrap}
+/* ─── OCR PROGRESS ─── */
+.ocr-progress{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:var(--glass2);border:1px solid var(--border2);border-radius:14px;padding:24px 32px;text-align:center;z-index:9000;backdrop-filter:blur(20px)}
+.ocr-progress.hidden{display:none}
+.ocr-spinner{width:36px;height:36px;border:3px solid rgba(99,102,241,.2);border-top-color:var(--accent);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ocr-progress-txt{font-size:.85rem;color:#e2e8f0;font-weight:600}
+.ocr-progress-sub{font-size:.73rem;color:var(--text-s);margin-top:4px}
 
-/* MODALS */
-.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.78);backdrop-filter:blur(6px);z-index:9000;display:flex;align-items:center;justify-content:center}
+/* ─── SCREENSHOT BADGE ─── */
+.screen-badge{margin:0 12px 8px;background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2);border-radius:8px;padding:6px 11px;font-size:.7rem;color:var(--purple);display:none;align-items:center;gap:7px;flex-shrink:0}
+.screen-badge.on{display:flex}
+.resume-badge{margin:6px 12px 0;background:rgba(99,102,241,.06);border:1px solid rgba(99,102,241,.18);border-radius:8px;padding:6px 11px;font-size:.7rem;color:#a5b4fc;display:none;align-items:center;gap:7px;flex-shrink:0}
+.resume-badge.on{display:flex}
+.ctx-pct{font-size:.65rem;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(99,102,241,.15);color:#a5b4fc;margin-left:auto;white-space:nowrap}
+
+/* ─── MODALS ─── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.8);backdrop-filter:blur(8px);z-index:9000;display:flex;align-items:center;justify-content:center}
 .modal-bg.hidden{display:none}
-.modal{background:#0f0f22;border:1px solid var(--border2);border-radius:16px;padding:26px;width:min(500px,95vw);max-height:88vh;overflow-y:auto}
-.modal-title{font-size:.95rem;font-weight:800;color:#e2e8f0;margin-bottom:18px;display:flex;align-items:center;gap:8px}
-.mlabel{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-s);margin-bottom:7px}
-.minput{width:100%;padding:9px 12px;background:#141430;border:1px solid var(--border2);border-radius:8px;color:#e2e8f0;font-size:.83rem;outline:none;transition:border-color .2s;margin-bottom:14px}
-.minput:focus{border-color:var(--accent)}
-.minput::placeholder{color:var(--text-s)}
-.mtextarea{min-height:88px;resize:vertical;font-family:'JetBrains Mono',monospace;font-size:.76rem}
-.mrow{display:flex;gap:10px;align-items:center;justify-content:flex-end;margin-top:6px}
-.mbtn{padding:8px 17px;border-radius:8px;font-size:.8rem;font-weight:700;cursor:pointer;border:1px solid var(--border2);background:transparent;color:var(--text-m);transition:all .15s}
-.mbtn:hover{background:var(--accent2);border-color:var(--accent);color:#fff}
-.mbtn.primary{background:var(--grad);border-color:transparent;color:#fff}
-.drop-zone{border:2px dashed var(--border2);border-radius:9px;padding:18px;text-align:center;cursor:pointer;font-size:.78rem;color:var(--text-s);transition:border-color .2s;margin-bottom:10px}
-.drop-zone:hover,.drop-zone.over{border-color:var(--accent);color:var(--text-m)}
-.file-ok{font-size:.72rem;color:var(--green);margin-bottom:10px}
+.modal{background:#0f0f22;border:1px solid var(--border2);border-radius:16px;padding:24px;width:min(480px,95vw);max-height:88vh;overflow-y:auto}
+.modal-ttl{font-size:.95rem;font-weight:800;color:#e2e8f0;margin-bottom:18px;display:flex;align-items:center;gap:7px}
+.mlbl{display:block;font-size:.67rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--text-s);margin-bottom:6px}
+.minp{width:100%;padding:8px 11px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;color:#e2e8f0;font-size:.82rem;outline:none;transition:border-color .2s;margin-bottom:13px}
+.minp:focus{border-color:var(--border2)}
+.minp::placeholder{color:var(--text-s)}
+.mta{min-height:80px;resize:vertical;font-family:'JetBrains Mono',monospace;font-size:.74rem}
+.mrow{display:flex;gap:9px;justify-content:flex-end;margin-top:6px}
+.mbtn{padding:7px 16px;border-radius:8px;font-size:.78rem;font-weight:700;cursor:pointer;border:1px solid var(--border);background:transparent;color:var(--text-m);transition:all .15s}
+.mbtn:hover{background:var(--accent-h);border-color:var(--border2);color:#fff}
+.mbtn.prim{background:var(--grad);border-color:transparent;color:#fff}
+.drop-z{border:2px dashed var(--border);border-radius:9px;padding:16px;text-align:center;cursor:pointer;font-size:.76rem;color:var(--text-s);transition:border-color .2s;margin-bottom:9px}
+.drop-z:hover,.drop-z.over{border-color:var(--accent);color:var(--text-m)}
+.fok{font-size:.7rem;color:var(--green);margin-bottom:9px}
 
 /* TOAST */
-.toast{position:fixed;bottom:70px;right:14px;background:#1e1e3a;border:1px solid rgba(99,102,241,.3);color:#f1f5f9;padding:9px 16px;border-radius:9px;font-size:.8rem;z-index:9999;transition:opacity .3s;pointer-events:none;max-width:300px}
-.toast.hidden{opacity:0;pointer-events:none}
+.toast{position:fixed;bottom:65px;right:14px;background:#111128;border:1px solid rgba(99,102,241,.3);color:#f1f5f9;padding:8px 15px;border-radius:9px;font-size:.79rem;z-index:9999;transition:opacity .3s;pointer-events:none;max-width:280px}
+.toast.hidden{opacity:0}
 
-/* SPIN */
-@keyframes spin{to{transform:rotate(360deg)}}
+/* COMPACT MODE */
+.compact-pill{position:fixed;top:14px;right:14px;background:var(--glass2);border:1px solid var(--border2);border-radius:30px;padding:6px 16px;display:none;align-items:center;gap:10px;z-index:9500;cursor:pointer;backdrop-filter:blur(16px);transition:all .2s}
+.compact-pill:hover{border-color:var(--accent);transform:scale(1.02)}
+.compact-pill.on{display:flex}
+.cp-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:live-pulse 1.6s ease infinite}
 </style>
 <script src="/protect.js"></script>
 <script src="/theme.js"></script>
@@ -225,23 +252,23 @@ body{padding-left:72px}
 
 <!-- SIDEBAR -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Ambore Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
-    <a href="/applications" class="sb-item" title="Applications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg><span>Applied</span></a>
+    <a href="/applications" class="sb-item" title="Applied"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg><span>Applied</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
-    <a href="/resume-builder" class="sb-item" title="Resume Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
+    <a href="/resume-builder" class="sb-item" title="Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg><span>Builder</span></a>
     <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
     <a href="/email" class="sb-item" title="Email"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
     <a href="/linkedin" class="sb-item" title="LinkedIn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
     <a href="/portfolio" class="sb-item" title="Portfolio"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg><span>Portfolio</span></a>
-    <a href="/interview" class="sb-item active" title="Interview Copilot"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Copilot</span></a>
-    <a href="/interview-prep" class="sb-item" title="Interview Prep"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>Prep</span></a>
-    <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
-    <a href="/coding" class="sb-item" title="Coding AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
-    <a href="/english" class="sb-item" title="English AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
+    <a href="/interview" class="sb-item active" title="Copilot"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg><span>Copilot</span></a>
+    <a href="/interview-prep" class="sb-item" title="Prep"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg><span>Prep</span></a>
+    <a href="/ats-score" class="sb-item" title="ATS"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
+    <a href="/coding" class="sb-item" title="Coding"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg><span>Coding</span></a>
+    <a href="/english" class="sb-item" title="English"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg><span>English</span></a>
     <a href="/project" class="sb-item" title="Projects"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
-    <a href="/learn" class="sb-item" title="Learn AI"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Learn</span></a>
+    <a href="/learn" class="sb-item" title="Learn"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg><span>Learn</span></a>
     <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
     <a href="/coaching" class="sb-item" title="Coaching"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg><span>Coaching</span></a>
     <a href="/community" class="sb-item" title="Community"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg><span>Community</span></a>
@@ -253,177 +280,209 @@ body{padding-left:72px}
 </nav>
 
 <!-- MOBILE DOCK -->
-<nav class="mob-dock" id="mob-dock">
+<nav class="mob-dock">
   <a href="/jobs" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
   <a href="/resume" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
   <a href="/interview" class="md-item active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg><span>Copilot</span></a>
   <a href="/dashboard" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
-  <button class="md-item" onclick="toggleMobMore()"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+  <button class="md-item" onclick="document.getElementById('mob-drawer').classList.toggle('hidden')"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
 </nav>
-<div class="mob-more-drawer hidden" id="mob-more-drawer">
-  <div class="mob-drawer-inner">
-    <div class="mob-drawer-grid">
-      <a href="/cover-letter" class="mdg-item"><span style="font-size:1.1rem">✉️</span><span>Cover</span></a>
-      <a href="/email" class="mdg-item"><span style="font-size:1.1rem">📨</span><span>Email</span></a>
-      <a href="/linkedin" class="mdg-item"><span style="font-size:1.1rem">🔗</span><span>LinkedIn</span></a>
-      <a href="/ats-score" class="mdg-item"><span style="font-size:1.1rem">🎯</span><span>ATS</span></a>
-      <a href="/interview-prep" class="mdg-item"><span style="font-size:1.1rem">📋</span><span>Prep</span></a>
-      <a href="/coding" class="mdg-item"><span style="font-size:1.1rem">💻</span><span>Coding</span></a>
-      <a href="/portfolio" class="mdg-item"><span style="font-size:1.1rem">🌐</span><span>Portfolio</span></a>
-      <a href="/learn" class="mdg-item"><span style="font-size:1.1rem">📚</span><span>Learn</span></a>
-    </div>
-    <div style="padding:10px 14px;border-top:1px solid rgba(255,255,255,.08)">
-      <button onclick="typeof logout!=='undefined'?logout():window.location.href='/'" style="width:100%;padding:9px;background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);border-radius:8px;color:#ef4444;font-size:.83rem;font-weight:600;cursor:pointer">Log Out</button>
-    </div>
-  </div>
+<div class="mob-drawer hidden" id="mob-drawer"><div class="mob-drawer-inner"><div class="mob-drawer-grid">
+  <a href="/cover-letter" class="mdg-item"><span style="font-size:1.1rem">✉️</span><span>Cover</span></a>
+  <a href="/email" class="mdg-item"><span style="font-size:1.1rem">📨</span><span>Email</span></a>
+  <a href="/ats-score" class="mdg-item"><span style="font-size:1.1rem">🎯</span><span>ATS</span></a>
+  <a href="/interview-prep" class="mdg-item"><span style="font-size:1.1rem">📋</span><span>Prep</span></a>
+  <a href="/coding" class="mdg-item"><span style="font-size:1.1rem">💻</span><span>Coding</span></a>
+  <a href="/linkedin" class="mdg-item"><span style="font-size:1.1rem">🔗</span><span>LinkedIn</span></a>
+  <a href="/portfolio" class="mdg-item"><span style="font-size:1.1rem">🌐</span><span>Portfolio</span></a>
+  <a href="/learn" class="mdg-item"><span style="font-size:1.1rem">📚</span><span>Learn</span></a>
+</div></div></div>
+
+<!-- COMPACT PILL (minimize mode) -->
+<div class="compact-pill" id="compact-pill" onclick="exitCompact()">
+  <div class="cp-dot"></div>
+  <span style="font-size:.72rem;font-weight:700;color:#e2e8f0">Interview Copilot</span>
+  <span id="compact-timer" style="font-size:.67rem;color:var(--text-s);font-family:'JetBrains Mono',monospace">00:00</span>
+  <span style="font-size:.72rem;color:var(--text-s)">— click to expand</span>
 </div>
 
-<!-- ══════════════════ INTERVIEW COPILOT HUD ══════════════════ -->
-<div class="copilot-shell">
+<!-- OCR PROGRESS OVERLAY -->
+<div class="ocr-progress hidden" id="ocr-progress">
+  <div class="ocr-spinner"></div>
+  <div class="ocr-progress-txt" id="ocr-progress-txt">Capturing screen…</div>
+  <div class="ocr-progress-sub">Analyzing with AI — takes 2–4 seconds</div>
+</div>
 
-  <!-- STATUS BAR -->
-  <div class="status-bar">
-    <span class="sb-brand">⚡ INTERVIEW COPILOT</span>
-    <div class="status-pill pill-live"><span class="dot dot-green" id="dot-live"></span><span id="pill-live-txt">STANDBY</span></div>
-    <div class="status-pill pill-stt off" id="pill-stt"><span class="dot dot-grey" id="dot-stt"></span><span id="pill-stt-txt">STT — IDLE</span></div>
-    <div class="status-pill pill-ctx"><span class="dot dot-purple"></span><span id="pill-ctx-txt">CONTEXT — 0%</span></div>
-    <div class="status-pill pill-ai" id="pill-ai"><span class="dot dot-amber"></span><span id="pill-ai-txt">AI — READY</span></div>
-    <div class="sb-spacer"></div>
-    <button class="sb-btn" onclick="openSettings()">⚙ Settings</button>
-    <button class="sb-btn" onclick="clearAll()">↺ Clear</button>
-    <button class="sb-btn danger hidden" id="btn-stop-bar" onclick="stopSession()">■ Stop</button>
+<!-- ══════════════ MAIN SHELL ══════════════ -->
+<div class="shell" id="main-shell">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="brand">
+      <div class="brand-dot" id="brand-dot"></div>
+      INTERVIEW COPILOT
+    </div>
+    <div class="pill pill-live"><span class="pdot pdot-g"></span><span id="pill-live-txt">STANDBY</span></div>
+    <div class="pill pill-stt off" id="pill-stt"><span class="pdot pdot-s" id="pdot-stt"></span><span id="pill-stt-txt">STT — IDLE</span></div>
+    <div class="pill pill-ctx"><span class="pdot pdot-p"></span><span id="pill-ctx-txt">CONTEXT — 0%</span></div>
+    <div class="pill pill-ai" id="pill-ai"><span class="pdot pdot-a"></span><span id="pill-ai-txt">AI — READY</span></div>
+    <div class="tb-space"></div>
+    <button class="tb-btn" onclick="toggleCompact()" title="Cmd+M">⊟ Compact</button>
+    <button class="tb-btn" onclick="clearAll()">↺ Clear</button>
+    <button class="tb-btn" onclick="openSettings()">⚙ Settings</button>
+    <button class="tb-btn red hidden" id="tb-stop" onclick="stopSession()">■ Stop</button>
   </div>
 
-  <!-- RESUME CONTEXT BAR -->
-  <div class="ctx-bar hidden" id="ctx-bar">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-    <span id="ctx-bar-txt">No resume loaded</span>
-    <span class="ctx-score" id="ctx-score-badge">0% match</span>
+  <!-- PERSONA BAR -->
+  <div class="persona-bar">
+    <span class="persona-lbl">Persona:</span>
+    <button class="persona-tab on" onclick="setPersona('engineer',this)" data-p="engineer">💻 Software Engineer</button>
+    <button class="persona-tab" onclick="setPersona('pm',this)" data-p="pm">📦 Product Manager</button>
+    <button class="persona-tab" onclick="setPersona('hr',this)" data-p="hr">👥 HR / Recruiter</button>
+    <button class="persona-tab" onclick="setPersona('sales',this)" data-p="sales">📈 Sales</button>
+    <button class="persona-tab" onclick="setPersona('leader',this)" data-p="leader">🏆 Leadership</button>
+    <button class="persona-tab" onclick="setPersona('data',this)" data-p="data">📊 Data / ML</button>
+    <div class="persona-sep"></div>
+    <button class="tb-btn" onclick="openResumeModal()" id="btn-resume" style="font-size:.65rem">📄 Resume</button>
   </div>
 
-  <!-- OCR BAR -->
-  <div class="ocr-bar" id="ocr-bar">
-    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-    <span id="ocr-preview">Screen context active</span>
-    <button onclick="clearOCR()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer">✕</button>
+  <!-- CONTEXT BADGES -->
+  <div class="resume-badge" id="resume-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+    <span id="resume-badge-txt">Resume loaded</span>
+    <span class="ctx-pct" id="ctx-pct-badge">0%</span>
+  </div>
+  <div class="screen-badge" id="screen-badge">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    <span id="screen-badge-txt">Screen context active</span>
+    <button onclick="clearScreen()" style="margin-left:auto;background:none;border:none;color:inherit;cursor:pointer;font-size:.85rem">✕</button>
   </div>
 
   <!-- SPLIT BODY -->
-  <div class="copilot-body">
+  <div class="body-split">
 
     <!-- LEFT: TRANSCRIPT -->
     <div class="panel">
       <div class="panel-hdr">
-        <span class="dot dot-blue" style="flex-shrink:0"></span>
-        <span class="panel-title">Live Transcript</span>
+        <span class="pdot pdot-b" style="flex-shrink:0"></span>
+        <span class="panel-ttl">Live Transcript</span>
         <span class="panel-meta" id="tx-count">0 lines</span>
-        <button class="panel-action" onclick="copyTranscript()">Copy</button>
+        <button class="pa-btn" onclick="copyTranscript()">Copy</button>
       </div>
 
-      <div class="transcript-feed" id="tx-feed">
+      <div class="tx-feed" id="tx-feed">
         <div class="tx-empty" id="tx-empty">
-          <div class="tx-empty-icon">🎤</div>
-          <div class="tx-empty-text">
-            Press <strong style="color:#e2e8f0">Start Session</strong> and speak clearly.<br>
-            Your microphone is transcribed here in real time.<br><br>
-            <span style="font-size:.74rem;color:var(--text-s)">Or type the interviewer's question below and press Send.</span>
+          <div class="tx-empty-ico">🎤</div>
+          <div class="tx-empty-txt">
+            Press <strong style="color:#e2e8f0">Start</strong> and speak — or type a question below.<br><br>
+            <span style="font-size:.72rem">⌘⇧↵ to capture &amp; analyze screen &nbsp;·&nbsp; Alt+H for instant hint</span>
           </div>
         </div>
       </div>
 
-      <div class="tx-input-row">
-        <input id="manual-inp" class="tx-input" placeholder="Type interviewer question or paste coding problem…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendManual()}"/>
-        <button class="tx-send" onclick="sendManual()">Send</button>
+      <div class="tx-inp-row">
+        <input id="manual-inp" class="tx-inp" placeholder="Type interviewer question or paste problem… (Enter to send)" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendManual()}"/>
+        <button class="tx-send" onclick="sendManual()">→</button>
       </div>
     </div>
 
-    <!-- RIGHT: AI HINTS -->
+    <!-- RIGHT: AI COACHING -->
     <div class="panel">
-      <div class="hint-glow" id="hint-glow"></div>
+      <div class="ai-glow" id="ai-glow"></div>
+
       <div class="panel-hdr">
-        <span class="dot dot-amber" style="flex-shrink:0"></span>
-        <span class="panel-title">AI Copilot — STAR Coaching</span>
-        <button class="hint-now-btn" onclick="triggerHint()">⚡ Hint Now</button>
-        <button class="panel-action" onclick="copyHints()">Copy</button>
+        <span class="pdot pdot-a" style="flex-shrink:0"></span>
+        <span class="panel-ttl">AI Coaching</span>
+        <button class="pa-btn" onclick="copyHints()">Copy</button>
       </div>
+
+      <!-- ACTION PRESETS (Cluely-style) -->
+      <div class="action-bar">
+        <button class="action-btn ab-answer" onclick="runAction('answer')" title="Alt+H">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          What should I answer?
+        </button>
+        <button class="action-btn ab-code" onclick="runAction('code')" title="⌘⇧↵">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          Explain / Solve Code
+        </button>
+        <button class="action-btn ab-points" onclick="runAction('points')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+          Talking Points
+        </button>
+        <button class="action-btn ab-recap" onclick="runAction('recap')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          Recap So Far
+        </button>
+        <button class="action-btn ab-followup" onclick="runAction('followup')">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+          Predict Follow-ups
+        </button>
+      </div>
+
       <div class="hint-panel" id="hint-panel">
         <div class="hint-empty" id="hint-empty">
-          <div style="font-size:2rem;opacity:.35">🤖</div>
-          <div style="font-size:.8rem;line-height:1.75;color:var(--text-s);max-width:280px">
-            AI coaching hints stream here as you speak.<br><br>
-            <span style="color:#a5b4fc;font-weight:600">STAR Method:</span><br>
-            <span style="color:#f87171">S:</span> Situation &nbsp;
-            <span style="color:#fbbf24">T:</span> Task &nbsp;
-            <span style="color:#4d9fff">A:</span> Action &nbsp;
-            <span style="color:#00ff88">R:</span> Result<br><br>
-            <span style="font-size:.72rem;color:var(--text-s)">Upload your resume for personalized, context-matched hints.</span>
+          <div class="hint-empty-ico">🤖</div>
+          <div style="font-size:.79rem;line-height:1.75;color:var(--text-s);max-width:290px">
+            Click any action above or press <strong style="color:#e2e8f0">Alt+H</strong> for an instant hint.<br><br>
+            <span style="color:#a5b4fc;font-weight:600">STAR structure:</span>
+            <span style="color:#f87171"> S</span>ituation ·
+            <span style="color:#fbbf24"> T</span>ask ·
+            <span style="color:#60a5fa"> A</span>ction ·
+            <span style="color:#00ff88"> R</span>esult<br><br>
+            <span style="font-size:.71rem">Use <code style="background:rgba(255,255,255,.06);padding:1px 5px;border-radius:4px">⌘⇧↵</code> to screenshot &amp; analyze a coding problem.</span>
           </div>
         </div>
       </div>
-    </div>
 
-  </div><!-- /copilot-body -->
+    </div>
+  </div><!-- /body-split -->
 
   <!-- CONTROLS BAR -->
   <div class="ctrl-bar">
     <div class="mic-wrap">
       <div class="mic-ring" id="mic-ring"></div>
-      <button class="ctrl-btn primary" id="btn-start" onclick="startSession()">
+      <button class="ctrl-btn prim" id="btn-start" onclick="startSession()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/></svg>
-        Start Session
+        Start
       </button>
     </div>
-    <button class="ctrl-btn stop-btn hidden" id="btn-stop" onclick="stopSession()">
+    <button class="ctrl-btn stop-c hidden" id="btn-stop" onclick="stopSession()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/></svg>
       Stop
     </button>
     <div class="ctrl-sep"></div>
-    <button class="ctrl-btn" id="btn-resume" onclick="openResumeModal()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-      Resume
-    </button>
-    <button class="ctrl-btn" id="btn-screen" onclick="captureScreen()">
+    <button class="ctrl-btn" id="btn-screen" onclick="captureScreen()" title="⌘⇧↵">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-      Screen OCR
+      ⌘⇧↵ Screen
     </button>
     <div class="ctrl-sep"></div>
-    <button class="ctrl-btn" id="btn-auto" onclick="toggleAutoHint()">
+    <button class="ctrl-btn" id="btn-auto" onclick="toggleAuto()">
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
       Auto: OFF
     </button>
-    <div class="ctrl-spacer"></div>
-    <span id="session-timer" style="font-size:.68rem;color:var(--text-s);font-family:'JetBrains Mono',monospace">00:00</span>
-    <button class="ctrl-btn" onclick="openSettings()">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      Settings
-    </button>
+    <div class="ctrl-space"></div>
+    <span class="session-clock" id="session-clock">00:00</span>
+    <button class="ctrl-btn" onclick="openSettings()">⚙</button>
   </div>
 
-</div>
+</div><!-- /shell -->
 
 <!-- TOAST -->
 <div class="toast hidden" id="toast"></div>
 
-<!-- ── SETTINGS MODAL ── -->
+<!-- SETTINGS MODAL -->
 <div class="modal-bg hidden" id="modal-settings" onclick="if(event.target===this)closeSettings()">
   <div class="modal">
-    <div class="modal-title">⚙ Copilot Settings</div>
-    <label class="mlabel">Target Role / Position</label>
-    <input class="minput" id="cfg-role" type="text" placeholder="e.g. Senior Software Engineer at Google"/>
-    <label class="mlabel">Interview Type</label>
-    <select class="minput" id="cfg-type">
-      <option value="behavioral">Behavioral (STAR / CAAR)</option>
-      <option value="technical">Technical / System Design</option>
-      <option value="mixed">Mixed (Behavioral + Technical)</option>
-      <option value="pm">Product Manager</option>
-      <option value="leadership">Leadership / Executive</option>
-    </select>
-    <label class="mlabel">Additional Context (tech stack, industry, years of experience)</label>
-    <textarea class="minput mtextarea" id="cfg-ctx" placeholder="e.g. Python backend role, FastAPI + PostgreSQL, 5 years experience, targeting FAANG."></textarea>
-    <label class="mlabel">Auto-Hint interval (seconds)</label>
-    <input class="minput" id="cfg-interval" type="number" value="12" min="5" max="60"/>
-    <label class="mlabel">Speech recognition language</label>
-    <select class="minput" id="cfg-lang">
+    <div class="modal-ttl">⚙ Copilot Settings</div>
+    <label class="mlbl">Target Role / Company</label>
+    <input class="minp" id="cfg-role" type="text" placeholder="e.g. Senior Software Engineer at Meta"/>
+    <label class="mlbl">Additional Context (tech stack, background, years exp)</label>
+    <textarea class="minp mta" id="cfg-ctx" placeholder="e.g. Python, FastAPI, 5 years backend. Targeting FAANG. Strong in distributed systems."></textarea>
+    <label class="mlbl">Auto-Hint Interval (seconds)</label>
+    <input class="minp" id="cfg-int" type="number" value="12" min="5" max="60"/>
+    <label class="mlbl">Speech Language</label>
+    <select class="minp" id="cfg-lang">
       <option value="en-US">English (US)</option>
       <option value="en-GB">English (UK)</option>
       <option value="en-AU">English (AU)</option>
@@ -434,405 +493,672 @@ body{padding-left:72px}
     </select>
     <div class="mrow">
       <button class="mbtn" onclick="closeSettings()">Cancel</button>
-      <button class="mbtn primary" onclick="saveSettings()">Save</button>
+      <button class="mbtn prim" onclick="saveSettings()">Save</button>
     </div>
   </div>
 </div>
 
-<!-- ── RESUME MODAL ── -->
+<!-- RESUME MODAL -->
 <div class="modal-bg hidden" id="modal-resume" onclick="if(event.target===this)closeResumeModal()">
   <div class="modal">
-    <div class="modal-title">📄 Load Resume Context</div>
-    <p style="font-size:.78rem;color:var(--text-s);margin-bottom:16px;line-height:1.6">Your resume personalizes every AI hint — matching your specific experience to interview questions for highly relevant STAR answers.</p>
-    <label class="mlabel">Upload Resume (PDF / DOCX / TXT)</label>
-    <div class="drop-zone" id="resume-drop" onclick="document.getElementById('resume-file').click()"
+    <div class="modal-ttl">📄 Resume Context</div>
+    <p style="font-size:.77rem;color:var(--text-s);margin-bottom:15px;line-height:1.65">Your resume personalizes every hint — the AI matches your specific experience and skills to each interview question.</p>
+    <label class="mlbl">Upload (PDF / DOCX / TXT)</label>
+    <div class="drop-z" id="resume-drop" onclick="document.getElementById('resume-file').click()"
          ondragover="event.preventDefault();this.classList.add('over')"
          ondragleave="this.classList.remove('over')"
-         ondrop="handleResumeDrop(event)">
-      Drop file here or click to browse
-      <input type="file" id="resume-file" accept=".pdf,.docx,.doc,.txt" onchange="loadResumeFile(this)" style="display:none"/>
+         ondrop="handleDrop(event)">
+      Drop file or click to browse
+      <input type="file" id="resume-file" accept=".pdf,.docx,.doc,.txt" onchange="loadFile(this)" style="display:none"/>
     </div>
-    <div class="file-ok hidden" id="resume-file-ok"></div>
-    <label class="mlabel">Or paste resume text</label>
-    <textarea class="minput mtextarea" id="resume-paste" placeholder="Paste resume text here…" style="min-height:110px"></textarea>
+    <div class="fok hidden" id="resume-fok"></div>
+    <label class="mlbl">Or paste resume text</label>
+    <textarea class="minp mta" id="resume-paste" placeholder="Paste resume text here…" style="min-height:100px"></textarea>
     <div class="mrow">
       <button class="mbtn" onclick="closeResumeModal()">Cancel</button>
-      <button class="mbtn primary" onclick="saveResume()">Load Resume</button>
+      <button class="mbtn prim" onclick="saveResume()">Load Resume</button>
     </div>
   </div>
 </div>
 
 <script>
-// ═══════════ STATE ═══════════
+// ══════════════════ STATE ══════════════════
 var S = {
-  running:false, autoHint:false,
-  resume:'', screen:'',
-  transcript:[], hintsRaw:'',
+  running:false, autoHint:false, compact:false,
+  resume:'', screen:'', screenImg:'',
+  transcript:[], hintsRaw:'', persona:'engineer',
   txCount:0, ctxScore:0,
-  hintPending:false, ctrl:null, stt:null,
-  autoTimer:null, sessionTimer:null,
-  lastHintAt:0, interimEl:null
+  pending:false, ctrl:null, stt:null,
+  autoTimer:null, clockTimer:null, clockStart:null,
+  interimEl:null, lastHintAt:0
 };
-var CFG = { role:'', type:'behavioral', ctx:'', interval:12, lang:'en-US' };
+var CFG = { role:'', ctx:'', interval:12, lang:'en-US' };
 
-// ═══════════ TOAST ═══════════
-function toast(msg,ms){
-  var t=document.getElementById('toast');
-  t.textContent=msg;t.classList.remove('hidden');
-  clearTimeout(t._t);t._t=setTimeout(function(){t.classList.add('hidden');},ms||2600);
+// PERSONA SYSTEM PROMPTS
+var PERSONAS = {
+  engineer:{
+    label:'Software Engineer',
+    system:`You are an expert Software Engineering interview coach. Analyze the interview conversation and provide real-time STAR-method coaching.
+
+RESPONSE FORMAT — use EXACTLY this structure:
+## SITUATION
+[Set the context — describe the technical scenario or challenge clearly]
+
+## TASK
+[What was your specific responsibility or the problem to solve]
+
+## ACTION
+[Concrete technical steps taken — be specific about tools, patterns, decisions. Use code keywords from the resume if provided]
+
+## RESULT
+[Quantifiable outcome: performance %, latency reduction, users impacted, bugs fixed, cost saved]
+
+## KEY PHRASES TO USE
+• [exact phrase or technical term to say]
+• [metric or achievement to mention]
+• [technology or pattern to highlight]
+
+## AVOID
+• [weak phrase or common mistake to skip]
+
+## QUICK TIP
+[One sentence coaching note for delivery]
+
+Rules: Be specific to the candidate's resume. Use technical vocabulary. Keep total under 280 words.`
+  },
+  pm:{
+    label:'Product Manager',
+    system:`You are an expert Product Manager interview coach. Provide STAR/CIRCLES-method coaching for PM interviews.
+Structure responses with: SITUATION → TASK → ACTION → RESULT → METRICS → STAKEHOLDER IMPACT.
+Focus on: user empathy, data-driven decisions, cross-functional alignment, trade-off reasoning.`
+  },
+  hr:{
+    label:'HR / Recruiter',
+    system:`You are an expert HR interview coach. Provide behavioral STAR coaching focused on: culture fit, communication, conflict resolution, team dynamics, growth mindset. Use warm, people-focused language.`
+  },
+  sales:{
+    label:'Sales',
+    system:`You are an expert Sales interview coach. Provide STAR coaching focused on: pipeline metrics, quota attainment, deal size, objection handling, relationship building. Include specific revenue figures and percentages.`
+  },
+  leader:{
+    label:'Leadership',
+    system:`You are an executive leadership interview coach. Provide STAR coaching focused on: team building, strategic vision, change management, organizational impact, cross-functional leadership. Think at scale.`
+  },
+  data:{
+    label:'Data / ML',
+    system:`You are a Data Science / ML interview coach. Provide STAR coaching with emphasis on: model performance metrics, data pipeline scale, A/B test results, business impact of ML solutions, technical rigor.`
+  }
+};
+
+// ACTION PROMPTS
+var ACTIONS = {
+  answer: function(tx, resume, screen) {
+    return 'Based on the live interview transcript below, answer using the STAR method.\n\nTranscript:\n'+(tx||'[none yet]')+'\n\nResume:\n'+(resume||'[not provided]')+'\n\nScreen context:\n'+(screen||'[none]')+'\n\nProvide STAR coaching now.';
+  },
+  code: function(tx, resume, screen) {
+    return `Analyze the coding problem/technical question from the screen or transcript below. Provide:
+## APPROACH
+[High-level strategy and why]
+
+## SOLUTION WALKTHROUGH
+[Step-by-step explanation with complexity analysis]
+
+## TIME COMPLEXITY
+[Big-O analysis]
+
+## SPACE COMPLEXITY
+[Big-O analysis]
+
+## EDGE CASES
+• [edge case 1]
+• [edge case 2]
+
+## WHAT TO SAY
+[Script for explaining your approach out loud to the interviewer]
+
+Screen content: ${screen||'[no screen captured — use ⌘⇧↵ to capture the coding problem]'}
+Transcript: ${tx||'[none]'}`;
+  },
+  points: function(tx, resume, screen) {
+    return `From this interview context, generate 5 sharp talking points the candidate should hit in their next answer.
+
+## TOP 5 TALKING POINTS
+• [point 1 — specific and compelling]
+• [point 2]
+• [point 3]
+• [point 4]
+• [point 5 — end with impact metric]
+
+## OPENING LINE
+[Exact first sentence to say]
+
+## CLOSING LINE
+[Exact last sentence to tie it back to the role]
+
+Transcript: ${tx||'[none]'}
+Resume: ${resume||'[not provided]'}`;
+  },
+  recap: function(tx, resume, screen) {
+    return `Summarize this interview conversation so far.
+
+## CONVERSATION SUMMARY
+[2-3 sentence overview of what's been discussed]
+
+## TOPICS COVERED
+• [topic 1]
+• [topic 2]
+• [topic 3]
+
+## CANDIDATE STRENGTHS SHOWN
+• [strength demonstrated]
+
+## GAPS / AREAS TO ADDRESS
+• [area not yet covered or that needs strengthening]
+
+## RECOMMENDED NEXT MOVE
+[What to say or emphasize in the next answer]
+
+Transcript: ${tx||'[none yet]'}`;
+  },
+  followup: function(tx, resume, screen) {
+    return `Based on this interview conversation, predict the 3 most likely follow-up questions the interviewer will ask next.
+
+## LIKELY NEXT QUESTIONS
+
+### Question 1
+[Most probable follow-up]
+**Best answer approach:** [brief STAR note]
+
+### Question 2
+[Second most likely]
+**Best answer approach:** [brief STAR note]
+
+### Question 3
+[Third likely question]
+**Best answer approach:** [brief STAR note]
+
+## WATCH OUT FOR
+[One curveball or trick question to prepare for]
+
+Transcript: ${tx||'[none]'}
+Resume: ${resume||'[not provided]'}`;
+  }
+};
+
+// ══════════════════ TOAST ══════════════════
+function toast(msg, ms) {
+  var t = document.getElementById('toast');
+  t.textContent = msg; t.classList.remove('hidden');
+  clearTimeout(t._t); t._t = setTimeout(function(){ t.classList.add('hidden'); }, ms || 2500);
 }
 
-// ═══════════ SESSION TIMER ═══════════
-var _tStart=null,_tInterval=null;
-function startTimer(){
-  _tStart=Date.now();
-  _tInterval=setInterval(function(){
-    var s=Math.floor((Date.now()-_tStart)/1000),m=Math.floor(s/60);s=s%60;
-    document.getElementById('session-timer').textContent=(m<10?'0':'')+m+':'+(s<10?'0':'')+s;
-  },1000);
+// ══════════════════ CLOCK ══════════════════
+function startClock() {
+  S.clockStart = Date.now();
+  S.clockTimer = setInterval(function(){
+    var s = Math.floor((Date.now()-S.clockStart)/1000), m = Math.floor(s/60); s = s%60;
+    var str = (m<10?'0':'')+m+':'+(s<10?'0':'')+s;
+    document.getElementById('session-clock').textContent = str;
+    document.getElementById('compact-timer').textContent = str;
+  }, 1000);
 }
-function stopTimer(){clearInterval(_tInterval);document.getElementById('session-timer').textContent='00:00';}
+function stopClock() { clearInterval(S.clockTimer); document.getElementById('session-clock').textContent='00:00'; }
 
-// ═══════════ STT ═══════════
-function initSTT(){
-  var SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR){toast('Speech recognition requires Chrome or Edge.',5000);return null;}
-  var r=new SR();
-  r.continuous=true;r.interimResults=true;r.lang=CFG.lang;r.maxAlternatives=1;
-  r.onresult=function(e){
-    var interim='',final='';
-    for(var i=e.resultIndex;i<e.results.length;i++){
-      var t=e.results[i][0].transcript;
-      if(e.results[i].isFinal)final+=t;else interim+=t;
+// ══════════════════ PERSONA ══════════════════
+function setPersona(p, el) {
+  S.persona = p;
+  document.querySelectorAll('.persona-tab').forEach(function(b){ b.classList.remove('on'); });
+  el.classList.add('on');
+  toast('Persona: '+PERSONAS[p].label, 1800);
+}
+
+// ══════════════════ STT ══════════════════
+function initSTT() {
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { toast('Speech recognition requires Chrome or Edge.', 5000); return null; }
+  var r = new SR();
+  r.continuous = true; r.interimResults = true; r.lang = CFG.lang; r.maxAlternatives = 1;
+  r.onresult = function(e) {
+    var interim = '', final = '';
+    for (var i = e.resultIndex; i < e.results.length; i++) {
+      var t = e.results[i][0].transcript;
+      if (e.results[i].isFinal) final += t; else interim += t;
     }
-    if(final.trim()){addTxLine('YOU',final.trim());removeInterim();
-      if(S.autoHint&&S.transcript.length-S.lastHintAt>=2)scheduleHint();}
-    else if(interim.trim())showInterim(interim.trim());
+    if (final.trim()) {
+      addLine('YOU', final.trim()); removeInterim();
+      if (S.autoHint && S.transcript.length - S.lastHintAt >= 2) scheduleHint('answer');
+    } else if (interim.trim()) showInterim(interim.trim());
   };
-  r.onerror=function(e){if(e.error==='no-speech'||e.error==='aborted')return;toast('STT: '+e.error,4000);setPillSTT(false);};
-  r.onend=function(){if(S.running){try{r.start();}catch(ex){}}else setPillSTT(false);};
+  r.onerror = function(e) { if (e.error === 'no-speech' || e.error === 'aborted') return; toast('STT: '+e.error, 4000); setPillSTT(false); };
+  r.onend = function() { if (S.running) { try { r.start(); } catch(ex){} } else setPillSTT(false); };
   return r;
 }
-function showInterim(txt){
+function showInterim(txt) {
   removeInterim();
-  var feed=document.getElementById('tx-feed');
-  var el=document.createElement('div');el.className='tx-line';el.id='tx-interim';el.style.opacity='.5';
-  el.innerHTML='<span class="tx-speaker tx-you">YOU</span><span class="tx-text cursor">'+escH(txt)+'</span>';
-  feed.appendChild(el);feed.scrollTop=feed.scrollHeight;S.interimEl=el;
+  var feed = document.getElementById('tx-feed');
+  var el = document.createElement('div'); el.className = 'tx-line'; el.id = 'tx-interim';
+  el.innerHTML = '<span class="tx-sp sp-you">YOU</span><span class="tx-txt interim">'+escH(txt)+'</span>';
+  feed.appendChild(el); feed.scrollTop = feed.scrollHeight; S.interimEl = el;
 }
-function removeInterim(){if(S.interimEl){S.interimEl.remove();S.interimEl=null;}}
+function removeInterim() { if (S.interimEl) { S.interimEl.remove(); S.interimEl = null; } }
 
-// ═══════════ TRANSCRIPT ═══════════
-function addTxLine(speaker,text){
+// ══════════════════ TRANSCRIPT ══════════════════
+function addLine(speaker, text) {
   document.getElementById('tx-empty').classList.add('hidden');
-  var time=new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
-  S.transcript.push({speaker,text,time});S.txCount++;
-  document.getElementById('tx-count').textContent=S.txCount+' lines';
-  var cls=speaker==='YOU'?'tx-you':speaker==='SYSTEM'?'tx-system':'tx-them';
-  var feed=document.getElementById('tx-feed');
-  var el=document.createElement('div');el.className='tx-line';
-  el.innerHTML='<span class="tx-speaker '+cls+'">'+escH(speaker)+'</span><span class="tx-text">'+escH(text)+'</span><span class="tx-time">'+time+'</span>';
-  feed.appendChild(el);feed.scrollTop=feed.scrollHeight;
-  updateCtxScore();
+  var time = new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false});
+  S.transcript.push({speaker, text, time}); S.txCount++;
+  document.getElementById('tx-count').textContent = S.txCount + ' lines';
+  var cls = speaker==='YOU' ? 'sp-you' : speaker==='SYSTEM' ? 'sp-sys' : 'sp-them';
+  var feed = document.getElementById('tx-feed');
+  var el = document.createElement('div'); el.className = 'tx-line';
+  var lineText = escH(text), lineSp = escH(speaker);
+  el.innerHTML = '<span class="tx-sp '+cls+'">'+lineSp+'</span><span class="tx-txt">'+lineText+'</span><span class="tx-time">'+time+'</span><button class="tx-hint-btn" onclick="hintForLine(\''+escH(text).replace(/'/g,"\\'").slice(0,120)+'\')">🤖 Hint</button>';
+  feed.appendChild(el); feed.scrollTop = feed.scrollHeight;
+  updateCtx();
 }
-function sendManual(){
-  var inp=document.getElementById('manual-inp'),txt=inp.value.trim();
-  if(!txt)return;inp.value='';
-  addTxLine('INTERVIEWER',txt);
-  scheduleHint();
+function hintForLine(txt) {
+  var inp = document.getElementById('manual-inp'); inp.value = txt; sendManual();
 }
-
-// ═══════════ CONTEXT SCORE ═══════════
-function updateCtxScore(){
-  if(!S.resume||!S.transcript.length){setPillCtx(0);return;}
-  var rWords=new Set((S.resume.toLowerCase().match(/\b[a-z]{3,}\b/g)||[]));
-  var txWords=S.transcript.slice(-8).map(function(l){return l.text;}).join(' ').toLowerCase().match(/\b[a-z]{3,}\b/g)||[];
-  var hits=txWords.filter(function(w){return rWords.has(w);}).length;
-  var score=Math.min(100,Math.round(hits/Math.max(txWords.length,1)*220));
-  S.ctxScore=score;setPillCtx(score);
-  var badge=document.getElementById('ctx-score-badge');
-  badge.textContent=score+'% match';
-  badge.style.background=score>60?'rgba(0,255,136,.15)':score>30?'rgba(251,191,36,.15)':'rgba(99,102,241,.2)';
-  badge.style.color=score>60?'var(--green)':score>30?'var(--amber)':'#a5b4fc';
+function sendManual() {
+  var inp = document.getElementById('manual-inp'), txt = inp.value.trim();
+  if (!txt) return; inp.value = '';
+  addLine('INTERVIEWER', txt); scheduleHint('answer');
 }
 
-// ═══════════ AI HINT ═══════════
-function scheduleHint(){if(S.hintPending)return;S.hintPending=true;setTimeout(function(){S.hintPending=false;triggerHint();},250);}
+// ══════════════════ CONTEXT ══════════════════
+function updateCtx() {
+  if (!S.resume || !S.transcript.length) { setPillCtx(0); return; }
+  var rw = new Set((S.resume.toLowerCase().match(/\b[a-z]{3,}\b/g)||[]));
+  var tw = S.transcript.slice(-8).map(function(l){return l.text;}).join(' ').toLowerCase().match(/\b[a-z]{3,}\b/g)||[];
+  var score = Math.min(100, Math.round(tw.filter(function(w){return rw.has(w);}).length / Math.max(tw.length,1) * 220));
+  S.ctxScore = score; setPillCtx(score);
+  var b = document.getElementById('ctx-pct-badge'); b.textContent = score + '% match';
+  b.style.background = score>60 ? 'rgba(0,255,136,.15)' : score>30 ? 'rgba(251,191,36,.15)' : 'rgba(99,102,241,.15)';
+  b.style.color = score>60 ? 'var(--green)' : score>30 ? 'var(--amber)' : '#a5b4fc';
+}
 
-async function triggerHint(){
-  if(S.ctrl)S.ctrl.abort();
-  var txLines=S.transcript.slice(-12).map(function(l){return l.speaker+': '+l.text;}).join('\n');
-  if(!txLines.trim()&&!S.screen.trim()){toast('Start speaking or type a question first.',2500);return;}
+// ══════════════════ AI HINT ENGINE ══════════════════
+function scheduleHint(action) { if (S.pending) return; S.pending=true; setTimeout(function(){S.pending=false;runAction(action||'answer');},200); }
+
+async function runAction(actionKey) {
+  if (S.ctrl) S.ctrl.abort();
+  var txLines = S.transcript.slice(-14).map(function(l){ return l.speaker+': '+l.text; }).join('\n');
+  var personaConfig = PERSONAS[S.persona] || PERSONAS.engineer;
+  var userMsg = ACTIONS[actionKey] ? ACTIONS[actionKey](txLines, S.resume.slice(0,3500), S.screen.slice(0,1200)) : ACTIONS.answer(txLines, S.resume.slice(0,3500), S.screen.slice(0,1200));
+
+  // Add role/context
+  if (CFG.role) userMsg = 'TARGET ROLE: '+CFG.role+'\n\n'+userMsg;
+  if (CFG.ctx) userMsg = 'CONTEXT: '+CFG.ctx+'\n\n'+userMsg;
 
   setPillAI(true);
-  document.getElementById('hint-glow').classList.add('active');
+  document.getElementById('ai-glow').classList.add('on');
   document.getElementById('hint-empty').classList.add('hidden');
+  // mark action buttons loading
+  document.querySelectorAll('.action-btn').forEach(function(b){ b.classList.add('loading'); });
 
-  var panel=document.getElementById('hint-panel');
-  var thinkEl=document.createElement('div');thinkEl.className='think-row';thinkEl.id='think-el';
-  thinkEl.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .85s linear infinite;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg><span style="color:#fbbf24;font-weight:600">Analyzing conversation</span><span class="think-dots"><span>.</span><span>.</span><span>.</span></span>';
-  panel.innerHTML='';panel.appendChild(thinkEl);
+  var panel = document.getElementById('hint-panel');
+  var thinkEl = document.createElement('div'); thinkEl.className='think-row'; thinkEl.id='think-el';
+  thinkEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg><span style="color:#fbbf24;font-weight:600;font-size:.78rem">'+personaConfig.label+' AI thinking</span><span class="think-dots"><span>.</span><span>.</span><span>.</span></span>';
+  panel.innerHTML = ''; panel.appendChild(thinkEl);
 
-  var SYS=[
-    'You are an expert interview coach with deep expertise in behavioral, technical, and leadership interviews.',
-    'Analyze the live interview conversation and provide real-time coaching hints.',
-    '',
-    'ALWAYS respond using this exact structure:',
-    '## STAR METHOD',
-    'S: [Situation — set the scene with specific context]',
-    'T: [Task — what challenge or responsibility was at stake]',
-    'A: [Action — concrete steps taken, specific and detailed]',
-    'R: [Result — quantifiable outcome, metrics, impact]',
-    '',
-    '## KEY TALKING POINTS',
-    '• [specific phrase or keyword to use]',
-    '• [metric or achievement to mention from resume]',
-    '• [skill or technology to highlight]',
-    '',
-    '## AVOID',
-    '• [weak phrase or common mistake NOT to say]',
-    '',
-    '## QUICK TIP',
-    '[One sentence coaching note for delivery or framing]',
-    '',
-    'Be concise, specific, actionable. Use resume context when available. Keep total response under 300 words.'
-  ].join('\n');
+  S.ctrl = new AbortController(); S.lastHintAt = S.transcript.length; S.hintsRaw = '';
 
-  var parts=[];
-  if(CFG.role)parts.push('TARGET ROLE: '+CFG.role);
-  if(CFG.type)parts.push('INTERVIEW TYPE: '+CFG.type);
-  if(CFG.ctx)parts.push('CONTEXT:\n'+CFG.ctx);
-  if(S.resume)parts.push('RESUME:\n'+S.resume.slice(0,3500));
-  if(S.screen)parts.push('SCREEN/PROBLEM CONTEXT:\n'+S.screen.slice(0,1200));
-  parts.push('LIVE TRANSCRIPT (last 12 lines):\n'+(txLines||'[No transcript yet — give a strong opening STAR template]'));
-  parts.push('\nProvide STAR coaching hints now.');
-
-  S.ctrl=new AbortController();S.lastHintAt=S.transcript.length;S.hintsRaw='';
-
-  try{
-    var res=await fetch('/api/claude',{
-      signal:S.ctrl.signal,method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:900,stream:true,system:SYS,messages:[{role:'user',content:parts.join('\n\n')}]})
+  try {
+    var res = await fetch('/api/claude', {
+      signal: S.ctrl.signal, method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ model:'claude-sonnet-4-6', max_tokens:1000, stream:true, system:personaConfig.system, messages:[{role:'user',content:userMsg}] })
     });
-    if(!res.ok){
-      if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;}
-      var e=await res.json().catch(function(){return{};});throw new Error(e.error||'API error '+res.status);
+    if (!res.ok) {
+      if (res.status === 402) { if (window.AmborePaywall) window.AmborePaywall.show(); return; }
+      var e = await res.json().catch(function(){return{};}); throw new Error(e.error||'API error '+res.status);
     }
-    var think=document.getElementById('think-el');if(think)think.remove();
-    var streamEl=document.createElement('div');streamEl.className='h-stream h-cursor';panel.appendChild(streamEl);
-    var reader=res.body.getReader(),dec=new TextDecoder();
-    while(true){
-      var chunk=await reader.read();if(chunk.done)break;
-      for(var line of dec.decode(chunk.value,{stream:true}).split('\n')){
-        if(!line.startsWith('data:'))continue;var d=line.slice(5).trim();if(d==='[DONE]')break;
-        try{var j=JSON.parse(d);if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){S.hintsRaw+=j.delta.text;streamEl.textContent=S.hintsRaw;panel.scrollTop=panel.scrollHeight;}}catch(ex){if(!(ex instanceof SyntaxError))throw ex;}
+    var th = document.getElementById('think-el'); if (th) th.remove();
+    var streamEl = document.createElement('div'); streamEl.className='stream-txt'; panel.appendChild(streamEl);
+    var reader = res.body.getReader(), dec = new TextDecoder();
+    while (true) {
+      var chunk = await reader.read(); if (chunk.done) break;
+      for (var line of dec.decode(chunk.value,{stream:true}).split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        var d = line.slice(5).trim(); if (d==='[DONE]') break;
+        try { var j=JSON.parse(d); if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){S.hintsRaw+=j.delta.text;streamEl.textContent=S.hintsRaw;panel.scrollTop=panel.scrollHeight;} } catch(ex){ if(!(ex instanceof SyntaxError))throw ex; }
       }
     }
-    streamEl.classList.remove('h-cursor');
-    renderHints(S.hintsRaw,panel);
-    if(window.AmborAPI)AmborAPI.logActivity('interview_copilot_hint',{}).catch(function(){});
-  }catch(err){
-    var th=document.getElementById('think-el');if(th)th.remove();
-    if(err.name!=='AbortError')panel.innerHTML='<div class="hint-empty"><span style="color:var(--red);font-size:.8rem">Error: '+escH(err.message)+'</span></div>';
-  }finally{
-    setPillAI(false);document.getElementById('hint-glow').classList.remove('active');
+    streamEl.remove();
+    renderHints(S.hintsRaw, panel);
+    if (window.AmborAPI) AmborAPI.logActivity('interview_copilot_'+actionKey, {persona:S.persona}).catch(function(){});
+  } catch(err) {
+    var th2 = document.getElementById('think-el'); if (th2) th2.remove();
+    if (err.name !== 'AbortError') panel.innerHTML = '<div class="hint-empty"><span style="color:var(--red);font-size:.79rem">Error: '+escH(err.message)+'</span></div>';
+  } finally {
+    setPillAI(false);
+    document.getElementById('ai-glow').classList.remove('on');
+    document.querySelectorAll('.action-btn').forEach(function(b){ b.classList.remove('loading'); });
   }
 }
 
-// ═══════════ RENDER HINTS ═══════════
-function renderHints(raw,panel){
-  panel.innerHTML='';var lines=raw.split('\n'),html='',inSec=false;
-  for(var i=0;i<lines.length;i++){
-    var line=lines[i];
-    if(line.startsWith('## ')){
-      if(inSec)html+='</div></div>';
-      var title=line.slice(3).trim();
-      var lc=title.toLowerCase();
-      var cls=lc.includes('star')?'h-lbl s':lc.includes('key')||lc.includes('talking')?'h-lbl k':lc.includes('avoid')?'h-lbl r':'h-lbl tip';
-      html+='<div class="hint-section"><div class="'+cls+'">'+escH(title)+'</div><div class="h-body">';inSec=true;
-    }else if(/^[STAR]: /.test(line)){
-      var letter=line[0],rest=escH(line.slice(3).trim());
-      var lmap={S:'s',T:'t',A:'a',R:'r'},lname={S:'SITUATION',T:'TASK',A:'ACTION',R:'RESULT'};
-      html+='<div style="margin-bottom:7px"><span class="h-lbl '+lmap[letter]+'" style="display:inline;font-size:.58rem">'+lname[letter]+' </span><span style="font-size:.8rem;color:var(--text)">'+rest+'</span></div>';
-    }else if(line.startsWith('• ')||line.startsWith('- ')){
-      html+='<div class="h-bullet"><span style="font-size:.8rem;color:var(--text)">'+escH(line.slice(2).trim())+'</span></div>';
-    }else if(line.trim()){
-      html+='<span style="font-size:.8rem;color:var(--text-m);display:block;margin-bottom:3px">'+escH(line)+'</span>';
-    }else if(inSec)html+='<br style="line-height:.6">';
-  }
-  if(inSec)html+='</div></div>';
-  panel.innerHTML=html;panel.scrollTop=0;
+// ══════════════════ RENDER HINTS ══════════════════
+var SEC_COLORS = {
+  'SITUATION':'ls','TASK':'lt','ACTION':'la','RESULT':'lr',
+  'KEY PHRASES TO USE':'lk','TOP 5 TALKING POINTS':'lk','LIKELY NEXT QUESTIONS':'lk',
+  'APPROACH':'lc','SOLUTION WALKTHROUGH':'la','TIME COMPLEXITY':'lt','SPACE COMPLEXITY':'lt',
+  'EDGE CASES':'ls','WHAT TO SAY':'lr','CONVERSATION SUMMARY':'lp','OPENING LINE':'la','CLOSING LINE':'lr',
+  'AVOID':'ls','QUICK TIP':'lp','RECOMMENDED NEXT MOVE':'lr','WATCH OUT FOR':'ls',
+  'CANDIDATE STRENGTHS SHOWN':'lr','GAPS / AREAS TO ADDRESS':'ls','TOPICS COVERED':'lk'
+};
+function getSectionColor(title) {
+  for (var k in SEC_COLORS) { if (title.includes(k)) return SEC_COLORS[k]; }
+  return 'lp';
 }
 
-// ═══════════ SESSION CONTROL ═══════════
-function startSession(){
-  if(S.running)return;
-  var stt=initSTT();if(!stt)return;
-  S.stt=stt;S.running=true;
-  try{stt.start();}catch(e){}
+function renderHints(raw, panel) {
+  panel.innerHTML = '';
+  var lines = raw.split('\n'), i = 0;
+  var sections = [];
+  var cur = null;
+  while (i < lines.length) {
+    var line = lines[i];
+    if (line.startsWith('## ') || line.startsWith('### ')) {
+      if (cur) sections.push(cur);
+      cur = { title: line.replace(/^#{2,3}\s*/,'').trim(), lines: [] };
+    } else if (cur) {
+      cur.lines.push(line);
+    }
+    i++;
+  }
+  if (cur) sections.push(cur);
+
+  if (!sections.length) {
+    // Fallback: render as stream
+    var el = document.createElement('div'); el.className = 'stream-txt'; el.style.cssText='padding:12px;color:var(--text-m)';
+    el.textContent = raw; panel.appendChild(el); return;
+  }
+
+  sections.forEach(function(sec) {
+    var clr = getSectionColor(sec.title.toUpperCase());
+    var secEl = document.createElement('div'); secEl.className = 'hint-sec';
+    var body = sec.lines.join('\n').trim();
+    var bodyHtml = '';
+    body.split('\n').forEach(function(l) {
+      if (l.startsWith('• ') || l.startsWith('- ') || l.startsWith('* ')) {
+        bodyHtml += '<div class="h-bullet"><span class="h-txt">'+escH(l.slice(2).trim())+'</span></div>';
+      } else if (l.trim()) {
+        bodyHtml += '<span style="display:block;margin-bottom:3px;font-size:.79rem;color:var(--text-m)">'+escH(l)+'</span>';
+      }
+    });
+    secEl.innerHTML = '<div class="hint-sec-hdr" onclick="toggleSec(this)"><span class="hint-sec-label '+clr+'">'+escH(sec.title)+'</span><button class="hint-sec-copy" onclick="event.stopPropagation();copySec(\''+encodeURIComponent(body)+'\',this)">Copy</button></div><div class="hint-sec-body">'+bodyHtml+'</div>';
+    panel.appendChild(secEl);
+  });
+  panel.scrollTop = 0;
+}
+function toggleSec(hdr) {
+  var body = hdr.nextElementSibling;
+  body.classList.toggle('collapsed');
+}
+function copySec(encoded, btn) {
+  navigator.clipboard.writeText(decodeURIComponent(encoded)).then(function(){
+    var orig = btn.textContent; btn.textContent='✓ Copied';
+    setTimeout(function(){ btn.textContent=orig; }, 1800);
+  });
+}
+
+// ══════════════════ SESSION ══════════════════
+function startSession() {
+  if (S.running) return;
+  var stt = initSTT(); if (!stt) return;
+  S.stt = stt; S.running = true;
+  try { stt.start(); } catch(e){}
   document.getElementById('btn-start').classList.add('hidden');
   document.getElementById('btn-stop').classList.remove('hidden');
-  document.getElementById('btn-stop-bar').classList.remove('hidden');
-  document.getElementById('mic-ring').classList.add('active');
-  document.getElementById('dot-live').className='dot dot-green';
-  document.getElementById('pill-live-txt').textContent='LIVE';
-  setPillSTT(true);startTimer();
-  if(S.autoHint)startAutoTimer();
-  addTxLine('SYSTEM','— Session started — begin speaking —');
-  toast('🎤 Session live — speak clearly',3000);
+  document.getElementById('tb-stop').classList.remove('hidden');
+  document.getElementById('mic-ring').classList.add('on');
+  document.getElementById('pill-live-txt').textContent = 'LIVE';
+  document.getElementById('brand-dot').style.background = 'var(--green)';
+  setPillSTT(true); startClock();
+  if (S.autoHint) startAutoTimer();
+  addLine('SYSTEM', '— Session started — speak now —');
+  toast('🎤 Session live', 2500);
 }
-function stopSession(){
-  if(!S.running)return;S.running=false;
-  if(S.stt){try{S.stt.stop();S.stt.abort();}catch(e){}S.stt=null;}
-  if(S.ctrl)S.ctrl.abort();
-  clearTimeout(S.autoTimer);removeInterim();stopTimer();
+function stopSession() {
+  if (!S.running) return; S.running = false;
+  if (S.stt) { try { S.stt.stop(); S.stt.abort(); } catch(e){} S.stt=null; }
+  if (S.ctrl) S.ctrl.abort();
+  clearTimeout(S.autoTimer); removeInterim(); stopClock();
   document.getElementById('btn-start').classList.remove('hidden');
   document.getElementById('btn-stop').classList.add('hidden');
-  document.getElementById('btn-stop-bar').classList.add('hidden');
-  document.getElementById('mic-ring').classList.remove('active');
-  document.getElementById('pill-live-txt').textContent='STANDBY';
+  document.getElementById('tb-stop').classList.add('hidden');
+  document.getElementById('mic-ring').classList.remove('on');
+  document.getElementById('pill-live-txt').textContent = 'STANDBY';
   setPillSTT(false);
-  addTxLine('SYSTEM','— Session ended —');
-  toast('Session stopped',2000);
+  addLine('SYSTEM', '— Session ended —'); toast('Session stopped', 2000);
 }
-function clearAll(){
-  if(S.running)stopSession();
-  S.transcript=[];S.txCount=0;S.hintsRaw='';S.screen='';S.ctxScore=0;
-  document.getElementById('tx-feed').innerHTML='<div class="tx-empty" id="tx-empty"><div class="tx-empty-icon">🎤</div><div class="tx-empty-text">Press <strong style="color:#e2e8f0">Start Session</strong> and speak clearly.<br>Or type a question below and press Send.</div></div>';
-  document.getElementById('hint-panel').innerHTML='<div class="hint-empty" id="hint-empty"><div style="font-size:2rem;opacity:.35">🤖</div><div style="font-size:.8rem;color:var(--text-s)">AI hints appear here as you speak.</div></div>';
+function clearAll() {
+  if (S.running) stopSession();
+  S.transcript=[]; S.txCount=0; S.hintsRaw=''; S.screen=''; S.screenImg=''; S.ctxScore=0;
+  document.getElementById('tx-feed').innerHTML='<div class="tx-empty" id="tx-empty"><div class="tx-empty-ico">🎤</div><div class="tx-empty-txt">Press <strong style="color:#e2e8f0">Start</strong> and speak — or type a question below.<br><br><span style="font-size:.72rem">⌘⇧↵ to capture screen · Alt+H for instant hint</span></div></div>';
+  document.getElementById('hint-panel').innerHTML='<div class="hint-empty" id="hint-empty"><div class="hint-empty-ico">🤖</div><div style="font-size:.79rem;color:var(--text-s)">Click an action above or press Alt+H for a hint.</div></div>';
   document.getElementById('tx-count').textContent='0 lines';
-  document.getElementById('ocr-bar').classList.remove('on');
-  setPillCtx(0);toast('Session cleared',1800);
+  document.getElementById('screen-badge').classList.remove('on');
+  setPillCtx(0); toast('Session cleared', 1600);
 }
 
-// ═══════════ AUTO-HINT ═══════════
-function toggleAutoHint(){
-  S.autoHint=!S.autoHint;
-  var btn=document.getElementById('btn-auto');
-  if(S.autoHint){btn.textContent='⏱ Auto: ON';btn.classList.add('active-btn');if(S.running)startAutoTimer();toast('Auto-hint every '+CFG.interval+'s',2000);}
-  else{btn.textContent='Auto: OFF';btn.classList.remove('active-btn');clearTimeout(S.autoTimer);toast('Auto-hint off',1600);}
+// ══════════════════ AUTO-HINT ══════════════════
+function toggleAuto() {
+  S.autoHint = !S.autoHint;
+  var btn = document.getElementById('btn-auto');
+  if (S.autoHint) { btn.textContent='⏱ Auto: ON'; btn.classList.add('auto-on'); if(S.running)startAutoTimer(); toast('Auto-hint every '+CFG.interval+'s', 1800); }
+  else { btn.textContent='Auto: OFF'; btn.classList.remove('auto-on'); clearTimeout(S.autoTimer); toast('Auto-hint off', 1500); }
 }
-function startAutoTimer(){
+function startAutoTimer() {
   clearTimeout(S.autoTimer);
-  S.autoTimer=setTimeout(function(){
-    if(!S.running||!S.autoHint)return;
-    if(S.transcript.length>S.lastHintAt)triggerHint();
+  S.autoTimer = setTimeout(function(){
+    if (!S.running || !S.autoHint) return;
+    if (S.transcript.length > S.lastHintAt) runAction('answer');
     startAutoTimer();
-  },CFG.interval*1000);
+  }, CFG.interval * 1000);
 }
 
-// ═══════════ SCREEN OCR ═══════════
-async function captureScreen(){
-  var btn=document.getElementById('btn-screen');
-  if(!navigator.mediaDevices?.getDisplayMedia){toast('Screen capture not supported in this browser.',4000);return;}
-  try{
-    btn.textContent='⏳ Capturing…';btn.disabled=true;
-    var stream=await navigator.mediaDevices.getDisplayMedia({video:{frameRate:1},audio:false});
-    var track=stream.getVideoTracks()[0];
-    var cap=new ImageCapture(track);
-    var bmp=await cap.grabFrame();
-    track.stop();stream.getTracks().forEach(function(t){t.stop();});
-    var cv=document.createElement('canvas');cv.width=bmp.width;cv.height=bmp.height;
-    cv.getContext('2d').drawImage(bmp,0,0);
-    S.screen='[Screen captured — '+new Date().toLocaleTimeString()+'. Paste the coding problem or question text into the Send box for full OCR context.]';
-    var bar=document.getElementById('ocr-bar');
-    bar.classList.add('on');
-    document.getElementById('ocr-preview').textContent='🖥 Screen captured at '+new Date().toLocaleTimeString();
-    toast('✓ Screen captured — add to context',2500);
-  }catch(err){
-    if(err.name!=='NotAllowedError')toast('Screen capture: '+err.message,4000);
-  }finally{
-    btn.innerHTML='<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg> Screen OCR';
-    btn.disabled=false;
+// ══════════════════ SCREEN CAPTURE ══════════════════
+async function captureScreen() {
+  var btn = document.getElementById('btn-screen');
+  if (!navigator.mediaDevices?.getDisplayMedia) { toast('Screen capture needs Chrome/Edge.', 4000); return; }
+  var prog = document.getElementById('ocr-progress');
+  prog.classList.remove('hidden'); document.getElementById('ocr-progress-txt').textContent = 'Capturing screen…';
+  btn.disabled = true;
+  try {
+    var stream = await navigator.mediaDevices.getDisplayMedia({video:{frameRate:1,width:{max:1920}},audio:false});
+    var track = stream.getVideoTracks()[0];
+    var cap = new ImageCapture(track);
+    var bmp = await cap.grabFrame();
+    track.stop(); stream.getTracks().forEach(function(t){t.stop();});
+
+    var cv = document.createElement('canvas'); cv.width=bmp.width; cv.height=bmp.height;
+    cv.getContext('2d').drawImage(bmp, 0, 0);
+    S.screenImg = cv.toDataURL('image/jpeg', 0.8);
+
+    document.getElementById('ocr-progress-txt').textContent = 'Analyzing with AI…';
+
+    // Send screenshot as vision to Claude
+    S.screen = '[Screenshot captured at '+new Date().toLocaleTimeString()+']';
+    var screenBadge = document.getElementById('screen-badge');
+    screenBadge.classList.add('on');
+    document.getElementById('screen-badge-txt').textContent = '🖥 Screen captured — '+bmp.width+'×'+bmp.height;
+
+    // Vision-based OCR via Claude
+    await analyzeScreenWithAI(S.screenImg);
+
+  } catch(err) {
+    if (err.name !== 'NotAllowedError') toast('Screen: '+err.message, 4000);
+  } finally {
+    prog.classList.add('hidden');
+    btn.disabled = false;
   }
 }
-function clearOCR(){S.screen='';document.getElementById('ocr-bar').classList.remove('on');toast('Screen context cleared',1600);}
 
-// ═══════════ RESUME ═══════════
-function openResumeModal(){document.getElementById('modal-resume').classList.remove('hidden');}
-function closeResumeModal(){document.getElementById('modal-resume').classList.add('hidden');}
-function handleResumeDrop(e){e.preventDefault();document.getElementById('resume-drop').classList.remove('over');var f=e.dataTransfer.files[0];if(f)processResumeFile(f);}
-function loadResumeFile(inp){if(inp.files[0])processResumeFile(inp.files[0]);}
-async function processResumeFile(file){
-  var ok=document.getElementById('resume-file-ok'),ext=file.name.split('.').pop().toLowerCase(),txt='';
-  ok.classList.remove('hidden');ok.textContent='Reading '+file.name+'…';
-  try{
-    if(ext==='txt'){txt=await file.text();}
-    else if(ext==='pdf'){
-      pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-      var buf=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf}).promise;
-      for(var i=1;i<=pdf.numPages;i++){var p=await pdf.getPage(i),c=await p.getTextContent();txt+=c.items.map(function(it){return it.str;}).join(' ')+'\n';}
-    }else if(ext==='docx'||ext==='doc'){var r=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()});txt=r.value;}
-    if(!txt.trim())throw new Error('Could not extract text');
+async function analyzeScreenWithAI(imgDataUrl) {
+  if (S.ctrl) S.ctrl.abort();
+  var base64 = imgDataUrl.split(',')[1];
+  setPillAI(true);
+  document.getElementById('ai-glow').classList.add('on');
+  document.getElementById('hint-empty').classList.add('hidden');
+  document.querySelectorAll('.action-btn').forEach(function(b){ b.classList.add('loading'); });
+
+  var panel = document.getElementById('hint-panel');
+  var thinkEl = document.createElement('div'); thinkEl.className='think-row'; thinkEl.id='think-el';
+  thinkEl.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin .8s linear infinite;flex-shrink:0"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg><span style="color:#a78bfa;font-weight:600;font-size:.78rem">Analyzing screenshot…</span><span class="think-dots"><span>.</span><span>.</span><span>.</span></span>';
+  panel.innerHTML = ''; panel.appendChild(thinkEl);
+
+  var persona = PERSONAS[S.persona] || PERSONAS.engineer;
+  var txLines = S.transcript.slice(-10).map(function(l){return l.speaker+': '+l.text;}).join('\n');
+
+  var SYS = persona.system + '\n\nAdditionally: if the screenshot contains a coding problem, provide APPROACH → SOLUTION → COMPLEXITY → WHAT TO SAY. If it contains a question/slide, provide STAR coaching.';
+  var userMsg = 'Analyze this screenshot and provide interview coaching.\n\nResume context:\n'+(S.resume.slice(0,2000)||'[not loaded]')+'\n\nTranscript so far:\n'+(txLines||'[none]')+'\n\n'+((CFG.role)?'Target role: '+CFG.role:'');
+
+  S.ctrl = new AbortController(); S.hintsRaw = '';
+
+  try {
+    var res = await fetch('/api/claude', {
+      signal: S.ctrl.signal, method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6', max_tokens: 1200, stream: true, system: SYS,
+        messages: [{role:'user', content:[
+          {type:'image', source:{type:'base64', media_type:'image/jpeg', data:base64}},
+          {type:'text', text:userMsg}
+        ]}]
+      })
+    });
+    if (!res.ok) {
+      if (res.status===402) { if(window.AmborePaywall)window.AmborePaywall.show(); return; }
+      var e = await res.json().catch(function(){return{};}); throw new Error(e.error||'Vision API error '+res.status);
+    }
+    var th = document.getElementById('think-el'); if (th) th.remove();
+    var streamEl = document.createElement('div'); streamEl.className='stream-txt'; panel.appendChild(streamEl);
+    var reader = res.body.getReader(), dec = new TextDecoder();
+    while (true) {
+      var chunk = await reader.read(); if (chunk.done) break;
+      for (var line of dec.decode(chunk.value,{stream:true}).split('\n')) {
+        if (!line.startsWith('data:')) continue;
+        var d = line.slice(5).trim(); if (d==='[DONE]') break;
+        try { var j=JSON.parse(d); if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){S.hintsRaw+=j.delta.text;streamEl.textContent=S.hintsRaw;panel.scrollTop=panel.scrollHeight;} } catch(ex){ if(!(ex instanceof SyntaxError))throw ex; }
+      }
+    }
+    // Extract text context from response for future prompts
+    S.screen = S.hintsRaw.slice(0, 500);
+    streamEl.remove(); renderHints(S.hintsRaw, panel);
+    toast('✓ Screenshot analyzed', 2500);
+    if (window.AmborAPI) AmborAPI.logActivity('interview_copilot_screen', {persona:S.persona}).catch(function(){});
+  } catch(err) {
+    var th2 = document.getElementById('think-el'); if (th2) th2.remove();
+    if (err.name !== 'AbortError') panel.innerHTML='<div class="hint-empty"><span style="color:var(--red);font-size:.79rem">Error: '+escH(err.message)+'</span></div>';
+  } finally {
+    setPillAI(false); document.getElementById('ai-glow').classList.remove('on');
+    document.querySelectorAll('.action-btn').forEach(function(b){ b.classList.remove('loading'); });
+  }
+}
+
+function clearScreen() { S.screen=''; S.screenImg=''; document.getElementById('screen-badge').classList.remove('on'); toast('Screen context cleared',1500); }
+
+// ══════════════════ COMPACT MODE ══════════════════
+function toggleCompact() {
+  S.compact = !S.compact;
+  document.getElementById('main-shell').style.display = S.compact ? 'none' : '';
+  document.getElementById('compact-pill').classList.toggle('on', S.compact);
+  if (S.compact) toast('Compact mode — click pill to restore', 2500);
+}
+function exitCompact() { S.compact=false; document.getElementById('main-shell').style.display=''; document.getElementById('compact-pill').classList.remove('on'); }
+
+// ══════════════════ RESUME ══════════════════
+function openResumeModal() { document.getElementById('modal-resume').classList.remove('hidden'); }
+function closeResumeModal() { document.getElementById('modal-resume').classList.add('hidden'); }
+function handleDrop(e) { e.preventDefault(); document.getElementById('resume-drop').classList.remove('over'); var f=e.dataTransfer.files[0]; if(f)loadFile({files:[f]}); }
+function loadFile(inp) { if (inp.files[0]) processFile(inp.files[0]); }
+async function processFile(file) {
+  var ok=document.getElementById('resume-fok'), ext=file.name.split('.').pop().toLowerCase(), txt='';
+  ok.classList.remove('hidden'); ok.textContent='Reading…';
+  try {
+    if (ext==='txt') { txt=await file.text(); }
+    else if (ext==='pdf') { pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js'; var buf=await file.arrayBuffer(),pdf=await pdfjsLib.getDocument({data:buf}).promise; for(var i=1;i<=pdf.numPages;i++){var p=await pdf.getPage(i),c=await p.getTextContent();txt+=c.items.map(function(it){return it.str;}).join(' ')+'\n';} }
+    else if (ext==='docx'||ext==='doc') { var r=await mammoth.extractRawText({arrayBuffer:await file.arrayBuffer()}); txt=r.value; }
+    if (!txt.trim()) throw new Error('Could not extract text');
     document.getElementById('resume-paste').value=txt;
     ok.textContent='✓ '+file.name+' ('+txt.length.toLocaleString()+' chars)';
-  }catch(err){ok.textContent='✗ '+err.message;ok.style.color='var(--red)';}
+  } catch(err) { ok.textContent='✗ '+err.message; ok.style.color='var(--red)'; }
 }
-function saveResume(){
-  var txt=document.getElementById('resume-paste').value.trim();
-  if(!txt){toast('Please upload or paste your resume.',2500);return;}
-  S.resume=txt;closeResumeModal();
-  var bar=document.getElementById('ctx-bar');bar.classList.remove('hidden');
-  document.getElementById('ctx-bar-txt').textContent='📄 Resume loaded — '+txt.split(/\s+/).length.toLocaleString()+' words · Context matching active';
-  document.getElementById('btn-resume').classList.add('active-btn');
-  updateCtxScore();toast('✓ Resume loaded — hints are now personalized',3000);
-}
-
-// ═══════════ SETTINGS ═══════════
-function openSettings(){document.getElementById('modal-settings').classList.remove('hidden');}
-function closeSettings(){document.getElementById('modal-settings').classList.add('hidden');}
-function saveSettings(){
-  CFG.role=document.getElementById('cfg-role').value.trim();
-  CFG.type=document.getElementById('cfg-type').value;
-  CFG.ctx=document.getElementById('cfg-ctx').value.trim();
-  CFG.interval=parseInt(document.getElementById('cfg-interval').value)||12;
-  CFG.lang=document.getElementById('cfg-lang').value;
-  if(S.stt)S.stt.lang=CFG.lang;
-  closeSettings();toast('✓ Settings saved',2000);
+function saveResume() {
+  var txt = document.getElementById('resume-paste').value.trim();
+  if (!txt) { toast('Upload or paste your resume first.', 2500); return; }
+  S.resume = txt; closeResumeModal();
+  var badge = document.getElementById('resume-badge'); badge.classList.add('on');
+  document.getElementById('resume-badge-txt').textContent='📄 Resume — '+txt.split(/\s+/).length.toLocaleString()+' words · context active';
+  document.getElementById('btn-resume').style.color='var(--green)';
+  updateCtx(); toast('✓ Resume loaded — hints are now personalized', 3000);
 }
 
-// ═══════════ COPY ═══════════
-function copyTranscript(){
-  if(!S.transcript.length){toast('No transcript yet.',2000);return;}
-  navigator.clipboard.writeText(S.transcript.map(function(l){return '['+l.time+'] '+l.speaker+': '+l.text;}).join('\n')).then(function(){toast('✓ Transcript copied',2000);});
-}
-function copyHints(){
-  if(!S.hintsRaw){toast('No hints yet.',2000);return;}
-  navigator.clipboard.writeText(S.hintsRaw).then(function(){toast('✓ Hints copied',2000);});
-}
-
-// ═══════════ PILLS ═══════════
-function setPillSTT(on){
-  var pill=document.getElementById('pill-stt'),dot=document.getElementById('dot-stt'),txt=document.getElementById('pill-stt-txt');
-  if(on){pill.classList.remove('off');dot.className='dot dot-blue';txt.textContent='STT — ACTIVE';}
-  else{pill.classList.add('off');dot.className='dot dot-grey';txt.textContent='STT — IDLE';}
-}
-function setPillCtx(score){document.getElementById('pill-ctx-txt').textContent='CONTEXT — '+score+'%';}
-function setPillAI(thinking){
-  var pill=document.getElementById('pill-ai'),txt=document.getElementById('pill-ai-txt');
-  if(thinking){pill.classList.add('thinking');txt.textContent='AI — THINKING';}
-  else{pill.classList.remove('thinking');txt.textContent='AI — READY';}
+// ══════════════════ SETTINGS ══════════════════
+function openSettings() { document.getElementById('modal-settings').classList.remove('hidden'); }
+function closeSettings() { document.getElementById('modal-settings').classList.add('hidden'); }
+function saveSettings() {
+  CFG.role = document.getElementById('cfg-role').value.trim();
+  CFG.ctx  = document.getElementById('cfg-ctx').value.trim();
+  CFG.interval = parseInt(document.getElementById('cfg-int').value)||12;
+  CFG.lang = document.getElementById('cfg-lang').value;
+  if (S.stt) S.stt.lang = CFG.lang;
+  closeSettings(); toast('✓ Settings saved', 1800);
 }
 
-// ═══════════ KEYBOARD SHORTCUTS ═══════════
-document.addEventListener('keydown',function(e){
-  var tag=document.activeElement.tagName;
-  if(tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT')return;
-  if(e.altKey&&e.key==='s'){e.preventDefault();S.running?stopSession():startSession();}
-  if(e.altKey&&e.key==='h'){e.preventDefault();triggerHint();}
-  if(e.altKey&&e.key==='a'){e.preventDefault();toggleAutoHint();}
-  if(e.altKey&&e.key==='r'){e.preventDefault();openResumeModal();}
-  if(e.key==='Escape'){closeSettings();closeResumeModal();}
+// ══════════════════ PILLS ══════════════════
+function setPillSTT(on) {
+  var pill=document.getElementById('pill-stt'), dot=document.getElementById('pdot-stt'), txt=document.getElementById('pill-stt-txt');
+  if (on) { pill.classList.remove('off'); dot.className='pdot pdot-b'; txt.textContent='STT — ACTIVE'; }
+  else { pill.classList.add('off'); dot.className='pdot pdot-s'; txt.textContent='STT — IDLE'; }
+}
+function setPillCtx(score) { document.getElementById('pill-ctx-txt').textContent='CONTEXT — '+score+'%'; }
+function setPillAI(on) {
+  var pill=document.getElementById('pill-ai'), txt=document.getElementById('pill-ai-txt');
+  if (on) { pill.classList.add('on'); txt.textContent='AI — THINKING'; }
+  else { pill.classList.remove('on'); txt.textContent='AI — READY'; }
+}
+
+// ══════════════════ COPY ══════════════════
+function copyTranscript() {
+  if (!S.transcript.length) { toast('No transcript yet.',2000); return; }
+  navigator.clipboard.writeText(S.transcript.map(function(l){return '['+l.time+'] '+l.speaker+': '+l.text;}).join('\n')).then(function(){ toast('✓ Transcript copied',2000); });
+}
+function copyHints() {
+  if (!S.hintsRaw) { toast('No hints yet.',2000); return; }
+  navigator.clipboard.writeText(S.hintsRaw).then(function(){ toast('✓ Hints copied',2000); });
+}
+
+// ══════════════════ KEYBOARD SHORTCUTS ══════════════════
+document.addEventListener('keydown', function(e) {
+  var tag = document.activeElement.tagName;
+  if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+  // Alt+H = instant hint
+  if (e.altKey && e.key==='h') { e.preventDefault(); runAction('answer'); }
+  // Alt+S = start/stop
+  if (e.altKey && e.key==='s') { e.preventDefault(); S.running ? stopSession() : startSession(); }
+  // Alt+A = auto
+  if (e.altKey && e.key==='a') { e.preventDefault(); toggleAuto(); }
+  // Alt+M = compact/mini mode
+  if (e.altKey && e.key==='m') { e.preventDefault(); toggleCompact(); }
+  // Cmd/Ctrl+Shift+Enter = screen capture
+  if ((e.metaKey||e.ctrlKey) && e.shiftKey && e.key==='Enter') { e.preventDefault(); captureScreen(); }
+  // Escape = close modals or exit compact
+  if (e.key==='Escape') {
+    if (S.compact) { exitCompact(); return; }
+    closeSettings(); closeResumeModal();
+  }
 });
 
-// ═══════════ UTIL ═══════════
-function toggleMobMore(){document.getElementById('mob-more-drawer').classList.toggle('hidden');}
-function escH(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+// ══════════════════ UTIL ══════════════════
+function escH(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 </script>
 
-<div style="position:fixed;bottom:62px;left:80px;font-size:.6rem;color:rgba(255,255,255,.15);line-height:2;pointer-events:none;z-index:1;white-space:nowrap">
-  Alt+S Start/Stop &nbsp;·&nbsp; Alt+H Hint Now &nbsp;·&nbsp; Alt+A Auto-Hint &nbsp;·&nbsp; Alt+R Resume
+<!-- SHORTCUT HINT -->
+<div style="position:fixed;bottom:60px;left:80px;font-size:.58rem;color:rgba(255,255,255,.13);line-height:1.9;pointer-events:none;z-index:1;white-space:nowrap">
+  Alt+S Start/Stop &nbsp;·&nbsp; Alt+H Hint &nbsp;·&nbsp; Alt+A Auto &nbsp;·&nbsp; Alt+M Compact &nbsp;·&nbsp; ⌘⇧↵ Screen
 </div>
+
 </body>
 </html>
