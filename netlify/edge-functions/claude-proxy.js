@@ -180,34 +180,53 @@ export default async function handler(req, context) {
     });
   }
 
-  // ── Subscription / usage check ────────────────────────────────────────────────
-  // Calls the subscription-check Netlify function which reads the DB and
-  // atomically increments the usage counter when the call is allowed.
+  // ── Subscription / usage check — FAIL CLOSED ─────────────────────────────
+  // Any error (network, DB, timeout) blocks the call. We never fail open.
+  // A 5-second timeout prevents a hung subscription-check from stalling forever.
   try {
-    const siteUrl  = Deno.env.get('URL') || 'https://ambore.org';
-    const subResp  = await fetch(`${siteUrl}/.netlify/functions/subscription-check`, {
-      method  : 'POST',
-      headers : { 'Content-Type': 'application/json' },
-      body    : JSON.stringify({ userId }),
-    });
-    if (subResp.ok) {
-      const subData = await subResp.json();
-      if (!subData.allowed) {
-        return new Response(
-          JSON.stringify({
-            error      : subData.reason === 'monthly_limit_reached'
-              ? 'Monthly AI limit reached. Your requests reset at the end of your billing period.'
-              : 'You\'ve used your 1 free AI request. Upgrade to Premium for $9/month to continue.',
-            code       : 'UPGRADE_REQUIRED',
-            reason     : subData.reason,
-            upgradeUrl : '/pricing',
-          }),
-          { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
-        );
-      }
+    const siteUrl   = Deno.env.get('URL') || 'https://ambore.org';
+    const controller = new AbortController();
+    const timeout    = setTimeout(() => controller.abort(), 5000);
+
+    let subResp;
+    try {
+      subResp = await fetch(`${siteUrl}/.netlify/functions/subscription-check`, {
+        method  : 'POST',
+        headers : { 'Content-Type': 'application/json' },
+        body    : JSON.stringify({ userId }),
+        signal  : controller.signal,
+      });
+    } finally {
+      clearTimeout(timeout);
     }
-  } catch (_subErr) {
-    // Fail open — a temporary DB outage should not block the user
+
+    if (!subResp.ok) {
+      // subscription-check returned a non-200 — treat as blocked
+      return errResp(503, 'Service temporarily unavailable. Please try again.', 'SERVICE_ERROR', corsHeaders);
+    }
+
+    const subData = await subResp.json();
+
+    if (!subData.allowed) {
+      const isLimit = subData.reason === 'monthly_limit_reached';
+      return new Response(
+        JSON.stringify({
+          error      : isLimit
+            ? 'Monthly AI limit reached. Your 1,000 requests reset at the end of your billing period.'
+            : subData.reason === 'account_suspended'
+              ? 'Your account has been suspended. Contact support@ambore.org.'
+              : 'AI tools require a Premium subscription. Upgrade at ambore.org/pricing.',
+          code       : 'UPGRADE_REQUIRED',
+          reason     : subData.reason,
+          upgradeUrl : '/pricing',
+        }),
+        { status: 402, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+  } catch (subErr) {
+    // Fail CLOSED — network error, timeout, or parse failure blocks the request
+    console.error('[claude-proxy] subscription-check failed:', subErr?.message);
+    return errResp(503, 'Service temporarily unavailable. Please try again in a moment.', 'SERVICE_ERROR', corsHeaders);
   }
 
   // ── Parse request body ───────────────────────────────────────────────────────
