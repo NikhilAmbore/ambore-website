@@ -33,7 +33,7 @@ const CFG = {
   USER_WINDOW : 3_600_000, // 1 hour in ms
 
   MAX_TOKENS  : 8000,      // hard ceiling on max_tokens
-  MAX_SYSTEM  : 12_000,    // characters allowed in system prompt
+  MAX_SYSTEM  : 20_000,    // characters allowed in system prompt
   MAX_MESSAGES: 20,        // max messages array length
   MAX_MSG_LEN : 32_000,    // characters per message
 
