@@ -1216,27 +1216,8 @@ STEP 6 — ATS FINAL CHECK (verify all before outputting)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STEP 7 — OUTPUT FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Output TWO parts separated by "---":
-
-PART 1: The complete resume in clean Markdown. Start immediately with # FULL NAME. No preamble, no commentary before the resume.
-
-PART 2: After the resume, add a separator line "---" then output this analysis:
-
-## ATS Alignment Summary
-
-**JD Keywords Matched:**
-[comma-separated list of all JD keywords that appear in the resume]
-
-**Skills Added from JD:**
-[list each skill that was in the JD but not in the original resume, and where it was placed]
-
-**How the Resume Was Aligned:**
-[2-3 sentences explaining the key alignment decisions made]
-
-**Tips to Improve Shortlisting:**
-- [Tip 1]
-- [Tip 2]
-- [Tip 3]`;
+Output ONLY the complete resume in clean Markdown. Start immediately with # FULL NAME.
+No preamble, no commentary, no analysis section, no ATS summary, no keyword lists, no tips, no notes of any kind. Resume content only.`;
 }
 
 /* ── KEY ACHIEVEMENTS ── */
@@ -1616,7 +1597,7 @@ async function generateResume() {
 },
           body: JSON.stringify({
             model: modelToUse,
-            max_tokens: generateMode === 'transform' ? 2500 : 4000,
+            max_tokens: 2500,
             stream: true,
             system: generateMode === 'transform' ? buildTransformSystemPrompt(links) : buildResumeSystemPrompt(links),
             messages: [{
