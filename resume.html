@@ -1073,7 +1073,23 @@ Every bullet must:
 - Never start with: "Responsible for", "Helped with", "Worked on", "I", "My"
 - Follow STAR format: Situation/Task → Action → Result (each bullet implies all three)
 - Include at least one number, percentage, dollar amount, or scale metric
-- Contain at least one keyword copied verbatim from the JD
+- Name the specific tool/technology/skill from the JD that was used in that task
+
+CRITICAL SKILL INTEGRATION RULE — this is the #1 reason resumes fail ATS:
+Every required skill listed in the JD MUST appear in BOTH Core Skills AND at least one Work Experience bullet. Listing a skill only in Core Skills is not enough — recruiters and ATS systems look for the skill being demonstrated in context, not just listed.
+
+BAD (skill only in Core Skills, not in experience):
+  Core Skills: Python, FastAPI, PostgreSQL
+  Experience bullet: "Built backend API that reduced latency by 43%"  ← Python/FastAPI missing
+
+GOOD (skill woven into the experience bullet):
+  Core Skills: Python, FastAPI, PostgreSQL
+  Experience bullet: "Built a FastAPI/Python REST service backed by PostgreSQL that reduced p95 latency from 800ms to 120ms across 40K daily requests"
+
+Before writing experience bullets, make a mental map:
+  JD required skill → which job + which bullet will demonstrate it?
+Every JD required skill must be assigned to at least one bullet. No skill left unmapped.
+
 BOLD RULES: NEVER use **bold** inside any bullet point or paragraph body text. Bold is ONLY allowed on: section headers (##), job titles/company names (###), skill category labels, project names, and certification names. Plain text only inside bullets.
 
 ━━━ SECTION 6: KEY ACHIEVEMENTS ━━━
@@ -1117,12 +1133,13 @@ At least 1 bullet per job should include a specific human detail: team size, dea
 Read each bullet aloud — if it sounds like a press release, rewrite it
 
 STEP 4 — ATS FINAL CHECK
-Before writing the final output, confirm:
+Before writing the final output, go through this checklist:
 - Exact job title from JD appears in the Headline and Summary
 - Every required JD skill appears in Core Skills
-- At least 6 JD keywords appear verbatim in experience bullets
-- Every experience bullet has a metric
-- Projects section has exactly 2 entries with 2 bullets each
+- Every required JD skill ALSO appears verbatim inside at least one Work Experience or Projects bullet (not just in Core Skills)
+- No JD-required skill exists only in the skills section — each one must be demonstrated in context
+- Every experience bullet contains at least one metric (number, %, $, scale)
+- Projects section has exactly 2 entries with 2 bullets each, each bullet names a JD skill
 
 CRITICAL: Output ONLY the resume in Markdown. No preamble, no commentary, no notes. Start immediately with # FULL NAME.`;
 }
