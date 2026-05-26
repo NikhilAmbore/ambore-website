@@ -1128,31 +1128,74 @@ MANDATORY COVERAGE — across all bullets for each role, collectively cover:
 - Cross-team collaboration or client/stakeholder work
 - Business impact or scalability (volume, users served, cost saved, SLA met)
 
-JD SKILL INTEGRATION RULE — the #1 ATS failure point:
-Every required JD skill MUST appear in BOTH Technical Skills AND at least one experience bullet. A skill listed only in Technical Skills is NOT enough. ATS and recruiters look for skills demonstrated in context.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+CRITICAL RULE — JD SKILL INTEGRATION (resume generation is FAILED if violated)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+DO NOT only update the Skills section.
 
-Before writing bullets, map every JD skill to a specific role + bullet:
-  JD skill → which company → which bullet shows it in action
-No JD skill left unmapped.
+If a skill appears in Technical Skills but NOT inside any Professional Experience bullet, the resume has FAILED. Every major JD skill MUST be demonstrated in context inside experience bullets — not just listed.
 
-BAD: "Built a backend service that reduced latency by 43%"  ← tool name missing
-GOOD: "Built a FastAPI/Python REST service backed by PostgreSQL, cutting p95 API latency from 800ms to 120ms for 40K daily active users"  ← tool named, impact clear
+PRE-WRITING MAPPING STEP (mandatory before writing a single bullet):
+1. Extract every important skill, tool, and technology from the JD.
+2. Assign each one to a specific role + specific bullet that will demonstrate it.
+3. Only begin writing experience bullets after this map is complete.
+4. No JD skill may be left unmapped to at least one bullet.
+
+MOST RECENT ROLE = HIGHEST JD ALIGNMENT:
+Recruiters read the most recent job first and weight it most heavily.
+The latest/current role MUST contain the majority of JD technologies and keywords.
+Spread the rest across earlier roles and projects. Never front-load older roles.
+
+STRONG bullet format — every bullet must follow this exactly:
+  Action verb + what was done + specific tool/technology + business scenario + measurable result
+
+STRONG examples (model every bullet on these):
+- Developed ETL pipelines using PySpark and Databricks to process 200M+ customer records daily, reducing batch processing time by 61%.
+- Built AWS Glue jobs for automated ingestion and transformation of structured and semi-structured data from S3, cutting manual prep work by 4 hours/day.
+- Designed Tableau dashboards connected directly to Snowflake analytics tables, enabling self-service reporting for 6 executive stakeholders.
+- Integrated Apache Airflow for end-to-end pipeline orchestration and scheduling across 14 dependent DAGs, eliminating 3 daily manual triggers.
+- Collaborated with DevOps to implement CI/CD deployment pipelines for data engineering workflows, reducing release cycle from 2 weeks to 3 days.
+
+WEAK bullets — these are FORBIDDEN:
+- "Worked on ETL pipelines."
+- "Used Python and SQL."
+- "Responsible for reporting."
+- "Assisted with data pipelines."  ← no tool, no scenario, no result
+
+Technologies must be blended naturally into one of these real-work scenarios:
+  Development / Integration / Migration / Optimization / Troubleshooting /
+  Automation / Deployment / Monitoring / Validation / Reporting / Cross-team collaboration
+
+The resume must sound like: "This candidate genuinely worked on these technologies in real enterprise projects."
+NOT like: "This resume was keyword stuffed for ATS."
 
 REALISTIC EXPERIENCE RULE — never fabricate:
-If the JD requires a tool the candidate does NOT have, bridge it through a related technology they DO have. Do NOT claim deep expertise — use honest exposure wording:
+If the JD requires a tool the candidate does NOT have, bridge it through a related technology they DO have. Use honest exposure wording — never claim deep expertise for something not on the resume:
 
-Honest bridging examples:
+Bridging examples:
 - MySQL → PostgreSQL: "Supported migration from MySQL to PostgreSQL, rewriting 8 stored procedures and validating data integrity across 14 tables."
 - AWS → Azure: "Collaborated on evaluating Azure Data Factory as an alternative to existing AWS Glue workflows during a multi-cloud feasibility study."
-- pandas → Spark: "Rewrote batch processing scripts from pandas to PySpark to handle data volumes exceeding 50M rows, reducing runtime from 4 hours to 22 minutes."
+- pandas → Spark: "Rewrote batch processing scripts from pandas to PySpark to handle volumes exceeding 50M rows, cutting runtime from 4 hours to 22 minutes."
 - REST → GraphQL: "Gained hands-on exposure to GraphQL while integrating a third-party API alongside existing REST endpoints."
 
-Acceptable wording for bridged skills:
-  Supported, Assisted with, Integrated, Configured, Gained hands-on exposure to, Collaborated on, Worked alongside, Helped migrate, Evaluated, Participated in
+Acceptable bridging verbs: Supported, Assisted with, Integrated, Configured, Gained hands-on exposure to, Collaborated on, Helped migrate, Evaluated, Participated in
 
 ENTERPRISE-LEVEL CONTEXT:
-Where authentic, frame work as client-facing, production-grade, or cross-functional:
-  "...for a mid-size logistics client" | "...across a 9-person data engineering squad" | "...supporting 4 business units under a 24-hour SLA"
+Where authentic, frame bullets as client-facing, production-grade, or cross-functional:
+  "...for a mid-size logistics client" | "...across a 9-person engineering squad" | "...under a 24-hour SLA"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+MANDATORY VALIDATION — run this check BEFORE writing the final output
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For every major JD skill, verify:
+  [ ] Present in Technical Skills section
+  [ ] Present verbatim in at least one Professional Experience bullet
+
+If any JD skill fails the second check — rewrite the experience section before continuing. Do NOT finalize the resume until:
+- Every JD keyword is distributed naturally across experience bullets
+- The most recent role carries the heaviest JD keyword load
+- Every bullet contains: action + tool + scenario + result
+- The resume reads as real enterprise production experience, not a keyword list
 
 BOLD RULE: Never bold inside bullet body text. Bold only on: ## section headers, ### job headers, **skill category labels**, project names.
 
