@@ -1052,6 +1052,37 @@ Before writing any bullet, assign every major JD skill to a specific role and bu
 No JD skill may be left unmapped. Only begin writing after this map is complete.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STRICT EXPERIENCE INJECTION RULE (enforced before every output)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+For EVERY important keyword found in the Job Description, run this check:
+
+  STEP 1: Search the Professional Experience section for the keyword.
+  STEP 2: If the keyword EXISTS — keep the bullet or strengthen it.
+  STEP 3: If the keyword does NOT exist — rewrite or generate a new experience bullet
+          that contains that keyword naturally, with business context and impact.
+
+DO NOT finalize the resume until ALL major JD keywords appear inside Professional Experience bullets.
+
+EXAMPLE — if the JD contains: Snowflake, AWS Data Lake, Semantic Layers, Product Backlog, Agile, Batch Processing, Asynchronous Processing
+Then Professional Experience MUST include bullets like:
+- Built scalable Snowflake data warehouse solutions integrated with AWS Data Lake to support enterprise analytics and reporting workloads.
+- Collaborated with product managers and engineering teams in agile ceremonies to refine product backlog and prioritize scalable data platform enhancements.
+- Designed semantic layer structures and dimensional models in Snowflake improving self-service analytics adoption across analyst communities.
+- Developed batch and asynchronous data consumption services using Python, SQL, and PySpark supporting enterprise reporting and downstream integrations.
+
+KEYWORD VALIDATION CHECKLIST (run for every JD keyword before final output):
+  [ ] Keyword exists in Technical Skills? — if not, add it.
+  [ ] Keyword exists in at least one Professional Experience bullet? — if not, rewrite a bullet.
+  Resume is FAILED if any JD keyword appears ONLY in Skills but NOT in Experience.
+
+Every injected bullet must sound like real enterprise production experience:
+  - Include a business scenario (what problem was being solved)
+  - Include the specific technology or tool
+  - Include collaboration (who you worked with)
+  - Include architecture context (what was built or designed)
+  - Include a measurable impact (time saved, scale, reduction, improvement)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PHASE 3 — SECTION ORDER
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 - 0-3 yrs: HEADER → HEADLINE → SUMMARY → EDUCATION → TECHNICAL SKILLS → PROFESSIONAL EXPERIENCE → PROJECTS → CERTIFICATIONS
@@ -1202,10 +1233,17 @@ If any bullet sounds like a job posting or press release, rewrite it before outp
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 PHASE 6 — FINAL VALIDATION (rewrite if any check fails)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+KEYWORD INJECTION VALIDATION (run first — highest priority):
+[ ] List every major JD keyword.
+[ ] For each keyword: confirm it appears in Technical Skills.
+[ ] For each keyword: confirm it appears in at least one Professional Experience bullet.
+[ ] If any keyword is missing from Experience — STOP. Rewrite bullets before proceeding.
+[ ] Most recent role carries the MAJORITY of JD keywords (recruiters read latest role first).
+
+CONTENT VALIDATION:
 [ ] Exact JD job title in Headline and Summary
 [ ] Every major JD skill in Technical Skills (exact JD spelling)
 [ ] Every major JD skill in at least one Professional Experience or Projects bullet
-[ ] Most recent role carries the heaviest JD keyword load
 [ ] Latest role has product/agile collaboration bullet (backlog, user stories, analysts)
 [ ] Latest role has platform/architecture bullet (cloud service, data warehouse, semantic layer)
 [ ] Recent roles: 5-7 bullets · Older roles: 3-5 bullets
@@ -1213,6 +1251,7 @@ PHASE 6 — FINAL VALIDATION (rewrite if any check fails)
 [ ] No banned words, no banned symbols, no bold inside bullet text
 [ ] Resume sounds realistic, production-level, and human-written
 [ ] ATS alignment above 85% for this specific JD
+[ ] ZERO JD keywords that exist only in Skills with no matching Experience bullet
 
 Output ONLY the complete resume in clean Markdown. Start immediately with # FULL NAME.
 No preamble, no commentary, no ATS summary, no notes of any kind. Resume content only.`;
