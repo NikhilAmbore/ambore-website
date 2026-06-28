@@ -365,6 +365,19 @@ body{padding-left:72px}
         <div class="kw-title">&#10060; Keywords Missing from Your Resume</div>
         <div class="kw-tags" id="missing-tags"></div>
       </div>
+
+      <!-- Fix-it CTA — shown when score is below Strong Match -->
+      <div id="fix-it-cta" style="display:none;margin-top:20px">
+        <div style="background:linear-gradient(135deg,rgba(37,99,235,0.09),rgba(37,99,235,0.05));border:1px solid rgba(37,99,235,0.22);border-radius:14px;padding:16px 20px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+          <div style="flex:1;min-width:160px">
+            <div style="font-size:0.88rem;font-weight:700;color:#1e293b;margin-bottom:4px">Your resume is missing keywords</div>
+            <div style="font-size:0.78rem;color:#64748B;line-height:1.45">Let AI rewrite your resume to match this job description — inject missing keywords and boost your score.</div>
+          </div>
+          <button onclick="tailorResume()" style="padding:10px 20px;background:linear-gradient(135deg,#2563EB,#1D4ED8);border:none;border-radius:10px;color:#fff;font-size:0.85rem;font-weight:700;cursor:pointer;white-space:nowrap;box-shadow:0 2px 10px rgba(37,99,235,0.28);flex-shrink:0;font-family:inherit">
+            🎯 Fix This → Tailor Resume
+          </button>
+        </div>
+      </div>
     </div>
 
     <!-- AI Skill Gap Analysis -->
@@ -384,6 +397,12 @@ body{padding-left:72px}
 <script>
 const Auth = { getUser() { return JSON.parse(localStorage.getItem('ambore_user') || 'null'); } };
 function logout() { localStorage.removeItem('ambore_user'); window.location.href = '/'; }
+
+function tailorResume() {
+  var jd = document.getElementById('jd-text').value.trim();
+  if (jd) localStorage.setItem('ambore_ats_prefill_jd', jd);
+  window.location.href = '/resume';
+}
 
 
 function showToast(msg) {
@@ -688,6 +707,10 @@ function renderResults(r) {
   document.getElementById('verdict-row').innerHTML =
     `<span class="verdict-badge" style="color:${vColor};background:${vBg};border:1px solid ${vBorder}">${vLabel}</span>` +
     `<span class="verdict-msg">${vMsg}</span>`;
+
+  // Show fix-it CTA for anything below Strong Match
+  var fixCta = document.getElementById('fix-it-cta');
+  if (fixCta) fixCta.style.display = r.score < 76 ? 'block' : 'none';
 
   // Keyword tags
   const matchedEl = document.getElementById('matched-tags');
