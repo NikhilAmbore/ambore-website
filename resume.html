@@ -478,7 +478,7 @@ button,input,textarea,select{font-family:inherit}
 .sb-logo{width:52px;height:52px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity 0.15s;overflow:hidden}
 .sb-logo:hover{opacity:0.85}
 .sb-nav{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;width:100%;padding-bottom:6px}
-.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;min-height:54px;border-radius:12px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 2px;font-family:inherit}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:60px;min-height:56px;border-radius:12px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 4px;font-family:inherit;text-align:center;line-height:1.2;word-break:break-word}
 .sb-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9)}
 .sb-item.active{background:rgba(99,102,241,0.25);color:#a5b4fc}
 .sb-item svg{flex-shrink:0}
@@ -520,12 +520,13 @@ body{padding-left:72px}
   <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/ao-logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
-    <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
-    <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover</span></a>
-    <a href="/email" class="sb-item" title="Email Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+    <a href="/resume" class="sb-item" title="Resume Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
+    <a href="/ats-score" class="sb-item" title="ATS Score — Check resume match"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS Score</span></a>
+    <a href="/cover-letter" class="sb-item" title="Cover Letter Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover Letter</span></a>
+    <a href="/email" class="sb-item" title="Job Email Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
     <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
-    <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
-    <a href="/project" class="sb-item" title="Build Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+    <a href="/certifications" class="sb-item" title="Free Certifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><span>Certs</span></a>
+    <a href="/project" class="sb-item" title="Build a Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
   </div>
   <div class="sb-foot">
     <button class="sb-item sb-logout" onclick="typeof logout!=='undefined'?logout():window.location.href='/'" title="Log Out"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Log Out</span></button>
@@ -555,12 +556,6 @@ body{padding-left:72px}
   </div>
 </div>
 
-<!-- PROMO BANNER -->
-<div id="promo-banner" style="background:linear-gradient(90deg,#312e81,#1e3a5f);padding:9px 16px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:0.82rem;font-weight:600;color:#fff;text-align:center;flex-wrap:wrap;position:relative">
-  <span>🚀 Struggling to get interviews? Get 1:1 career help — resume, LinkedIn, interview prep &amp; more</span>
-  <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener" style="color:#fff;text-decoration:none;display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,0.18);border:1px solid rgba(255,255,255,0.3);border-radius:20px;padding:4px 14px;white-space:nowrap;transition:background 0.2s" onmouseover="this.style.background='rgba(255,255,255,0.28)'" onmouseout="this.style.background='rgba(255,255,255,0.18)'">Apply Free →</a>
-  <button onclick="this.parentElement.style.display='none'" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:#fff;font-size:1.1rem;cursor:pointer;line-height:1;padding:2px 6px" aria-label="Close">×</button>
-</div>
 
 <!-- ══════════════════════════════════════
      AUTH SCREEN
