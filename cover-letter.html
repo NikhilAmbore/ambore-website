@@ -264,6 +264,36 @@ body{padding-left:72px}
     <h1 class="page-heading">AI Cover Letter Generator</h1>
     <p class="page-hint">Paste the job description and your resume → get a professional, tailored cover letter in under 30 seconds. Sounds like you, not a robot.</p>
 
+
+    <!-- WRITING STYLE PREFERENCES -->
+    <div class="prefs-panel" id="prefs-panel">
+      <button class="prefs-toggle" id="prefs-toggle" onclick="togglePrefs()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        ✍️ Writing Style Preferences
+        <span style="font-size:0.7rem;font-weight:400;color:#94A3B8;margin-left:4px">— tone, length & custom rules</span>
+        <span class="prefs-saved" id="prefs-saved">Saved</span>
+      </button>
+      <div class="prefs-body" id="prefs-body">
+        <div class="prefs-label">Tone</div>
+        <div class="prefs-row" id="tone-chips">
+          <button class="prefs-chip active" data-val="professional" onclick="selectPref('tone',this)">Professional</button>
+          <button class="prefs-chip" data-val="conversational" onclick="selectPref('tone',this)">Conversational</button>
+          <button class="prefs-chip" data-val="direct" onclick="selectPref('tone',this)">Direct &amp; Concise</button>
+          <button class="prefs-chip" data-val="enthusiastic" onclick="selectPref('tone',this)">Enthusiastic</button>
+        </div>
+        <div class="prefs-label">Length</div>
+        <div class="prefs-row" id="length-chips">
+          <button class="prefs-chip" data-val="short" onclick="selectPref('length',this)">Short (~250 words)</button>
+          <button class="prefs-chip active" data-val="standard" onclick="selectPref('length',this)">Standard (~350 words)</button>
+          <button class="prefs-chip" data-val="detailed" onclick="selectPref('length',this)">Detailed (~450 words)</button>
+        </div>
+        <div class="prefs-label" style="margin-top:4px">Always mention (optional)</div>
+        <input class="prefs-input" id="pref-always" placeholder="e.g. my Stanford MBA, led team of 15, open to relocate" oninput="savePrefs()" style="margin-bottom:12px"/>
+        <div class="prefs-label">Phrases to avoid (optional)</div>
+        <input class="prefs-input" id="pref-avoid" placeholder="e.g. passionate, results-driven, team player" oninput="savePrefs()"/>
+      </div>
+    </div>
+
     <!-- PREFILL BANNER -->
     <div class="prefill-banner hidden" id="prefill-banner">
       <div class="prefill-banner-text">
@@ -373,6 +403,56 @@ function logout(){localStorage.removeItem('ambore_user');window.location.href='/
 
 
 
+
+/* ── Writing Style Preferences ──────────────────────────────────────────── */
+var _clPrefs = { tone: 'professional', length: 'standard', always: '', avoid: '' };
+(function loadPrefs(){
+  try {
+    var saved = JSON.parse(localStorage.getItem('ao_cl_prefs') || 'null');
+    if (!saved) return;
+    _clPrefs = Object.assign(_clPrefs, saved);
+    // Restore chips
+    ['tone','length'].forEach(function(key){
+      var container = document.getElementById(key+'-chips');
+      if (!container) return;
+      container.querySelectorAll('.prefs-chip').forEach(function(chip){
+        chip.classList.toggle('active', chip.dataset.val === _clPrefs[key]);
+      });
+    });
+    if (saved.always) document.getElementById('pref-always').value = saved.always;
+    if (saved.avoid)  document.getElementById('pref-avoid').value  = saved.avoid;
+  } catch(e) {}
+})();
+function togglePrefs(){
+  var body = document.getElementById('prefs-body');
+  var toggle = document.getElementById('prefs-toggle');
+  var open = body.classList.toggle('open');
+  toggle.classList.toggle('open', open);
+}
+function selectPref(key, btn){
+  var container = btn.parentNode;
+  container.querySelectorAll('.prefs-chip').forEach(function(c){ c.classList.remove('active'); });
+  btn.classList.add('active');
+  _clPrefs[key] = btn.dataset.val;
+  savePrefs();
+}
+function savePrefs(){
+  _clPrefs.always = (document.getElementById('pref-always').value || '').trim();
+  _clPrefs.avoid  = (document.getElementById('pref-avoid').value  || '').trim();
+  localStorage.setItem('ao_cl_prefs', JSON.stringify(_clPrefs));
+  var el = document.getElementById('prefs-saved');
+  if (el) { el.style.display = 'inline'; clearTimeout(el._t); el._t = setTimeout(function(){ el.style.display='none'; }, 1500); }
+}
+function getPrefsInstructions(){
+  var lines = [];
+  var toneMap = {professional:'formal and professional',conversational:'warm and conversational',direct:'direct and concise — no filler',enthusiastic:'enthusiastic and energetic'};
+  lines.push('- Tone: '+( toneMap[_clPrefs.tone]||'professional'));
+  var lenMap = {short:'keep it short, under 260 words',standard:'aim for 320-380 words',detailed:'be thorough, 420-460 words'};
+  lines.push('- Length: '+(lenMap[_clPrefs.length]||'aim for 320-380 words'));
+  if (_clPrefs.always) lines.push('- Always mention: '+_clPrefs.always);
+  if (_clPrefs.avoid)  lines.push('- Never use these phrases: '+_clPrefs.avoid);
+  return lines.join('\n');
+}
 // Resume tab state
 let resumeMode='upload';
 let resumeText='';
@@ -478,7 +558,10 @@ COVER LETTER REQUIREMENTS:
 ${recipientName?`- Address the letter to: ${recipientName}`:'- Use "Dear Hiring Manager,"'}
 ${companyName?`- The company is: ${companyName}`:''}
 
-Output ONLY the letter text with no extra commentary or labels.`;
+Output ONLY the letter text with no extra commentary or labels.
+
+USER WRITING PREFERENCES (follow strictly):
+${getPrefsInstructions()}`;
 
   const userMsg=`MY RESUME:\n${resume}\n\n---\n\nJOB DESCRIPTION:\n${jd}`;
 

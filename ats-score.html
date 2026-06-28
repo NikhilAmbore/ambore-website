@@ -395,6 +395,18 @@ body{padding-left:72px}
       <div class="ai-gap-output" id="ai-gap-output"></div>
     </div>
 
+
+    <!-- Keyword Insights (across runs) -->
+    <div class="insights-panel" id="insights-panel" style="display:none">
+      <div class="insights-title">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Your Most-Needed Skills
+        <span class="insights-clear" onclick="clearInsights()">Clear history</span>
+      </div>
+      <div class="insights-sub">Keywords missing from your resume across your last scans — your personal skills gap map.</div>
+      <div class="insights-list" id="insights-list"></div>
+    </div>
+
   </div>
 </div>
 
@@ -727,6 +739,7 @@ function renderResults(r) {
 
   // Mark onboarding step done
   localStorage.setItem('ao_did_ats', '1');
+  trackMissingKeywords(r.missing);
 
   // Show fix-it CTA for anything below Strong Match
   var fixCta = document.getElementById('fix-it-cta');
@@ -951,6 +964,47 @@ document.addEventListener('click',function(e){
     drawer.classList.add('hidden');
   }
 });
+
+/* ── Keyword Insights ────────────────────────────────────────────────────── */
+function trackMissingKeywords(missing) {
+  if (!missing || !missing.length) return;
+  try {
+    var hist = JSON.parse(localStorage.getItem('ao_kw_history') || '[]');
+    hist.unshift({ date: Date.now(), kw: missing.slice(0, 30) });
+    if (hist.length > 20) hist.pop();
+    localStorage.setItem('ao_kw_history', JSON.stringify(hist));
+    renderInsights();
+  } catch(e) {}
+}
+function renderInsights() {
+  try {
+    var hist = JSON.parse(localStorage.getItem('ao_kw_history') || '[]');
+    var panel = document.getElementById('insights-panel');
+    var list  = document.getElementById('insights-list');
+    if (!panel || !list) return;
+    if (hist.length === 0) { panel.style.display = 'none'; return; }
+    var freq = {};
+    hist.forEach(function(h){ h.kw.forEach(function(k){ freq[k] = (freq[k]||0)+1; }); });
+    var sorted = Object.keys(freq).sort(function(a,b){ return freq[b]-freq[a]; }).slice(0, 12);
+    var max = freq[sorted[0]] || 1;
+    list.innerHTML = sorted.map(function(kw){
+      var pct = Math.round(freq[kw] / max * 100);
+      return '<div class="insight-row">'
+        + '<div class="insight-kw">'+kw+'</div>'
+        + '<div class="insight-bar-wrap"><div class="insight-bar" style="width:'+pct+'%"></div></div>'
+        + '<div class="insight-count">'+freq[kw]+'x</div>'
+        + '</div>';
+    }).join('');
+    panel.style.display = sorted.length ? '' : 'none';
+  } catch(e) {}
+}
+function clearInsights() {
+  localStorage.removeItem('ao_kw_history');
+  var panel = document.getElementById('insights-panel');
+  if (panel) panel.style.display = 'none';
+  showToast('Keyword history cleared');
+}
+(function(){ renderInsights(); })();
 
 </script>
 <script src="/account-modal.js"></script>

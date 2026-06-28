@@ -1163,7 +1163,53 @@ function renderPagination(current, total) {
    INTERACTION HANDLERS
 ═══════════════════════════════════════════ */
 function doSearch()    { currentPage = 1; applyAndRender(); }
-function applyFilters(){ currentPage = 1; applyAndRender(); }
+
+/* ── Persistent filter state ─────────────────────────────────────────────── */
+function saveFilterState() {
+  try {
+    var checkboxes = {};
+    document.querySelectorAll('.sidebar input[type=checkbox]').forEach(function(cb){
+      checkboxes[cb.value || cb.id] = cb.checked;
+    });
+    localStorage.setItem('ao_job_filters', JSON.stringify({
+      search: document.getElementById('search-input').value || '',
+      state:  document.getElementById('state-select').value || '',
+      date:   document.getElementById('filter-date').value || '',
+      salary: document.getElementById('filter-salary').value || '',
+      source: (document.getElementById('filter-source') || {}).value || '',
+      sort:   (document.getElementById('sort-select') || {}).value || '',
+      cat:    currentCategory || '',
+      boxes:  checkboxes
+    }));
+  } catch(e) {}
+}
+function restoreFilterState() {
+  try {
+    var saved = JSON.parse(localStorage.getItem('ao_job_filters') || 'null');
+    if (!saved) return;
+    if (saved.search) document.getElementById('search-input').value = saved.search;
+    if (saved.state)  document.getElementById('state-select').value  = saved.state;
+    if (saved.date)   document.getElementById('filter-date').value   = saved.date;
+    if (saved.salary) document.getElementById('filter-salary').value = saved.salary;
+    var src = document.getElementById('filter-source');
+    if (src && saved.source) src.value = saved.source;
+    var srt = document.getElementById('sort-select');
+    if (srt && saved.sort) srt.value = saved.sort;
+    if (saved.cat) {
+      currentCategory = saved.cat;
+      document.querySelectorAll('.cat-pill').forEach(function(p){ p.classList.remove('active'); });
+      var pill = document.querySelector('.cat-pill[data-cat="'+saved.cat+'"]');
+      if (pill) pill.classList.add('active');
+    }
+    if (saved.boxes) {
+      document.querySelectorAll('.sidebar input[type=checkbox]').forEach(function(cb){
+        var key = cb.value || cb.id;
+        if (saved.boxes[key]) cb.checked = true;
+      });
+    }
+  } catch(e) {}
+}
+function applyFilters(){ currentPage = 1; saveFilterState(); applyAndRender(); }
 
 function selectCategory(cat, el) {
   currentCategory = cat;
@@ -1358,6 +1404,7 @@ window.addEventListener('load', async () => {
   buildCategoryPills();
   buildPlatformStrip();
   buildStateDropdown();
+  restoreFilterState();
   applyAndRender();
   showProfileBanner();
 });
