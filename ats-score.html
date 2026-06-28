@@ -368,7 +368,7 @@ body{padding-left:72px}
       <hr class="kw-divider"/>
 
       <div class="kw-section">
-        <div class="kw-title">&#10060; Keywords Missing from Your Resume</div>
+        <div class="kw-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><span>&#10060; Keywords Missing from Your Resume</span><button id="copy-missing-btn" onclick="copyMissingKw(this)" style="display:none;padding:4px 11px;border-radius:6px;font-size:0.72rem;font-weight:600;cursor:pointer;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B;font-family:inherit;white-space:nowrap">Copy All</button></div>
         <div class="kw-tags" id="missing-tags"></div>
       </div>
 
@@ -411,6 +411,17 @@ function tailorResume() {
 }
 
 
+function copyMissingKw(btn) {
+  var tags = document.querySelectorAll('#missing-tags .kw-tag-miss');
+  var words = Array.from(tags).map(function(t){ return t.textContent; }).join(', ');
+  if (!words) { showToast('No missing keywords to copy.'); return; }
+  navigator.clipboard.writeText(words).then(function(){
+    var orig = btn.textContent;
+    btn.textContent = 'Copied!';
+    btn.style.color = '#16a34a';
+    setTimeout(function(){ btn.textContent = orig; btn.style.color = ''; }, 2000);
+  });
+}
 function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -732,8 +743,10 @@ function renderResults(r) {
   const missingEl = document.getElementById('missing-tags');
   if (r.missing.length > 0) {
     missingEl.innerHTML = r.missing.map(w => `<span class="kw-tag-miss">${w}</span>`).join('');
+  var cmb = document.getElementById('copy-missing-btn'); if(cmb) cmb.style.display = r.missing.length ? '' : 'none';
   } else {
     missingEl.innerHTML = '<span class="kw-empty">None — all keywords covered! &#127881;</span>';
+  var cmb2 = document.getElementById('copy-missing-btn'); if(cmb2) cmb2.style.display = 'none';
   }
 }
 

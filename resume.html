@@ -705,11 +705,16 @@ body{padding-left:72px}
   <!-- RESULT VIEW -->
   <div id="result-view" class="result-section hidden">
     <div class="result-topbar">
-      <div style="display:flex;align-items:center;gap:10px">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
         <button class="back-btn" onclick="showInputView()">← Back</button>
         <div class="result-title">Your Tailored Resume <span class="gen-status" id="gen-status"></span></div>
+        <span id="resume-stats"></span>
       </div>
       <div class="result-actions">
+        <div class="hist-wrap">
+          <button class="action-btn" id="hist-btn" onclick="toggleHistory()" style="border-color:rgba(37,99,235,0.2);color:#2563EB">📁 History</button>
+          <div class="hist-drop" id="hist-drop"></div>
+        </div>
         <button class="action-btn" onclick="copyResume()">📋 Copy</button>
         <button class="action-btn" onclick="downloadTxt()" title="Best for ATS scanners — plain text, zero formatting">📄 Download TXT</button>
         <button class="action-btn" onclick="printResume()">🖨 Save as PDF</button>
@@ -1570,6 +1575,8 @@ async function generateResume() {
 
         // Mark onboarding step done
         localStorage.setItem('ao_did_resume', '1');
+        saveResumeVersion();
+        updateWordCount();
 
         // Show cross-tool nudge
         const wnEl = document.getElementById('whats-next');
@@ -2127,6 +2134,65 @@ document.addEventListener('click',function(e){
     </div>
   </div>
 </div>
+
+// ── Word count ────────────────────────────────────────────────────────────────
+function updateWordCount() {
+  var plain = generatedMarkdown.replace(/[#*_`>-]/g, ' ');
+  var words = plain.trim().split(/\s+/).filter(function(w){ return w.length > 1; }).length;
+  var pages = (words / 650).toFixed(1);
+  var el = document.getElementById('resume-stats');
+  if (el) { el.textContent = '~' + words + ' words \u00b7 ~' + pages + ' pages'; el.style.display = ''; }
+}
+
+// ── Version history ───────────────────────────────────────────────────────────
+function saveResumeVersion() {
+  var jdEl = document.getElementById('jd-text');
+  var raw = jdEl ? jdEl.value.trim() : '';
+  var label = (raw.split('\n')[0] || 'Resume').slice(0, 55);
+  var hist = JSON.parse(localStorage.getItem('ao_resume_history') || '[]');
+  hist.unshift({ ts: Date.now(), label: label, md: generatedMarkdown });
+  if (hist.length > 3) hist.pop();
+  localStorage.setItem('ao_resume_history', JSON.stringify(hist));
+  updateHistoryBtn();
+}
+function updateHistoryBtn() {
+  var hist = JSON.parse(localStorage.getItem('ao_resume_history') || '[]');
+  var btn = document.getElementById('hist-btn');
+  if (btn) btn.textContent = hist.length ? '\ud83d\udcc1 History (' + hist.length + ')' : '\ud83d\udcc1 History';
+}
+function toggleHistory() {
+  var dd = document.getElementById('hist-drop');
+  if (!dd) return;
+  if (dd.style.display === 'block') { dd.style.display = 'none'; return; }
+  var hist = JSON.parse(localStorage.getItem('ao_resume_history') || '[]');
+  if (!hist.length) { showToast('No saved versions yet \u2014 generate a resume first.'); return; }
+  dd.innerHTML = hist.map(function(h, i) {
+    var d = new Date(h.ts);
+    var when = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return '<div class="hist-item" onclick="loadHistoryItem(' + i + ')">'
+      + '<div class="hist-item-label">' + h.label.replace(/</g, '&lt;') + '</div>'
+      + '<div class="hist-item-date">' + when + '</div></div>';
+  }).join('');
+  dd.style.display = 'block';
+}
+function loadHistoryItem(idx) {
+  var hist = JSON.parse(localStorage.getItem('ao_resume_history') || '[]');
+  if (!hist[idx]) return;
+  generatedMarkdown = hist[idx].md;
+  var out = document.getElementById('resume-output');
+  if (out) out.innerHTML = renderMarkdown(generatedMarkdown);
+  document.getElementById('hist-drop').style.display = 'none';
+  updateWordCount();
+  showToast('Previous version restored');
+}
+document.addEventListener('click', function(e) {
+  var wrap = document.querySelector('.hist-wrap');
+  if (wrap && !wrap.contains(e.target)) {
+    var dd = document.getElementById('hist-drop');
+    if (dd) dd.style.display = 'none';
+  }
+});
+(function(){ updateHistoryBtn(); })();
 
 <script src="/account-modal.js"></script>
 </body>

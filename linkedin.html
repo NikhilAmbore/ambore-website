@@ -383,6 +383,10 @@ body{padding-left:72px}
           <button class="output-copy-btn" onclick="copySection('about-text',this)">Copy</button>
         </div>
         <div class="output-body" id="about-text"></div>
+        <div style="padding:0 20px 14px;display:flex;align-items:center;justify-content:space-between">
+          <div class="char-hint" id="about-len">0 / 2,600</div>
+          <div class="char-hint" id="about-warn" style="color:#f87171;display:none">Over limit — trim before pasting</div>
+        </div>
       </div>
 
       <!-- Skills -->
@@ -609,7 +613,17 @@ function renderSections(raw){
     document.getElementById('headline-text').textContent=headline;
     updateHeadlineMeter(headline);
   }
-  if(about)document.getElementById('about-text').textContent=about;
+  if(about){
+    document.getElementById('about-text').textContent=about;
+    var aLen=document.getElementById('about-len');
+    var aWarn=document.getElementById('about-warn');
+    if(aLen){
+      var n=about.length;
+      aLen.textContent=n+' / 2,600';
+      aLen.className='char-hint'+(n>2600?' over':n>2300?' warn':'');
+      if(aWarn) aWarn.style.display=n>2600?'':'none';
+    }
+  }
   if(skills)document.getElementById('skills-text').textContent=skills;
   if(bullets)document.getElementById('bullets-text').textContent=bullets;
 }

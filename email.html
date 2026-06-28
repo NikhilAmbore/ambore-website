@@ -315,6 +315,7 @@ body{padding-left:72px}
           <button class="copy-btn" onclick="copyText('body-text',this)">Copy</button>
         </div>
         <div class="output-text" id="body-text"></div>
+        <div style="padding:4px 18px 12px;font-size:0.7rem;color:#94A3B8" id="email-word-count"></div>
       </div>
 
       <!-- Copy All + Regenerate -->
@@ -342,11 +343,31 @@ const TYPE_DESCS={
 };
 const TYPE_LABELS={application:'Job Application',cold:'Cold Outreach',followup:'Follow-Up',thankyou:'Thank You Note',networking:'Networking Request'};
 
+const TYPE_PLACEHOLDERS={
+  background:{
+    application:'Your background: years of experience, key skills, notable achievements...\n\nE.g.: 5 years full-stack engineering. Built payment systems at Plaid. Expert in Python, React, AWS.',
+    cold:'Your background relevant to this contact: title, specialisation, a notable win...',
+    followup:'Brief reminder: when you applied or interviewed, what role, one thing that stood out.',
+    thankyou:'Who you interviewed with, the role, and one specific thing you discussed to make it personal.',
+    networking:'Who you are, what you do, and why you\'re reaching out to this specific person.'
+  },
+  notes:{
+    application:"Anything specific to include? E.g.: 'Mention I was referred by John', 'I can start immediately'",
+    cold:"What do you want them to do? E.g.: '15-min call', 'intro to their hiring manager'",
+    followup:"E.g.: 'I sent my application 2 weeks ago', 'We interviewed on Tuesday', 'Still very interested'",
+    thankyou:"Specific moment from the interview to reference — makes it personal and memorable.",
+    networking:"What help or insight are you looking for? Be specific — vague requests get ignored."
+  }
+};
 function setEmailType(type,btn){
   emailType=type;
   document.querySelectorAll('.email-type-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.getElementById('type-desc').textContent=TYPE_DESCS[type];
+  const bg=document.getElementById('background');
+  const nt=document.getElementById('notes');
+  if(bg&&TYPE_PLACEHOLDERS.background[type]) bg.placeholder=TYPE_PLACEHOLDERS.background[type];
+  if(nt&&TYPE_PLACEHOLDERS.notes[type]) nt.placeholder=TYPE_PLACEHOLDERS.notes[type];
 }
 
 function showToast(msg){
@@ -373,6 +394,17 @@ function copyAll(){
   navigator.clipboard.writeText(full).then(()=>showToast('Full email copied to clipboard!'));
 }
 
+function updateEmailWordCount(){
+  const body=document.getElementById('body-text').textContent.trim();
+  const wc=document.getElementById('email-word-count');
+  if(!wc) return;
+  if(!body){wc.textContent='';return;}
+  const words=body.split(/\s+/).filter(w=>w.length>0).length;
+  const ideal={application:'200–300',cold:'100–150',followup:'150–200',thankyou:'150–200',networking:'100–150'};
+  const range=ideal[emailType]||'150–250';
+  wc.textContent=words+' words (ideal: '+range+')';
+}
+
 function renderEmail(text){
   // Expected format: SUBJECT: ...\n---\n[body]
   const subjectMatch=text.match(/^SUBJECT:\s*(.+?)(?:\n|$)/im);
@@ -389,6 +421,7 @@ function renderEmail(text){
     // No separator found yet — stream everything into body
     document.getElementById('body-text').textContent=text;
   }
+  updateEmailWordCount();
 }
 
 async function generate(){
