@@ -12,13 +12,10 @@ function track(event,page){fetch('https://web-production-d62ab.up.railway.app/ap
 window.addEventListener('load',()=>track('page_view','job_detail'));
 </script>
 <script>
-// Auth guard
+// Clean expired session — page is public (no auth gate)
 (function(){
   var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
-  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
-    localStorage.removeItem('ambore_user');
-    window.location.href='/?auth=login&redirect=/jobs&msg=Please+log+in+to+view+job+details';
-  }
+  if(s&&s.expiresAt&&Date.now()>s.expiresAt){localStorage.removeItem('ambore_user');}
 })();
 </script>
 <style>
@@ -87,6 +84,14 @@ body{padding-left:72px}
   margin-bottom:28px;
 }
 .apply-btn:hover{opacity:0.88}
+.apply-btn-row{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:28px;align-items:center}
+.tailor-btn{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:13px 22px;background:rgba(79,70,229,0.14);border:1.5px solid rgba(129,140,248,0.4);
+  border-radius:12px;color:#a5b4fc;font-size:0.95rem;font-weight:700;
+  cursor:pointer;transition:all 0.2s;font-family:inherit;white-space:nowrap;
+}
+.tailor-btn:hover{background:rgba(79,70,229,0.24);border-color:#818CF8;color:#fff}
 
 /* Description */
 .desc-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px;margin-bottom:24px}
@@ -212,7 +217,22 @@ async function loadJob() {
   }
 }
 
+var _currentJob = null;
+
+function tailorJob() {
+  if (!_currentJob) return;
+  var prefill = {
+    title: _currentJob.title || '',
+    company: _currentJob.company || '',
+    description: _currentJob.description || '',
+    applyUrl: _currentJob.apply_url || ''
+  };
+  localStorage.setItem('ambore_prefill_job', JSON.stringify(prefill));
+  window.location.href = '/resume';
+}
+
 function renderJob(job) {
+  _currentJob = job;
   const location = [job.location_city, job.location_state].filter(Boolean).join(', ') || job.location || 'USA';
 
   let salaryStr = '';
@@ -264,7 +284,10 @@ function renderJob(job) {
       <div class="info-item"><div class="info-label">Source</div><div class="info-value">${esc(job.source || job.ats || '')}</div></div>
     </div>
 
-    <a href="${getApplyUrl(job)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>
+    <div class="apply-btn-row">
+      <a href="${getApplyUrl(job)}" target="_blank" rel="noopener" class="apply-btn">Apply Now &rarr;</a>
+      <button class="tailor-btn" onclick="tailorJob()">🎯 Tailor My Resume</button>
+    </div>
 
     ${skillsHtml}
 
@@ -284,7 +307,10 @@ function renderJob(job) {
         <div class="apply-sticky-title">${esc(job.title)}</div>
         <div class="apply-sticky-company">${esc(job.company)}</div>
       </div>
-      <a href="${getApplyUrl(job)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
+      <div style="display:flex;gap:10px;flex-shrink:0">
+        <button class="tailor-btn" onclick="tailorJob()" style="padding:10px 16px;font-size:0.85rem">🎯 Tailor Resume</button>
+        <a href="${getApplyUrl(job)}" target="_blank" rel="noopener">Apply Now &rarr;</a>
+      </div>
     </div>`;
   stickyBar.classList.add('visible');
 }

@@ -200,6 +200,18 @@ a.cert-card{text-decoration:none;color:inherit;display:flex}
     </div>
   </div>
 
+  <!-- Quick picks for new users -->
+  <div style="background:rgba(79,70,229,0.1);border:1px solid rgba(79,70,229,0.2);border-radius:14px;padding:16px 20px;margin-bottom:28px">
+    <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(129,140,248,0.7);margin-bottom:10px">⭐ Most popular picks — great starting point</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="document.getElementById('f-provider').value='Google';document.getElementById('search').value='Data Analytics';applyFilters()" style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit">Google Data Analytics</button>
+      <button onclick="document.getElementById('f-provider').value='AWS';document.getElementById('search').value='';applyFilters()" style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit">AWS Cloud</button>
+      <button onclick="document.getElementById('f-domain').value='AI/ML';document.getElementById('search').value='';applyFilters()" style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit">AI &amp; Machine Learning</button>
+      <button onclick="document.getElementById('f-difficulty').value='Beginner';document.getElementById('f-duration').value='short';applyFilters()" style="padding:7px 14px;border-radius:20px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.8);font-size:0.8rem;font-weight:600;cursor:pointer;font-family:inherit">Quick wins (&lt;10 hrs)</button>
+    </div>
+    <p style="font-size:0.7rem;color:rgba(255,255,255,0.3);margin-top:10px">All links open the official provider site in a new tab — 100% free, no AstraOffer account needed.</p>
+  </div>
+
   <!-- FILTERS -->
   <div class="filters-bar">
     <div class="search-wrap">

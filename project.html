@@ -359,9 +359,14 @@ body{padding-left:72px}
     </div>
 
     <div class="field">
-      <label>Extra Context (optional)</label>
+      <label>Extra Context <span style="font-weight:400;text-transform:none;letter-spacing:0;color:#64748B">(optional — but worth filling in)</span></label>
       <textarea id="extra-input" rows="3" placeholder="e.g. I want to focus on real-time streaming data, or I want to use Kafka + Spark. I'm interested in NLP projects. I have experience with PostgreSQL..."></textarea>
-      <div class="field-hint">Any tech preferences, areas of interest, or constraints you want the project to address</div>
+      <div class="field-hint">More context = better output. Mention preferred tools, constraints, or areas you want to grow in.</div>
+    </div>
+
+    <div style="background:rgba(79,70,229,0.07);border:1px solid rgba(79,70,229,0.15);border-radius:12px;padding:14px 18px;margin-bottom:18px">
+      <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:rgba(79,70,229,0.6);margin-bottom:6px">What you'll get</div>
+      <div style="font-size:0.8rem;color:#475569;line-height:1.6">A complete, ready-to-build project plan: project concept, tech stack, architecture diagram, step-by-step build guide, stretch goals, and interview questions based on the project — all tailored to your experience level.</div>
     </div>
 
     <button class="gen-btn" id="gen-btn" onclick="generateProject()">
