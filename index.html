@@ -132,17 +132,19 @@ button,input,textarea{font-family:inherit}
 .demo-dots span:nth-child(2){background:#fbd38d}
 .demo-dots span:nth-child(3){background:#68d391}
 .demo-title{font-size:.75rem;font-weight:600;color:#94a3b8;letter-spacing:.02em}
-.demo-score-wrap{display:flex;justify-content:center;margin-bottom:20px}
-.demo-ring{position:relative;width:120px;height:120px;flex-shrink:0}
-.demo-ring-inner{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
-.demo-pct{font-size:1.7rem;font-weight:900;color:#1d4ed8;line-height:1}
-.demo-pct-lbl{font-size:.6rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.07em}
-.demo-kws{margin-bottom:16px}
-.demo-kw-lbl{font-size:.68rem;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
-.demo-chips{display:flex;flex-wrap:wrap;gap:6px}
-.chip{font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:20px}
-.chip.matched{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe}
-.chip.added{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0}
+.demo-job-tag{display:block;font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:#94a3b8;margin-bottom:3px}
+.demo-job-role{font-size:.8rem;font-weight:700;color:#0f1f5c}
+.demo-job-box{background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:10px 12px;margin-bottom:14px}
+.demo-b{background:#fff7f7;border:1px solid #fecaca;border-radius:8px;padding:11px 13px;margin-bottom:6px}
+.demo-b-lbl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#ef4444;margin-bottom:5px}
+.demo-b p{font-size:.78rem;color:#6b7280;line-height:1.55;font-style:italic}
+.demo-mid{text-align:center;padding:4px 0;font-size:.7rem;font-weight:700;color:#1d4ed8;display:flex;align-items:center;gap:8px}
+.demo-mid::before,.demo-mid::after{content:'';flex:1;height:1px;background:#e2e8f0}
+.demo-a{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:11px 13px;margin-top:6px;margin-bottom:14px}
+.demo-a-lbl{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#16a34a;margin-bottom:5px}
+.demo-a p{font-size:.78rem;color:#1e293b;line-height:1.55;font-weight:500}
+.demo-kws{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:14px}
+.demo-kw{font-size:.68rem;font-weight:600;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:20px;padding:3px 9px}
 .demo-ready{display:flex;align-items:center;gap:8px;font-size:.8rem;font-weight:600;color:#16a34a;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 14px}
 .demo-ready-dot{width:8px;height:8px;border-radius:50%;background:#16a34a;flex-shrink:0;animation:pulse-g 2s infinite}
 @keyframes pulse-g{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(22,163,74,.4)}50%{opacity:.8;box-shadow:0 0 0 5px rgba(22,163,74,0)}}
@@ -164,21 +166,24 @@ button,input,textarea{font-family:inherit}
 .feat-list li{display:flex;align-items:flex-start;gap:10px;font-size:.9rem;color:var(--text-m);line-height:1.5}
 .feat-ck{color:var(--blue);font-weight:800;flex-shrink:0;margin-top:1px}
 
-/* ── BEFORE/AFTER VISUAL ── */
-.ba-wrap{display:flex;align-items:center;gap:12px}
-@media(max-width:480px){.ba-wrap{flex-direction:column}}
-.ba-card{background:#fff;border:1px solid #e2e8f0;border-radius:14px;padding:16px;flex:1;box-shadow:var(--shadow)}
-.ba-card.after{border-color:#bfdbfe}
-.ba-tag{font-size:.65rem;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:#94a3b8;margin-bottom:10px}
-.after-tag{color:#1d4ed8}
-.ba-lines{display:flex;flex-direction:column;gap:7px;margin-bottom:14px}
-.ba-line{height:8px;background:#e2e8f0;border-radius:4px}
-.ba-score{display:flex;align-items:center;gap:6px;font-size:.7rem;color:#94a3b8;font-weight:600}
-.ba-bar{flex:1;height:6px;background:#f1f5f9;border-radius:3px;overflow:hidden}
-.ba-fill{height:100%;border-radius:3px;transition:width .8s ease}
-.ba-score-num{font-size:.75rem;font-weight:800;flex-shrink:0}
-.ba-arr{display:flex;flex-direction:column;align-items:center;gap:4px;flex-shrink:0}
-.ba-arr-lbl{font-size:.62rem;font-weight:800;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:2px 6px;letter-spacing:.05em}
+/* ── TEXT BEFORE/AFTER ── */
+.tba{max-width:480px}
+.tba-label{font-size:.7rem;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.tba-label.bad{color:#ef4444}
+.tba-label.good{color:#16a34a}
+.tba-box{padding:16px 18px;border-radius:12px;font-size:.9rem;line-height:1.7;color:#374151}
+.tba-box.bad{background:#fff7f7;border:1px solid #fecaca;font-style:italic;color:#6b7280}
+.tba-box.good{background:#f0fdf4;border:1px solid #bbf7d0;font-weight:500;color:#1e293b}
+.tba-divider{display:flex;align-items:center;gap:10px;padding:14px 0}
+.tba-div-line{flex:1;height:1px;background:#e2e8f0}
+.tba-div-badge{font-size:.72rem;font-weight:700;color:#1d4ed8;background:#eff6ff;border:1px solid #bfdbfe;border-radius:20px;padding:4px 14px;white-space:nowrap}
+.tba-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tba-chip{font-size:.7rem;font-weight:600;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:20px;padding:3px 10px}
+.tba-score-row{display:flex;align-items:center;gap:16px;margin-top:16px;padding:14px 18px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:12px}
+.tba-score-item{display:flex;flex-direction:column;align-items:center;gap:2px}
+.tba-score-before{font-size:1.3rem;font-weight:900;color:#ef4444}
+.tba-score-after{font-size:1.3rem;font-weight:900;color:#16a34a}
+.tba-score-lbl{font-size:.65rem;color:#94a3b8;font-weight:600}
 
 /* ── TOOLS GRID ── */
 .tools-sec{background:#fff;padding:96px 0}
@@ -318,7 +323,7 @@ section{padding:96px 0}
 
 <!-- ANNOUNCE BAR -->
 <div id="ann-bar">
-  <span>✨ AstraOffer — AI tools to help you land your next offer. <a href="#features">Explore Tools →</a></span>
+  <span>✨ 50,000+ live jobs updated hourly — browse free, no account needed. <a href="/jobs">Find Jobs →</a></span>
   <button id="ann-close" onclick="dismissAnn()" aria-label="Close">✕</button>
 </div>
 
@@ -398,16 +403,16 @@ section{padding:96px 0}
       <!-- Left: copy -->
       <div class="hero-text">
         <div class="hero-badge rev"><span class="badge-dot"></span>AI-Powered Career Platform</div>
-        <h1 class="rev r1">Land more interviews with an AI-tailored resume</h1>
-        <p class="hero-sub rev r2">Paste any job description → your resume is rewritten to match it exactly. Beat ATS filters and get more callbacks — in 60 seconds.</p>
+        <h1 class="rev r1">Your resume, rewritten to match every job you apply to</h1>
+        <p class="hero-sub rev r2">Paste a job description. The AI rewrites your resume to match its exact keywords and language — so you pass ATS filters and stand out to recruiters. Done in 60 seconds.</p>
         <div class="hero-ctas rev r2">
-          <button class="btn-hero-p" id="hero-cta" onclick="ctaAction()">🔍 Check My Resume Score →</button>
+          <button class="btn-hero-p" id="hero-cta" onclick="ctaAction()">✂️ Tailor My Resume Free →</button>
           <button class="btn-hero-g" onclick="goToFeature('/jobs')">💼 Browse Jobs</button>
         </div>
         <div class="hero-trust rev r3">
           <span class="trust-i"><span class="ck">★</span> 4.9 rating</span>
           <span class="trust-i"><span class="ck">✓</span> 14,000+ job seekers</span>
-          <span class="trust-i"><span class="ck">✓</span> Free to start</span>
+          <span class="trust-i"><span class="ck">✓</span> Job board always free</span>
         </div>
       </div>
 
@@ -416,34 +421,29 @@ section{padding:96px 0}
         <div class="demo-card">
           <div class="demo-hdr">
             <div class="demo-dots"><span></span><span></span><span></span></div>
-            <span class="demo-title">AstraOffer AI Result</span>
+            <span class="demo-title">AI Resume Tailor</span>
           </div>
-          <div class="demo-score-wrap">
-            <div class="demo-ring">
-              <svg viewBox="0 0 120 120" width="120" height="120">
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#e2e8f0" stroke-width="10"/>
-                <circle cx="60" cy="60" r="50" fill="none" stroke="#1d4ed8" stroke-width="10"
-                  stroke-dasharray="314" stroke-dashoffset="19" stroke-linecap="round"
-                  transform="rotate(-90 60 60)"/>
-              </svg>
-              <div class="demo-ring-inner">
-                <span class="demo-pct">94%</span>
-                <span class="demo-pct-lbl">ATS Match</span>
-              </div>
-            </div>
+          <div class="demo-job-box">
+            <span class="demo-job-tag">Applied for</span>
+            <span class="demo-job-role">Senior Software Engineer · Google</span>
+          </div>
+          <div class="demo-b">
+            <div class="demo-b-lbl">✗ Before</div>
+            <p>"Managed software projects and worked with cross-functional teams on product delivery"</p>
+          </div>
+          <div class="demo-mid">✨ AI rewrote this</div>
+          <div class="demo-a">
+            <div class="demo-a-lbl">✓ After</div>
+            <p>"Led 8-engineer team delivering $1.8M roadmap, cutting release cycles by 35% via agile restructuring"</p>
           </div>
           <div class="demo-kws">
-            <div class="demo-kw-lbl">Keywords matched</div>
-            <div class="demo-chips">
-              <span class="chip matched">Python ✓</span>
-              <span class="chip matched">AWS ✓</span>
-              <span class="chip matched">React ✓</span>
-              <span class="chip added">+12 more added</span>
-            </div>
+            <span class="demo-kw">agile ✓</span>
+            <span class="demo-kw">cross-functional ✓</span>
+            <span class="demo-kw">+12 keywords</span>
           </div>
           <div class="demo-ready">
             <span class="demo-ready-dot"></span>
-            Resume optimized — ready to submit
+            Resume ready — 94% ATS match
           </div>
         </div>
       </div>
@@ -484,37 +484,35 @@ section{padding:96px 0}
         <button class="btn-hero-p" onclick="goToFeature('/resume')">Try Resume Tailor Free →</button>
       </div>
       <div class="feat-visual rev r2">
-        <div class="ba-wrap">
-          <div class="ba-card">
-            <div class="ba-tag">Before</div>
-            <div class="ba-lines">
-              <div class="ba-line" style="width:88%"></div>
-              <div class="ba-line" style="width:65%"></div>
-              <div class="ba-line" style="width:78%"></div>
-              <div class="ba-line" style="width:50%"></div>
-            </div>
-            <div class="ba-score">
-              <span style="white-space:nowrap">ATS Score</span>
-              <div class="ba-bar"><div class="ba-fill" style="width:42%;background:#ef4444"></div></div>
-              <span class="ba-score-num" style="color:#ef4444">42%</span>
-            </div>
+        <div class="tba">
+          <div class="tba-label bad">✗ Before — Generic, ignored by ATS</div>
+          <div class="tba-box bad">
+            "Managed software development projects and collaborated with cross-functional teams on product delivery timelines"
           </div>
-          <div class="ba-arr">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            <span class="ba-arr-lbl">AI</span>
+          <div class="tba-divider">
+            <div class="tba-div-line"></div>
+            <span class="tba-div-badge">✨ AI rewrote this</span>
+            <div class="tba-div-line"></div>
           </div>
-          <div class="ba-card after">
-            <div class="ba-tag after-tag">After AI</div>
-            <div class="ba-lines">
-              <div class="ba-line" style="width:92%;background:#bfdbfe"></div>
-              <div class="ba-line" style="width:80%;background:#bfdbfe"></div>
-              <div class="ba-line" style="width:88%;background:#bfdbfe"></div>
-              <div class="ba-line" style="width:70%;background:#bfdbfe"></div>
+          <div class="tba-label good">✓ After — Specific, high-impact, ATS-optimised</div>
+          <div class="tba-box good">
+            "Led 8-engineer cross-functional team delivering <strong>$1.8M product roadmap</strong> — reduced release cycles by <strong>35%</strong> through agile sprint restructuring and CI/CD automation"
+          </div>
+          <div class="tba-chips">
+            <span class="tba-chip">agile ✓</span>
+            <span class="tba-chip">CI/CD ✓</span>
+            <span class="tba-chip">cross-functional ✓</span>
+            <span class="tba-chip">+ 9 more</span>
+          </div>
+          <div class="tba-score-row">
+            <div class="tba-score-item">
+              <span class="tba-score-before">42%</span>
+              <span class="tba-score-lbl">ATS before</span>
             </div>
-            <div class="ba-score">
-              <span style="white-space:nowrap">ATS Score</span>
-              <div class="ba-bar"><div class="ba-fill" style="width:94%;background:#16a34a"></div></div>
-              <span class="ba-score-num" style="color:#16a34a">94%</span>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1d4ed8" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            <div class="tba-score-item">
+              <span class="tba-score-after">94%</span>
+              <span class="tba-score-lbl">ATS after</span>
             </div>
           </div>
         </div>
@@ -582,23 +580,23 @@ section{padding:96px 0}
     <div class="steps-grid">
       <div class="step-card rev r1">
         <div class="step-num">1</div>
-        <span class="step-ico">👤</span>
-        <h3>Create your free account</h3>
-        <p>Sign up in 30 seconds — completely free.</p>
+        <span class="step-ico">📋</span>
+        <h3>Paste the job description</h3>
+        <p>Copy any job posting and paste it in. No setup, no templates — just the job text.</p>
         <div class="step-connector">→</div>
       </div>
       <div class="step-card rev r2">
         <div class="step-num">2</div>
-        <span class="step-ico">📋</span>
-        <h3>Paste the job description</h3>
-        <p>Drop any job posting URL or text into AstraOffer.</p>
+        <span class="step-ico">⚡</span>
+        <h3>AI rewrites your resume</h3>
+        <p>The AI matches your experience to the job's exact language, keywords, and requirements. Done in 60 seconds.</p>
         <div class="step-connector">→</div>
       </div>
       <div class="step-card rev r3">
         <div class="step-num">3</div>
-        <span class="step-ico">⚡</span>
-        <h3>Get your AI-optimized result</h3>
-        <p>Resume, cover letter, ATS score — ready instantly.</p>
+        <span class="step-ico">📥</span>
+        <h3>Download and apply</h3>
+        <p>Sign up free to save and download your tailored resume. Apply with confidence — your ATS score is shown too.</p>
       </div>
     </div>
     <div style="text-align:center;margin-top:40px" class="rev">
@@ -640,7 +638,7 @@ section{padding:96px 0}
         <div style="display:flex;flex-direction:column;gap:9px">
           <div class="price-feat"><span class="price-ck">✓</span> Job board access (50,000+ jobs)</div>
           <div class="price-feat"><span class="price-ck">✓</span> Free account &amp; profile</div>
-          <div class="price-feat"><span class="price-ck">✓</span> Preview all AI tools</div>
+          <div class="price-feat" style="color:#94a3b8"><span style="color:#94a3b8;font-weight:700;flex-shrink:0">—</span> AI tools require Premium</div>
         </div>
       </div>
 
@@ -1088,7 +1086,7 @@ function updatePageAuth(){
   var hCta=document.getElementById('hero-cta');
   if(hCta){
     if(sess){hCta.textContent='✂️ AI Resume Tailor →';hCta.onclick=function(){track('hero_cta_click','index',{cta:'loggedin'});window.location.href='/resume';};}
-    else{hCta.textContent='🔍 Check My Resume Score →';hCta.onclick=function(){track('hero_cta_click','index',{cta:'primary'});openAuth('signup');};}
+    else{hCta.textContent='✂️ Tailor My Resume Free →';hCta.onclick=function(){track('hero_cta_click','index',{cta:'primary'});openAuth('signup');};}
   }
   ['howitworks-cta-btn','pricing-cta-btn'].forEach(function(id){
     var el=document.getElementById(id);if(!el)return;
