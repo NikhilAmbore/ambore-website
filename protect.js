@@ -1,4 +1,4 @@
-/* © 2025 Offerly.org — All rights reserved. Unauthorized copying is prohibited. */
+/* © 2025 AstraOffer.org — All rights reserved. Unauthorized copying is prohibited. */
 (function(){
   'use strict';
 
@@ -53,7 +53,7 @@
       console.log(
         '%c This site is protected by copyright.\n © ' +
         new Date().getFullYear() +
-        ' Offerly.org — All rights reserved.\n Unauthorized copying or reproduction is strictly prohibited.',
+        ' AstraOffer.org — All rights reserved.\n Unauthorized copying or reproduction is strictly prohibited.',
         'color:#e2e8f0;font-size:13px;background:#0d1117;padding:12px 16px;' +
         'border-radius:6px;border-left:3px solid #ef4444;font-family:monospace;line-height:1.7'
       );
@@ -63,7 +63,7 @@
 })();
 
 /**
- * OfferlySecurity — client-side security utilities
+ * AstraOfferSecurity — client-side security utilities
  * ─────────────────────────────────────────────────────────────────────────────
  * Used by every tool page that calls the /api/claude proxy.
  *
@@ -77,7 +77,7 @@
  * OWASP A01 (Broken Access Control) — getUserId validates session expiry
  * OWASP A03 (Injection)             — sanitizeInput strips dangerous chars
  */
-window.OfferlySecurity = (function () {
+window.AstraOfferSecurity = (function () {
   'use strict';
 
   // ── Client-side rate-limit config ──────────────────────────────────────────

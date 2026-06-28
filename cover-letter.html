@@ -22,20 +22,20 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Offerly] Unhandled promise rejection:', e.reason);
+  console.error('[AstraOffer] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
+  console.error('[AstraOffer] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Offerly — AI Cover Letter Generator</title>
-<meta name="description" content="Generate a tailored, ATS-optimized cover letter in seconds. Upload your resume, paste the job description, and let Offerly AI write it for you."/>
+<title>AstraOffer — AI Cover Letter Generator</title>
+<meta name="description" content="Generate a tailored, ATS-optimized cover letter in seconds. Upload your resume, paste the job description, and let AstraOffer AI write it for you."/>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -213,12 +213,12 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
-<script src="/offerly-api.js"></script>
+<script src="/astraoffer-api.js"></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -466,7 +466,7 @@ async function generate(){
   document.getElementById('output-section').classList.add('hidden');
   document.getElementById('letter-text').textContent='';
 
-  const systemPrompt=`You are Offerly AI — a professional, human-like career assistant. Generate a compelling, personalized cover letter.
+  const systemPrompt=`You are AstraOffer AI — a professional, human-like career assistant. Generate a compelling, personalized cover letter.
 
 CORE PRINCIPLES:
 - Sound human, natural, and conversational — never robotic or AI-generated.
@@ -501,7 +501,7 @@ Output ONLY the letter text with no extra commentary or labels.`;
 },
           body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:1200,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg}]})
         });
-        if(!res.ok){if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
+        if(!res.ok){if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
         document.getElementById('spinner-row').classList.add('hidden');
         document.getElementById('output-section').classList.remove('hidden');

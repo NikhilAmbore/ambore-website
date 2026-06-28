@@ -1,4 +1,4 @@
-/* Offerly Theme Manager — always dark mode */
+/* AstraOffer Theme Manager — always dark mode */
 (function () {
   // Always dark — clear any old saved light preference
   localStorage.removeItem('ambore_theme');

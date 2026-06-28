@@ -1,5 +1,5 @@
 /**
- * Offerly API Client — full-stack DB layer
+ * AstraOffer API Client — full-stack DB layer
  * Wraps all Netlify Function calls with localStorage cache for instant UI.
  * Pattern: show cached data instantly → sync from DB in background → update cache.
  */

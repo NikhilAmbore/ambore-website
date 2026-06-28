@@ -1,11 +1,11 @@
 /**
- * Offerly Paywall — global upgrade intercept, loaded on every tool page.
+ * AstraOffer Paywall — global upgrade intercept, loaded on every tool page.
  *
  * What this does:
  *  1. Monkey-patches window.fetch to detect 402 UPGRADE_REQUIRED from /api/claude
  *  2. Shows a beautiful upgrade modal automatically — no page-level changes needed
  *  3. Shows a floating plan-status pill (bottom-right) with live usage
- *  4. Exposes window.OfferlyPaywall.show() for any page to trigger manually
+ *  4. Exposes window.AstraOfferPaywall.show() for any page to trigger manually
  *
  * Loaded via protect.js so it runs on every authenticated tool page.
  */
@@ -276,7 +276,7 @@
 
     } catch (e) {
       if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Premium →'; }
-      alert('Payment error: ' + e.message + '\n\nVisit offerly.org/pricing to upgrade.');
+      alert('Payment error: ' + e.message + '\n\nVisit astraoffer.org/pricing to upgrade.');
     }
   }
 
@@ -340,12 +340,12 @@
              : (args[0] && args[0].url ? args[0].url : '');
 
     if (url.indexOf('/api/claude') !== -1) {
-      // Prefer OfferlySecurity, fall back to localStorage directly so mobile
-      // browsers that haven't fully loaded OfferlySecurity still get the header.
+      // Prefer AstraOfferSecurity, fall back to localStorage directly so mobile
+      // browsers that haven't fully loaded AstraOfferSecurity still get the header.
       var uid = '';
       try {
-        uid = (global.OfferlySecurity && global.OfferlySecurity.getUserId())
-              ? global.OfferlySecurity.getUserId()
+        uid = (global.AstraOfferSecurity && global.AstraOfferSecurity.getUserId())
+              ? global.AstraOfferSecurity.getUserId()
               : '';
       } catch (e) {}
       if (!uid) {
@@ -383,7 +383,7 @@
   };
 
   // ── Public API ────────────────────────────────────────────────────────
-  global.OfferlyPaywall = { show: show, hide: hide, _checkout: doCheckout };
+  global.AstraOfferPaywall = { show: show, hide: hide, _checkout: doCheckout };
 
   // ── Boot on DOM ready ─────────────────────────────────────────────────
   function boot() {

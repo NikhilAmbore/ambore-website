@@ -21,19 +21,19 @@
 <script>
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Offerly] Unhandled promise rejection:', e.reason);
+  console.error('[AstraOffer] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
+  console.error('[AstraOffer] Uncaught error:', msg, src + ':' + line);
   return true;
 };
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Offerly Help — Ask Anything, Get Clear Answers</title>
-<meta name="description" content="Ask Offerly Help anything — resume tips, interview prep, career advice, data engineering, Python, SQL, English, and more. Clear and simple answers, instantly."/>
+<title>AstraOffer Help — Ask Anything, Get Clear Answers</title>
+<meta name="description" content="Ask AstraOffer Help anything — resume tips, interview prep, career advice, data engineering, Python, SQL, English, and more. Clear and simple answers, instantly."/>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -46,7 +46,7 @@ window.addEventListener('load',()=>track('page_view','help'));
     var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
     if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
       localStorage.removeItem('ambore_user');
-      window.location.href='/?auth=login&redirect=/help&msg=Please+log+in+to+access+Offerly+Help';
+      window.location.href='/?auth=login&redirect=/help&msg=Please+log+in+to+access+AstraOffer+Help';
     }
   } catch(e) {
     window.location.href='/?auth=login&redirect=/help';
@@ -212,7 +212,7 @@ body{padding-left:72px}
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -321,20 +321,20 @@ function logout(){try{localStorage.removeItem('ambore_user');}catch{}window.loca
 
 /* ── SYSTEM PROMPT ── */
 function buildSystemPrompt(){
-  return `You are Offerly Help — the official support assistant for Offerly.org.
+  return `You are AstraOffer Help — the official support assistant for AstraOffer.org.
 
-STRICT SCOPE: You ONLY answer questions related to Offerly and its tools:
-- How to use Offerly (Resume Builder, Job Portal, Cover Letter, Email Generator, LinkedIn Optimizer, Portfolio Builder, Interview AI, English AI, Coding AI, Project Builder, Dashboard)
+STRICT SCOPE: You ONLY answer questions related to AstraOffer and its tools:
+- How to use AstraOffer (Resume Builder, Job Portal, Cover Letter, Email Generator, LinkedIn Optimizer, Portfolio Builder, Interview AI, English AI, Coding AI, Project Builder, Dashboard)
 - Account help: sign up, log in, Google sign-in, password reset
-- Job search on Offerly: filtering, saving jobs, applying
-- Resume and cover letter generation on Offerly
+- Job search on AstraOffer: filtering, saving jobs, applying
+- Resume and cover letter generation on AstraOffer
 - Interview AI: how it works, setup, microphone, supported platforms
 - Billing/pricing (AI tools require Premium — $9/month for 300 AI requests; job board and tracker are always free)
-- Privacy and security questions about Offerly
-- Troubleshooting any Offerly feature
+- Privacy and security questions about AstraOffer
+- Troubleshooting any AstraOffer feature
 
-If the user asks ANYTHING outside of Offerly — sports, cooking, general coding help, news, personal advice, other websites, general knowledge, or any other off-topic subject — respond ONLY with:
-"I can only help with questions about Offerly and its tools. Please visit offerly.org to explore all features, or ask me anything about how to use Offerly!"
+If the user asks ANYTHING outside of AstraOffer — sports, cooking, general coding help, news, personal advice, other websites, general knowledge, or any other off-topic subject — respond ONLY with:
+"I can only help with questions about AstraOffer and its tools. Please visit astraoffer.org to explore all features, or ask me anything about how to use AstraOffer!"
 
 Do not make exceptions. Do not answer off-topic questions even if they seem harmless.
 
@@ -342,7 +342,7 @@ Response style:
 - Short and direct — answer in 2–4 sentences max unless steps are needed
 - Friendly and clear — no jargon, no filler
 - If steps are needed, use a numbered list
-- Always end with one helpful follow-up offer related to Offerly
+- Always end with one helpful follow-up offer related to AstraOffer
 
 Answer Style
 Use this format:
@@ -377,7 +377,7 @@ Keep it simple. Keep it useful.`;
     if(a.getAttribute('href') === path) a.classList.add('active');
   });
   // Welcome message
-  appendAIMessage(`**Hi, I'm Offerly Help.** ❓
+  appendAIMessage(`**Hi, I'm AstraOffer Help.** ❓
 
 Ask me anything — I'll give you a clear and simple answer.
 
@@ -446,7 +446,7 @@ async function streamResponse(userMsg){
     });
 
     if(!res.ok){
-      if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;}
+      if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;}
       const e = await res.json().catch(()=>({}));
       throw new Error(e.error?.message || 'API error ' + res.status);
     }

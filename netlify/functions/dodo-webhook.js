@@ -19,7 +19,7 @@
  *   monthly | 3month | 6month | 1year
  *
  * Register this URL in the Dodo dashboard:
- *   https://offerly.org/.netlify/functions/dodo-webhook
+ *   https://astraoffer.org/.netlify/functions/dodo-webhook
  */
 const DodoPayments = require('dodopayments');
 const { getPool } = require('./_db');

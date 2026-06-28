@@ -22,12 +22,12 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Offerly] Unhandled promise rejection:', e.reason);
+  console.error('[AstraOffer] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
+  console.error('[AstraOffer] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
@@ -35,17 +35,17 @@ window.onerror = (msg, src, line, col, err) => {
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <!-- SEO + OG -->
-<link rel="canonical" href="https://offerly.org/jobs"/>
+<link rel="canonical" href="https://astraoffer.org/jobs"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://offerly.org/jobs"/>
-<meta property="og:title" content="Offerly Jobs — 50,000+ Tech & IT Jobs Across the USA"/>
+<meta property="og:url" content="https://astraoffer.org/jobs"/>
+<meta property="og:title" content="AstraOffer Jobs — 50,000+ Tech & IT Jobs Across the USA"/>
 <meta property="og:description" content="Browse 50,000+ fresh US tech jobs from Greenhouse, Ashby, Workday, LinkedIn, Indeed and more. Updated daily. Apply with an AI-tailored resume instantly."/>
-<meta property="og:image" content="https://offerly.org/og-image.png"/>
-<meta property="og:site_name" content="Offerly"/>
+<meta property="og:image" content="https://astraoffer.org/og-image.png"/>
+<meta property="og:site_name" content="AstraOffer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Offerly Jobs — 50,000+ Tech & IT Jobs Across the USA"/>
+<meta name="twitter:title" content="AstraOffer Jobs — 50,000+ Tech & IT Jobs Across the USA"/>
 <meta name="twitter:description" content="Browse 50,000+ fresh US tech jobs from Greenhouse, Ashby, Workday, LinkedIn, Indeed and more. Updated daily. Apply with an AI-tailored resume instantly."/>
-<title>Offerly Jobs — Tech & IT Jobs Across the USA</title>
+<title>AstraOffer Jobs — Tech & IT Jobs Across the USA</title>
 <meta name="description" content="Browse 4,000+ fresh US tech jobs from Greenhouse, Ashby, Workday, Lever, WeWorkRemotely, Adzuna, USAJobs, and more. Updated daily."/>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -493,12 +493,12 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
-<script src="/offerly-api.js" defer></script>
+<script src="/astraoffer-api.js" defer></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -686,7 +686,7 @@ body{padding-left:72px}
       <div class="profile-banner-icon">⚡</div>
       <div class="profile-banner-text">
         <strong>Set up your profile to enable 1-Click Apply</strong>
-        Enter your details once — Offerly AI will tailor your resume and write a cover letter for every job automatically.
+        Enter your details once — AstraOffer AI will tailor your resume and write a cover letter for every job automatically.
       </div>
       <button class="profile-banner-btn" onclick="openProfileSetup()">Set Up Profile →</button>
     </div>
@@ -1674,7 +1674,7 @@ async function extractProfileFromResume() {
       })
     });
 
-    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} throw new Error('API error ' + res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;} throw new Error('API error ' + res.status); }
     var data = await res.json();
     var rawText = (data.content && data.content[0] && data.content[0].text) ? data.content[0].text.trim() : '';
 
@@ -1930,13 +1930,13 @@ async function runOCAFlow(job, profile, user) {
 
 async function callClaudeOCA(systemPrompt, userMessage) {
   // Check client-side rate limit
-  if (window.OfferlySecurity) {
-    var rl = OfferlySecurity.checkRateLimit('ai');
+  if (window.AstraOfferSecurity) {
+    var rl = AstraOfferSecurity.checkRateLimit('ai');
     if (!rl.allowed) {
       throw new Error('Rate limit reached — please wait an hour before making more AI requests.');
     }
   }
-  var headers = window.OfferlySecurity ? OfferlySecurity.proxyHeaders() : { 'Content-Type': 'application/json' };
+  var headers = window.AstraOfferSecurity ? AstraOfferSecurity.proxyHeaders() : { 'Content-Type': 'application/json' };
   var res = await fetch('/api/claude', {
     method: 'POST',
     headers: headers,
@@ -1949,7 +1949,7 @@ async function callClaudeOCA(systemPrompt, userMessage) {
     })
   });
   if (!res.ok) {
-    if (res.status === 402) { if (window.OfferlyPaywall) window.OfferlyPaywall.show(); return; }
+    if (res.status === 402) { if (window.AstraOfferPaywall) window.AstraOfferPaywall.show(); return; }
     var err = await res.json().catch(function(){ return {}; });
     throw new Error(err.error || ('API error ' + res.status + ' — check that your API key is configured in Netlify'));
   }
@@ -2157,7 +2157,7 @@ document.addEventListener('keydown', function(e){
     <!-- No profile -->
     <div id="oca-no-resume" class="oca-no-resume hidden">
       <strong>Profile not set up yet</strong>
-      <p>Fill in your details once — Offerly will auto-tailor your resume and write a cover letter for every job you apply to.</p>
+      <p>Fill in your details once — AstraOffer will auto-tailor your resume and write a cover letter for every job you apply to.</p>
       <button class="btn-oca-apply" onclick="closeOCABtn();openProfileSetup()">Set Up Profile →</button>
     </div>
 

@@ -1,23 +1,30 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
   <defs>
-    <linearGradient id="og" x1="5" y1="95" x2="95" y2="5" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#064e3b"/>
-      <stop offset="50%" stop-color="#059669"/>
-      <stop offset="100%" stop-color="#6ee7b7"/>
+    <linearGradient id="ag" x1="12" y1="90" x2="88" y2="10" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0d1b4b"/>
+      <stop offset="55%" stop-color="#1d4ed8"/>
+      <stop offset="100%" stop-color="#3b82f6"/>
     </linearGradient>
-    <linearGradient id="og2" x1="5" y1="95" x2="95" y2="5" gradientUnits="userSpaceOnUse">
-      <stop offset="0%" stop-color="#047857"/>
-      <stop offset="100%" stop-color="#34d399"/>
+    <linearGradient id="ag2" x1="14" y1="82" x2="86" y2="28" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1e40af"/>
+      <stop offset="100%" stop-color="#60a5fa"/>
     </linearGradient>
   </defs>
-  <!-- Outer circle arc: ~300° ring, gap at upper-right -->
-  <path d="M 82,52 A 32,32 0 1,1 68,24" stroke="url(#og)" stroke-width="13" fill="none" stroke-linecap="round"/>
-  <!-- Left hand/arm coming from lower-left to center -->
-  <rect x="17" y="57" width="37" height="12" rx="6" fill="url(#og2)" transform="rotate(-33 35.5 63)"/>
-  <!-- Right hand/arm coming from upper-right to center -->
-  <rect x="46" y="31" width="37" height="12" rx="6" fill="url(#og2)" transform="rotate(-33 64.5 37)"/>
-  <!-- Small grip bar at clasp point -->
-  <rect x="44" y="48" width="12" height="8" rx="4" fill="url(#og)"/>
-  <!-- 4-pointed sparkle star near arc gap -->
-  <path d="M 72,17 L 73.6,22.4 L 79,17 L 73.6,21 L 72,26.5 L 70.4,21 L 65,17 L 70.4,13.5 Z" fill="#6ee7b7"/>
+  <!-- A letter: outer shape with inner triangle hole -->
+  <path fill-rule="evenodd" fill="url(#ag)" d="
+    M 50,10 L 90,88 L 76,88 L 50,28 L 24,88 L 10,88 Z
+    M 50,28 L 66,60 L 34,60 Z
+  "/>
+  <!-- Crossbar -->
+  <rect x="28" y="58" width="44" height="11" rx="4" fill="url(#ag)"/>
+  <!-- Person: head -->
+  <circle cx="50" cy="42" r="8" fill="#0a1535"/>
+  <!-- Person: body -->
+  <path d="M 37,68 Q 38,55 50,52 Q 62,55 63,68 Z" fill="#0a1535"/>
+  <!-- Tie -->
+  <path d="M 50,54 L 47.5,63 L 50,67 L 52.5,63 Z" fill="#2563eb"/>
+  <!-- Swoosh arc from lower-left to upper-right -->
+  <path d="M 14,82 C 35,60 58,42 83,30" stroke="url(#ag2)" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <!-- 4-pointed sparkle star -->
+  <path d="M 84,24 L 85.8,29.5 L 92,24 L 85.8,27.5 L 84,33 L 82.2,27.5 L 76,24 L 82.2,20.5 Z" fill="#60a5fa"/>
 </svg>

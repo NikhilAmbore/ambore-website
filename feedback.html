@@ -24,8 +24,8 @@ window.onerror = (msg, src, line, col, err) => {
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Offerly Feedback — Share Your Experience</title>
-<meta name="description" content="Help us improve Offerly. Share your experience, suggestions, and ideas — it only takes 2 minutes."/>
+<title>AstraOffer Feedback — Share Your Experience</title>
+<meta name="description" content="Help us improve AstraOffer. Share your experience, suggestions, and ideas — it only takes 2 minutes."/>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -221,7 +221,7 @@ body{padding-left:72px}
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -314,7 +314,7 @@ body{padding-left:72px}
 
       <div style="margin-top:auto;padding-top:10px">
         <div style="font-size:0.7rem;color:#1e293b;line-height:1.6">
-          Your feedback is shared with the Offerly team and helps us build better tools for you.
+          Your feedback is shared with the AstraOffer team and helps us build better tools for you.
         </div>
       </div>
     </aside>
@@ -385,7 +385,7 @@ function buildSystemPrompt(){
   const user = getUser();
   const uname = user ? (user.name || user.email || 'the user') : 'the user';
 
-  return `You are Offerly's UX Feedback Assistant — a warm, friendly chatbot that collects user experience feedback for Offerly.org (an AI career platform).
+  return `You are AstraOffer's UX Feedback Assistant — a warm, friendly chatbot that collects user experience feedback for AstraOffer.org (an AI career platform).
 
 The user's name is: ${uname}
 
@@ -395,11 +395,11 @@ You guide users through a short feedback conversation with exactly 4 questions, 
 FEEDBACK FLOW — ask exactly these 4 questions in order, one at a time:
 
 STEP 1 — OVERALL RATING:
-Ask: "On a scale of 1 to 5 stars, how would you rate your overall experience with Offerly? (1 = Poor, 5 = Excellent)"
+Ask: "On a scale of 1 to 5 stars, how would you rate your overall experience with AstraOffer? (1 = Poor, 5 = Excellent)"
 → When user answers, acknowledge warmly. If they give a low rating (1-2), express care and say you really want to help improve.
 
 STEP 2 — WHAT THEY LIKED:
-Ask: "What did you enjoy most about using Offerly? What worked well for you?"
+Ask: "What did you enjoy most about using AstraOffer? What worked well for you?"
 → After they answer, affirm their response positively.
 
 STEP 3 — IMPROVEMENTS:
@@ -407,7 +407,7 @@ Ask: "What could be better? Is there anything that felt confusing, slow, or frus
 → After they answer, thank them sincerely for their honesty.
 
 STEP 4 — FEATURE REQUESTS:
-Ask: "Is there a feature or tool you wish Offerly had? What would make your experience even better?"
+Ask: "Is there a feature or tool you wish AstraOffer had? What would make your experience even better?"
 → After they answer, give a warm closing message thanking them.
 
 AFTER ALL 4 ANSWERS:
@@ -422,7 +422,7 @@ IMPORTANT RULES:
 - Keep your messages SHORT and conversational (2-3 sentences max)
 - Never skip a step — always ask all 4 questions
 - Be positive, caring, and professional
-- Do NOT answer unrelated questions — gently redirect: "I'd love to focus on your Offerly feedback first! 😊"
+- Do NOT answer unrelated questions — gently redirect: "I'd love to focus on your AstraOffer feedback first! 😊"
 - If a user seems upset, be extra empathetic before moving to the next question
 - Use light emoji occasionally to keep the tone warm
 - After collecting all feedback, output the JSON block exactly as shown`;
@@ -551,7 +551,7 @@ async function streamResponse(userMsg){
     });
 
     if(!res.ok){
-      if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;}
+      if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;}
       const e = await res.json().catch(()=>({}));
       throw new Error(e.error?.message || 'API error ' + res.status);
     }
@@ -638,7 +638,7 @@ function formatFeedbackForWhatsApp(){
   const uname = u ? (u.name || u.email || 'Anonymous') : 'Anonymous';
   const date = new Date().toLocaleDateString('en-IN', {day:'numeric',month:'short',year:'numeric'});
 
-  return `*Offerly UX Feedback*
+  return `*AstraOffer UX Feedback*
 📅 ${date}
 👤 User: ${uname}
 
@@ -653,7 +653,7 @@ ${collectedFeedback.improve || 'Not provided'}
 💡 *Feature Requests:*
 ${collectedFeedback.features || 'Not provided'}
 
-_Sent via Offerly Feedback Assistant_`;
+_Sent via AstraOffer Feedback Assistant_`;
 }
 
 function showWhatsAppCard(){
@@ -770,13 +770,13 @@ function init(){
   /* Kick off the conversation */
   const uname = u ? (u.name ? u.name.split(' ')[0] : '') : '';
   const greeting = uname ? `Hi ${uname}!` : 'Hi!';
-  appendAIMessage(`${greeting} 👋 I'm the **Offerly Feedback Assistant**.
+  appendAIMessage(`${greeting} 👋 I'm the **AstraOffer Feedback Assistant**.
 
-Your opinion genuinely matters — it helps us make Offerly better for everyone.
+Your opinion genuinely matters — it helps us make AstraOffer better for everyone.
 
 This will only take **2 minutes**. I'll ask you 4 quick questions about your experience.
 
-Let's start — **on a scale of 1 to 5 stars, how would you rate your overall experience with Offerly?**
+Let's start — **on a scale of 1 to 5 stars, how would you rate your overall experience with AstraOffer?**
 
 _(1 = Poor, 5 = Excellent)_`);
 }

@@ -54,7 +54,7 @@ exports.handler = async (event) => {
   });
 
   const db      = getPool();
-  const siteUrl = process.env.URL || 'https://offerly.org';
+  const siteUrl = process.env.URL || 'https://astraoffer.org';
 
   try {
     const r = await db.query(
@@ -66,7 +66,7 @@ exports.handler = async (event) => {
     const row = r.rows[0] || {};
 
     // Block suspended accounts
-    if (row.is_suspended) return err('Account suspended. Contact support@offerly.org.', 403);
+    if (row.is_suspended) return err('Account suspended. Contact support@astraoffer.org.', 403);
 
     // Block if already on an active Premium subscription
     const periodEnd = row.subscription_current_period_end;

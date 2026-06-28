@@ -1,4 +1,4 @@
-/* Offerly — Supabase sync layer
+/* AstraOffer — Supabase sync layer
  * Loads silently in the background alongside existing localStorage auth.
  * NEVER modifies localStorage behaviour — only syncs data to Supabase.
  */

@@ -20,7 +20,7 @@ const FREE_ACCESS_EMAILS = new Set([
 
 const CORS = {
   'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': 'https://offerly.org',
+  'Access-Control-Allow-Origin': 'https://astraoffer.org',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };

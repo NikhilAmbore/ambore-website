@@ -50,7 +50,7 @@ exports.handler = async (event) => {
     // ── Suspended — hard block ─────────────────────────────────────────────
     if (user.is_suspended) {
       return err(
-        `Account suspended${user.suspended_reason ? ': ' + user.suspended_reason : ''}. Contact support@offerly.org.`,
+        `Account suspended${user.suspended_reason ? ': ' + user.suspended_reason : ''}. Contact support@astraoffer.org.`,
         403
       );
     }

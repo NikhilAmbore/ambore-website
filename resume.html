@@ -22,12 +22,12 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Offerly] Unhandled promise rejection:', e.reason);
+  console.error('[AstraOffer] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
+  console.error('[AstraOffer] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
@@ -35,18 +35,18 @@ window.onerror = (msg, src, line, col, err) => {
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <!-- SEO + OG -->
-<link rel="canonical" href="https://offerly.org/resume"/>
+<link rel="canonical" href="https://astraoffer.org/resume"/>
 <meta property="og:type" content="website"/>
-<meta property="og:url" content="https://offerly.org/resume"/>
-<meta property="og:title" content="Offerly — AI Resume Tailor | ATS-Optimized in Seconds"/>
-<meta property="og:description" content="Upload your resume and paste any job description. Offerly AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
-<meta property="og:image" content="https://offerly.org/og-image.png"/>
-<meta property="og:site_name" content="Offerly"/>
+<meta property="og:url" content="https://astraoffer.org/resume"/>
+<meta property="og:title" content="AstraOffer — AI Resume Tailor | ATS-Optimized in Seconds"/>
+<meta property="og:description" content="Upload your resume and paste any job description. AstraOffer AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
+<meta property="og:image" content="https://astraoffer.org/og-image.png"/>
+<meta property="og:site_name" content="AstraOffer"/>
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:title" content="Offerly — AI Resume Tailor | ATS-Optimized in Seconds"/>
-<meta name="twitter:description" content="Upload your resume and paste any job description. Offerly AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
-<title>Offerly — AI Resume Tailor | ATS-Optimized in Seconds</title>
-<meta name="description" content="Upload your resume and paste any job description. Offerly AI tailors your resume to match keywords, beat ATS, and land more interviews — free."/>
+<meta name="twitter:title" content="AstraOffer — AI Resume Tailor | ATS-Optimized in Seconds"/>
+<meta name="twitter:description" content="Upload your resume and paste any job description. AstraOffer AI rewrites your resume to match keywords, beat ATS filters, and land more interviews — free."/>
+<title>AstraOffer — AI Resume Tailor | ATS-Optimized in Seconds</title>
+<meta name="description" content="Upload your resume and paste any job description. AstraOffer AI tailors your resume to match keywords, beat ATS, and land more interviews — free."/>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -510,12 +510,12 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
-<script src="/offerly-api.js"></script>
+<script src="/astraoffer-api.js"></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -569,7 +569,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><img src="/logo.svg" class="logo-img" alt="Offerly" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Offerly AI Resume</div>
+  <div class="auth-logo"><img src="/logo.svg" class="logo-img" alt="AstraOffer" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">AstraOffer AI Resume</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
@@ -640,7 +640,7 @@ body{padding-left:72px}
     </div>
 
     <h1 class="page-heading" id="page-heading">Tailor Your Resume with AI</h1>
-    <p class="page-hint" id="page-hint">Upload your resume and paste the job description — Offerly AI rewrites it for 100% ATS alignment.</p>
+    <p class="page-hint" id="page-hint">Upload your resume and paste the job description — AstraOffer AI rewrites it for 100% ATS alignment.</p>
 
     <div class="input-grid" id="input-grid">
       <!-- Resume upload -->
@@ -769,8 +769,8 @@ body{padding-left:72px}
             <div class="rlock-perk"><span class="rlock-perk-ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Missing ATS keywords injected automatically</div>
             <div class="rlock-perk"><span class="rlock-perk-ck"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></span>Bullet points reframed with STAR format</div>
           </div>
-          <button class="rlock-btn" id="rlock-upgrade-btn" onclick="window.OfferlyPaywall&&window.OfferlyPaywall._checkout()">Upgrade to Premium — $9/mo →</button>
-          <div class="rlock-note">Cancel anytime · <a onclick="if(window.OfferlyPaywall)window.OfferlyPaywall.show()">Already Premium? Restore access</a></div>
+          <button class="rlock-btn" id="rlock-upgrade-btn" onclick="window.AstraOfferPaywall&&window.AstraOfferPaywall._checkout()">Upgrade to Premium — $9/mo →</button>
+          <div class="rlock-note">Cancel anytime · <a onclick="if(window.AstraOfferPaywall)window.AstraOfferPaywall.show()">Already Premium? Restore access</a></div>
         </div>
       </div>
     </div>
@@ -1164,7 +1164,7 @@ async function generateAchievements() {
     });
 
     if (!res.ok) {
-      if (res.status === 402) { if (window.OfferlyPaywall) window.OfferlyPaywall.show(); return; }
+      if (res.status === 402) { if (window.AstraOfferPaywall) window.AstraOfferPaywall.show(); return; }
       const e = await res.json().catch(() => ({}));
       throw new Error(e.error?.message || 'API error ' + res.status);
     }
@@ -1268,7 +1268,7 @@ async function scoreResume() {
         messages: [{ role: 'user', content: 'Resume to score:\n\n' + resume }]
       })
     });
-    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
 
     const reader = res.body.getReader();
     const dec = new TextDecoder();
@@ -1367,7 +1367,7 @@ function setGenMode(mode) {
     jdField.classList.remove('hidden');
     hintField.classList.add('hidden');
     heading.textContent = 'Tailor Your Resume with AI';
-    hint.textContent = 'Upload your resume and paste the job description — Offerly AI rewrites it for 100% ATS alignment.';
+    hint.textContent = 'Upload your resume and paste the job description — AstraOffer AI rewrites it for 100% ATS alignment.';
     btnText.textContent = '🎯 Generate Tailored Resume';
   }
 }
@@ -1487,7 +1487,7 @@ async function generateResume() {
         });
 
         if (!res.ok) {
-          if (res.status === 402) { if (window.OfferlyPaywall) window.OfferlyPaywall.show(); return; }
+          if (res.status === 402) { if (window.AstraOfferPaywall) window.AstraOfferPaywall.show(); return; }
           const e = await res.json().catch(() => ({}));
           throw new Error(e.error?.message || 'API error ' + res.status);
         }
@@ -1806,7 +1806,7 @@ function _isResumeLocked() {
 }
 
 function copyResume() {
-  if (_isResumeLocked()) { if (window.OfferlyPaywall) window.OfferlyPaywall._checkout(); return; }
+  if (_isResumeLocked()) { if (window.AstraOfferPaywall) window.AstraOfferPaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to copy.'); return; }
   const plain = document.getElementById('resume-output').innerText;
   navigator.clipboard.writeText(plain).then(() => {
@@ -1815,7 +1815,7 @@ function copyResume() {
 }
 
 function printResume() {
-  if (_isResumeLocked()) { if (window.OfferlyPaywall) window.OfferlyPaywall._checkout(); return; }
+  if (_isResumeLocked()) { if (window.AstraOfferPaywall) window.AstraOfferPaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to print.'); return; }
   const html = renderMarkdown(generatedMarkdown);
   const css = TEMPLATE_PRINT_CSS[activeTemplate] || TEMPLATE_PRINT_CSS.classic;
@@ -1851,7 +1851,7 @@ function triggerBlobDownload(blob, filename, toastMsg) {
 }
 
 function downloadTxt() {
-  if (_isResumeLocked()) { if (window.OfferlyPaywall) window.OfferlyPaywall._checkout(); return; }
+  if (_isResumeLocked()) { if (window.AstraOfferPaywall) window.AstraOfferPaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   // Strip markdown to produce clean plain text — best for ATS parsers
   let txt = generatedMarkdown
@@ -1928,7 +1928,7 @@ function mdToOoxml(md) {
 }
 
 async function downloadDocx() {
-  if (_isResumeLocked()) { if (window.OfferlyPaywall) window.OfferlyPaywall._checkout(); return; }
+  if (_isResumeLocked()) { if (window.AstraOfferPaywall) window.AstraOfferPaywall._checkout(); return; }
   if (!generatedMarkdown) { showToast('No resume to download.'); return; }
   if (typeof JSZip === 'undefined') { showToast('Export library not loaded yet — please try again in a moment.'); return; }
 

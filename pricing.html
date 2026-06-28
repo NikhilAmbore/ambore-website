@@ -12,13 +12,13 @@
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<link rel="canonical" href="https://offerly.org/pricing"/>
-<meta name="description" content="Offerly Premium — from $29/month for 1,000 AI requests. Resume builder, interview preparation, cover letter generator, and every AI tool unlocked."/>
-<meta property="og:title" content="Offerly Pricing"/>
+<link rel="canonical" href="https://astraoffer.org/pricing"/>
+<meta name="description" content="AstraOffer Premium — from $29/month for 1,000 AI requests. Resume builder, interview preparation, cover letter generator, and every AI tool unlocked."/>
+<meta property="og:title" content="AstraOffer Pricing"/>
 <meta property="og:description" content="AI tools require Premium. From $29/month for 1,000 AI requests — resume builder, interview preparation, cover letters, and more."/>
-<meta property="og:url" content="https://offerly.org/pricing"/>
+<meta property="og:url" content="https://astraoffer.org/pricing"/>
 <meta property="og:type" content="website"/>
-<title>Offerly — Pricing</title>
+<title>AstraOffer — Pricing</title>
 <link rel="icon" href="/logo.svg"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -147,13 +147,13 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 </head>
 <body>
 <script src="/protect.js"></script>
-<script src="/offerly-api.js"></script>
+<script src="/astraoffer-api.js"></script>
 
 <!-- ── Top Nav ── -->
 <nav class="nav">
   <a href="/" class="nav-logo">
     <div class="logo-sq">A</div>
-    Offerly
+    AstraOffer
   </a>
   <div class="nav-links">
     <a href="/" class="nav-cta" id="nav-auth-btn">Get Started</a>
@@ -327,7 +327,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       Is my payment information secure?
       <span class="faq-arrow">▾</span>
     </button>
-    <div class="faq-a">Payments are processed by Dodo Payments, a PCI-DSS compliant payment provider. Offerly never stores your card details.</div>
+    <div class="faq-a">Payments are processed by Dodo Payments, a PCI-DSS compliant payment provider. AstraOffer never stores your card details.</div>
   </div>
 
   <div class="faq-item">
@@ -339,7 +339,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
   </div>
 </section>
 
-<!-- ── Upgrade modal (used by other pages via window.OfferlyPaywall.show()) ── -->
+<!-- ── Upgrade modal (used by other pages via window.AstraOfferPaywall.show()) ── -->
 <div id="upgrade-modal">
   <div class="modal-box">
     <div class="modal-icon">⚡</div>
@@ -357,7 +357,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 
 <!-- ── Footer ── -->
 <footer class="footer">
-  <p>© 2025 Offerly.org &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/help">Help</a></p>
+  <p>© 2025 AstraOffer.org &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/help">Help</a></p>
 </footer>
 
 <script>
@@ -406,7 +406,7 @@ function closeModal(){
   document.getElementById('upgrade-modal').classList.remove('open');
 }
 
-window.OfferlyPaywall = {
+window.AstraOfferPaywall = {
   show: function(reason){
     var modal = document.getElementById('upgrade-modal');
     if(reason==='monthly_limit_reached'){

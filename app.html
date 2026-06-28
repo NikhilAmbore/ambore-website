@@ -22,12 +22,12 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Offerly] Unhandled promise rejection:', e.reason);
+  console.error('[AstraOffer] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
+  console.error('[AstraOffer] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
@@ -35,7 +35,7 @@ window.onerror = (msg, src, line, col, err) => {
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content="Practice interviews with AI. Real-time voice Q&amp;A, STAR method coaching, coding interview help, and instant feedback to ace your next job interview."/>
-<title>Offerly — AI Interview Assistant</title>
+<title>AstraOffer — AI Interview Assistant</title>
 <link rel="icon" href="/logo.svg">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -418,7 +418,7 @@ body{padding-left:72px}
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/logo.svg" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -472,7 +472,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><img src="/logo.svg" class="logo-img" alt="Offerly" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Offerly</div>
+  <div class="auth-logo"><img src="/logo.svg" class="logo-img" alt="AstraOffer" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">AstraOffer</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
@@ -482,7 +482,7 @@ body{padding-left:72px}
       <!-- LOGIN -->
       <div class="auth-panel active" id="panel-login">
         <div class="auth-heading">Welcome back</div>
-        <div class="auth-sub">Log in to your Offerly account</div>
+        <div class="auth-sub">Log in to your AstraOffer account</div>
         <div class="auth-err" id="login-err"></div>
         <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
         <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
@@ -511,7 +511,7 @@ body{padding-left:72px}
 <div id="setup" class="setup-shell hidden">
       <div class="setup-content">
     <h1 class="setup-heading">Start your interview prep journey</h1>
-    <p class="setup-hint">Upload your resume, job description, and target company — Offerly will coach you from prep to offer letter.</p>
+    <p class="setup-hint">Upload your resume, job description, and target company — AstraOffer will coach you from prep to offer letter.</p>
 
     <div class="setup-row">
       <div class="setup-field"><label>Job Role</label><input type="text" id="s-role" placeholder="e.g. Software Engineer"/></div>
@@ -570,7 +570,7 @@ body{padding-left:72px}
 ══════════════════════════════════════ -->
 <div id="session" class="sess-shell hidden">
   <div class="sess-header">
-    <div class="sess-logo"><img src="/logo.svg" class="logo-img" alt="Offerly" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Offerly</div>
+    <div class="sess-logo"><img src="/logo.svg" class="logo-img" alt="AstraOffer" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">AstraOffer</div>
     <div class="sess-meta">
       <span class="sess-badge" id="sess-round">Interview</span>
       <span class="sess-badge" id="sess-role"></span>
@@ -605,7 +605,7 @@ body{padding-left:72px}
     <!-- Bottom: Answers -->
     <div class="panel">
       <div class="panel-title">
-        ✦ Offerly Coach
+        ✦ AstraOffer Coach
         <span class="ai-status" id="ai-status"></span>
       </div>
       <div id="answers-body" class="answers-body">
@@ -891,7 +891,7 @@ function startSession() {
   const roundType = getRoundType();
   const frameworkLabel = roundType === 'behavioral' ? 'STAR' : roundType === 'system-design' ? 'System Design' : 'CAAR';
   document.getElementById('answers-body').innerHTML = `<div class="ans-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)">
-    <div class="ans-card-head"><span class="ans-badge" style="background:rgba(34,197,94,0.12);color:#22c55e">🎙 Offerly Interview Assistant</span></div>
+    <div class="ans-card-head"><span class="ans-badge" style="background:rgba(34,197,94,0.12);color:#22c55e">🎙 AstraOffer Interview Assistant</span></div>
     <div class="ans-body" style="color:rgba(255,255,255,0.8);line-height:1.8">
       <strong>Hi! I'm here to make everything easy for you.</strong><br><br>
       <span style="color:rgba(255,255,255,0.75)">I'm listening for the interviewer's question. I'll give you a clear, confident, natural-sounding answer the moment a question is detected.</span><br><br>
@@ -986,7 +986,7 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  return `You are Offerly AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
+  return `You are AstraOffer AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
 
 CANDIDATE RESUME:
 ${cfg.resume}
@@ -1096,7 +1096,7 @@ async function streamAnswer(question) {
         }]
       })
     });
-    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
 
     setStatus('thinking','✦ Writing...');
     const reader = res.body.getReader(), decoder = new TextDecoder();
@@ -1137,7 +1137,7 @@ async function streamAnswer(question) {
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err) {
     textDiv.innerHTML = `<p style="color:var(--red);font-size:0.83rem;padding:12px 14px">⚠️ Error: ${err.message}<br><br><small style="opacity:0.6">Check internet connection or try the text box below.</small></p>`;
-    setStatus('',''); console.error('Offerly AI error:',err);
+    setStatus('',''); console.error('AstraOffer AI error:',err);
     showToast('⚠️ AI error: ' + err.message);
   } finally {
     clearTimeout(safetyTimer);
@@ -1474,7 +1474,7 @@ async function streamCodeAnswer(base64) {
   card.innerHTML = `
     <div class="ans-card-head">
       <div class="ans-q-label">📸 Screen Analysis — Coding Problem</div>
-      <div class="ans-badge">🖥 Offerly AI</div>
+      <div class="ans-badge">🖥 AstraOffer AI</div>
     </div>
     <div class="code-answer" id="txt-${id}"><span class="cursor"></span></div>
     <div class="ans-actions"><button class="act" onclick="copyCard('${id}')">📋 Copy</button></div>`;
@@ -1496,11 +1496,11 @@ async function streamCodeAnswer(base64) {
         model: CLAUDE_MODEL, max_tokens:1200, stream:true,
         messages:[{ role:'user', content:[
           { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:base64 }},
-          { type:'text', text:`You are Offerly AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
+          { type:'text', text:`You are AstraOffer AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
         ]}]
       })
     });
-    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.AstraOfferPaywall)window.AstraOfferPaywall.show();return;} const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
     setStatus('thinking','🖥 Solving...');
     const reader=res.body.getReader(), decoder=new TextDecoder(); let buf='';
     while(true){

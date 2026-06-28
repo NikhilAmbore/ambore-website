@@ -19,7 +19,7 @@ function getPool() {
 
 const CORS = {
   'Content-Type': 'application/json',
-  'Access-Control-Allow-Origin': 'https://offerly.org',
+  'Access-Control-Allow-Origin': 'https://astraoffer.org',
   'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type',
 };

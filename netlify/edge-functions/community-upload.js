@@ -1,5 +1,5 @@
 /**
- * Offerly Community — Document Upload Edge Function
+ * AstraOffer Community — Document Upload Edge Function
  * ─────────────────────────────────────────────────────────────────────────────
  * Handles admin-only PDF uploads to the community-docs/ folder via GitHub API.
  *
@@ -14,7 +14,7 @@
  * ENV VARS REQUIRED (set in Netlify dashboard → Site settings → Env vars)
  *  COMMUNITY_ADMIN_SECRET  — long random string known only to the founder
  *  GITHUB_TOKEN            — fine-grained PAT with Contents:write on this repo
- *  GITHUB_REPO             — e.g. "nikhilambore/offerly-website"
+ *  GITHUB_REPO             — e.g. "nikhilambore/astraoffer-website"
  *  GITHUB_BRANCH           — default "main"
  */
 
@@ -31,8 +31,8 @@ const CFG = {
   MAX_CAT_LEN   : 60,
 
   ALLOWED_ORIGINS: new Set([
-    'https://offerly.org',
-    'https://www.offerly.org',
+    'https://astraoffer.org',
+    'https://www.astraoffer.org',
     'https://ambore.netlify.app',
   ]),
 
@@ -150,7 +150,7 @@ export default async function handler(req, context) {
 
   // ── GitHub env vars ───────────────────────────────────────────────────────────
   const githubToken  = Deno.env.get('GITHUB_TOKEN');
-  const githubRepo   = Deno.env.get('GITHUB_REPO')   ?? 'nikhilambore/offerly-website';
+  const githubRepo   = Deno.env.get('GITHUB_REPO')   ?? 'nikhilambore/astraoffer-website';
   const githubBranch = Deno.env.get('GITHUB_BRANCH') ?? 'main';
 
   if (!githubToken) {
