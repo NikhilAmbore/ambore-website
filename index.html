@@ -210,13 +210,6 @@ footer{background:var(--navy);padding:56px 0 28px}
 .mob-bnav button:hover{color:var(--blue)}
 
 /* ── SLIDE BANNER ── */
-.slide-ban{position:fixed;bottom:70px;right:18px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:14px 18px;max-width:280px;z-index:199;flex-direction:column;gap:8px;box-shadow:var(--shadow-lg);display:none}
-@media(min-width:641px){.slide-ban{bottom:18px}}
-.sban-x{position:absolute;top:8px;right:10px;background:none;border:none;color:var(--text-s);font-size:1rem;cursor:pointer}
-.sban-btn{display:inline-flex;align-items:center;padding:7px 14px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:.79rem;font-weight:700;cursor:pointer;transition:background .15s}
-.sban-btn:hover{background:var(--blue-d)}
-.sban-btn-a{background:#f97316}
-.sban-btn-a:hover{background:#ea580c}
 
 /* ── AUTH MODAL ── */
 .auth-ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);z-index:9999;display:none;align-items:center;justify-content:center;padding:20px}
@@ -636,14 +629,6 @@ footer{background:var(--navy);padding:56px 0 28px}
   </button>
 </div>
 
-<!-- SLIDE BANNER -->
-<div class="slide-ban" id="slide-ban" style="display:none">
-  <button class="sban-x" onclick="dismissSlide()">✕</button>
-  <div style="font-size:.83rem;line-height:1.5;color:var(--dark)">💬 <strong>Join 1,000+ job seekers</strong> — free tips &amp; resume help</div>
-  <a href="https://chat.whatsapp.com/GVNsPzXOegqEuKEKP1Mai7" target="_blank" rel="noopener noreferrer" class="sban-btn">Join WhatsApp →</a>
-  <div style="margin-top:6px;font-size:.83rem;line-height:1.5;color:var(--dark)">🚀 <strong>Struggling with interviews?</strong> Get 1:1 career help</div>
-  <a href="https://forms.gle/3rnZGjN9UFZ6eFbNA" target="_blank" rel="noopener noreferrer" class="sban-btn sban-btn-a">Apply Free →</a>
-</div>
 
 <!-- AUTH MODAL -->
 <div class="auth-ov" id="auth-ov">
@@ -711,28 +696,6 @@ function dismissAnn(){
   }
 })();
 
-// ── Slide banner ──────────────────────────────────────────────────────────────
-function dismissSlide(){
-  document.getElementById('slide-ban').style.display='none';
-  sessionStorage.setItem('slide_banner_dismissed','1');
-}
-function showSlide(){
-  if(sessionStorage.getItem('slide_banner_dismissed'))return;
-  var b=document.getElementById('slide-ban');
-  if(b){b.style.display='flex';}
-}
-(function(){
-  if(sessionStorage.getItem('slide_banner_dismissed'))return;
-  var ready=false;
-  setTimeout(function(){ready=true;},15000);
-  var fired=false;
-  window.addEventListener('scroll',function(){
-    if(fired||!ready)return;
-    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
-    if(pct>=0.6){fired=true;showSlide();}
-  },{passive:true});
-  setTimeout(function(){if(!fired){fired=true;showSlide();}},90000);
-})();
 
 // ── Navbar scroll ─────────────────────────────────────────────────────────────
 (function(){
