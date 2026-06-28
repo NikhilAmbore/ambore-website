@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
+<script>
+  window.dataLayer=window.dataLayer||[];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js',new Date());
+  gtag('config','G-F3S7FLQRSM',{anonymize_ip:true,cookie_flags:'SameSite=None;Secure',cookie_expires:0});
+</script>
+<script>
+window.addEventListener('unhandledrejection',e=>{if(e.reason?.name==='AbortError'){e.preventDefault();return;}console.error('[AstraOffer]',e.reason);e.preventDefault();});
+window.onerror=(msg,src,line,col,err)=>{if(err?.name==='AbortError')return true;console.error('[AstraOffer]',msg);return true;};
+</script>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>AstraOffer — AI Document Chat</title>
+<meta name="description" content="Upload any PDF or paste text and chat with AI about it in real-time. Get instant answers, summaries, and insights from your documents."/>
+<link rel="icon" href="/ao-logo.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script>
+(function(){
+  var s=JSON.parse(localStorage.getItem('ambore_user')||'null');
+  if(!s||(s.expiresAt&&Date.now()>s.expiresAt)){
+    localStorage.removeItem('ambore_user');
+    window.location.href='/?auth=login&redirect=/doc-chat&msg=Please+log+in+to+access+this+feature';
+  }
+})();
+</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:#fff;color:#1e293b}
+:root{
+  --grad:linear-gradient(135deg,#2563EB,#1D4ED8);
+  --card:#fff;--card2:#F8FAFC;
+  --border:#E2E8F0;
+  --accent:#2563EB;--green:#22c55e;--yellow:#fbbf24;--red:#ef4444;
+}
+::-webkit-scrollbar{width:4px}::-webkit-scrollbar-thumb{background:#E2E8F0;border-radius:2px}
+.hidden{display:none!important}
+button,input,textarea,select{font-family:inherit}
+
+/* ── APP SHELL ── */
+.app-shell{min-height:100vh;background:#f8fafc;
+  background-image:radial-gradient(ellipse at 20% 20%,rgba(37,99,235,0.04) 0%,transparent 50%),
+                   radial-gradient(ellipse at 80% 80%,rgba(37,99,235,0.03) 0%,transparent 50%);}
+
+/* ── PAGE LAYOUT ── */
+.main{max-width:1200px;margin:0 auto;padding:28px 20px 80px}
+.page-heading{font-size:1.7rem;font-weight:900;color:#1e293b;margin-bottom:4px}
+.page-hint{font-size:0.88rem;color:#64748B;margin-bottom:24px}
+
+/* ── SPLIT LAYOUT ── */
+.split{display:grid;grid-template-columns:340px 1fr;gap:18px;height:calc(100vh - 170px);min-height:500px}
+@media(max-width:900px){.split{grid-template-columns:1fr;height:auto}}
+
+/* ── DOC PANEL ── */
+.doc-panel{display:flex;flex-direction:column;gap:12px;min-height:0}
+.panel-label{font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:#64748B;margin-bottom:2px}
+
+/* Drop zone */
+.drop-zone{border:2px dashed var(--border);border-radius:14px;padding:28px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--card);flex-shrink:0}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--accent);background:rgba(37,99,235,0.03)}
+.drop-zone svg{margin:0 auto 10px;display:block;opacity:0.35}
+.drop-zone p{font-size:0.82rem;color:#64748B;line-height:1.5}
+.drop-zone strong{color:var(--accent);font-weight:700}
+.drop-zone input[type=file]{display:none}
+
+/* Document list */
+.doc-list{flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:8px;min-height:0}
+.doc-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.doc-card-icon{width:36px;height:36px;border-radius:9px;background:rgba(37,99,235,0.08);display:flex;align-items:center;justify-content:center;flex-shrink:0;color:var(--accent)}
+.doc-card-info{flex:1;min-width:0}
+.doc-card-name{font-size:0.82rem;font-weight:700;color:#1e293b;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.doc-card-meta{font-size:0.7rem;color:#94A3B8;margin-top:2px}
+.doc-card-del{background:none;border:none;cursor:pointer;color:#94A3B8;padding:2px 4px;border-radius:5px;flex-shrink:0;line-height:1;font-size:1rem}
+.doc-card-del:hover{color:var(--red);background:rgba(239,68,68,0.08)}
+
+/* Paste area */
+.paste-toggle{font-size:0.78rem;font-weight:600;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;display:flex;align-items:center;gap:4px;flex-shrink:0}
+.paste-box{width:100%;height:120px;padding:10px 13px;background:var(--card2);border:1px solid var(--border);border-radius:10px;font-size:0.82rem;color:#1e293b;resize:none;outline:none;line-height:1.5;transition:border-color 0.2s;flex-shrink:0}
+.paste-box:focus{border-color:var(--accent)}
+.paste-box::placeholder{color:#94A3B8}
+.paste-add-btn{padding:9px 18px;border-radius:9px;background:var(--grad);border:none;color:#fff;font-size:0.82rem;font-weight:700;cursor:pointer;transition:opacity 0.2s;flex-shrink:0}
+.paste-add-btn:hover{opacity:0.88}
+
+.doc-empty{text-align:center;padding:32px 16px;color:#94A3B8;font-size:0.8rem;line-height:1.6}
+.doc-chars{font-size:0.7rem;color:#94A3B8;padding:2px 0}
+
+/* ── CHAT PANEL ── */
+.chat-panel{display:flex;flex-direction:column;min-height:0;height:100%}
+@media(max-width:900px){.chat-panel{min-height:500px}}
+.chat-topbar{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:14px 14px 0 0;flex-shrink:0}
+.chat-topbar-left{display:flex;align-items:center;gap:8px}
+.chat-status{width:8px;height:8px;border-radius:50%;background:var(--green);flex-shrink:0}
+.chat-status.busy{background:var(--yellow);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
+.chat-title{font-size:0.88rem;font-weight:700;color:#1e293b}
+.chat-doc-count{font-size:0.72rem;color:#94A3B8;font-weight:500}
+.chat-clear-btn{font-size:0.75rem;font-weight:600;color:#94A3B8;background:none;border:1px solid var(--border);border-radius:7px;padding:5px 10px;cursor:pointer;transition:all 0.15s}
+.chat-clear-btn:hover{color:var(--red);border-color:rgba(239,68,68,0.3)}
+
+/* Messages */
+.chat-messages{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--card);border-left:1px solid var(--border);border-right:1px solid var(--border);min-height:0}
+.msg{display:flex;gap:10px;align-items:flex-start;animation:msg-in 0.2s ease}
+@keyframes msg-in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{flex-direction:row-reverse}
+.msg-avatar{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:800;flex-shrink:0;margin-top:2px}
+.msg.ai .msg-avatar{background:var(--grad);color:#fff}
+.msg.user .msg-avatar{background:#E2E8F0;color:#64748B}
+.msg-bubble{max-width:80%;padding:11px 15px;border-radius:14px;font-size:0.875rem;line-height:1.65}
+.msg.ai .msg-bubble{background:var(--card2);border:1px solid var(--border);border-top-left-radius:4px;color:#1e293b}
+.msg.user .msg-bubble{background:var(--grad);color:#fff;border-top-right-radius:4px}
+.msg-bubble p{margin:0 0 8px}
+.msg-bubble p:last-child{margin:0}
+.msg-bubble ul,.msg-bubble ol{padding-left:18px;margin:6px 0}
+.msg-bubble li{margin-bottom:4px}
+.msg-bubble strong{font-weight:700}
+.msg-bubble code{background:rgba(0,0,0,0.06);padding:1px 5px;border-radius:4px;font-family:monospace;font-size:0.82em}
+.msg.user .msg-bubble code{background:rgba(255,255,255,0.2)}
+
+/* Typing dots */
+.typing-dots{display:flex;gap:4px;padding:4px 0}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:0.4;animation:dot-bounce 1.2s infinite}
+.typing-dots span:nth-child(2){animation-delay:0.2s}
+.typing-dots span:nth-child(3){animation-delay:0.4s}
+@keyframes dot-bounce{0%,80%,100%{opacity:0.4;transform:translateY(0)}40%{opacity:1;transform:translateY(-5px)}}
+
+/* Cursor blink */
+.cursor{display:inline-block;width:2px;height:14px;background:var(--accent);margin-left:2px;vertical-align:middle;animation:blink 0.9s step-end infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+
+/* Chat empty state */
+.chat-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;text-align:center;padding:32px;color:#94A3B8}
+.chat-empty svg{opacity:0.25}
+.chat-empty h3{font-size:0.95rem;font-weight:700;color:#64748B}
+.chat-empty p{font-size:0.82rem;line-height:1.5;max-width:260px}
+
+/* Suggestions */
+.suggestions{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.sugg-btn{padding:6px 13px;border-radius:20px;font-size:0.75rem;font-weight:600;border:1px solid var(--border);background:var(--card2);color:#475569;cursor:pointer;transition:all 0.15s}
+.sugg-btn:hover{border-color:var(--accent);color:var(--accent);background:rgba(37,99,235,0.04)}
+
+/* Input bar */
+.chat-inputbar{display:flex;gap:10px;padding:12px 16px;background:var(--card);border:1px solid var(--border);border-radius:0 0 14px 14px;border-top:none;flex-shrink:0}
+.chat-input{flex:1;padding:10px 14px;border:1px solid var(--border);border-radius:10px;font-size:0.88rem;color:#1e293b;background:var(--card2);outline:none;transition:border-color 0.2s;resize:none;height:44px;max-height:120px;overflow-y:auto;line-height:1.5}
+.chat-input:focus{border-color:var(--accent)}
+.chat-input::placeholder{color:#94A3B8}
+.chat-send-btn{width:44px;height:44px;border-radius:10px;background:var(--grad);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:opacity 0.2s,transform 0.15s;color:#fff}
+.chat-send-btn:hover{opacity:0.88;transform:translateY(-1px)}
+.chat-send-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none}
+
+/* ── PROGRESS BAR (PDF loading) ── */
+.pdf-progress{width:100%;height:3px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px}
+.pdf-progress-bar{height:100%;background:var(--grad);border-radius:2px;transition:width 0.3s;width:0%}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1e1e3a;border:1px solid rgba(129,140,248,0.3);color:#f1f5f9;padding:12px 20px;border-radius:10px;font-size:0.85rem;z-index:9999;transition:opacity 0.3s;pointer-events:none}
+
+/* ── SIDEBAR ── */
+.sb{position:fixed;left:0;top:0;bottom:0;width:72px;background:#0d0d1e;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;align-items:center;padding:12px 0 8px;z-index:200;overflow:hidden}
+.sb:hover{overflow-y:auto}
+.sb-logo{width:52px;height:52px;background:transparent;border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-bottom:14px;text-decoration:none;transition:opacity 0.15s;overflow:hidden}
+.sb-logo:hover{opacity:0.85}
+.sb-nav{display:flex;flex-direction:column;align-items:center;gap:1px;flex:1;width:100%;padding-bottom:6px}
+.sb-item{display:flex;flex-direction:column;align-items:center;justify-content:center;width:60px;min-height:56px;border-radius:12px;color:rgba(255,255,255,0.55);text-decoration:none;font-size:0.58rem;font-weight:600;letter-spacing:0.01em;gap:4px;cursor:pointer;background:none;border:none;transition:background 0.15s,color 0.15s;padding:6px 4px;font-family:inherit;text-align:center;line-height:1.2;word-break:break-word}
+.sb-item:hover{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.9)}
+.sb-item.active{background:rgba(255,255,255,0.1);color:#fff}
+.sb-item svg{flex-shrink:0}
+.sb-foot{display:flex;flex-direction:column;align-items:center;gap:1px;padding-top:8px;border-top:1px solid rgba(255,255,255,0.08);flex-shrink:0;width:100%}
+.sb-logout{color:rgba(239,68,68,0.6)!important}
+.sb-logout:hover{background:rgba(239,68,68,0.08)!important;color:#ef4444!important}
+
+/* ── Mobile dock ── */
+.mob-dock{display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:200;align-items:center;justify-content:space-around;padding:0 4px}
+.md-item{display:flex;flex-direction:column;align-items:center;gap:2px;color:rgba(255,255,255,0.45);text-decoration:none;font-size:0.55rem;font-weight:600;cursor:pointer;background:none;border:none;padding:4px 10px;font-family:inherit;border-radius:8px;transition:color 0.15s}
+.md-item.active{color:#60a5fa}
+.md-item:hover{color:rgba(255,255,255,0.85)}
+.mob-more-drawer{position:fixed;bottom:60px;left:0;right:0;background:#0d0d1e;border-top:1px solid rgba(255,255,255,0.08);z-index:199;max-height:70vh;overflow-y:auto}
+.mob-more-drawer.hidden{display:none}
+.mob-drawer-inner{padding:16px}
+.mob-drawer-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:12px}
+.mdg-item{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:10px;background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);text-decoration:none;font-size:0.62rem;font-weight:600;text-align:center;transition:background 0.15s,color 0.15s}
+.mdg-item:hover{background:rgba(255,255,255,0.12);color:#fff}
+
+body{padding-left:72px}
+@media(max-width:768px){
+  .sb{display:none}
+  .mob-dock{display:flex}
+  body{padding-left:0;padding-bottom:60px}
+  .split{grid-template-columns:1fr}
+  .doc-panel{max-height:300px}
+}
+</style>
+<script src="/protect.js"></script>
+<script src="/theme.js"></script>
+<script src="/supabase-sync.js"></script>
+<script src="/astraoffer-api.js"></script>
+<!-- PDF.js for client-side PDF text extraction -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<nav class="sb" id="sb">
+  <a href="/" class="sb-logo" title="AstraOffer Home"><img src="/ao-logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <div class="sb-nav">
+    <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+    <a href="/resume" class="sb-item" title="Resume Builder"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
+    <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS Score</span></a>
+    <a href="/cover-letter" class="sb-item" title="Cover Letter"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover Letter</span></a>
+    <a href="/email" class="sb-item" title="Email Writer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+    <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+    <a href="/certifications" class="sb-item" title="Free Certifications"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg><span>Certs</span></a>
+    <a href="/project" class="sb-item" title="Project Generator"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+    <a href="/doc-chat" class="sb-item active" title="AI Document Chat"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Doc Chat</span></a>
+  </div>
+  <div class="sb-foot">
+    <button class="sb-item sb-logout" onclick="typeof logout!=='undefined'?logout():window.location.href='/'" title="Log Out"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg><span>Log Out</span></button>
+  </div>
+</nav>
+
+<!-- ── Mobile bottom dock ── -->
+<nav class="mob-dock" id="mob-dock">
+  <a href="/jobs" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
+  <a href="/resume" class="md-item"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
+  <a href="/doc-chat" class="md-item active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><span>Doc Chat</span></a>
+  <button class="md-item" onclick="toggleMobMore()" id="mob-more-btn"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
+</nav>
+<div class="mob-more-drawer hidden" id="mob-more-drawer">
+  <div class="mob-drawer-inner">
+    <div class="mob-drawer-grid">
+      <a href="/cover-letter" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg><span>Cover Letter</span></a>
+      <a href="/email" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg><span>Email</span></a>
+      <a href="/linkedin" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
+      <a href="/ats-score" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS Score</span></a>
+      <a href="/project" class="mdg-item"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
+    </div>
+    <div style="padding:12px 16px;border-top:1px solid rgba(255,255,255,0.08)">
+      <button onclick="typeof logout!=='undefined'?logout():window.location.href='/'" style="width:100%;padding:10px;background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2);border-radius:8px;color:#ef4444;font-size:0.85rem;font-weight:600;cursor:pointer;">Log Out</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── App ── -->
+<div class="app-shell">
+  <div class="main">
+    <h1 class="page-heading">AI Document Chat</h1>
+    <p class="page-hint">Upload PDFs or paste any text — then ask AI anything about it in real time.</p>
+
+    <div class="split">
+
+      <!-- ── LEFT: Document Panel ── -->
+      <div class="doc-panel">
+        <div>
+          <p class="panel-label">Your Documents</p>
+          <!-- Drop zone -->
+          <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()" ondragover="onDragOver(event)" ondragleave="onDragLeave(event)" ondrop="onDrop(event)">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+            <p><strong>Click to upload</strong> or drag & drop<br><span style="font-size:0.75rem">PDF files · Max 10 MB</span></p>
+            <div class="pdf-progress hidden" id="pdf-progress"><div class="pdf-progress-bar" id="pdf-bar"></div></div>
+          </div>
+          <input type="file" id="file-input" accept=".pdf,application/pdf" multiple onchange="handleFileSelect(this.files)"/>
+        </div>
+
+        <!-- Paste text toggle -->
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <button class="paste-toggle" id="paste-toggle" onclick="togglePaste()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+            Paste text instead
+          </button>
+          <span class="doc-chars" id="doc-chars"></span>
+        </div>
+
+        <div id="paste-area" class="hidden" style="display:flex;flex-direction:column;gap:8px">
+          <textarea class="paste-box" id="paste-input" placeholder="Paste any text — job description, article, notes, research…" rows="5"></textarea>
+          <button class="paste-add-btn" onclick="addPastedText()">Add as Document</button>
+        </div>
+
+        <!-- Document list -->
+        <div class="doc-list" id="doc-list">
+          <div class="doc-empty" id="doc-empty">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+            <p style="margin-top:8px;font-size:0.8rem">Upload a PDF or paste text to get started.<br>Your base resume will be auto-loaded if saved.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── RIGHT: Chat Panel ── -->
+      <div class="chat-panel">
+        <div class="chat-topbar">
+          <div class="chat-topbar-left">
+            <div class="chat-status" id="chat-status"></div>
+            <span class="chat-title">AI Assistant</span>
+            <span class="chat-doc-count" id="chat-doc-count"></span>
+          </div>
+          <button class="chat-clear-btn" onclick="clearChat()">Clear chat</button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+          <div class="chat-empty" id="chat-empty">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <h3>Ask anything about your documents</h3>
+            <p>Upload a document on the left, then start chatting. Try one of these:</p>
+            <div class="suggestions">
+              <button class="sugg-btn" onclick="sendSuggestion(this)">Summarize this document</button>
+              <button class="sugg-btn" onclick="sendSuggestion(this)">What are the key points?</button>
+              <button class="sugg-btn" onclick="sendSuggestion(this)">What skills does this job require?</button>
+              <button class="sugg-btn" onclick="sendSuggestion(this)">How does my resume match this job?</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-inputbar">
+          <textarea
+            class="chat-input"
+            id="chat-input"
+            placeholder="Ask a question about your documents…"
+            rows="1"
+            onkeydown="handleInputKey(event)"
+            oninput="autoResize(this)"
+          ></textarea>
+          <button class="chat-send-btn" id="send-btn" onclick="sendMessage()" title="Send">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════════════════════
+   AstraOffer — AI Document Chat
+   - PDF.js text extraction (client-side, no server needed)
+   - Streaming Claude responses via /api/claude
+   - Documents + chat history persisted in localStorage
+═══════════════════════════════════════════════════════════════════════════ */
+
+const CLAUDE_MODEL = 'claude-sonnet-4-6';
+const STORAGE_DOCS = 'ao_dc_docs';
+const STORAGE_CHAT = 'ao_dc_chat';
+const MAX_DOCS     = 5;
+const MAX_DOC_CHARS = 40000; // chars per doc fed to AI
+const MAX_CHAT_HISTORY = 20; // messages kept in memory
+
+/* ── State ── */
+var _docs    = [];   // [{ id, name, text, chars, source }]
+var _chat    = [];   // [{ role:'user'|'assistant', content }]
+var _busy    = false;
+
+/* ── PDF.js worker ── */
+if (typeof pdfjsLib !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+}
+
+/* ════════════════════════════════
+   INIT
+════════════════════════════════ */
+(function init() {
+  /* Load persisted docs */
+  try { _docs = JSON.parse(localStorage.getItem(STORAGE_DOCS) || '[]'); } catch(e){ _docs=[]; }
+  /* Load persisted chat */
+  try { _chat = JSON.parse(localStorage.getItem(STORAGE_CHAT) || '[]'); } catch(e){ _chat=[]; }
+
+  /* Auto-load base resume if no docs yet */
+  if (_docs.length === 0) {
+    var base = localStorage.getItem('ao_base_resume');
+    if (base && base.trim()) {
+      addDoc({ name: 'My Resume (base)', text: base.trim(), source: 'base_resume' });
+    }
+  }
+
+  renderDocList();
+  renderChatHistory();
+  updateDocCount();
+})();
+
+/* ════════════════════════════════
+   DOCUMENTS
+════════════════════════════════ */
+function addDoc(doc) {
+  if (_docs.length >= MAX_DOCS) { showToast('Maximum ' + MAX_DOCS + ' documents. Remove one first.'); return; }
+  var id = 'doc_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  _docs.push({ id: id, name: doc.name, text: doc.text.slice(0, MAX_DOC_CHARS), chars: doc.text.length, source: doc.source || 'upload' });
+  saveDocs();
+  renderDocList();
+  updateDocCount();
+}
+
+function removeDoc(id) {
+  _docs = _docs.filter(function(d){ return d.id !== id; });
+  saveDocs();
+  renderDocList();
+  updateDocCount();
+}
+
+function saveDocs() {
+  try { localStorage.setItem(STORAGE_DOCS, JSON.stringify(_docs)); } catch(e){}
+}
+
+function renderDocList() {
+  var list = document.getElementById('doc-list');
+  var empty = document.getElementById('doc-empty');
+  var charSpan = document.getElementById('doc-chars');
+
+  if (_docs.length === 0) {
+    list.innerHTML = '';
+    list.appendChild(empty);
+    empty.classList.remove('hidden');
+    charSpan.textContent = '';
+    return;
+  }
+
+  empty.classList.add('hidden');
+  var totalChars = _docs.reduce(function(s,d){ return s + d.chars; }, 0);
+  charSpan.textContent = fmtNum(totalChars) + ' chars loaded';
+
+  list.innerHTML = _docs.map(function(d) {
+    return '<div class="doc-card" id="dc-' + d.id + '">'
+      + '<div class="doc-card-icon">'
+      + (d.source === 'paste'
+          ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>'
+          : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>')
+      + '</div>'
+      + '<div class="doc-card-info">'
+      + '<div class="doc-card-name">' + escHtml(d.name) + '</div>'
+      + '<div class="doc-card-meta">' + fmtNum(d.chars) + ' chars'
+      + (d.chars > MAX_DOC_CHARS ? ' · truncated to ' + fmtNum(MAX_DOC_CHARS) : '') + '</div>'
+      + '</div>'
+      + '<button class="doc-card-del" onclick="removeDoc(\'' + d.id + '\')" title="Remove">×</button>'
+      + '</div>';
+  }).join('');
+}
+
+function updateDocCount() {
+  var el = document.getElementById('chat-doc-count');
+  if (_docs.length === 0) { el.textContent = ''; return; }
+  el.textContent = '· ' + _docs.length + ' doc' + (_docs.length > 1 ? 's' : '') + ' loaded';
+}
+
+/* ════════════════════════════════
+   PDF UPLOAD
+════════════════════════════════ */
+function handleFileSelect(files) {
+  Array.from(files).forEach(function(f){ processFile(f); });
+}
+
+async function processFile(file) {
+  if (!file.type.includes('pdf') && !file.name.endsWith('.pdf')) {
+    showToast('Only PDF files are supported.'); return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('File too large. Max 10 MB.'); return;
+  }
+  if (typeof pdfjsLib === 'undefined') {
+    showToast('PDF library not loaded. Please refresh.'); return;
+  }
+
+  var progress = document.getElementById('pdf-progress');
+  var bar      = document.getElementById('pdf-bar');
+  progress.classList.remove('hidden');
+  bar.style.width = '10%';
+
+  try {
+    var arrayBuf = await file.arrayBuffer();
+    bar.style.width = '30%';
+    var pdf = await pdfjsLib.getDocument({ data: arrayBuf }).promise;
+    bar.style.width = '50%';
+
+    var texts = [];
+    for (var i = 1; i <= pdf.numPages; i++) {
+      var page = await pdf.getPage(i);
+      var content = await page.getTextContent();
+      var pageText = content.items.map(function(item){ return item.str; }).join(' ');
+      texts.push(pageText);
+      bar.style.width = (50 + Math.round((i / pdf.numPages) * 45)) + '%';
+    }
+
+    bar.style.width = '100%';
+    var fullText = texts.join('\n\n').replace(/\s+/g, ' ').trim();
+
+    if (!fullText) { showToast('Could not extract text from this PDF (it may be a scanned image).'); return; }
+
+    addDoc({ name: file.name, text: fullText, source: 'pdf' });
+    showToast('✓ ' + file.name + ' loaded (' + fmtNum(fullText.length) + ' chars)');
+  } catch(e) {
+    showToast('Error reading PDF: ' + (e.message || 'Unknown error'));
+    console.error('[doc-chat] PDF error:', e);
+  } finally {
+    setTimeout(function(){ progress.classList.add('hidden'); bar.style.width = '0%'; }, 600);
+  }
+}
+
+/* Drag & drop */
+function onDragOver(e) { e.preventDefault(); document.getElementById('drop-zone').classList.add('drag-over'); }
+function onDragLeave(e) { document.getElementById('drop-zone').classList.remove('drag-over'); }
+function onDrop(e) {
+  e.preventDefault();
+  document.getElementById('drop-zone').classList.remove('drag-over');
+  handleFileSelect(e.dataTransfer.files);
+}
+
+/* ════════════════════════════════
+   PASTE TEXT
+════════════════════════════════ */
+var _pasteVisible = false;
+function togglePaste() {
+  _pasteVisible = !_pasteVisible;
+  var el = document.getElementById('paste-area');
+  if (_pasteVisible) { el.classList.remove('hidden'); el.style.display='flex'; }
+  else { el.classList.add('hidden'); }
+  document.getElementById('paste-toggle').textContent = _pasteVisible ? '▲ Hide paste area' : '+ Paste text instead';
+}
+
+function addPastedText() {
+  var ta = document.getElementById('paste-input');
+  var text = ta.value.trim();
+  if (!text) { showToast('Please paste some text first.'); return; }
+  addDoc({ name: 'Pasted text (' + new Date().toLocaleTimeString() + ')', text: text, source: 'paste' });
+  ta.value = '';
+  togglePaste();
+  showToast('✓ Text document added');
+}
+
+/* ════════════════════════════════
+   CHAT
+════════════════════════════════ */
+function buildSystemPrompt() {
+  var base = 'You are a helpful AI assistant. The user has uploaded documents for analysis. '
+    + 'Answer questions accurately based on the document content. '
+    + 'Be concise but thorough. Use bullet points where helpful. '
+    + 'If the answer is not in the documents, say so clearly.';
+
+  if (_docs.length === 0) {
+    return base + '\n\nNo documents have been uploaded yet. Ask the user to upload a document first.';
+  }
+
+  var docsText = _docs.map(function(d, i) {
+    return '--- DOCUMENT ' + (i+1) + ': ' + d.name + ' ---\n' + d.text;
+  }).join('\n\n');
+
+  return base + '\n\n=== USER\'S DOCUMENTS ===\n' + docsText;
+}
+
+function renderChatHistory() {
+  var container = document.getElementById('chat-messages');
+  var empty = document.getElementById('chat-empty');
+
+  if (_chat.length === 0) {
+    container.innerHTML = '';
+    container.appendChild(empty);
+    empty.style.display = 'flex';
+    return;
+  }
+
+  empty.style.display = 'none';
+  container.innerHTML = '';
+
+  _chat.forEach(function(msg) {
+    container.appendChild(createMsgEl(msg.role, msg.content));
+  });
+  container.scrollTop = container.scrollHeight;
+}
+
+function createMsgEl(role, content) {
+  var div = document.createElement('div');
+  div.className = 'msg ' + role;
+  var initials = role === 'ai' ? 'AI' : getUserInitials();
+  div.innerHTML = '<div class="msg-avatar">' + initials + '</div>'
+    + '<div class="msg-bubble">' + (role === 'ai' ? renderMarkdownSimple(content) : escHtml(content)) + '</div>';
+  return div;
+}
+
+function sendSuggestion(btn) {
+  var input = document.getElementById('chat-input');
+  input.value = btn.textContent;
+  sendMessage();
+}
+
+function handleInputKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+}
+
+async function sendMessage() {
+  var input = document.getElementById('chat-input');
+  var msg = input.value.trim();
+  if (!msg || _busy) return;
+
+  if (_docs.length === 0) {
+    showToast('Upload a document first, then ask your question.');
+    return;
+  }
+
+  input.value = '';
+  input.style.height = 'auto';
+  _busy = true;
+  setBusy(true);
+
+  /* Hide empty state */
+  var empty = document.getElementById('chat-empty');
+  empty.style.display = 'none';
+
+  /* Add user message */
+  var container = document.getElementById('chat-messages');
+  var userEl = createMsgEl('user', msg);
+  container.appendChild(userEl);
+
+  /* Add AI typing indicator */
+  var typingEl = document.createElement('div');
+  typingEl.className = 'msg ai';
+  typingEl.innerHTML = '<div class="msg-avatar">AI</div>'
+    + '<div class="msg-bubble"><div class="typing-dots"><span></span><span></span><span></span></div></div>';
+  container.appendChild(typingEl);
+  container.scrollTop = container.scrollHeight;
+
+  /* Build messages array (keep last N for context) */
+  var historyMsgs = _chat.slice(-MAX_CHAT_HISTORY).map(function(m) {
+    return { role: m.role === 'ai' ? 'assistant' : 'user', content: m.content };
+  });
+  historyMsgs.push({ role: 'user', content: msg });
+
+  var fullResponse = '';
+  var ctrl = new AbortController();
+  var timeout = setTimeout(function(){ ctrl.abort(); }, 90000);
+
+  try {
+    var res = await fetch('/api/claude', {
+      signal: ctrl.signal,
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: CLAUDE_MODEL,
+        max_tokens: 2000,
+        stream: true,
+        system: buildSystemPrompt(),
+        messages: historyMsgs
+      })
+    });
+
+    if (!res.ok) {
+      if (res.status === 402) { if (window.AstraOfferPaywall) window.AstraOfferPaywall.show(); return; }
+      var errData = await res.json().catch(function(){ return {}; });
+      throw new Error(errData.error || 'API error ' + res.status);
+    }
+
+    /* Replace typing dots with streaming bubble */
+    var bubble = typingEl.querySelector('.msg-bubble');
+    bubble.innerHTML = '<span class="cursor"></span>';
+
+    var reader = res.body.getReader();
+    var decoder = new TextDecoder();
+    var buf = '';
+
+    while (true) {
+      var _ref = await reader.read();
+      var done = _ref.done, value = _ref.value;
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      var lines = buf.split('\n');
+      buf = lines.pop();
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i];
+        if (!line.startsWith('data: ')) continue;
+        var data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
+        try {
+          var parsed = JSON.parse(data);
+          if (parsed.type === 'error') throw new Error(parsed.error?.message || 'Stream error');
+          if (parsed.type === 'content_block_delta' && parsed.delta?.text) {
+            fullResponse += parsed.delta.text;
+            bubble.innerHTML = renderMarkdownSimple(fullResponse) + '<span class="cursor"></span>';
+            container.scrollTop = container.scrollHeight;
+          }
+        } catch(parseErr) { if (!(parseErr instanceof SyntaxError)) throw parseErr; }
+      }
+    }
+
+    /* Remove cursor */
+    bubble.innerHTML = renderMarkdownSimple(fullResponse);
+
+    /* Save to history */
+    _chat.push({ role: 'user', content: msg });
+    _chat.push({ role: 'ai', content: fullResponse });
+    if (_chat.length > MAX_CHAT_HISTORY * 2) _chat = _chat.slice(-MAX_CHAT_HISTORY * 2);
+    try { localStorage.setItem(STORAGE_CHAT, JSON.stringify(_chat)); } catch(e){}
+
+  } catch(err) {
+    if (err.name === 'AbortError') {
+      typingEl.querySelector('.msg-bubble').innerHTML = '<span style="color:var(--red)">Request timed out. Please try again.</span>';
+    } else {
+      typingEl.querySelector('.msg-bubble').innerHTML = '<span style="color:var(--red)">Error: ' + escHtml(err.message) + '</span>';
+    }
+  } finally {
+    clearTimeout(timeout);
+    _busy = false;
+    setBusy(false);
+    container.scrollTop = container.scrollHeight;
+  }
+}
+
+function clearChat() {
+  _chat = [];
+  try { localStorage.removeItem(STORAGE_CHAT); } catch(e){}
+  renderChatHistory();
+}
+
+function setBusy(on) {
+  var status = document.getElementById('chat-status');
+  var btn    = document.getElementById('send-btn');
+  var input  = document.getElementById('chat-input');
+  status.className = 'chat-status' + (on ? ' busy' : '');
+  btn.disabled = on;
+  input.disabled = on;
+}
+
+/* ════════════════════════════════
+   MOBILE DRAWER
+════════════════════════════════ */
+function toggleMobMore() {
+  var d = document.getElementById('mob-more-drawer');
+  var b = document.getElementById('mob-more-btn');
+  d.classList.toggle('hidden');
+  b.classList.toggle('active');
+}
+document.addEventListener('click', function(e) {
+  var drawer = document.getElementById('mob-more-drawer');
+  var btn    = document.getElementById('mob-more-btn');
+  if (!drawer.contains(e.target) && !btn.contains(e.target)) drawer.classList.add('hidden');
+});
+
+/* ════════════════════════════════
+   UTILITIES
+════════════════════════════════ */
+function getUserInitials() {
+  try {
+    var u = JSON.parse(localStorage.getItem('ambore_user') || 'null');
+    if (u && u.name) return u.name.charAt(0).toUpperCase();
+    if (u && u.email) return u.email.charAt(0).toUpperCase();
+  } catch(e){}
+  return 'U';
+}
+
+function fmtNum(n) {
+  return n >= 1000 ? (n/1000).toFixed(1).replace(/\.0$/,'') + 'k' : String(n);
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderMarkdownSimple(text) {
+  /* Simple markdown: bold, inline code, headers, bullet lists, line breaks */
+  return escHtml(text)
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/^#{1,3}\s+(.+)$/gm, '<strong>$1</strong>')
+    .replace(/^\s*[-•]\s+(.+)$/gm, '<li>$1</li>')
+    .replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>')
+    .replace(/\n/g, '<br>');
+}
+
+function showToast(msg) {
+  var t = document.createElement('div');
+  t.className = 'toast';
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(function(){ t.style.opacity='0'; setTimeout(function(){ t.remove(); }, 300); }, 3000);
+}
+</script>
+
+<script src="/account-modal.js"></script>
+</body>
+</html>
