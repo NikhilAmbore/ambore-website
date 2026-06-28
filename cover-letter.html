@@ -357,6 +357,7 @@ body{padding-left:72px}
           <button class="btn-action btn-copy" id="copy-btn" onclick="copyLetter(this)">Copy</button>
           <button class="btn-action btn-download" onclick="downloadLetter()">⬇ TXT</button>
           <button class="btn-action btn-pdf" onclick="downloadLetterPDF()">⬇ PDF</button>
+          <button class="btn-action" onclick="regenerateLetter()" style="border-color:rgba(37,99,235,0.2);color:#64748B">↺ Regenerate</button>
         </div>
       </div>
       <div class="letter-text" id="letter-text"></div>
@@ -519,6 +520,7 @@ Output ONLY the letter text with no extra commentary or labels.`;
           }
         }
         document.getElementById('output-section').scrollIntoView({behavior:'smooth',block:'start'});
+        localStorage.setItem('ao_did_cover','1');
         if(window.AmborAPI){AmborAPI.logActivity('cover_letter_generated',{company:companyName||''}).catch(function(){});}
         break;
       }catch(retryErr){
@@ -596,6 +598,7 @@ function downloadLetterPDF(){
     <div class="signature-name">${Auth.getUser()?.name||''}</div>
   </div>
 </div>
+<script src="/account-modal.js"></script>
 </body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -624,8 +627,23 @@ function init(){
       banner.classList.remove('hidden');
     }
   }
+
+  // Auto-save + restore drafts
+  const jdEl=document.getElementById('jd-text');
+  const rsEl=document.getElementById('resume-text');
+  if(jdEl&&!jdEl.value){const s=localStorage.getItem('ao_draft_cl_jd');if(s)jdEl.value=s;}
+  if(rsEl&&!rsEl.value){const s=localStorage.getItem('ao_draft_cl_resume');if(s)rsEl.value=s;}
+  if(jdEl)jdEl.addEventListener('input',function(){localStorage.setItem('ao_draft_cl_jd',jdEl.value);});
+  if(rsEl)rsEl.addEventListener('input',function(){localStorage.setItem('ao_draft_cl_resume',rsEl.value);});
 }
 init();
+
+function regenerateLetter(){
+  document.getElementById('output-section').classList.add('hidden');
+  document.getElementById('letter-text').textContent='';
+  window.scrollTo({top:0,behavior:'smooth'});
+  generate();
+}
 
 // ── Sidebar active state ──────────────────────────────────────────────────────
 (function(){

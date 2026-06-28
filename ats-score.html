@@ -308,9 +308,12 @@ body{padding-left:72px}
 
     <!-- RESULTS -->
     <div class="results hidden" id="results">
-      <div class="results-header">
-        <div class="results-title">ATS Match Report</div>
-        <div class="results-sub" id="results-sub">Keyword analysis against the job description</div>
+      <div class="results-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+        <div>
+          <div class="results-title">ATS Match Report</div>
+          <div class="results-sub" id="results-sub">Keyword analysis against the job description</div>
+        </div>
+        <button onclick="window.scrollTo({top:0,behavior:'smooth'})" style="padding:7px 14px;border-radius:9px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B;font-size:0.78rem;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap">↺ Rescore</button>
       </div>
 
       <!-- Score legend -->
@@ -711,6 +714,9 @@ function renderResults(r) {
     `<span class="verdict-badge" style="color:${vColor};background:${vBg};border:1px solid ${vBorder}">${vLabel}</span>` +
     `<span class="verdict-msg">${vMsg}</span>`;
 
+  // Mark onboarding step done
+  localStorage.setItem('ao_did_ats', '1');
+
   // Show fix-it CTA for anything below Strong Match
   var fixCta = document.getElementById('fix-it-cta');
   if (fixCta) fixCta.style.display = r.score < 76 ? 'block' : 'none';
@@ -910,6 +916,16 @@ async function runSkillGap() {
   });
 })();
 
+// ── Auto-save draft inputs ────────────────────────────────────────────────────
+(function(){
+  var jdEl = document.getElementById('jd-text');
+  var rsEl = document.getElementById('resume-text');
+  if(jdEl && !jdEl.value){ var s=localStorage.getItem('ao_draft_ats_jd'); if(s) jdEl.value=s; }
+  if(rsEl && !rsEl.value){ var s2=localStorage.getItem('ao_draft_ats_resume')||localStorage.getItem('ambore_resume_text'); if(s2){ rsEl.value=s2; switchTab('paste'); } }
+  if(jdEl) jdEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_ats_jd', jdEl.value); });
+  if(rsEl) rsEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_ats_resume', rsEl.value); });
+})();
+
 // ── Mobile more drawer ────────────────────────────────────────────────────────
 function toggleMobMore(){
   var d=document.getElementById('mob-more-drawer');
@@ -924,5 +940,6 @@ document.addEventListener('click',function(e){
 });
 
 </script>
+<script src="/account-modal.js"></script>
 </body>
 </html>

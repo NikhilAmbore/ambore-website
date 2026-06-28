@@ -716,6 +716,7 @@ body{padding-left:72px}
         <button class="action-btn primary" onclick="downloadDocx()">📥 Download DOCX</button>
         <button class="action-btn" onclick="saveToDashboard()" id="save-dash-btn" style="border-color:rgba(37,99,235,0.3);color:#2563EB">💾 Save to Dashboard</button>
         <button class="action-btn" id="score-btn" onclick="scoreResume()" style="border-color:rgba(245,158,11,0.4);color:#D97706">⭐ Score My Resume</button>
+        <button class="action-btn" onclick="showInputView()" style="border-color:rgba(37,99,235,0.2);color:#64748B" title="Edit inputs and regenerate">↺ Regenerate</button>
       </div>
     </div>
     <!-- TEMPLATE PICKER -->
@@ -915,6 +916,20 @@ function showApp() {
     document.getElementById('jd-text').value = atsPrefill;
     showToast('Job description pre-filled from ATS Score');
   }
+
+  // Auto-save + restore drafts (only if no prefill took priority)
+  const jdEl = document.getElementById('jd-text');
+  const rsEl = document.getElementById('resume-text');
+  if (jdEl && !jdEl.value) {
+    const savedJd = localStorage.getItem('ao_draft_resume_jd');
+    if (savedJd) { jdEl.value = savedJd; }
+  }
+  if (rsEl && !rsEl.value) {
+    const savedRs = localStorage.getItem('ao_draft_resume_text') || localStorage.getItem('ambore_resume_text');
+    if (savedRs) { rsEl.value = savedRs; switchTab('paste'); }
+  }
+  if (jdEl) jdEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_resume_jd', jdEl.value); });
+  if (rsEl) rsEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_resume_text', rsEl.value); });
 }
 
 /* ═══════════════════════════════════════════
@@ -1553,6 +1568,9 @@ async function generateResume() {
         setGenStatus('done', 'Complete');
         setTimeout(() => { setGenStatus('', ''); hideGenSteps(); }, 4000);
 
+        // Mark onboarding step done
+        localStorage.setItem('ao_did_resume', '1');
+
         // Show cross-tool nudge
         const wnEl = document.getElementById('whats-next');
         if (wnEl) wnEl.classList.remove('hidden');
@@ -1854,7 +1872,8 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
-</head><body>${html}</body></html>`);
+</head><body>${html}<script src="/account-modal.js"></script>
+</body></html>`);
   printWin.document.close();
   printWin.focus();
   setTimeout(() => { printWin.print(); printWin.close(); }, 300);

@@ -317,9 +317,10 @@ body{padding-left:72px}
         <div class="output-text" id="body-text"></div>
       </div>
 
-      <!-- Copy All -->
-      <div class="copy-all-row">
+      <!-- Copy All + Regenerate -->
+      <div class="copy-all-row" style="gap:10px">
         <button class="copy-all-btn" onclick="copyAll()">Copy Full Email</button>
+        <button class="copy-all-btn" onclick="document.getElementById('output-section').classList.add('hidden');window.scrollTo({top:0,behavior:'smooth'});generate();" style="background:rgba(100,116,139,0.06);border-color:rgba(100,116,139,0.2);color:#64748B">↺ Regenerate</button>
       </div>
     </div>
   </div>
@@ -525,5 +526,6 @@ document.addEventListener('click',function(e){
   }
 });
 
-</script></body>
+</script><script src="/account-modal.js"></script>
+</body>
 </html>

@@ -332,5 +332,6 @@ window.addEventListener('load', loadJob);
 function toggleMobMore(){const d=document.getElementById('mob-more-drawer');if(d)d.classList.toggle('open');}
 document.addEventListener('click',function(e){const d=document.getElementById('mob-more-drawer');if(d&&d.classList.contains('open')&&!d.contains(e.target)&&!e.target.closest('.mob-dock')){d.classList.remove('open');}});
 </script>
+<script src="/account-modal.js"></script>
 </body>
 </html>
