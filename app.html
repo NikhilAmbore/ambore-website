@@ -22,12 +22,12 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Ambore] Unhandled promise rejection:', e.reason);
+  console.error('[Offerly] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
@@ -35,7 +35,7 @@ window.onerror = (msg, src, line, col, err) => {
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <meta name="description" content="Practice interviews with AI. Real-time voice Q&amp;A, STAR method coaching, coding interview help, and instant feedback to ace your next job interview."/>
-<title>Ambore — AI Interview Assistant</title>
+<title>Offerly — AI Interview Assistant</title>
 <link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -418,7 +418,7 @@ body{padding-left:72px}
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Ambore Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -428,7 +428,6 @@ body{padding-left:72px}
     <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
     <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
     <a href="/project" class="sb-item" title="Build Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
-    <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
   </div>
   <div class="sb-foot">
     <a href="/help" class="sb-item" title="Help"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
@@ -441,7 +440,6 @@ body{padding-left:72px}
 <nav class="mob-dock" id="mob-dock">
   <a href="/jobs" class="md-item" title="Jobs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
   <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
-  <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
   <button class="md-item" onclick="toggleMobMore()" id="mob-more-btn" title="More"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
 </nav>
 
@@ -474,7 +472,7 @@ body{padding-left:72px}
      AUTH SCREEN
 ══════════════════════════════════════ -->
 <div id="auth" class="auth-shell hidden">
-  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore</div>
+  <div class="auth-logo"><img src="/logo.png" class="logo-img" alt="Offerly" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Offerly</div>
   <div class="auth-card">
     <div class="auth-tabs">
       <div class="auth-tab active" onclick="switchAuthTab('login')">Log In</div>
@@ -484,7 +482,7 @@ body{padding-left:72px}
       <!-- LOGIN -->
       <div class="auth-panel active" id="panel-login">
         <div class="auth-heading">Welcome back</div>
-        <div class="auth-sub">Log in to your Ambore account</div>
+        <div class="auth-sub">Log in to your Offerly account</div>
         <div class="auth-err" id="login-err"></div>
         <div class="field"><label>Email</label><input type="email" id="li-email" placeholder="you@example.com"/></div>
         <div class="field"><label>Password</label><input type="password" id="li-pass" placeholder="Your password"/></div>
@@ -513,7 +511,7 @@ body{padding-left:72px}
 <div id="setup" class="setup-shell hidden">
       <div class="setup-content">
     <h1 class="setup-heading">Start your interview prep journey</h1>
-    <p class="setup-hint">Upload your resume, job description, and target company — Ambore will coach you from prep to offer letter.</p>
+    <p class="setup-hint">Upload your resume, job description, and target company — Offerly will coach you from prep to offer letter.</p>
 
     <div class="setup-row">
       <div class="setup-field"><label>Job Role</label><input type="text" id="s-role" placeholder="e.g. Software Engineer"/></div>
@@ -572,7 +570,7 @@ body{padding-left:72px}
 ══════════════════════════════════════ -->
 <div id="session" class="sess-shell hidden">
   <div class="sess-header">
-    <div class="sess-logo"><img src="/logo.png" class="logo-img" alt="Ambore" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Ambore</div>
+    <div class="sess-logo"><img src="/logo.png" class="logo-img" alt="Offerly" style="height:28px;width:28px;object-fit:contain;flex-shrink:0">Offerly</div>
     <div class="sess-meta">
       <span class="sess-badge" id="sess-round">Interview</span>
       <span class="sess-badge" id="sess-role"></span>
@@ -607,7 +605,7 @@ body{padding-left:72px}
     <!-- Bottom: Answers -->
     <div class="panel">
       <div class="panel-title">
-        ✦ Ambore Coach
+        ✦ Offerly Coach
         <span class="ai-status" id="ai-status"></span>
       </div>
       <div id="answers-body" class="answers-body">
@@ -893,7 +891,7 @@ function startSession() {
   const roundType = getRoundType();
   const frameworkLabel = roundType === 'behavioral' ? 'STAR' : roundType === 'system-design' ? 'System Design' : 'CAAR';
   document.getElementById('answers-body').innerHTML = `<div class="ans-card" style="border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.04)">
-    <div class="ans-card-head"><span class="ans-badge" style="background:rgba(34,197,94,0.12);color:#22c55e">🎙 Ambore Interview Assistant</span></div>
+    <div class="ans-card-head"><span class="ans-badge" style="background:rgba(34,197,94,0.12);color:#22c55e">🎙 Offerly Interview Assistant</span></div>
     <div class="ans-body" style="color:rgba(255,255,255,0.8);line-height:1.8">
       <strong>Hi! I'm here to make everything easy for you.</strong><br><br>
       <span style="color:rgba(255,255,255,0.75)">I'm listening for the interviewer's question. I'll give you a clear, confident, natural-sounding answer the moment a question is detected.</span><br><br>
@@ -988,7 +986,7 @@ function getRoundType() {
    SYSTEM PROMPT
 ═══════════════════════════════════════════ */
 function buildSystemPrompt() {
-  return `You are Ambore AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
+  return `You are Offerly AI — a professional, human-like career assistant designed to give clear, accurate, confident, and perfectly structured interview answers.
 
 CANDIDATE RESUME:
 ${cfg.resume}
@@ -1098,7 +1096,7 @@ async function streamAnswer(question) {
         }]
       })
     });
-    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || 'API error '+res.status); }
 
     setStatus('thinking','✦ Writing...');
     const reader = res.body.getReader(), decoder = new TextDecoder();
@@ -1139,7 +1137,7 @@ async function streamAnswer(question) {
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err) {
     textDiv.innerHTML = `<p style="color:var(--red);font-size:0.83rem;padding:12px 14px">⚠️ Error: ${err.message}<br><br><small style="opacity:0.6">Check internet connection or try the text box below.</small></p>`;
-    setStatus('',''); console.error('Ambore AI error:',err);
+    setStatus('',''); console.error('Offerly AI error:',err);
     showToast('⚠️ AI error: ' + err.message);
   } finally {
     clearTimeout(safetyTimer);
@@ -1476,7 +1474,7 @@ async function streamCodeAnswer(base64) {
   card.innerHTML = `
     <div class="ans-card-head">
       <div class="ans-q-label">📸 Screen Analysis — Coding Problem</div>
-      <div class="ans-badge">🖥 Ambore AI</div>
+      <div class="ans-badge">🖥 Offerly AI</div>
     </div>
     <div class="code-answer" id="txt-${id}"><span class="cursor"></span></div>
     <div class="ans-actions"><button class="act" onclick="copyCard('${id}')">📋 Copy</button></div>`;
@@ -1498,11 +1496,11 @@ async function streamCodeAnswer(base64) {
         model: CLAUDE_MODEL, max_tokens:1200, stream:true,
         messages:[{ role:'user', content:[
           { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:base64 }},
-          { type:'text', text:`You are Ambore AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
+          { type:'text', text:`You are Offerly AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
         ]}]
       })
     });
-    if (!res.ok) { if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;} const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
+    if (!res.ok) { if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;} const e=await res.json().catch(()=>({})); throw new Error(e.error?.message||'API error '+res.status); }
     setStatus('thinking','🖥 Solving...');
     const reader=res.body.getReader(), decoder=new TextDecoder(); let buf='';
     while(true){

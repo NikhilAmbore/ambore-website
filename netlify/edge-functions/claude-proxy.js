@@ -1,5 +1,5 @@
 /**
- * Ambore AI — Claude Proxy Edge Function
+ * Offerly AI — Claude Proxy Edge Function
  * ─────────────────────────────────────────────────────────────────────────────
  * Routes all Claude API calls through this serverless edge function so that
  * the Anthropic API key NEVER appears in client-side JavaScript.
@@ -8,7 +8,7 @@
  *  1. API key  — stored in CLAUDE_API_KEY env variable, invisible to clients
  *  2. Rate limiting — 20 req / IP / minute + 200 req / user-ID / hour
  *  3. Input validation — strict schema, type checks, length limits, whitelist
- *  4. Origin enforcement — requests only accepted from ambore.org / Netlify
+ *  4. Origin enforcement — requests only accepted from offerly.org / Netlify
  *  5. 429 responses with Retry-After headers (graceful degradation)
  *  6. Streaming pass-through — preserves SSE streaming from Claude
  *
@@ -44,8 +44,8 @@ const CFG = {
   ]),
 
   ALLOWED_ORIGINS: new Set([
-    'https://ambore.org',
-    'https://www.ambore.org',
+    'https://offerly.org',
+    'https://www.offerly.org',
     'https://ambore.netlify.app',
   ]),
 };
@@ -184,7 +184,7 @@ export default async function handler(req, context) {
   // Any error (network, DB, timeout) blocks the call. We never fail open.
   // A 5-second timeout prevents a hung subscription-check from stalling forever.
   try {
-    const siteUrl   = Deno.env.get('URL') || 'https://ambore.org';
+    const siteUrl   = Deno.env.get('URL') || 'https://offerly.org';
     const controller = new AbortController();
     const timeout    = setTimeout(() => controller.abort(), 5000);
 
@@ -214,8 +214,8 @@ export default async function handler(req, context) {
           error      : isLimit
             ? 'Monthly AI limit reached. Your 1,000 requests reset at the end of your billing period.'
             : subData.reason === 'account_suspended'
-              ? 'Your account has been suspended. Contact support@ambore.org.'
-              : 'AI tools require a Premium subscription. Upgrade at ambore.org/pricing.',
+              ? 'Your account has been suspended. Contact support@offerly.org.'
+              : 'AI tools require a Premium subscription. Upgrade at offerly.org/pricing.',
           code       : 'UPGRADE_REQUIRED',
           reason     : subData.reason,
           upgradeUrl : '/pricing',

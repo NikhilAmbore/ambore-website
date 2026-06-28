@@ -12,13 +12,13 @@
 </script>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<link rel="canonical" href="https://ambore.org/pricing"/>
-<meta name="description" content="Ambore Premium — from $29/month for 1,000 AI requests. Resume builder, interview preparation, cover letter generator, and every AI tool unlocked."/>
-<meta property="og:title" content="Ambore Pricing"/>
+<link rel="canonical" href="https://offerly.org/pricing"/>
+<meta name="description" content="Offerly Premium — from $29/month for 1,000 AI requests. Resume builder, interview preparation, cover letter generator, and every AI tool unlocked."/>
+<meta property="og:title" content="Offerly Pricing"/>
 <meta property="og:description" content="AI tools require Premium. From $29/month for 1,000 AI requests — resume builder, interview preparation, cover letters, and more."/>
-<meta property="og:url" content="https://ambore.org/pricing"/>
+<meta property="og:url" content="https://offerly.org/pricing"/>
 <meta property="og:type" content="website"/>
-<title>Ambore — Pricing</title>
+<title>Offerly — Pricing</title>
 <link rel="icon" href="/logo.png"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
@@ -147,16 +147,15 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 </head>
 <body>
 <script src="/protect.js"></script>
-<script src="/ambore-api.js"></script>
+<script src="/offerly-api.js"></script>
 
 <!-- ── Top Nav ── -->
 <nav class="nav">
   <a href="/" class="nav-logo">
     <div class="logo-sq">A</div>
-    Ambore
+    Offerly
   </a>
   <div class="nav-links">
-    <a href="/dashboard" class="nav-link">Dashboard</a>
     <a href="/" class="nav-cta" id="nav-auth-btn">Get Started</a>
   </div>
 </nav>
@@ -328,7 +327,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
       Is my payment information secure?
       <span class="faq-arrow">▾</span>
     </button>
-    <div class="faq-a">Payments are processed by Dodo Payments, a PCI-DSS compliant payment provider. Ambore never stores your card details.</div>
+    <div class="faq-a">Payments are processed by Dodo Payments, a PCI-DSS compliant payment provider. Offerly never stores your card details.</div>
   </div>
 
   <div class="faq-item">
@@ -340,7 +339,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
   </div>
 </section>
 
-<!-- ── Upgrade modal (used by other pages via window.AmborePaywall.show()) ── -->
+<!-- ── Upgrade modal (used by other pages via window.OfferlyPaywall.show()) ── -->
 <div id="upgrade-modal">
   <div class="modal-box">
     <div class="modal-icon">⚡</div>
@@ -358,7 +357,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none}
 
 <!-- ── Footer ── -->
 <footer class="footer">
-  <p>© 2025 Ambore.org &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/help">Help</a></p>
+  <p>© 2025 Offerly.org &nbsp;·&nbsp; <a href="/terms">Terms</a> &nbsp;·&nbsp; <a href="/privacy">Privacy</a> &nbsp;·&nbsp; <a href="/help">Help</a></p>
 </footer>
 
 <script>
@@ -407,7 +406,7 @@ function closeModal(){
   document.getElementById('upgrade-modal').classList.remove('open');
 }
 
-window.AmborePaywall = {
+window.OfferlyPaywall = {
   show: function(reason){
     var modal = document.getElementById('upgrade-modal');
     if(reason==='monthly_limit_reached'){
@@ -461,7 +460,6 @@ async function startCheckout(){
 async function loadStatus(){
   var user=getUser();
   var navBtn=document.getElementById('nav-auth-btn');
-  if(user){ navBtn.textContent='Dashboard'; navBtn.href='/dashboard'; }
 
   var params=new URLSearchParams(location.search);
   if(params.get('upgraded')==='1'){

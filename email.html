@@ -22,19 +22,19 @@
 /* Global error boundary — prevents blank-screen crashes */
 window.addEventListener('unhandledrejection', e => {
   if (e.reason?.name === 'AbortError') { e.preventDefault(); return; }
-  console.error('[Ambore] Unhandled promise rejection:', e.reason);
+  console.error('[Offerly] Unhandled promise rejection:', e.reason);
   e.preventDefault();
 });
 window.onerror = (msg, src, line, col, err) => {
   if (err?.name === 'AbortError') return true;
-  console.error('[Ambore] Uncaught error:', msg, src + ':' + line);
+  console.error('[Offerly] Uncaught error:', msg, src + ':' + line);
   return true; // prevent default browser error handling
 };
 </script>
 
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
-<title>Ambore — AI Job Email Generator</title>
+<title>Offerly — AI Job Email Generator</title>
 <meta name="description" content="Generate professional job application emails, cold outreach, follow-ups, and thank you notes with AI. Pick your email type and get it in seconds."/>
 <link rel="icon" href="/logo.png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
@@ -188,12 +188,12 @@ body{padding-left:72px}
 <script src="/theme.js"></script>
 
 <script src="/supabase-sync.js"></script>
-<script src="/ambore-api.js"></script>
+<script src="/offerly-api.js"></script>
 </head>
 <body>
 <!-- ── Sidebar ────────────────────────────────────────────────────────────── -->
 <nav class="sb" id="sb">
-  <a href="/" class="sb-logo" title="Ambore Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
+  <a href="/" class="sb-logo" title="Offerly Home"><img src="/logo.png" alt="A" style="width:42px;height:42px;object-fit:cover;border-radius:0"></a>
   <div class="sb-nav">
     <a href="/jobs" class="sb-item" title="Jobs"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
     <a href="/resume" class="sb-item" title="Resume"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg><span>Resume</span></a>
@@ -203,7 +203,6 @@ body{padding-left:72px}
     <a href="/linkedin" class="sb-item" title="LinkedIn Optimizer"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg><span>LinkedIn</span></a>
     <a href="/ats-score" class="sb-item" title="ATS Score"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg><span>ATS</span></a>
     <a href="/project" class="sb-item" title="Build Project"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg><span>Project</span></a>
-    <a href="/dashboard" class="sb-item" title="Dashboard"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
   </div>
   <div class="sb-foot">
     <a href="/help" class="sb-item" title="Help"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg><span>Help</span></a>
@@ -216,7 +215,6 @@ body{padding-left:72px}
 <nav class="mob-dock" id="mob-dock">
   <a href="/jobs" class="md-item" title="Jobs"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg><span>Jobs</span></a>
   <a href="/resume" class="md-item" title="Resume"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><span>Resume</span></a>
-  <a href="/dashboard" class="md-item" title="Dashboard"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg><span>Dashboard</span></a>
   <button class="md-item" onclick="toggleMobMore()" id="mob-more-btn" title="More"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg><span>More</span></button>
 </nav>
 
@@ -420,7 +418,7 @@ async function generate(){
   document.getElementById('body-text').textContent='';
 
   const typeLabel=TYPE_LABELS[emailType];
-  const systemPrompt=`You are Ambore AI — a professional, human-like career assistant. Generate a professional ${typeLabel} email.
+  const systemPrompt=`You are Offerly AI — a professional, human-like career assistant. Generate a professional ${typeLabel} email.
 
 Email Type: ${typeLabel}
 ${emailType==='application'?'Goal: Submit application with confidence. Express enthusiasm for the specific role and company. Highlight 2-3 most relevant qualifications. Clear call to action (attached resume, available for call).':''}
@@ -462,7 +460,7 @@ Rules:
 },
           body:JSON.stringify({model:attempt>=1?FALLBACK_MODEL:CLAUDE_MODEL,max_tokens:900,stream:true,system:systemPrompt,messages:[{role:'user',content:userMsg||`Generate a professional ${typeLabel} email.`}]})
         });
-        if(!res.ok){if(res.status===402){if(window.AmborePaywall)window.AmborePaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
+        if(!res.ok){if(res.status===402){if(window.OfferlyPaywall)window.OfferlyPaywall.show();return;}const e=await res.json().catch(()=>({}));throw new Error(e.error?.message||'API error '+res.status);}
 
         document.getElementById('spinner-row').classList.add('hidden');
         document.getElementById('output-section').classList.remove('hidden');
