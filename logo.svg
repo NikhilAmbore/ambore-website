@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="og" x1="5" y1="95" x2="95" y2="5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#064e3b"/>
+      <stop offset="50%" stop-color="#059669"/>
+      <stop offset="100%" stop-color="#6ee7b7"/>
+    </linearGradient>
+    <linearGradient id="og2" x1="5" y1="95" x2="95" y2="5" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#047857"/>
+      <stop offset="100%" stop-color="#34d399"/>
+    </linearGradient>
+  </defs>
+  <!-- Outer circle arc: ~300° ring, gap at upper-right -->
+  <path d="M 82,52 A 32,32 0 1,1 68,24" stroke="url(#og)" stroke-width="13" fill="none" stroke-linecap="round"/>
+  <!-- Left hand/arm coming from lower-left to center -->
+  <rect x="17" y="57" width="37" height="12" rx="6" fill="url(#og2)" transform="rotate(-33 35.5 63)"/>
+  <!-- Right hand/arm coming from upper-right to center -->
+  <rect x="46" y="31" width="37" height="12" rx="6" fill="url(#og2)" transform="rotate(-33 64.5 37)"/>
+  <!-- Small grip bar at clasp point -->
+  <rect x="44" y="48" width="12" height="8" rx="4" fill="url(#og)"/>
+  <!-- 4-pointed sparkle star near arc gap -->
+  <path d="M 72,17 L 73.6,22.4 L 79,17 L 73.6,21 L 72,26.5 L 70.4,21 L 65,17 L 70.4,13.5 Z" fill="#6ee7b7"/>
+</svg>

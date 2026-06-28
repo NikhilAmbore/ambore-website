@@ -22,9 +22,9 @@
 <meta name="twitter:title" content="Offerly — Free AI Resume Optimizer"/>
 <meta name="twitter:description" content="Upload resume + paste job description → ATS-optimized resume in 60 seconds. Free to start. Premium from $29/mo."/>
 <meta name="twitter:image" content="https://offerly.org/og-image.png"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Offerly","url":"https://offerly.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 10 AI-powered tools.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Offerly","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"Offerly","url":"https://offerly.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 10 AI-powered tools.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is Offerly?","acceptedAnswer":{"@type":"Answer","text":"Offerly is a free, all-in-one AI career platform with 15 tools: a Job Portal (50,000+ hourly-updated jobs), AI Resume Tailor, Cover Letter Generator, LinkedIn Optimizer, AI Mock Interview, and Interview Preparation."}},{"@type":"Question","name":"Does Offerly require payment to use AI tools?","acceptedAnswer":{"@type":"Answer","text":"Yes — all AI-powered tools require a Premium subscription from $29/month for 1,000 AI requests. The job board, application tracker, and community are always free. Creating an account is free."}},{"@type":"Question","name":"How does the AI Resume Tailor work?","acceptedAnswer":{"@type":"Answer","text":"Upload your resume and paste the job description. The AI rewrites your resume to match keywords and optimize for ATS systems in under 60 seconds."}},{"@type":"Question","name":"Is my data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your account is stored in a secure cloud database. localStorage only caches your session. We use Google Analytics with IP anonymization and never sell your data."}},{"@type":"Question","name":"How secure is my password?","acceptedAnswer":{"@type":"Answer","text":"Passwords are hashed with bcrypt before storage. The actual password is never saved and cannot be recovered even if the database were breached."}}]}</script>
-<link rel="icon" href="/logo.png">
+<link rel="icon" href="/logo.svg" type="image/svg+xml"><link rel="alternate icon" href="/logo.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
 function track(e,p,extra){
@@ -65,9 +65,9 @@ button,input,textarea{font-family:inherit}
 #nav.scrolled{box-shadow:0 2px 12px rgba(0,0,0,.06)}
 .nav-inner{display:flex;align-items:center;justify-content:space-between;gap:8px;height:60px}
 .logo{display:flex;align-items:center;gap:9px;font-weight:900;font-size:1.18rem;letter-spacing:-.03em;color:#1e293b;cursor:pointer;text-decoration:none;flex-shrink:0}
-.logo-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:#070d1c;display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 1px rgba(56,189,248,.2)}
-.logo-icon svg{width:26px;height:26px;display:block}
-.logo-text{font-weight:900;font-size:1.1rem;letter-spacing:-.03em;background:linear-gradient(135deg,#38bdf8 0%,#2563EB 50%,#fb923c 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-icon{width:36px;height:36px;border-radius:10px;overflow:hidden;flex-shrink:0;background:transparent;display:flex;align-items:center;justify-content:center}
+.logo-icon img{width:36px;height:36px;display:block;object-fit:contain}
+.logo-text{font-weight:900;font-size:1.1rem;letter-spacing:-.03em;background:linear-gradient(135deg,#059669 0%,#047857 50%,#065f46 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .nav-links{display:flex;align-items:center;gap:4px;flex:1;padding:0 12px}
 .nav-links>a{font-size:.875rem;font-weight:500;color:#1e293b;text-decoration:none;padding:6px 11px;border-radius:6px;white-space:nowrap;transition:background .15s,color .15s}
 .nav-links>a:hover{background:#f1f5f9;color:#2563EB}
@@ -280,28 +280,7 @@ footer{background:var(--navy);padding:56px 0 28px}
     <div class="nav-inner">
       <a href="/" class="logo">
         <div class="logo-icon">
-          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="lg1" x1="4" y1="34" x2="20" y2="4" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#fb923c"/>
-                <stop offset="50%" stop-color="#38bdf8"/>
-                <stop offset="100%" stop-color="#38bdf8"/>
-              </linearGradient>
-              <linearGradient id="lg2" x1="20" y1="4" x2="36" y2="34" gradientUnits="userSpaceOnUse">
-                <stop offset="0%" stop-color="#38bdf8"/>
-                <stop offset="100%" stop-color="#2563EB"/>
-              </linearGradient>
-              <filter id="glow"><feGaussianBlur stdDeviation="1.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
-            </defs>
-            <line x1="4" y1="34" x2="20" y2="5" stroke="url(#lg1)" stroke-width="2.2" stroke-linecap="round" filter="url(#glow)"/>
-            <line x1="20" y1="5" x2="36" y2="34" stroke="url(#lg2)" stroke-width="2.2" stroke-linecap="round" filter="url(#glow)"/>
-            <line x1="11" y1="23" x2="29" y2="23" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" filter="url(#glow)"/>
-            <circle cx="20" cy="5" r="2" fill="#38bdf8" opacity=".9"/>
-            <circle cx="4" cy="34" r="2" fill="#fb923c" opacity=".9"/>
-            <circle cx="36" cy="34" r="2" fill="#2563EB" opacity=".9"/>
-            <circle cx="11" cy="23" r="1.5" fill="#38bdf8" opacity=".7"/>
-            <circle cx="29" cy="23" r="1.5" fill="#38bdf8" opacity=".7"/>
-          </svg>
+          <img src="/logo.svg" alt="Offerly" width="36" height="36">
         </div>
         <span class="logo-text">Offerly</span>
       </a>
@@ -332,18 +311,7 @@ footer{background:var(--navy);padding:56px 0 28px}
   <div class="mob-head">
     <a href="/" class="logo" onclick="toggleMenu()">
       <div class="logo-icon">
-        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="mlg1" x1="4" y1="34" x2="20" y2="4" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb923c"/><stop offset="50%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
-            <linearGradient id="mlg2" x1="20" y1="4" x2="36" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
-          </defs>
-          <line x1="4" y1="34" x2="20" y2="5" stroke="url(#mlg1)" stroke-width="2.2" stroke-linecap="round"/>
-          <line x1="20" y1="5" x2="36" y2="34" stroke="url(#mlg2)" stroke-width="2.2" stroke-linecap="round"/>
-          <line x1="11" y1="23" x2="29" y2="23" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-          <circle cx="20" cy="5" r="2" fill="#38bdf8" opacity=".9"/>
-          <circle cx="4" cy="34" r="2" fill="#fb923c" opacity=".9"/>
-          <circle cx="36" cy="34" r="2" fill="#2563EB" opacity=".9"/>
-        </svg>
+        <img src="/logo.svg" alt="Offerly" width="36" height="36">
       </div>
       <span class="logo-text">Offerly</span>
     </a>
@@ -591,15 +559,7 @@ footer{background:var(--navy);padding:56px 0 28px}
       <div class="foot-brand foot-col">
         <div class="logo" style="-webkit-text-fill-color:unset;margin-bottom:0">
           <div class="logo-icon">
-            <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" width="26" height="26">
-              <defs>
-                <linearGradient id="flg1" x1="4" y1="34" x2="20" y2="4" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fb923c"/><stop offset="100%" stop-color="#38bdf8"/></linearGradient>
-                <linearGradient id="flg2" x1="20" y1="4" x2="36" y2="34" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#38bdf8"/><stop offset="100%" stop-color="#2563EB"/></linearGradient>
-              </defs>
-              <line x1="4" y1="34" x2="20" y2="5" stroke="url(#flg1)" stroke-width="2.2" stroke-linecap="round"/>
-              <line x1="20" y1="5" x2="36" y2="34" stroke="url(#flg2)" stroke-width="2.2" stroke-linecap="round"/>
-              <line x1="11" y1="23" x2="29" y2="23" stroke="#38bdf8" stroke-width="2" stroke-linecap="round"/>
-            </svg>
+            <img src="/logo.svg" alt="Offerly" width="36" height="36">
           </div>
           <span class="logo-text">Offerly</span>
         </div>
@@ -674,7 +634,7 @@ footer{background:var(--navy);padding:56px 0 28px}
 <div class="auth-ov" id="auth-ov">
   <div class="auth-mod">
     <div class="auth-head">
-      <div class="auth-logo"><img src="/logo.png" class="logo-icon" alt="Offerly" style="height:26px;width:26px;object-fit:contain;flex-shrink:0">Offerly</div>
+      <div class="auth-logo"><img src="/logo.svg" class="logo-icon" alt="Offerly" style="height:26px;width:26px;object-fit:contain;flex-shrink:0">Offerly</div>
       <button class="auth-x" onclick="closeAuth()">&times;</button>
     </div>
     <div class="auth-tabs" id="auth-tabs">
