@@ -926,7 +926,7 @@ function showApp() {
   }
   if (rsEl && !rsEl.value) {
     const savedRs = localStorage.getItem('ao_draft_resume_text') || localStorage.getItem('ambore_resume_text');
-    if (savedRs) { rsEl.value = savedRs; switchTab('paste'); }
+    if (savedRs) { rsEl.value = savedRs; setResumeMode('paste'); }
   }
   if (jdEl) jdEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_resume_jd', jdEl.value); });
   if (rsEl) rsEl.addEventListener('input', function(){ localStorage.setItem('ao_draft_resume_text', rsEl.value); });
