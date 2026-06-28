@@ -32,5 +32,6 @@ exports.handler = async (event) => {
     [userId, overall, newResume, newAts, newInterview]
   );
 
+  if (!result.rows[0]) return err('Failed to update career score', 500);
   return ok({ careerScore: result.rows[0] });
 };

@@ -27,12 +27,11 @@ exports.handler = async (event) => {
     if (result.rows.length === 0) return err('Application not found', 404);
   } else {
     // Insert new
-    const cuid = require('crypto').randomUUID();
     const aDate = appliedDate ? new Date(appliedDate) : new Date();
     result = await db.query(
       `INSERT INTO "Application" (id, "userId", "jobTitle", company, location, status, notes, salary, url, "jobData", "appliedDate", "createdAt", "updatedAt")
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,NOW(),NOW()) RETURNING *`,
-      [cuid, userId, jobTitle, company, location || null, safeStatus, notes || null, salary || null, url || null, jobData ? JSON.stringify(jobData) : null, aDate]
+       VALUES (gen_random_uuid()::text,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,NOW(),NOW()) RETURNING *`,
+      [userId, jobTitle, company, location || null, safeStatus, notes || null, salary || null, url || null, jobData ? JSON.stringify(jobData) : null, aDate]
     );
     // Log activity
     await db.query(

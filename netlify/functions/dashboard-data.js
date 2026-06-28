@@ -31,7 +31,7 @@ exports.handler = async (event) => {
     recentActivity: actRes.rows,
     resumeCount: resumeRes.rows.length,
     resumes: resumeRes.rows,
-    applicationCount: parseInt(appRes.rows[0].count),
-    savedJobCount: parseInt(savedRes.rows[0].count),
+    applicationCount: parseInt(appRes.rows[0]?.count || 0),
+    savedJobCount: parseInt(savedRes.rows[0]?.count || 0),
   });
 };

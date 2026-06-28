@@ -138,7 +138,7 @@
     '</div>',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
-    '<div class="apw-feat-txt">Every AI tool unlocked — ATS scorer, interview AI, coding, LinkedIn, portfolio &amp; more</div>',
+    '<div class="apw-feat-txt">Every AI tool unlocked — ATS scorer, cover letters, LinkedIn &amp; more</div>',
     '</div>',
     '<div class="apw-feat">',
     '<div class="apw-feat-ck"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>',
@@ -258,13 +258,16 @@
         body: JSON.stringify({ userId: user.id, plan: 'monthly' }),
       });
 
-      var data = await res.json();
-
       if (res.status === 409) {
         hide();
         if (btn) { btn.disabled = false; btn.textContent = 'Upgrade to Premium →'; }
         alert('You already have an active Premium subscription!');
         return;
+      }
+
+      var data;
+      try { data = await res.json(); } catch (jsonErr) {
+        throw new Error('Unexpected server response (status ' + res.status + '). Please try again.');
       }
 
       if (!res.ok) throw new Error(data.error || 'Failed to start checkout');
