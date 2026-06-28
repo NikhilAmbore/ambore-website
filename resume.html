@@ -1872,7 +1872,7 @@ function printResume() {
   printWin.document.write(`<!DOCTYPE html>
 <html><head><title>Resume</title>
 <style>@page{size:letter;margin:0.5in 0.6in}${css}</style>
-</head><body>${html}<script src="/account-modal.js"></script>
+</head><body>${html}
 </body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -2128,5 +2128,6 @@ document.addEventListener('click',function(e){
   </div>
 </div>
 
+<script src="/account-modal.js"></script>
 </body>
 </html>

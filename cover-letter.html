@@ -598,7 +598,7 @@ function downloadLetterPDF(){
     <div class="signature-name">${Auth.getUser()?.name||''}</div>
   </div>
 </div>
-<script src="/account-modal.js"></script>
+
 </body></html>`);
   printWin.document.close();
   printWin.focus();
@@ -667,5 +667,6 @@ document.addEventListener('click',function(e){
   }
 });
 
-</script></body>
+</script>
+<script src="/account-modal.js"></script></body>
 </html>
