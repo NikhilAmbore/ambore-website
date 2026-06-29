@@ -135,6 +135,62 @@ button,input,textarea,select{font-family:inherit}
 .file-status.ok{background:rgba(34,197,94,0.1);color:var(--green);border:1px solid rgba(34,197,94,0.2)}
 .file-status.err{background:rgba(239,68,68,0.1);color:var(--red);border:1px solid rgba(239,68,68,0.2)}
 
+/* ── PREFS PANEL ── */
+.prefs-panel{background:#fff;border:1px solid var(--border);border-radius:14px;overflow:hidden;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,0.04)}
+.prefs-toggle{width:100%;display:flex;align-items:center;gap:8px;padding:13px 18px;background:none;border:none;cursor:pointer;font-size:0.88rem;font-weight:600;color:#1e293b;text-align:left;font-family:inherit;transition:background 0.15s}
+.prefs-toggle:hover{background:#f8fafc}
+.prefs-toggle svg{transition:transform 0.2s;flex-shrink:0;color:#64748B}
+.prefs-toggle.open svg{transform:rotate(90deg)}
+.prefs-saved{margin-left:auto;font-size:0.68rem;font-weight:700;background:#dcfce7;color:#16a34a;padding:2px 8px;border-radius:20px;display:none;flex-shrink:0}
+.prefs-body{display:none;padding:4px 18px 18px;border-top:1px solid var(--border);background:#fafbfc}
+.prefs-body.open{display:block}
+.prefs-label{font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#64748B;margin:14px 0 7px}
+.prefs-row{display:flex;flex-wrap:wrap;gap:6px}
+.prefs-chip{padding:5px 13px;border-radius:20px;font-size:0.8rem;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:#475569;transition:all 0.15s;font-family:inherit}
+.prefs-chip:hover{border-color:#93c5fd;color:#2563EB;background:rgba(37,99,235,0.04)}
+.prefs-chip.active{background:rgba(37,99,235,0.08);border-color:#2563EB;color:var(--accent);font-weight:600}
+.prefs-input{width:100%;padding:9px 12px;background:#fff;border:1px solid var(--border);border-radius:9px;font-size:0.85rem;color:#1e293b;outline:none;transition:border-color 0.2s;font-family:inherit}
+.prefs-input:focus{border-color:#2563EB}
+.prefs-input::placeholder{color:#94A3B8}
+.prefs-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px}
+@media(max-width:600px){.prefs-grid{grid-template-columns:1fr}}
+.prefs-toggle-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;background:#fff;border:1px solid var(--border);border-radius:9px;cursor:pointer;margin-top:8px}
+.toggle-switch{width:36px;height:20px;background:#E2E8F0;border-radius:20px;position:relative;transition:background 0.2s;flex-shrink:0}
+.toggle-switch.on{background:#2563EB}
+.toggle-switch::after{content:'';position:absolute;width:14px;height:14px;background:#fff;border-radius:50%;top:3px;left:3px;transition:transform 0.2s;box-shadow:0 1px 3px rgba(0,0,0,0.2)}
+.toggle-switch.on::after{transform:translateX(16px)}
+
+/* ── SAVED RESUME BANNER ── */
+.saved-resume-bar{display:flex;align-items:center;gap:8px;padding:9px 13px;background:rgba(37,99,235,0.05);border:1px solid rgba(37,99,235,0.18);border-radius:9px;margin-bottom:8px;font-size:0.81rem}
+.saved-resume-bar-icon{font-size:1rem;flex-shrink:0}
+.saved-resume-bar-text{flex:1;color:#334155;font-weight:500}
+.saved-resume-bar-btn{padding:4px 11px;background:var(--accent);border:none;border-radius:6px;color:#fff;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:inherit;transition:opacity 0.15s}
+.saved-resume-bar-btn:hover{opacity:0.85}
+
+/* ── LOAD JOB BAR ── */
+.load-job-bar{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.load-job-btn{display:flex;align-items:center;gap:5px;padding:5px 12px;background:#fff;border:1px solid var(--border);border-radius:7px;font-size:0.78rem;font-weight:600;color:#475569;cursor:pointer;font-family:inherit;transition:all 0.15s}
+.load-job-btn:hover{border-color:#93c5fd;color:#2563EB;background:rgba(37,99,235,0.03)}
+.load-job-dropdown{position:absolute;top:100%;left:0;right:0;background:#fff;border:1px solid var(--border);border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.1);z-index:50;max-height:220px;overflow-y:auto;margin-top:4px}
+.load-job-dropdown.hidden{display:none}
+.job-drop-item{padding:10px 14px;cursor:pointer;font-size:0.83rem;border-bottom:1px solid var(--border);transition:background 0.12s}
+.job-drop-item:last-child{border-bottom:none}
+.job-drop-item:hover{background:#f8fafc}
+.job-drop-title{font-weight:600;color:#1e293b;font-size:0.83rem}
+.job-drop-co{font-size:0.73rem;color:#64748B;margin-top:2px}
+.jd-field-wrap{position:relative}
+
+/* ── WORD COUNT ── */
+.wc-badge{font-size:0.73rem;color:#94A3B8;background:#F8FAFC;border:1px solid var(--border);padding:2px 9px;border-radius:20px;font-variant-numeric:tabular-nums}
+
+/* ── STICKY GEN BTN ── */
+.gen-btn-wrap{position:sticky;bottom:20px;z-index:10;margin-bottom:32px}
+.gen-btn{margin-bottom:0}
+
+/* ── SECTION CARD ── */
+.input-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:20px;box-shadow:0 1px 6px rgba(0,0,0,0.04)}
+.input-card-label{font-size:0.7rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:#64748B;margin-bottom:12px;display:flex;align-items:center;gap:6px}
+
 /* ── OPTIONAL ROW ── */
 .optional-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
 @media(max-width:700px){.optional-row{grid-template-columns:1fr}}
@@ -270,27 +326,88 @@ body{padding-left:72px}
       <button class="prefs-toggle" id="prefs-toggle" onclick="togglePrefs()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
         ✍️ Writing Style Preferences
-        <span style="font-size:0.7rem;font-weight:400;color:#94A3B8;margin-left:4px">— tone, length & custom rules</span>
+        <span style="font-size:0.7rem;font-weight:400;color:#94A3B8;margin-left:4px">— tone, length, seniority &amp; more</span>
         <span class="prefs-saved" id="prefs-saved">Saved</span>
       </button>
       <div class="prefs-body" id="prefs-body">
-        <div class="prefs-label">Tone</div>
-        <div class="prefs-row" id="tone-chips">
-          <button class="prefs-chip active" data-val="professional" onclick="selectPref('tone',this)">Professional</button>
-          <button class="prefs-chip" data-val="conversational" onclick="selectPref('tone',this)">Conversational</button>
-          <button class="prefs-chip" data-val="direct" onclick="selectPref('tone',this)">Direct &amp; Concise</button>
-          <button class="prefs-chip" data-val="enthusiastic" onclick="selectPref('tone',this)">Enthusiastic</button>
+
+        <div class="prefs-grid">
+          <div>
+            <div class="prefs-label">Tone</div>
+            <div class="prefs-row" id="tone-chips">
+              <button class="prefs-chip active" data-val="professional" onclick="selectPref('tone',this)">Professional</button>
+              <button class="prefs-chip" data-val="conversational" onclick="selectPref('tone',this)">Conversational</button>
+              <button class="prefs-chip" data-val="direct" onclick="selectPref('tone',this)">Direct &amp; Concise</button>
+              <button class="prefs-chip" data-val="enthusiastic" onclick="selectPref('tone',this)">Enthusiastic</button>
+            </div>
+          </div>
+          <div>
+            <div class="prefs-label">Length</div>
+            <div class="prefs-row" id="length-chips">
+              <button class="prefs-chip" data-val="short" onclick="selectPref('length',this)">Short (~250 words)</button>
+              <button class="prefs-chip active" data-val="standard" onclick="selectPref('length',this)">Standard (~350 words)</button>
+              <button class="prefs-chip" data-val="detailed" onclick="selectPref('length',this)">Detailed (~450 words)</button>
+            </div>
+          </div>
         </div>
-        <div class="prefs-label">Length</div>
-        <div class="prefs-row" id="length-chips">
-          <button class="prefs-chip" data-val="short" onclick="selectPref('length',this)">Short (~250 words)</button>
-          <button class="prefs-chip active" data-val="standard" onclick="selectPref('length',this)">Standard (~350 words)</button>
-          <button class="prefs-chip" data-val="detailed" onclick="selectPref('length',this)">Detailed (~450 words)</button>
+
+        <div class="prefs-grid">
+          <div>
+            <div class="prefs-label">Seniority Level</div>
+            <div class="prefs-row" id="seniority-chips">
+              <button class="prefs-chip" data-val="entry" onclick="selectPref('seniority',this)">Entry-Level</button>
+              <button class="prefs-chip active" data-val="mid" onclick="selectPref('seniority',this)">Mid-Level</button>
+              <button class="prefs-chip" data-val="senior" onclick="selectPref('seniority',this)">Senior</button>
+              <button class="prefs-chip" data-val="executive" onclick="selectPref('seniority',this)">Executive</button>
+            </div>
+          </div>
+          <div>
+            <div class="prefs-label">Industry</div>
+            <div class="prefs-row" id="industry-chips">
+              <button class="prefs-chip active" data-val="tech" onclick="selectPref('industry',this)">Tech</button>
+              <button class="prefs-chip" data-val="finance" onclick="selectPref('industry',this)">Finance</button>
+              <button class="prefs-chip" data-val="healthcare" onclick="selectPref('industry',this)">Healthcare</button>
+              <button class="prefs-chip" data-val="marketing" onclick="selectPref('industry',this)">Marketing</button>
+              <button class="prefs-chip" data-val="other" onclick="selectPref('industry',this)">Other</button>
+            </div>
+          </div>
         </div>
-        <div class="prefs-label" style="margin-top:4px">Always mention (optional)</div>
-        <input class="prefs-input" id="pref-always" placeholder="e.g. my Stanford MBA, led team of 15, open to relocate" oninput="savePrefs()" style="margin-bottom:12px"/>
-        <div class="prefs-label">Phrases to avoid (optional)</div>
-        <input class="prefs-input" id="pref-avoid" placeholder="e.g. passionate, results-driven, team player" oninput="savePrefs()"/>
+
+        <div class="prefs-grid" style="margin-top:4px">
+          <div>
+            <div class="prefs-label">Always mention (optional)</div>
+            <input class="prefs-input" id="pref-always" placeholder="e.g. Stanford MBA, led team of 15, open to relocate" oninput="savePrefs()"/>
+          </div>
+          <div>
+            <div class="prefs-label">Phrases to avoid (optional)</div>
+            <input class="prefs-input" id="pref-avoid" placeholder="e.g. passionate, results-driven, team player" oninput="savePrefs()"/>
+          </div>
+        </div>
+
+        <div class="prefs-grid" style="margin-top:4px">
+          <div>
+            <div class="prefs-label">Output Language</div>
+            <select class="prefs-input" id="pref-language" onchange="savePrefs()" style="cursor:pointer">
+              <option value="en">English</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="de">German</option>
+              <option value="pt">Portuguese</option>
+              <option value="nl">Dutch</option>
+              <option value="it">Italian</option>
+            </select>
+          </div>
+          <div style="display:flex;align-items:flex-end">
+            <div style="width:100%">
+              <div class="prefs-label">Extras</div>
+              <div class="prefs-toggle-row" onclick="togglePSLine()" id="ps-toggle-row">
+                <span style="font-size:0.82rem;font-weight:500;color:#334155">Add a P.S. line at the end</span>
+                <div class="toggle-switch" id="ps-switch"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
@@ -306,11 +423,22 @@ body{padding-left:72px}
     </div>
 
     <!-- INPUT GRID -->
-    <div class="input-grid" style="margin-top:28px">
+    <div class="input-grid" style="margin-top:20px">
 
       <!-- Left: Resume -->
-      <div class="input-field">
-        <label>Your Resume</label>
+      <div class="input-card">
+        <div class="input-card-label">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Your Resume
+        </div>
+
+        <!-- Saved resume quick-load -->
+        <div class="saved-resume-bar hidden" id="saved-resume-bar">
+          <span class="saved-resume-bar-icon">💾</span>
+          <span class="saved-resume-bar-text" id="saved-resume-label">Saved resume found</span>
+          <button class="saved-resume-bar-btn" onclick="loadSavedResume()">Use It</button>
+        </div>
+
         <div class="resume-tabs">
           <button class="rtab active" onclick="switchTab('upload',this)">Upload File</button>
           <button class="rtab" onclick="switchTab('paste',this)">Paste Text</button>
@@ -336,14 +464,29 @@ body{padding-left:72px}
 
         <!-- Paste panel -->
         <div id="panel-paste" class="hidden">
-          <textarea id="resume-text" placeholder="Paste your resume text here..."></textarea>
+          <textarea id="resume-text" placeholder="Paste your resume text here..." style="min-height:200px;width:100%;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:13px;font-size:0.87rem;color:#1e293b;resize:vertical;outline:none;font-family:inherit;transition:border-color 0.2s" onfocus="this.style.borderColor='#2563EB'" onblur="this.style.borderColor='var(--border)'"></textarea>
         </div>
       </div>
 
       <!-- Right: Job Description -->
-      <div class="input-field">
-        <label>Job Description</label>
-        <textarea id="jd-text" placeholder="Paste the full job description here...&#10;&#10;The more detail you include, the more tailored your cover letter will be."></textarea>
+      <div class="input-card">
+        <div class="input-card-label" style="justify-content:space-between">
+          <span style="display:flex;align-items:center;gap:6px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-4 0v2"/></svg>
+            Job Description
+          </span>
+          <div style="position:relative" id="load-job-wrap">
+            <button class="load-job-btn" onclick="toggleJobDropdown()" id="load-job-toggle">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="21 15 21 19 3 19 3 15"/><polyline points="7 9 12 4 17 9"/><line x1="12" y1="4" x2="12" y2="15"/></svg>
+              Load saved job
+            </button>
+            <div class="load-job-dropdown hidden" id="load-job-dropdown"></div>
+          </div>
+        </div>
+        <div class="jd-field-wrap">
+          <textarea id="jd-text" placeholder="Paste the full job description here...&#10;&#10;The more detail you include, the more tailored your cover letter will be." style="min-height:220px;width:100%;background:#f8fafc;border:1px solid var(--border);border-radius:10px;padding:13px;font-size:0.87rem;color:#1e293b;resize:vertical;outline:none;font-family:inherit;transition:border-color 0.2s" onfocus="this.style.borderColor='#2563EB'" onblur="this.style.borderColor='var(--border)'" oninput="updateJDCount(this)"></textarea>
+          <div style="text-align:right;margin-top:5px"><span class="wc-badge" id="jd-count">0 words</span></div>
+        </div>
       </div>
     </div>
 
@@ -362,10 +505,12 @@ body{padding-left:72px}
     </div>
 
     <!-- GENERATE BUTTON -->
-    <button class="gen-btn" id="gen-btn" onclick="generate()">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Generate Cover Letter
-    </button>
+    <div class="gen-btn-wrap">
+      <button class="gen-btn" id="gen-btn" onclick="generate()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+        Generate Cover Letter
+      </button>
+    </div>
 
     <!-- SPINNER -->
     <div class="spinner-row hidden" id="spinner-row">
@@ -381,7 +526,10 @@ body{padding-left:72px}
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
             Cover Letter
           </div>
-          <div class="output-meta" id="output-meta">AI-generated, tailored to the job</div>
+          <div style="display:flex;align-items:center;gap:8px;margin-top:3px">
+            <div class="output-meta" id="output-meta">AI-generated, tailored to the job</div>
+            <span class="wc-badge" id="output-wc" style="display:none"></span>
+          </div>
         </div>
         <div class="output-actions">
           <button class="btn-action btn-copy" id="copy-btn" onclick="copyLetter(this)">Copy</button>
@@ -405,14 +553,13 @@ function logout(){localStorage.removeItem('ambore_user');window.location.href='/
 
 
 /* ── Writing Style Preferences ──────────────────────────────────────────── */
-var _clPrefs = { tone: 'professional', length: 'standard', always: '', avoid: '' };
+var _clPrefs = { tone:'professional', length:'standard', seniority:'mid', industry:'tech', always:'', avoid:'', language:'en', psLine:false };
 (function loadPrefs(){
   try {
     var saved = JSON.parse(localStorage.getItem('ao_cl_prefs') || 'null');
     if (!saved) return;
     _clPrefs = Object.assign(_clPrefs, saved);
-    // Restore chips
-    ['tone','length'].forEach(function(key){
+    ['tone','length','seniority','industry'].forEach(function(key){
       var container = document.getElementById(key+'-chips');
       if (!container) return;
       container.querySelectorAll('.prefs-chip').forEach(function(chip){
@@ -421,6 +568,8 @@ var _clPrefs = { tone: 'professional', length: 'standard', always: '', avoid: ''
     });
     if (saved.always) document.getElementById('pref-always').value = saved.always;
     if (saved.avoid)  document.getElementById('pref-avoid').value  = saved.avoid;
+    if (saved.language) { var sel=document.getElementById('pref-language'); if(sel) sel.value=saved.language; }
+    if (saved.psLine) { var sw=document.getElementById('ps-switch'); if(sw) sw.classList.add('on'); }
   } catch(e) {}
 })();
 function togglePrefs(){
@@ -436,21 +585,108 @@ function selectPref(key, btn){
   _clPrefs[key] = btn.dataset.val;
   savePrefs();
 }
+function togglePSLine(){
+  _clPrefs.psLine = !_clPrefs.psLine;
+  var sw = document.getElementById('ps-switch');
+  if (sw) sw.classList.toggle('on', _clPrefs.psLine);
+  savePrefs();
+}
 function savePrefs(){
-  _clPrefs.always = (document.getElementById('pref-always').value || '').trim();
-  _clPrefs.avoid  = (document.getElementById('pref-avoid').value  || '').trim();
+  _clPrefs.always   = (document.getElementById('pref-always').value || '').trim();
+  _clPrefs.avoid    = (document.getElementById('pref-avoid').value  || '').trim();
+  _clPrefs.language = (document.getElementById('pref-language')?.value || 'en');
   localStorage.setItem('ao_cl_prefs', JSON.stringify(_clPrefs));
   var el = document.getElementById('prefs-saved');
   if (el) { el.style.display = 'inline'; clearTimeout(el._t); el._t = setTimeout(function(){ el.style.display='none'; }, 1500); }
 }
+
+/* ── Saved resume auto-fill ──────────────────────────────────────────────── */
+(function checkSavedResume(){
+  var saved = localStorage.getItem('ao_base_resume') || localStorage.getItem('ao_saved_resume');
+  if (!saved || saved.length < 50) return;
+  var bar = document.getElementById('saved-resume-bar');
+  var lbl = document.getElementById('saved-resume-label');
+  if (bar) {
+    bar.classList.remove('hidden');
+    var words = saved.trim().split(/\s+/).length;
+    if (lbl) lbl.textContent = 'Saved resume (' + words + ' words) ready to use';
+  }
+})();
+function loadSavedResume(){
+  var saved = localStorage.getItem('ao_base_resume') || localStorage.getItem('ao_saved_resume');
+  if (!saved) { showToast('No saved resume found. Paste your resume in the Resume Tailor first.'); return; }
+  resumeText = saved;
+  switchTab('paste', document.querySelectorAll('.rtab')[1]);
+  document.getElementById('resume-text').value = saved;
+  document.getElementById('saved-resume-bar').classList.add('hidden');
+  showToast('✓ Saved resume loaded');
+}
+
+/* ── Saved jobs dropdown ─────────────────────────────────────────────────── */
+function getRecentJobs(){
+  try {
+    var apps = JSON.parse(localStorage.getItem('ao_applications') || '[]');
+    var drafts = JSON.parse(localStorage.getItem('ao_saved_jobs') || '[]');
+    return [...apps, ...drafts].filter(function(j){ return j && (j.description || j.jd); }).slice(0,8);
+  } catch(e){ return []; }
+}
+function toggleJobDropdown(){
+  var dd = document.getElementById('load-job-dropdown');
+  if (!dd) return;
+  if (!dd.classList.contains('hidden')) { dd.classList.add('hidden'); return; }
+  var jobs = getRecentJobs();
+  if (!jobs.length) { showToast('No saved jobs found. Save a job from the Jobs page first.'); return; }
+  dd.innerHTML = jobs.map(function(j, i){
+    var title   = j.title   || j.role   || 'Job ' + (i+1);
+    var company = j.company || '';
+    return '<div class="job-drop-item" onclick="loadJob(' + i + ')">'
+      + '<div class="job-drop-title">' + escHtml(title) + '</div>'
+      + (company ? '<div class="job-drop-co">' + escHtml(company) + '</div>' : '')
+      + '</div>';
+  }).join('');
+  dd.classList.remove('hidden');
+}
+function loadJob(idx){
+  var jobs = getRecentJobs();
+  var j = jobs[idx];
+  if (!j) return;
+  var jd = j.description || j.jd || '';
+  if (jd) document.getElementById('jd-text').value = jd;
+  if (j.company) document.getElementById('company-name').value = j.company;
+  if (j.hiringManager || j.contact) document.getElementById('recipient-name').value = j.hiringManager || j.contact;
+  document.getElementById('load-job-dropdown').classList.add('hidden');
+  updateJDCount(document.getElementById('jd-text'));
+  showToast('✓ Job loaded — ' + (j.title||'') + (j.company?' @ '+j.company:''));
+}
+function escHtml(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.addEventListener('click', function(e){
+  var dd = document.getElementById('load-job-dropdown');
+  var wrap = document.getElementById('load-job-wrap');
+  if (dd && !dd.classList.contains('hidden') && wrap && !wrap.contains(e.target)) dd.classList.add('hidden');
+});
+
+/* ── JD word count ───────────────────────────────────────────────────────── */
+function updateJDCount(el){
+  var words = (el.value||'').trim().split(/\s+/).filter(Boolean).length;
+  var badge = document.getElementById('jd-count');
+  if (badge) badge.textContent = words + ' word' + (words===1?'':'s');
+}
+
 function getPrefsInstructions(){
   var lines = [];
   var toneMap = {professional:'formal and professional',conversational:'warm and conversational',direct:'direct and concise — no filler',enthusiastic:'enthusiastic and energetic'};
   lines.push('- Tone: '+( toneMap[_clPrefs.tone]||'professional'));
   var lenMap = {short:'keep it short, under 260 words',standard:'aim for 320-380 words',detailed:'be thorough, 420-460 words'};
   lines.push('- Length: '+(lenMap[_clPrefs.length]||'aim for 320-380 words'));
+  var senMap = {entry:'Entry-level candidate — emphasize eagerness to learn, academic projects, internships',mid:'Mid-level professional — balance skills with impact and growth',senior:'Senior professional — lead with leadership, scale, and strategic impact',executive:'Executive — focus on vision, business outcomes, and cross-functional leadership'};
+  lines.push('- Seniority: '+(senMap[_clPrefs.seniority]||senMap.mid));
+  var indMap = {tech:'Technology / Software — use industry terminology appropriately',finance:'Finance / Banking — professional, numbers-focused, compliance-aware',healthcare:'Healthcare — compassionate, patient-focused, regulatory-aware',marketing:'Marketing / Creative — show personality, brand awareness, results',other:'General professional'};
+  lines.push('- Industry context: '+(indMap[_clPrefs.industry]||indMap.other));
+  var langMap = {en:'English',es:'Spanish',fr:'French',de:'German',pt:'Portuguese',nl:'Dutch',it:'Italian'};
+  if (_clPrefs.language && _clPrefs.language !== 'en') lines.push('- Write the entire letter in: '+(langMap[_clPrefs.language]||'English'));
   if (_clPrefs.always) lines.push('- Always mention: '+_clPrefs.always);
   if (_clPrefs.avoid)  lines.push('- Never use these phrases: '+_clPrefs.avoid);
+  if (_clPrefs.psLine) lines.push('- Add a short P.S. line at the very end (1 sentence max — something memorable or enthusiastic)');
   return lines.join('\n');
 }
 // Resume tab state
@@ -598,6 +834,9 @@ ${getPrefsInstructions()}`;
               if(j.type==='content_block_delta'&&j.delta?.type==='text_delta'){
                 full+=j.delta.text;
                 document.getElementById('letter-text').textContent=full;
+                const wc=full.trim().split(/\s+/).filter(Boolean).length;
+                const wcEl=document.getElementById('output-wc');
+                if(wcEl){wcEl.textContent=wc+' words';wcEl.style.display='inline';}
               }
             }catch(e){if(!(e instanceof SyntaxError))throw e;}
           }
