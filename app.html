@@ -1006,6 +1006,28 @@ INTERVIEW ANSWER RULES:
 - Never invent experience, tools, companies, or achievements not in the resume.
 - Answer length: ONE smooth paragraph, 5–7 lines.
 
+CODING ROUND — when asked to write/explain code, output EXACTLY these 5 sections:
+
+### OPENING
+1–2 sentences to say OUT LOUD before writing a single line. State the algorithm and key data structure. Natural, confident tone.
+
+### SOLUTION
+\`\`\`[language]
+// COMPLETE runnable code — no TODOs, no placeholders
+// Brief inline comment only where logic is non-obvious
+\`\`\`
+
+### COMPLEXITY
+Time: O(?) | Space: O(?) — one line
+
+### WHILE CODING
+Numbered steps — one short sentence each, in the order the code is written. Say these ALOUD while typing each section.
+1. "..."
+2. "..."
+
+### CLOSING
+1–2 sentences when done. State complexity, offer to walk through an example or discuss trade-offs.
+
 QUESTION DETECTION:
 - Input with a question mark or clear question intent → generate answer.
 - Input that is the user speaking, explaining, or practicing their own answer → output exactly: SILENT
@@ -1043,7 +1065,7 @@ async function streamAnswer(question) {
   const roundType = getRoundType();
   const isCAAR = roundType === 'coding' || roundType === 'system-design' || roundType === 'technical';
   const roundBadge = isCAAR ? '⚙ Technical' : '✦ Practice';
-  const maxTok = 220;
+  const maxTok = roundType === 'coding' ? 1800 : 220;
 
   const id = 'card-' + cardCount;
   const card = document.createElement('div');
@@ -1118,11 +1140,15 @@ async function streamAnswer(question) {
       setStatus('','');
       return;
     }
-    // Render final answer as natural paragraph
+    // Render final answer — coaching sheet for coding, paragraph for everything else
     textDiv.innerHTML = '';
-    textDiv.className = 'streaming-text';
-    textDiv.innerHTML = safeMd(fullText.trim()).split(/\n\n+/).filter(Boolean)
-      .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    if (roundType === 'coding' && fullText.includes('### ')) {
+      renderCodingCoach(textDiv, fullText.trim());
+    } else {
+      textDiv.className = 'streaming-text';
+      textDiv.innerHTML = safeMd(fullText.trim()).split(/\n\n+/).filter(Boolean)
+        .map(p => `<p>${p.replace(/\n/g,'<br>')}</p>`).join('');
+    }
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err) {
@@ -1483,10 +1509,10 @@ async function streamCodeAnswer(base64) {
         'Content-Type':'application/json',
 },
       body: JSON.stringify({
-        model: CLAUDE_MODEL, max_tokens:1200, stream:true,
+        model: CLAUDE_MODEL, max_tokens:2048, stream:true,
         messages:[{ role:'user', content:[
           { type:'image', source:{ type:'base64', media_type:'image/jpeg', data:base64 }},
-          { type:'text', text:`You are AstraOffer AI, helping a candidate in a coding interview. Analyze the coding problem on screen and respond with:\n\n**PROBLEM:** What is being asked (1-2 sentences)\n\n**APPROACH:** Step-by-step algorithm/logic\n\n**CODE:**\n\`\`\`\n// Complete working solution with inline comments\n\`\`\`\n\n**COMPLEXITY:** Time: O(...) | Space: O(...)\n\n**EDGE CASES:** Key cases to mention\n\nBe clear and complete.` }
+          { type:'text', text:`You are an expert coding interview co-pilot. The user is in a LIVE coding interview. Analyze the coding problem on screen and produce a complete coaching guide they can follow top-to-bottom while coding and speaking simultaneously.\n\nOUTPUT — use EXACTLY these five section headers (### prefix):\n\n### OPENING\n1–2 sentences to say OUT LOUD to the interviewer BEFORE writing a single line of code. State the approach and key data structure. Sound natural and confident.\n\n### SOLUTION\n\`\`\`[language]\n// COMPLETE runnable code — no TODOs, no placeholders\n// Brief inline comment only where logic is non-obvious\n\`\`\`\n\n### COMPLEXITY\nTime: O(?) | Space: O(?) — one line\n\n### WHILE CODING\nNumbered list — one short sentence per step, in the ORDER the code is written. These are the words to say WHILE typing each section.\n1. "..."\n2. "..."\n3. "..."\n\n### CLOSING\n1–2 sentences to say when you FINISH typing. Mention complexity, offer to trace an example or discuss trade-offs.\n\nRULES: Code must be complete and runnable. Clean variable names. Handle edge cases. Output ONLY the 5 sections above.` }
         ]}]
       })
     });
@@ -1505,13 +1531,21 @@ async function streamCodeAnswer(base64) {
           const p=JSON.parse(data);
           if(p.type==='content_block_delta'&&p.delta?.text){
             fullText+=p.delta.text;
+            // Stream as raw text; rich render happens at the end
             textDiv.innerHTML=formatCodeText(fullText)+'<span class="cursor"></span>';
             body.scrollTop=body.scrollHeight;
           }
         }catch(e){}
       }
     }
-    textDiv.innerHTML = formatCodeText(fullText);
+    // Final render — use coaching-sheet layout when all 5 sections are present
+    if (fullText.includes('### ')) {
+      textDiv.innerHTML = '';
+      textDiv.className = 'code-answer';
+      renderCodingCoach(textDiv, fullText.trim());
+    } else {
+      textDiv.innerHTML = formatCodeText(fullText);
+    }
     body.scrollTop = body.scrollHeight;
     setStatus('done','✓ Done'); setTimeout(()=>setStatus('',''),3000);
   } catch(err){
@@ -1542,6 +1576,104 @@ function formatCodeText(text) {
   return safe.split(/\n\n+/).filter(Boolean)
     .map(p => p.startsWith('<div class="code-block">') ? p : `<p>${p.replace(/\n/g,'<br>')}</p>`)
     .join('');
+}
+
+/* ═══════════════════════════════════════════
+   CODING COACH RENDERER
+   Parses 5-section output (OPENING / SOLUTION / COMPLEXITY / WHILE CODING / CLOSING)
+   and renders a structured coaching sheet the user can follow top-to-bottom.
+═══════════════════════════════════════════ */
+function renderCodingCoach(container, text) {
+  function sec(name) {
+    const m = text.match(new RegExp('###\\s*' + name + '\\s*([\\s\\S]*?)(?=###|$)', 'i'));
+    return m ? m[1].trim() : '';
+  }
+  const opening     = sec('OPENING');
+  const solution    = sec('SOLUTION');
+  const complexity  = sec('COMPLEXITY');
+  const whileCoding = sec('WHILE CODING');
+  const closing     = sec('CLOSING');
+
+  // If nothing parsed, fall back to formatCodeText
+  if (!opening && !solution) {
+    container.innerHTML = formatCodeText(text);
+    return;
+  }
+
+  container.innerHTML = '';
+
+  // Helper: extract code from fenced block
+  function extractCode(s) {
+    const m = s.match(/```[\w]*\n?([\s\S]*?)```/);
+    return m ? m[1].trim() : s.trim();
+  }
+
+  // ── 1. OPENING — say before typing ──────────────────────────────
+  if (opening) {
+    const box = document.createElement('div');
+    box.style.cssText = 'background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.20);border-radius:8px;padding:10px 13px;margin-bottom:12px';
+    box.innerHTML = `<div style="font-size:0.68rem;font-weight:800;letter-spacing:0.08em;color:rgba(34,197,94,0.70);text-transform:uppercase;margin-bottom:5px">🗣 Say this FIRST — before you type</div>`
+      + `<div style="color:rgba(220,255,230,0.90);font-style:italic;font-size:0.88rem;line-height:1.6">&ldquo;${escapeHtml(opening)}&rdquo;</div>`;
+    container.appendChild(box);
+  }
+
+  // ── 2. SOLUTION — code to write ─────────────────────────────────
+  if (solution) {
+    const wrap = document.createElement('div');
+    wrap.style.marginBottom = '10px';
+    const label = document.createElement('div');
+    label.style.cssText = 'font-size:0.68rem;font-weight:800;letter-spacing:0.08em;color:rgba(255,255,255,0.35);text-transform:uppercase;margin-bottom:5px';
+    label.textContent = '{ } Code to write';
+    wrap.appendChild(label);
+    const code = document.createElement('pre');
+    code.className = 'code-block';
+    code.textContent = extractCode(solution);
+    wrap.appendChild(code);
+    container.appendChild(wrap);
+  }
+
+  // ── 3. COMPLEXITY ────────────────────────────────────────────────
+  if (complexity) {
+    const cx = document.createElement('div');
+    cx.style.cssText = 'font-family:monospace;font-size:0.78rem;color:rgba(255,255,255,0.35);background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:5px 10px;margin-bottom:12px';
+    cx.textContent = complexity;
+    container.appendChild(cx);
+  }
+
+  // ── 4. WHILE CODING — numbered narration steps ───────────────────
+  if (whileCoding) {
+    const box = document.createElement('div');
+    box.style.cssText = 'background:rgba(56,130,255,0.06);border:1px solid rgba(56,130,255,0.15);border-radius:8px;padding:10px 13px;margin-bottom:12px';
+    const lbl = document.createElement('div');
+    lbl.style.cssText = 'font-size:0.68rem;font-weight:800;letter-spacing:0.08em;color:rgba(100,160,255,0.70);text-transform:uppercase;margin-bottom:7px';
+    lbl.textContent = '🗣 Say WHILE typing each part';
+    box.appendChild(lbl);
+    const lines = whileCoding.split('\n').filter(l => l.trim());
+    lines.forEach(line => {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex;gap:8px;align-items:flex-start;margin-bottom:5px';
+      const num = document.createElement('span');
+      num.style.cssText = 'flex-shrink:0;font-family:monospace;font-size:0.72rem;color:rgba(100,160,255,0.45);margin-top:2px';
+      num.textContent = line.match(/^(\d+)[.)]/)?.[1] ?? '•';
+      const txt = document.createElement('span');
+      txt.style.cssText = 'font-style:italic;font-size:0.87rem;color:rgba(190,215,255,0.88);line-height:1.55';
+      const cleaned = line.replace(/^\d+[.)]\s*/, '').replace(/^[-•]\s*/, '');
+      txt.innerHTML = '&ldquo;' + escapeHtml(cleaned) + '&rdquo;';
+      row.appendChild(num);
+      row.appendChild(txt);
+      box.appendChild(row);
+    });
+    container.appendChild(box);
+  }
+
+  // ── 5. CLOSING — say when done ───────────────────────────────────
+  if (closing) {
+    const box = document.createElement('div');
+    box.style.cssText = 'background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.20);border-radius:8px;padding:10px 13px';
+    box.innerHTML = `<div style="font-size:0.68rem;font-weight:800;letter-spacing:0.08em;color:rgba(34,197,94,0.70);text-transform:uppercase;margin-bottom:5px">🗣 Say when you FINISH typing</div>`
+      + `<div style="color:rgba(220,255,230,0.90);font-style:italic;font-size:0.88rem;line-height:1.6">&ldquo;${escapeHtml(closing)}&rdquo;</div>`;
+    container.appendChild(box);
+  }
 }
 
 /* ═══════════════════════════════════════════

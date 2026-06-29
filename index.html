@@ -10,20 +10,20 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
 <title>AstraOffer — AI Resume Optimizer | Match Resume to Any Job in 60 Seconds</title>
-<meta name="description" content="Paste any job description → AI rewrites your resume to match it. Beat ATS filters, get more callbacks. 7 AI career tools. Free to start."/>
+<meta name="description" content="Paste any job description → AI rewrites your resume to match it. Beat ATS filters, get more callbacks. 8 AI career tools. Free to start."/>
 <meta name="robots" content="index, follow"/>
 <link rel="canonical" href="https://astraoffer.org/"/>
 <meta property="og:type" content="website"/>
 <meta property="og:url" content="https://astraoffer.org/"/>
 <meta property="og:title" content="AstraOffer — AI Resume Optimizer"/>
-<meta property="og:description" content="Paste any job description → AI rewrites your resume to match it. 7 AI career tools. Free to start."/>
+<meta property="og:description" content="Paste any job description → AI rewrites your resume to match it. 8 AI career tools. Free to start."/>
 <meta property="og:image" content="https://astraoffer.org/og-image.png"/>
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="AstraOffer — AI Resume Optimizer"/>
 <meta name="twitter:description" content="Paste job description → AI-optimized resume in 60 seconds. 7 career tools. Free to start."/>
 <meta name="twitter:image" content="https://astraoffer.org/og-image.png"/>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AstraOffer","url":"https://astraoffer.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 7 AI-powered tools.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AstraOffer?","acceptedAnswer":{"@type":"Answer","text":"AstraOffer is a free AI career platform with 7 tools: AI Resume Tailor, ATS Score Checker, Cover Letter Generator, LinkedIn Optimizer, Email AI, Job Portal (50,000+ jobs), and Certifications guide."}},{"@type":"Question","name":"Does AstraOffer require payment to use AI tools?","acceptedAnswer":{"@type":"Answer","text":"AI-powered tools require a Premium subscription from $29/month. The job board is always free. Creating an account is free."}},{"@type":"Question","name":"How does the AI Resume Tailor work?","acceptedAnswer":{"@type":"Answer","text":"Paste your resume and the job description. The AI rewrites your resume to match the job's keywords and optimize for ATS systems in under 60 seconds."}},{"@type":"Question","name":"Is my data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your account is stored in a secure cloud database. We use Google Analytics with IP anonymization and never sell your data."}},{"@type":"Question","name":"How secure is my password?","acceptedAnswer":{"@type":"Answer","text":"Passwords are hashed with bcrypt before storage. The actual password is never saved and cannot be recovered even if the database were breached."}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"SoftwareApplication","name":"AstraOffer","url":"https://astraoffer.org","description":"Free AI career platform — resume optimizer, job portal, interview practice. 8 AI-powered tools.","applicationCategory":"BusinessApplication","operatingSystem":"Web","offers":{"@type":"Offer","price":"0","priceCurrency":"USD","availability":"https://schema.org/InStock"},"author":{"@type":"Person","name":"Nikhil Ambore","url":"https://www.linkedin.com/in/nikhil-ambore"},"aggregateRating":{"@type":"AggregateRating","ratingValue":"4.9","ratingCount":"1200","bestRating":"5"}}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"FAQPage","mainEntity":[{"@type":"Question","name":"What is AstraOffer?","acceptedAnswer":{"@type":"Answer","text":"AstraOffer is a free AI career platform with 8 tools: AI Resume Tailor, ATS Score Checker, Cover Letter Generator, LinkedIn Optimizer, Email AI, Job Portal (50,000+ jobs), Certifications guide, and Interview Assistant."}},{"@type":"Question","name":"Does AstraOffer require payment to use AI tools?","acceptedAnswer":{"@type":"Answer","text":"AI-powered tools require a Premium subscription from $29/month. The job board is always free. Creating an account is free."}},{"@type":"Question","name":"How does the AI Resume Tailor work?","acceptedAnswer":{"@type":"Answer","text":"Paste your resume and the job description. The AI rewrites your resume to match the job's keywords and optimize for ATS systems in under 60 seconds."}},{"@type":"Question","name":"Is my data private and secure?","acceptedAnswer":{"@type":"Answer","text":"Your account is stored in a secure cloud database. We use Google Analytics with IP anonymization and never sell your data."}},{"@type":"Question","name":"How secure is my password?","acceptedAnswer":{"@type":"Answer","text":"Passwords are hashed with bcrypt before storage. The actual password is never saved and cannot be recovered even if the database were breached."}}]}</script>
 <link rel="icon" href="/ao-logo.png" type="image/png">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script>
@@ -339,6 +339,7 @@ section{padding:96px 0}
       <div class="nav-links">
         <a href="/jobs">Jobs</a>
         <a href="/resume" onclick="goToFeature('/resume');return false">Resume</a>
+        <a href="/interview">Interview</a>
         <a href="/#pricing">Pricing</a>
       </div>
       <div class="nav-actions" id="nav-cta-auth" style="display:flex">
@@ -373,6 +374,7 @@ section{padding:96px 0}
     <a class="mob-item" onclick="goToFeature('/ats-score');toggleMenu()"><span class="mob-icon">📊</span>ATS Score</a>
     <a class="mob-item" onclick="goToFeature('/jobs');toggleMenu()"><span class="mob-icon">💼</span>Jobs / Job Search</a>
     <a class="mob-item" onclick="goToFeature('/linkedin');toggleMenu()"><span class="mob-icon">🔗</span>LinkedIn Optimizer</a>
+    <a class="mob-item" onclick="goToFeature('/interview');toggleMenu()"><span class="mob-icon">🎙</span>Interview Assistant</a>
     <a class="mob-item" href="/#pricing" onclick="toggleMenu()"><span class="mob-icon">💳</span>Pricing</a>
   </div>
   <div id="mob-auth-guest">
@@ -527,7 +529,7 @@ section{padding:96px 0}
     <div class="tc rev" style="max-width:560px;margin:0 auto 40px">
       <div class="sec-lbl">All Tools</div>
       <h2 class="sec-h">Everything you need to land the job</h2>
-      <p class="sec-sub">7 AI-powered tools — one platform.</p>
+      <p class="sec-sub">8 AI-powered tools — one platform.</p>
     </div>
     <div class="tools-grid">
       <div class="tool-card rev r1" onclick="goToFeature('/resume')">
@@ -563,6 +565,11 @@ section{padding:96px 0}
       <div class="tool-card rev r2" onclick="goToFeature('/certifications')">
         <div class="tool-ico" style="background:#faf5ff">🏆</div>
         <div class="tool-info"><div class="tool-name">Certifications</div><div class="tool-desc">Discover certifications that actually matter for your role</div></div>
+        <span class="tool-arrow">→</span>
+      </div>
+      <div class="tool-card rev r3" onclick="goToFeature('/interview')">
+        <div class="tool-ico" style="background:#fff1f2">🎙</div>
+        <div class="tool-info"><div class="tool-name">Interview Assistant</div><div class="tool-desc">Real-time AI answers, coding solver, and coaching for live interviews</div></div>
         <span class="tool-arrow">→</span>
       </div>
     </div>
