@@ -257,6 +257,64 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .review-name{font-size:0.82rem;font-weight:700;color:var(--black)}
 .review-role{font-size:0.71rem;color:var(--text-subtle)}
 
+/* ── STATS STRIP ── */
+.stats-strip{background:#0a0a0a;padding:20px 24px;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a}
+.stats-strip-inner{max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0}
+.stat-item{display:flex;flex-direction:column;align-items:center;padding:8px 32px;border-right:1px solid rgba(255,255,255,0.08)}
+.stat-item:last-child{border-right:none}
+.stat-num{font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1}
+.stat-num span{color:#4ade80}
+.stat-label{font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px}
+@media(max-width:600px){.stat-item{padding:10px 18px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}.stat-item:last-child{border-bottom:none}}
+
+/* ── BEFORE / AFTER ── */
+.ba-section{padding:80px 20px;background:#fff;border-top:1px solid var(--border)}
+.ba-inner{max-width:1000px;margin:0 auto}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
+@media(max-width:680px){.ba-grid{grid-template-columns:1fr}}
+.ba-card{border-radius:14px;overflow:hidden;border:1px solid var(--border)}
+.ba-card-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.ba-badge-bad{display:inline-flex;align-items:center;gap:5px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:3px 10px;font-size:0.7rem;font-weight:700;color:#dc2626}
+.ba-badge-good{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-weight:700;color:#15803d}
+.ba-question{padding:14px 18px;background:var(--bg-alt);border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text-muted);font-style:italic;line-height:1.5}
+.ba-answer{padding:16px 18px;font-size:0.85rem;line-height:1.75;color:var(--text)}
+.ba-answer-bad{color:#6b7280}
+.ba-answer-good{color:#111}
+.ba-mark-bad{background:#fef2f2;border-radius:3px;padding:0 2px}
+.ba-mark-good{background:#f0fdf4;border-radius:3px;padding:0 2px;color:#15803d;font-weight:600}
+.ba-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px;font-size:0.75rem}
+.ba-footer-bad{color:#dc2626}
+.ba-footer-good{color:#15803d}
+
+/* ── ANSWER SHOWCASE ── */
+.showcase-section{padding:80px 20px;background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+.showcase-inner{max-width:900px;margin:0 auto}
+.showcase-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px;margin-bottom:24px}
+.s-tab{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:0.83rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-muted);transition:all 0.15s;user-select:none}
+.s-tab:hover{border-color:var(--border-dark);color:var(--black)}
+.s-tab.active{background:var(--black);color:#fff;border-color:var(--black)}
+.showcase-pane{display:none}
+.showcase-pane.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:640px){.showcase-pane.active{grid-template-columns:1fr}}
+.s-box{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
+.s-box-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle);display:flex;align-items:center;gap:7px}
+.s-box-q{padding:12px 16px;background:var(--bg-alt);border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text-muted);font-style:italic;line-height:1.5}
+.s-box-a{padding:14px 16px;font-size:0.83rem;color:var(--text);line-height:1.75}
+.s-box-footer{padding:8px 16px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--green);font-weight:700;display:flex;align-items:center;gap:5px}
+
+/* ── MOBILE EMAIL CAPTURE ── */
+.mobile-capture{display:none;background:var(--bg-dark);padding:48px 24px;text-align:center}
+.mobile-capture h3{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
+.mobile-capture p{font-size:0.9rem;color:rgba(255,255,255,0.45);margin-bottom:24px;line-height:1.65}
+.email-form{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto}
+.email-input{padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:0.9rem;font-family:inherit;outline:none}
+.email-input::placeholder{color:rgba(255,255,255,0.3)}
+.email-input:focus{border-color:rgba(255,255,255,0.35)}
+.email-submit{padding:13px;border-radius:9px;background:#fff;color:#111;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:background 0.15s}
+.email-submit:hover{background:#f0f0f0}
+.email-note{font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:8px}
+@media(max-width:768px){.mobile-capture{display:block}}
+
 /* ── PLATFORMS ── */
 .platforms{padding:60px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#fff}
 .platforms-inner{max-width:1000px;margin:0 auto;text-align:center}
@@ -519,6 +577,40 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
   </div>
 </section>
 
+<!-- ── STATS STRIP ── -->
+<div class="stats-strip">
+  <div class="stats-strip-inner">
+    <div class="stat-item">
+      <div class="stat-num">4,<span>200</span>+</div>
+      <div class="stat-label">Engineers hired</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">$<span>187K</span></div>
+      <div class="stat-label">Average offer</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>89</span>%</div>
+      <div class="stat-label">Interview pass rate</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num"><span>0.7</span>s</div>
+      <div class="stat-label">Avg answer time</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── MOBILE EMAIL CAPTURE ── -->
+<div class="mobile-capture">
+  <h3>Get the download link on your Mac or PC</h3>
+  <p>AstraOffer Assistant is a desktop app — it can't run in a browser. Enter your email and we'll send the download link to open on your computer.</p>
+  <form class="email-form" onsubmit="handleEmailCapture(event)">
+    <input class="email-input" type="email" placeholder="your@email.com" required id="mobile-email"/>
+    <button class="email-submit" type="submit">Send download link →</button>
+    <p class="email-note">No spam. Just the download link + setup guide.</p>
+  </form>
+  <div id="email-success" style="display:none;color:#4ade80;font-size:0.85rem;font-weight:600;margin-top:12px">✓ Sent! Check your inbox.</div>
+</div>
+
 <!-- ── COMPANIES ── -->
 <div class="companies">
   <div class="companies-inner">
@@ -693,6 +785,145 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <div class="feat-desc">Upload your resume and job description once. Every answer references your actual experience — no generic responses, no invented facts, no filler phrases.</div>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ── BEFORE / AFTER ── -->
+<section class="ba-section" id="before-after">
+  <div class="ba-inner">
+    <div class="section-label">The difference</div>
+    <h2 class="section-h">What your answers sound like — without vs. with AstraOffer.</h2>
+    <p class="section-sub">Same question. Same candidate. Completely different outcome.</p>
+
+    <div class="ba-grid">
+      <!-- WITHOUT -->
+      <div class="ba-card">
+        <div class="ba-card-head">
+          <div class="ba-badge-bad">✕ Without AstraOffer</div>
+        </div>
+        <div class="ba-question">"Tell me about a time you led a team through a difficult situation."</div>
+        <div class="ba-answer ba-answer-bad">
+          "Um, yeah so <span class="ba-mark-bad">I think</span> there was this one time where we had like a <span class="ba-mark-bad">kind of</span> hard project and I was <span class="ba-mark-bad">sort of</span> leading it. We had some issues with the timeline and we <span class="ba-mark-bad">basically</span> just pushed through it. I think the team did pretty well. <span class="ba-mark-bad">I'm not sure</span> if that answers the question."
+        </div>
+        <div class="ba-footer ba-footer-bad">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Vague · No metrics · Filler words · No structure
+        </div>
+      </div>
+
+      <!-- WITH -->
+      <div class="ba-card" style="border-color:#bbf7d0">
+        <div class="ba-card-head" style="background:#f0fdf4">
+          <div class="ba-badge-good">✓ With AstraOffer</div>
+        </div>
+        <div class="ba-question" style="background:#f0fdf4;border-color:#bbf7d0">"Tell me about a time you led a team through a difficult situation."</div>
+        <div class="ba-answer ba-answer-good">
+          "At my previous company, we had <span class="ba-mark-good">a production outage 48 hours before a major client demo</span>. I led a team of 4 engineers to isolate the root cause — a memory leak in our message queue — and deploy a fix in under 6 hours. <span class="ba-mark-good">I split the team into two tracks:</span> one debugging, one preparing a rollback plan. The demo went ahead on time. The client signed a $240K contract the following week."
+        </div>
+        <div class="ba-footer ba-footer-good">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          Specific · Metric-driven · STAR structure · Memorable
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ANSWER SHOWCASE ── -->
+<section class="showcase-section" id="showcase">
+  <div class="showcase-inner">
+    <div class="section-label">Answer quality</div>
+    <h2 class="section-h">Every type of interview question. Covered.</h2>
+    <p class="section-sub">Behavioral, System Design, Coding narration, Culture Fit — AstraOffer generates grounded, resume-backed answers for all of them.</p>
+
+    <div class="showcase-tabs">
+      <div class="s-tab active" onclick="showTab('behavioral',this)">💬 Behavioral</div>
+      <div class="s-tab" onclick="showTab('sysdesign',this)">🏗 System Design</div>
+      <div class="s-tab" onclick="showTab('coding',this)">💻 Coding</div>
+      <div class="s-tab" onclick="showTab('culture',this)">🎯 Culture Fit</div>
+    </div>
+
+    <!-- Behavioral -->
+    <div class="showcase-pane active" id="pane-behavioral">
+      <div class="s-box">
+        <div class="s-box-head">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Interviewer question
+        </div>
+        <div class="s-box-q">"Describe a time you disagreed with your manager. How did you handle it?"</div>
+      </div>
+      <div class="s-box">
+        <div class="s-box-head" style="color:#15803d">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          AstraOffer answer
+        </div>
+        <div class="s-box-a">In Q3 last year, my manager wanted to delay our API rate-limiting feature to ship a lower-priority UI update instead. I disagreed because we had two enterprise clients actively hitting our limits. I put together a one-page impact analysis showing the churn risk — $80K ARR — and presented it in our next 1-on-1. He agreed to reprioritize. We shipped rate limiting in 2 weeks and retained both accounts.</div>
+        <div class="s-box-footer">✓ Answer ready · 0.8s</div>
+      </div>
+    </div>
+
+    <!-- System Design -->
+    <div class="showcase-pane" id="pane-sysdesign">
+      <div class="s-box">
+        <div class="s-box-head">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Interviewer question
+        </div>
+        <div class="s-box-q">"Design a notification service that can handle 10 million users."</div>
+      </div>
+      <div class="s-box">
+        <div class="s-box-head" style="color:#15803d">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          AstraOffer answer
+        </div>
+        <div class="s-box-a">I'd start with requirements: push, email, SMS. At 10M users, fan-out is the core problem. I'd use a message queue — Kafka — with per-channel consumer groups. Notification preferences sit in Redis for sub-millisecond reads. For email/SMS, delegate to SendGrid/Twilio via async workers. Rate-limit per user at the queue layer. Store delivery receipts in Cassandra for scale. At 10M that's ~50K events/sec at peak — fully horizontal.</div>
+        <div class="s-box-footer">✓ Answer ready · 1.1s</div>
+      </div>
+    </div>
+
+    <!-- Coding -->
+    <div class="showcase-pane" id="pane-coding">
+      <div class="s-box">
+        <div class="s-box-head">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Coding problem (screen capture)
+        </div>
+        <div class="s-box-q">"Given an array of integers, return indices of the two numbers that add up to a target. Each input has exactly one solution."</div>
+      </div>
+      <div class="s-box">
+        <div class="s-box-head" style="color:#15803d">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Coaching sheet
+        </div>
+        <div class="s-box-a" style="font-size:0.78rem">
+          <strong>Say first:</strong> "I'll use a hash map to get O(n) instead of O(n²) brute force."<br><br>
+          <strong>Code:</strong> <code style="background:#f3f4f6;padding:2px 5px;border-radius:4px;font-size:0.75rem">seen = {}; for i,n in enumerate(nums): if target-n in seen: return [seen[target-n], i]; seen[n]=i</code><br><br>
+          <strong>Say while coding:</strong> "For each number I check if its complement is already in the map…"<br>
+          <strong>Complexity:</strong> O(n) time · O(n) space
+        </div>
+        <div class="s-box-footer">✓ Coaching sheet ready · 0.6s</div>
+      </div>
+    </div>
+
+    <!-- Culture Fit -->
+    <div class="showcase-pane" id="pane-culture">
+      <div class="s-box">
+        <div class="s-box-head">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Interviewer question
+        </div>
+        <div class="s-box-q">"Why do you want to work at Google specifically? What draws you here over other companies?"</div>
+      </div>
+      <div class="s-box">
+        <div class="s-box-head" style="color:#15803d">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          AstraOffer answer
+        </div>
+        <div class="s-box-a">Two reasons specifically. First, the scale — at my last company I was designing for 500K users. Google's infrastructure problems at a billion users are categorically different and that's the problem space I want to grow in. Second, the open culture around publishing research. The Spanner and Bigtable papers directly shaped how I think about distributed systems. I want to be in the room where those decisions happen.</div>
+        <div class="s-box-footer">✓ Answer ready · 0.7s</div>
+      </div>
+    </div>
+
   </div>
 </section>
 
@@ -1043,17 +1274,29 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 <script>
 function toggleFaq(btn){
-  var a = btn.nextElementSibling;
-  var icon = btn.querySelector('.faq-icon');
-  if(a.classList.contains('open')){
-    a.classList.remove('open');
-    icon.classList.remove('open');
-  } else {
+  var a=btn.nextElementSibling,icon=btn.querySelector('.faq-icon');
+  if(a.classList.contains('open')){a.classList.remove('open');icon.classList.remove('open');}
+  else{
     document.querySelectorAll('.faq-a.open').forEach(function(el){el.classList.remove('open')});
     document.querySelectorAll('.faq-icon.open').forEach(function(el){el.classList.remove('open')});
-    a.classList.add('open');
-    icon.classList.add('open');
+    a.classList.add('open');icon.classList.add('open');
   }
+}
+
+function showTab(id,btn){
+  document.querySelectorAll('.showcase-pane').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.s-tab').forEach(function(t){t.classList.remove('active')});
+  document.getElementById('pane-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function handleEmailCapture(e){
+  e.preventDefault();
+  var email=document.getElementById('mobile-email').value;
+  // In production: POST to your email service
+  console.log('Email captured:',email);
+  document.querySelector('.email-form').style.display='none';
+  document.getElementById('email-success').style.display='block';
 }
 </script>
 </body>
