@@ -1015,12 +1015,14 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       <div class="setup-step">
         <div class="setup-num">2</div>
         <div class="setup-content">
-          <div class="setup-title">First launch — bypass the OS security warning</div>
+          <div class="setup-title">First launch — bypass the Mac security warning</div>
           <div class="setup-desc">
-            <strong>Mac:</strong> macOS will say "damaged and can't be opened." Right-click the app → Open → Open. Or run:<br>
+            <strong>Mac — if you see "damaged and can't be opened":</strong><br>
+            Open Terminal (⌘ Space → Terminal) and run:<br>
             <code class="setup-code">xattr -cr "/Applications/AstraOffer Assistant.app"</code><br>
-            <span class="setup-note">⚠ This only needs to happen once.</span><br><br>
-            <strong>Windows:</strong> Windows Defender may warn "Unrecognized app." Click "More info" → "Run anyway." This is because the app is unsigned.
+            Then launch the app normally. <span class="setup-note">⚠ One-time only — the app opens instantly from then on.</span><br><br>
+            <strong>Windows — if you see "Windows protected your PC":</strong><br>
+            Click <strong>More info</strong> → <strong>Run anyway</strong>. Safe to proceed.
           </div>
         </div>
       </div>
