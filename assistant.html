@@ -50,7 +50,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 @media(max-width:768px){.nav-links{display:none}.nav-logo{margin-right:auto}}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;position:relative;overflow:hidden;background:#fff}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 72px;position:relative;overflow:hidden;background:#fff}
 .hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(0,0,0,0.03) 0%,transparent 60%);pointer-events:none}
 .hero-badge{display:inline-flex;align-items:center;gap:8px;background:#f3f4f6;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:0.72rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:28px}
 .hero-badge-dot{width:6px;height:6px;background:#16a34a;border-radius:50%;animation:pulse 2s infinite}
@@ -67,17 +67,79 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 .platform-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-subtle);font-weight:500}
 .platform-tag svg{opacity:0.5}
 
-/* ── APP MOCKUP ── */
-.hero-preview{width:100%;max-width:420px;background:#0d0d1a;border:1px solid rgba(255,255,255,0.12);border-radius:14px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,0.15),0 4px 16px rgba(0,0,0,0.08);margin:0 auto}
-.preview-bar{display:flex;align-items:center;gap:6px;padding:10px 13px;border-bottom:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.03)}
-.preview-dot{width:9px;height:9px;border-radius:50%}
-.preview-title{font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.35);margin-left:6px}
-.preview-body{padding:14px}
-.preview-q{font-size:0.7rem;color:rgba(255,255,255,0.3);margin-bottom:10px;font-style:italic;line-height:1.5}"Tell me about a time you led a cross-functional team under a tight deadline."</div>
-.preview-a{font-size:0.76rem;color:rgba(255,255,255,0.85);line-height:1.65;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.09);border-radius:8px;padding:11px}
-.preview-cursor{display:inline-block;width:2px;height:11px;background:#fff;margin-left:2px;animation:blink 1s infinite;vertical-align:middle}
+/* ── DESKTOP MOCKUP ── */
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.preview-badge{display:inline-flex;align-items:center;gap:5px;background:rgba(22,163,74,0.12);border:1px solid rgba(22,163,74,0.25);border-radius:5px;padding:4px 9px;font-size:0.65rem;font-weight:700;color:#4ade80;margin-top:9px}
+.preview-cursor{display:inline-block;width:2px;height:11px;background:#a5b4fc;margin-left:2px;animation:blink 1s infinite;vertical-align:middle}
+.screen-wrap{width:100%;max-width:920px;margin:0 auto}
+.screen-caption{font-size:0.72rem;color:var(--text-subtle);text-align:center;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px}
+.screen-frame{border-radius:14px;overflow:hidden;border:2px solid #1a1a1a;box-shadow:0 28px 70px rgba(0,0,0,0.22),0 0 0 1px rgba(0,0,0,0.06)}
+/* macOS title bar */
+.mac-bar{height:26px;background:#202020;display:flex;align-items:center;padding:0 12px;flex-shrink:0}
+.mac-dots{display:flex;gap:5px;margin-right:12px}
+.mac-dot{width:10px;height:10px;border-radius:50%}
+.mac-bar-label{font-size:0.62rem;color:rgba(255,255,255,0.25);margin:0 auto;font-family:system-ui}
+/* macOS desktop */
+.mac-desktop{position:relative;background:linear-gradient(145deg,#0e0b2e 0%,#0d1554 45%,#1a0a60 100%);overflow:hidden}
+/* video call tiles */
+.vc-bg{position:absolute;inset:0 0 48px 0;display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px}
+.vc-tile{position:relative;overflow:hidden;border-radius:4px;background:#080820}
+.vc-tile-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+.vc-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:rgba(255,255,255,0.2)}
+.vc-name{position:absolute;bottom:6px;left:7px;background:rgba(0,0,0,0.55);color:rgba(255,255,255,0.7);font-size:0.58rem;font-weight:600;padding:2px 7px;border-radius:4px;font-family:system-ui}
+.vc-status{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#22c55e}
+/* interviewer sees label */
+.vc-sees-label{position:absolute;top:8px;left:8px;background:rgba(239,68,68,0.85);color:#fff;font-size:0.58rem;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:0.03em;backdrop-filter:blur(4px)}
+/* meet-style controls bar */
+.vc-controls{position:absolute;bottom:0;left:0;right:0;height:48px;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;gap:10px;backdrop-filter:blur(4px)}
+.vc-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:0.78rem}
+.vc-btn-end{background:#ef4444}
+/* AstraOffer overlay */
+.ao-win{position:absolute;inset:8px 8px 55px 8px;background:rgba(10,10,22,0.95);border:1px solid rgba(255,255,255,0.13);border-radius:10px;overflow:hidden;backdrop-filter:blur(12px);display:flex;flex-direction:column}
+.ao-titlebar{display:flex;align-items:center;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07);height:38px;flex-shrink:0;padding:0 10px;gap:0}
+.ao-tab{display:flex;align-items:center;gap:6px;padding:0 14px;height:100%;font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.35);border-right:1px solid rgba(255,255,255,0.06);cursor:default;white-space:nowrap}
+.ao-tab.active{color:#e0e7ff;background:rgba(255,255,255,0.05)}
+.ao-tab svg{flex-shrink:0}
+.ao-rec{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite;flex-shrink:0}
+.ao-timer{font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.4);font-family:monospace;margin-left:10px}
+.ao-spacer{flex:1}
+.ao-shield{display:flex;align-items:center;gap:5px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);border-radius:20px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:#4ade80;margin-right:8px}
+.ao-settings{color:rgba(255,255,255,0.25);font-size:0.85rem;line-height:1}
+/* three panels */
+.ao-panels{display:grid;grid-template-columns:1fr 1.4fr 1fr;flex:1;overflow:hidden}
+.ao-panel{border-right:1px solid rgba(255,255,255,0.06);padding:10px 11px;overflow:hidden;display:flex;flex-direction:column;gap:6px}
+.ao-panel:last-child{border-right:none}
+.ao-panel-hd{font-size:0.57rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;color:rgba(255,255,255,0.22);display:flex;align-items:center;gap:5px;margin-bottom:2px;flex-shrink:0}
+.ao-live-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;flex-shrink:0}
+/* transcript */
+.ao-msg{flex-shrink:0}
+.ao-msg-role{font-size:0.57rem;font-weight:700;color:rgba(255,255,255,0.28);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.05em}
+.ao-msg-role.you{color:rgba(99,102,241,0.6)}
+.ao-msg-text{font-size:0.65rem;color:rgba(255,255,255,0.65);line-height:1.5}
+.ao-typing{display:flex;gap:3px;align-items:center;padding:4px 0}
+.ao-typing span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.2)}
+.ao-typing span:nth-child(2){animation:bounce 1s 0.2s infinite}
+.ao-typing span:nth-child(3){animation:bounce 1s 0.4s infinite}
+@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+/* ai answer */
+.ao-q-label{font-size:0.62rem;color:rgba(255,255,255,0.35);font-style:italic;line-height:1.45;flex-shrink:0}
+.ao-answer-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:7px;padding:9px;font-size:0.66rem;color:rgba(255,255,255,0.88);line-height:1.6;flex:1;overflow:hidden}
+.ao-ready-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:20px;padding:2px 8px;font-size:0.58rem;font-weight:700;color:#4ade80;flex-shrink:0}
+/* history */
+.ao-hist{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px;flex-shrink:0}
+.ao-hist-q{font-size:0.58rem;color:rgba(255,255,255,0.28);margin-bottom:3px;line-height:1.4}
+.ao-hist-a{font-size:0.62rem;color:rgba(255,255,255,0.6);line-height:1.45}
+/* input bar */
+.ao-inputbar{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);flex-shrink:0}
+.ao-input-fake{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:6px 11px;font-size:0.65rem;color:rgba(255,255,255,0.3);font-family:inherit;display:flex;align-items:center}
+.ao-send-hint{font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.2);white-space:nowrap;display:flex;align-items:center;gap:3px}
+.ao-kbd{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;font-size:0.58rem;color:rgba(255,255,255,0.35)}
+/* caption below mockup */
+.screen-note{font-size:0.73rem;color:var(--text-subtle);text-align:center;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:6px}
+@media(max-width:600px){
+  .ao-panels{grid-template-columns:1fr}
+  .ao-panel:not(:first-child){display:none}
+  .mac-desktop{min-height:300px}
+}
 
 /* ── COMPANIES ── */
 .companies{padding:28px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg-alt)}
@@ -305,22 +367,155 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
     <span class="platform-tag">No API keys needed</span>
   </div>
 
-  <!-- App preview mockup -->
-  <div class="hero-preview">
-    <div class="preview-bar">
-      <div class="preview-dot" style="background:#ef4444"></div>
-      <div class="preview-dot" style="background:#f59e0b;margin-left:4px"></div>
-      <div class="preview-dot" style="background:#22c55e;margin-left:4px"></div>
-      <span class="preview-title">AstraOffer Assistant · 🛡 Screen Protected</span>
-    </div>
-    <div class="preview-body">
-      <div style="font-size:0.65rem;color:rgba(255,255,255,0.3);margin-bottom:8px;font-family:monospace">🔊 Listening — interviewer audio only</div>
-      <div class="preview-q">"Tell me about a time you led a cross-functional team under a tight deadline."</div>
-      <div class="preview-a">
-        In my previous role at a Series B startup, I led a team of 6 across engineering, design, and product to ship a data pipeline migration in 3 weeks — half the usual timeline. I broke the work into daily milestones, ran async standups to surface blockers early, and personally unblocked two critical API dependencies with the vendor. We shipped on time with zero regressions. That sprint reduced our ETL latency by 40% and directly influenced our Series C pitch.<span class="preview-cursor"></span>
+  <!-- ── DESKTOP MOCKUP ── -->
+  <div class="screen-wrap">
+    <p class="screen-caption">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      This is your screen during the interview
+    </p>
+
+    <div class="screen-frame">
+      <!-- macOS title bar -->
+      <div class="mac-bar">
+        <div class="mac-dots">
+          <div class="mac-dot" style="background:#ef4444"></div>
+          <div class="mac-dot" style="background:#f59e0b"></div>
+          <div class="mac-dot" style="background:#22c55e"></div>
+        </div>
+        <span class="mac-bar-label">Your Mac — AstraOffer window excluded from screen share at OS level</span>
       </div>
-      <div class="preview-badge">✓ Answer ready · 0.8s</div>
+
+      <!-- macOS desktop -->
+      <div class="mac-desktop" style="min-height:380px">
+
+        <!-- Video call background (what interviewer sees) -->
+        <div class="vc-bg">
+          <!-- Interviewer tile -->
+          <div class="vc-tile">
+            <div class="vc-tile-inner">
+              <div class="vc-avatar">👤</div>
+            </div>
+            <div class="vc-name">Interviewer · Google</div>
+            <div class="vc-status"></div>
+            <div class="vc-sees-label">🔴 Interviewer's screen share shows only this</div>
+          </div>
+          <!-- Your tile -->
+          <div class="vc-tile" style="background:#050514">
+            <div class="vc-tile-inner">
+              <div class="vc-avatar" style="background:rgba(99,102,241,0.15)">🙂</div>
+            </div>
+            <div class="vc-name">You</div>
+          </div>
+        </div>
+
+        <!-- Meet-style controls -->
+        <div class="vc-controls">
+          <div class="vc-btn">🎤</div>
+          <div class="vc-btn">📹</div>
+          <div class="vc-btn vc-btn-end">📞</div>
+          <div class="vc-btn">💬</div>
+          <div class="vc-btn">⋯</div>
+        </div>
+
+        <!-- ── AstraOffer overlay (invisible to screen share) ── -->
+        <div class="ao-win">
+
+          <!-- Tab bar -->
+          <div class="ao-titlebar">
+            <div class="ao-tab active">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              AstraOffer
+            </div>
+            <div class="ao-tab">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+              Coding Solver
+            </div>
+            <div class="ao-rec" style="margin-left:10px"></div>
+            <div class="ao-timer">⏱ 08:23</div>
+            <div class="ao-spacer"></div>
+            <div class="ao-shield">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              Invisible to screen share
+            </div>
+            <div class="ao-settings">⚙</div>
+          </div>
+
+          <!-- Three panels -->
+          <div class="ao-panels">
+
+            <!-- LEFT: Live Transcript -->
+            <div class="ao-panel">
+              <div class="ao-panel-hd">
+                <div class="ao-live-dot"></div>
+                Live Transcript
+              </div>
+
+              <div class="ao-msg">
+                <div class="ao-msg-role">Interviewer</div>
+                <div class="ao-msg-text">Hi, great to meet you. Can you walk me through your background quickly?</div>
+              </div>
+              <div class="ao-msg">
+                <div class="ao-msg-role you">You</div>
+                <div class="ao-msg-text">Sure — 5 years in backend engineering, mostly distributed systems at Series B stage.</div>
+              </div>
+              <div class="ao-msg">
+                <div class="ao-msg-role">Interviewer</div>
+                <div class="ao-msg-text">Tell me about a time you debugged a production incident under pressure.</div>
+              </div>
+              <div class="ao-typing">
+                <span></span><span></span><span></span>
+                <span style="font-size:0.58rem;color:rgba(255,255,255,0.2);margin-left:4px">Interviewer typing…</span>
+              </div>
+            </div>
+
+            <!-- MIDDLE: AI Answer -->
+            <div class="ao-panel">
+              <div class="ao-panel-hd">AI Answer</div>
+              <div class="ao-q-label">"Tell me about a time you debugged a production incident under pressure."</div>
+              <div class="ao-answer-box">
+                I was the on-call engineer when our checkout service hit a 40% error rate at 2 AM. I isolated the root cause in 8 minutes — a missing index on a high-traffic query introduced in a deploy two hours earlier. I rolled back the migration, applied a hotfix, and wrote the post-mortem by morning. We cut P99 latency by 60% and added that query pattern to our pre-deploy checklist.<span class="preview-cursor"></span>
+              </div>
+              <div class="ao-ready-pill">✓ Answer ready · 0.7s</div>
+            </div>
+
+            <!-- RIGHT: History -->
+            <div class="ao-panel">
+              <div class="ao-panel-hd">History · 2 answers</div>
+              <div class="ao-hist">
+                <div class="ao-hist-q">Q: Walk me through your background</div>
+                <div class="ao-hist-a">5 years backend, distributed systems at two Series B startups. Led infra team of 4, shipped 30+ features…</div>
+              </div>
+              <div class="ao-hist" style="margin-top:6px">
+                <div class="ao-hist-q">Q: Why are you interested in this role?</div>
+                <div class="ao-hist-a">The scale of Google's infra is exactly the problem space I want to work in. At my last company I hit the ceiling of…</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Input bar -->
+          <div class="ao-inputbar">
+            <div style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.2);font-size:0.65rem;flex-shrink:0">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+            </div>
+            <div class="ao-input-fake">Type a follow-up or override question…</div>
+            <div class="ao-send-hint">
+              <div class="ao-kbd">⌘</div>+<div class="ao-kbd">↵</div>
+            </div>
+          </div>
+
+        </div>
+        <!-- end ao-win -->
+
+      </div>
+      <!-- end mac-desktop -->
     </div>
+    <!-- end screen-frame -->
+
+    <p class="screen-note">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      The AstraOffer panel is <strong style="color:#111">only visible to you</strong> — your screen share sends only the video call to your interviewer.
+    </p>
   </div>
 </section>
 
