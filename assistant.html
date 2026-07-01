@@ -230,28 +230,61 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .hw-ao-answer{font-size:0.7rem;color:var(--text-muted);line-height:1.6}
 .hw-cursor{display:inline-block;width:2px;height:11px;background:var(--purple);margin-left:2px;vertical-align:middle;animation:blink 0.9s infinite}
 
-/* ── Flow steps at bottom ── */
+/* ── AI Pipeline Flow ── */
 .hw-flow{
   position:absolute;bottom:0;left:0;right:0;height:96px;
   display:flex;align-items:center;justify-content:center;gap:0;
 }
 .hw-step{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  background:#fff;border:1px solid var(--border);border-radius:14px;
-  padding:10px 14px;min-width:88px;text-align:center;
-  box-shadow:var(--shadow);
-  transition:transform 0.2s;
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:linear-gradient(145deg,rgba(12,9,28,0.9),rgba(22,15,45,0.88));
+  border:1px solid rgba(124,58,237,0.35);border-radius:16px;
+  padding:11px 15px;min-width:96px;text-align:center;
+  box-shadow:0 0 24px rgba(124,58,237,0.18),0 4px 14px rgba(0,0,0,0.25);
+  position:relative;overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;
 }
-.hw-step:hover{transform:translateY(-2px)}
-.hw-step-emoji{font-size:1.15rem;margin-bottom:2px}
-.hw-step-name{font-size:0.65rem;font-weight:700;color:var(--text);white-space:nowrap}
-.hw-step-sub{font-size:0.58rem;color:var(--text-subtle);font-weight:500;white-space:nowrap}
-.hw-arrow-conn{
-  display:flex;align-items:center;padding:0 6px;
-  color:rgba(124,58,237,0.5);font-size:0.8rem;
+/* top inner glow line */
+.hw-step::before{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);
+  width:55%;height:1px;
+  background:linear-gradient(90deg,transparent,rgba(167,139,250,0.7),transparent)}
+/* hover */
+.hw-step:hover{transform:translateY(-3px);box-shadow:0 0 36px rgba(124,58,237,0.3),0 8px 24px rgba(0,0,0,0.3)}
+.hw-step-icon{font-size:1.2rem;margin-bottom:2px;position:relative;z-index:1}
+.hw-step-name{font-size:0.64rem;font-weight:700;color:#fff;white-space:nowrap;position:relative;z-index:1}
+.hw-step-sub{font-size:0.57rem;color:rgba(255,255,255,0.38);font-weight:500;white-space:nowrap;position:relative;z-index:1}
+/* status badge on each step */
+.hw-step-status{
+  display:inline-flex;align-items:center;gap:3px;
+  background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.25);
+  border-radius:20px;padding:2px 7px;font-size:0.54rem;font-weight:700;
+  color:rgba(167,139,250,0.9);margin-top:2px;position:relative;z-index:1;
 }
-.hw-arrow-conn::before{content:'';display:block;width:18px;height:1.5px;background:linear-gradient(90deg,rgba(124,58,237,0.3),rgba(124,58,237,0.6));margin-right:2px}
-.hw-arrow-conn::after{content:'▶';font-size:0.55rem;color:rgba(124,58,237,0.6)}
+.hw-status-dot{width:4px;height:4px;border-radius:50%;background:#a78bfa;animation:pulse 1.4s infinite}
+.hw-status-dot.green{background:#22c55e}
+.hw-status-dot.green{animation:pulse-green 1.4s infinite}
+@keyframes pulse-green{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.7)}}
+
+/* ── Animated connection line ── */
+.hw-pipe{
+  position:relative;width:36px;height:2px;flex-shrink:0;
+  background:linear-gradient(90deg,rgba(124,58,237,0.15),rgba(124,58,237,0.4),rgba(124,58,237,0.15));
+  overflow:visible;
+}
+/* flowing packet dot */
+.hw-pipe::after{
+  content:'';position:absolute;top:50%;transform:translateY(-50%);
+  width:7px;height:7px;border-radius:50%;
+  background:var(--purple);
+  box-shadow:0 0 8px rgba(124,58,237,0.9),0 0 16px rgba(124,58,237,0.4);
+  animation:packet 1.8s linear infinite;
+}
+.hw-pipe:nth-of-type(2)::after{animation-delay:0.9s}
+@keyframes packet{
+  0%{left:-7px;opacity:0}
+  15%{opacity:1}
+  85%{opacity:1}
+  100%{left:100%;opacity:0}
+}
 
 @media(max-width:900px){
   .hero{grid-template-columns:1fr;padding:100px 24px 56px;gap:36px}
@@ -628,24 +661,27 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:56
       <div class="hw-ao-answer">At my previous company, we had to choose between K8s and ECS two weeks before a major launch. I ran a 48-hour spike, documented the failure modes, and recommended staying on ECS. The launch hit 4× traffic with zero incidents.<span class="hw-cursor"></span></div>
     </div>
 
-    <!-- 3-step flow -->
+    <!-- AI pipeline flow -->
     <div class="hw-flow">
       <div class="hw-step">
-        <div class="hw-step-emoji">🎙</div>
+        <div class="hw-step-icon">🎙</div>
         <div class="hw-step-name">System Audio</div>
-        <div class="hw-step-sub">Interviewer's voice</div>
+        <div class="hw-step-sub">loopback · no mic</div>
+        <div class="hw-step-status"><span class="hw-status-dot green"></span>Live</div>
       </div>
-      <div class="hw-arrow-conn"></div>
+      <div class="hw-pipe"></div>
       <div class="hw-step">
-        <div class="hw-step-emoji">📝</div>
+        <div class="hw-step-icon">📡</div>
         <div class="hw-step-name">Groq Whisper</div>
-        <div class="hw-step-sub">0.4s transcription</div>
+        <div class="hw-step-sub">whisper-large-v3</div>
+        <div class="hw-step-status"><span class="hw-status-dot"></span>~0.4s</div>
       </div>
-      <div class="hw-arrow-conn"></div>
+      <div class="hw-pipe"></div>
       <div class="hw-step">
-        <div class="hw-step-emoji">✨</div>
-        <div class="hw-step-name">Claude AI</div>
-        <div class="hw-step-sub">Answer in &lt;1s</div>
+        <div class="hw-step-icon">⚡</div>
+        <div class="hw-step-name">Claude Sonnet</div>
+        <div class="hw-step-sub">streaming SSE</div>
+        <div class="hw-step-status"><span class="hw-status-dot"></span>&lt;1s total</div>
       </div>
     </div>
   </div>
