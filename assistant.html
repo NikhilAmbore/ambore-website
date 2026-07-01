@@ -7,821 +7,535 @@
 <meta name="description" content="Real-time AI answers during live interviews. Completely invisible during Zoom, Teams & Meet screen share. Mac + Windows."/>
 <link rel="icon" href="/ao-logo.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-F3S7FLQRSM"></script>
 <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','G-F3S7FLQRSM',{anonymize_ip:true});</script>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:#ffffff;color:#111111;-webkit-font-smoothing:antialiased}
+body{font-family:'Inter',sans-serif;background:#030308;color:#e8e8f0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
-::-webkit-scrollbar{width:5px}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:3px}
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:#0a0a15}
+::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.4);border-radius:4px}
 
 :root{
-  --black:#111111;
-  --white:#ffffff;
-  --bg:#ffffff;
-  --bg-alt:#f8f9fa;
-  --bg-dark:#0a0a0a;
-  --text:#111111;
-  --text-muted:#6b7280;
-  --text-subtle:#9ca3af;
-  --border:#e5e7eb;
-  --border-dark:#d1d5db;
-  --green:#16a34a;
-  --green-bg:#f0fdf4;
-  --green-border:#bbf7d0;
-  --amber:#d97706;
-  --amber-bg:#fffbeb;
+  --c1:#22d3ee;
+  --c2:#a78bfa;
+  --c3:#f472b6;
+  --grad:linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#f472b6 100%);
+  --grad2:linear-gradient(135deg,#8b5cf6,#06b6d4);
+  --surface:rgba(255,255,255,0.03);
+  --surface2:rgba(255,255,255,0.06);
+  --border:rgba(255,255,255,0.08);
+  --border2:rgba(255,255,255,0.14);
+  --text:#e8e8f0;
+  --text-muted:rgba(232,232,240,0.55);
+  --text-subtle:rgba(232,232,240,0.32);
 }
 
+/* ── ORBS / BACKGROUND ── */
+.orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(80px);z-index:0}
+.orb-1{width:700px;height:700px;top:-200px;right:-150px;background:radial-gradient(circle,rgba(139,92,246,0.25) 0%,transparent 70%);animation:float1 20s ease-in-out infinite}
+.orb-2{width:600px;height:600px;top:30%;left:-200px;background:radial-gradient(circle,rgba(34,211,238,0.18) 0%,transparent 70%);animation:float2 25s ease-in-out infinite}
+.orb-3{width:500px;height:500px;bottom:10%;right:5%;background:radial-gradient(circle,rgba(244,114,182,0.15) 0%,transparent 70%);animation:float3 18s ease-in-out infinite}
+@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,60px) scale(1.05)}66%{transform:translate(30px,-40px) scale(0.97)}}
+@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(50px,-70px) scale(1.08)}70%{transform:translate(-20px,40px) scale(0.94)}}
+@keyframes float3{0%,100%{transform:translate(0,0) scale(1)}30%{transform:translate(-60px,-30px) scale(1.1)}70%{transform:translate(40px,50px) scale(0.96)}}
+
+/* grid pattern */
+.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%)}
+
 /* ── NAV ── */
-.nav{position:fixed;top:0;left:0;right:0;z-index:100;height:60px;display:flex;align-items:center;padding:0 24px;background:rgba(255,255,255,0.9);backdrop-filter:blur(12px);border-bottom:1px solid var(--border)}
-.nav-inner{max-width:1100px;margin:0 auto;width:100%;display:flex;align-items:center}
-.nav-logo{display:flex;align-items:center;gap:9px;font-size:0.95rem;font-weight:800;color:var(--black);margin-right:32px}
-.nav-logo img{width:28px;height:28px;border-radius:7px}
-.nav-links{display:flex;align-items:center;gap:2px;flex:1}
-.nav-links a{font-size:0.83rem;font-weight:500;color:var(--text-muted);padding:6px 11px;border-radius:6px;transition:color 0.15s,background 0.15s}
-.nav-links a:hover{color:var(--black);background:#f3f4f6}
-.nav-cta{display:flex;align-items:center;gap:10px}
-.btn-dl{display:inline-flex;align-items:center;gap:7px;background:var(--black);color:#fff;padding:8px 18px;border-radius:8px;font-size:0.83rem;font-weight:700;transition:background 0.15s,transform 0.1s}
-.btn-dl:hover{background:#333;transform:translateY(-1px)}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;padding:0 24px;background:rgba(3,3,8,0.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
+.nav-inner{max-width:1140px;margin:0 auto;width:100%;display:flex;align-items:center;gap:0}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:800;color:#fff;margin-right:36px;letter-spacing:-0.02em}
+.nav-logo-mark{width:30px;height:30px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:1px;flex:1}
+.nav-links a{font-size:0.82rem;font-weight:500;color:var(--text-muted);padding:6px 12px;border-radius:7px;transition:all 0.15s}
+.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.06)}
+.nav-cta{display:flex;align-items:center;gap:8px}
+.btn-nav{display:inline-flex;align-items:center;gap:7px;background:var(--grad2);color:#fff;padding:8px 18px;border-radius:8px;font-size:0.82rem;font-weight:700;transition:all 0.2s;box-shadow:0 0 20px rgba(139,92,246,0.3)}
+.btn-nav:hover{opacity:0.9;box-shadow:0 0 30px rgba(139,92,246,0.5);transform:translateY(-1px)}
 @media(max-width:768px){.nav-links{display:none}.nav-logo{margin-right:auto}}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 24px 72px;position:relative;overflow:hidden;background:#fff}
-.hero-bg{position:absolute;inset:0;background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(0,0,0,0.03) 0%,transparent 60%);pointer-events:none}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#f3f4f6;border:1px solid var(--border);border-radius:20px;padding:5px 14px;font-size:0.72rem;font-weight:700;color:var(--text-muted);letter-spacing:0.05em;text-transform:uppercase;margin-bottom:28px}
-.hero-badge-dot{width:6px;height:6px;background:#16a34a;border-radius:50%;animation:pulse 2s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.4}}
-.hero h1{font-size:clamp(2.4rem,6vw,4rem);font-weight:900;line-height:1.08;color:var(--black);margin-bottom:22px;letter-spacing:-0.03em}
-.hero h1 em{font-style:normal;color:#3b3b3b}
-.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--text-muted);max-width:540px;margin:0 auto 36px;line-height:1.75}
-.hero-actions{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:10px;margin-bottom:20px}
-.btn-primary{display:inline-flex;align-items:center;gap:9px;background:var(--black);color:#fff;padding:15px 30px;border-radius:10px;font-size:0.95rem;font-weight:700;transition:all 0.15s;border:2px solid var(--black)}
-.btn-primary:hover{background:#333;border-color:#333;transform:translateY(-1px)}
-.btn-ghost{display:inline-flex;align-items:center;gap:8px;background:#fff;border:2px solid var(--border);color:var(--text-muted);padding:15px 26px;border-radius:10px;font-size:0.93rem;font-weight:600;transition:all 0.15s}
-.btn-ghost:hover{border-color:var(--border-dark);color:var(--black)}
-.hero-platform-tags{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:56px}
-.platform-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.75rem;color:var(--text-subtle);font-weight:500}
-.platform-tag svg{opacity:0.5}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;z-index:1}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);border-radius:100px;padding:6px 16px;font-size:0.72rem;font-weight:700;color:var(--c2);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:32px;backdrop-filter:blur(12px)}
+.badge-dot{width:6px;height:6px;background:var(--c1);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 8px var(--c1)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
+.hero h1{font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;line-height:1.04;color:#fff;margin-bottom:24px;letter-spacing:-0.04em}
+.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.hero-sub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--text-muted);max-width:560px;margin:0 auto 40px;line-height:1.8}
+.hero-btns{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-bottom:56px}
+.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--grad2);color:#fff;padding:16px 32px;border-radius:12px;font-size:0.95rem;font-weight:700;transition:all 0.2s;box-shadow:0 0 40px rgba(139,92,246,0.4),0 4px 20px rgba(0,0,0,0.4);position:relative;overflow:hidden}
+.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);opacity:0;transition:opacity 0.2s}
+.btn-primary:hover::before{opacity:1}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(139,92,246,0.6),0 8px 32px rgba(0,0,0,0.5)}
+.btn-ghost{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text-muted);padding:16px 28px;border-radius:12px;font-size:0.93rem;font-weight:600;transition:all 0.2s;backdrop-filter:blur(12px)}
+.btn-ghost:hover{border-color:rgba(255,255,255,0.28);color:#fff;background:rgba(255,255,255,0.07)}
+.platform-row{display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap}
+.platform-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-subtle);font-weight:500}
 
-/* ── DESKTOP MOCKUP ── */
-@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.preview-cursor{display:inline-block;width:2px;height:11px;background:#a5b4fc;margin-left:2px;animation:blink 1s infinite;vertical-align:middle}
-.screen-wrap{width:100%;max-width:920px;margin:0 auto}
-.screen-caption{font-size:0.72rem;color:var(--text-subtle);text-align:center;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:6px}
-.screen-frame{border-radius:14px;overflow:hidden;border:2px solid #1a1a1a;box-shadow:0 28px 70px rgba(0,0,0,0.22),0 0 0 1px rgba(0,0,0,0.06)}
-/* macOS title bar */
-.mac-bar{height:26px;background:#202020;display:flex;align-items:center;padding:0 12px;flex-shrink:0}
-.mac-dots{display:flex;gap:5px;margin-right:12px}
+/* ── MOCKUP ── */
+.mockup-wrap{width:100%;max-width:960px;margin:0 auto;position:relative;z-index:1}
+.mockup-glow{position:absolute;inset:-60px;background:radial-gradient(ellipse 80% 50% at 50% 100%,rgba(139,92,246,0.2) 0%,transparent 70%);pointer-events:none;z-index:0}
+.mockup-frame{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);box-shadow:0 40px 100px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05),0 0 80px rgba(139,92,246,0.15);position:relative;z-index:1}
+.mac-bar{height:28px;background:rgba(15,15,25,0.98);display:flex;align-items:center;padding:0 14px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.mac-dots{display:flex;gap:6px;margin-right:12px}
 .mac-dot{width:10px;height:10px;border-radius:50%}
-.mac-bar-label{font-size:0.62rem;color:rgba(255,255,255,0.25);margin:0 auto;font-family:system-ui}
-/* macOS desktop */
-.mac-desktop{position:relative;background:linear-gradient(145deg,#0e0b2e 0%,#0d1554 45%,#1a0a60 100%);overflow:hidden}
-/* video call tiles */
-.vc-bg{position:absolute;inset:0 0 48px 0;display:grid;grid-template-columns:1fr 1fr;gap:3px;padding:3px}
-.vc-tile{position:relative;overflow:hidden;border-radius:4px;background:#080820}
-.vc-tile-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-.vc-avatar{width:56px;height:56px;border-radius:50%;background:rgba(255,255,255,0.08);display:flex;align-items:center;justify-content:center;font-size:1.4rem;color:rgba(255,255,255,0.2)}
-.vc-name{position:absolute;bottom:6px;left:7px;background:rgba(0,0,0,0.55);color:rgba(255,255,255,0.7);font-size:0.58rem;font-weight:600;padding:2px 7px;border-radius:4px;font-family:system-ui}
-.vc-status{position:absolute;top:6px;right:7px;width:7px;height:7px;border-radius:50%;background:#22c55e}
-/* interviewer sees label */
-.vc-sees-label{position:absolute;top:8px;left:8px;background:rgba(239,68,68,0.85);color:#fff;font-size:0.58rem;font-weight:700;padding:3px 8px;border-radius:5px;letter-spacing:0.03em;backdrop-filter:blur(4px)}
-/* meet-style controls bar */
-.vc-controls{position:absolute;bottom:0;left:0;right:0;height:48px;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;gap:10px;backdrop-filter:blur(4px)}
-.vc-btn{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.12);display:flex;align-items:center;justify-content:center;font-size:0.78rem}
-.vc-btn-end{background:#ef4444}
-/* AstraOffer overlay */
-.ao-win{position:absolute;inset:8px 8px 55px 8px;background:rgba(10,10,22,0.95);border:1px solid rgba(255,255,255,0.13);border-radius:10px;overflow:hidden;backdrop-filter:blur(12px);display:flex;flex-direction:column}
-.ao-titlebar{display:flex;align-items:center;background:rgba(255,255,255,0.03);border-bottom:1px solid rgba(255,255,255,0.07);height:38px;flex-shrink:0;padding:0 10px;gap:0}
-.ao-tab{display:flex;align-items:center;gap:6px;padding:0 14px;height:100%;font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.35);border-right:1px solid rgba(255,255,255,0.06);cursor:default;white-space:nowrap}
-.ao-tab.active{color:#e0e7ff;background:rgba(255,255,255,0.05)}
-.ao-tab svg{flex-shrink:0}
-.ao-rec{width:8px;height:8px;border-radius:50%;background:#ef4444;animation:pulse 2s infinite;flex-shrink:0}
-.ao-timer{font-size:0.68rem;font-weight:700;color:rgba(255,255,255,0.4);font-family:monospace;margin-left:10px}
-.ao-spacer{flex:1}
-.ao-shield{display:flex;align-items:center;gap:5px;background:rgba(34,197,94,0.12);border:1px solid rgba(34,197,94,0.22);border-radius:20px;padding:3px 10px;font-size:0.6rem;font-weight:700;color:#4ade80;margin-right:8px}
-.ao-settings{color:rgba(255,255,255,0.25);font-size:0.85rem;line-height:1}
-/* three panels */
-.ao-panels{display:grid;grid-template-columns:1fr 1.4fr 1fr;flex:1;overflow:hidden}
-.ao-panel{border-right:1px solid rgba(255,255,255,0.06);padding:10px 11px;overflow:hidden;display:flex;flex-direction:column;gap:6px}
-.ao-panel:last-child{border-right:none}
-.ao-panel-hd{font-size:0.57rem;font-weight:800;text-transform:uppercase;letter-spacing:0.09em;color:rgba(255,255,255,0.22);display:flex;align-items:center;gap:5px;margin-bottom:2px;flex-shrink:0}
-.ao-live-dot{width:5px;height:5px;border-radius:50%;background:#22c55e;animation:pulse 2s infinite;flex-shrink:0}
-/* transcript */
-.ao-msg{flex-shrink:0}
-.ao-msg-role{font-size:0.57rem;font-weight:700;color:rgba(255,255,255,0.28);margin-bottom:2px;text-transform:uppercase;letter-spacing:0.05em}
-.ao-msg-role.you{color:rgba(99,102,241,0.6)}
-.ao-msg-text{font-size:0.65rem;color:rgba(255,255,255,0.65);line-height:1.5}
-.ao-typing{display:flex;gap:3px;align-items:center;padding:4px 0}
-.ao-typing span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.2)}
-.ao-typing span:nth-child(2){animation:bounce 1s 0.2s infinite}
-.ao-typing span:nth-child(3){animation:bounce 1s 0.4s infinite}
-@keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
-/* ai answer */
-.ao-q-label{font-size:0.62rem;color:rgba(255,255,255,0.35);font-style:italic;line-height:1.45;flex-shrink:0}
-.ao-answer-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.09);border-radius:7px;padding:9px;font-size:0.66rem;color:rgba(255,255,255,0.88);line-height:1.6;flex:1;overflow:hidden}
-.ao-ready-pill{display:inline-flex;align-items:center;gap:4px;background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.2);border-radius:20px;padding:2px 8px;font-size:0.58rem;font-weight:700;color:#4ade80;flex-shrink:0}
-/* history */
-.ao-hist{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:6px;padding:7px;flex-shrink:0}
-.ao-hist-q{font-size:0.58rem;color:rgba(255,255,255,0.28);margin-bottom:3px;line-height:1.4}
-.ao-hist-a{font-size:0.62rem;color:rgba(255,255,255,0.6);line-height:1.45}
-/* input bar */
-.ao-inputbar{display:flex;align-items:center;gap:8px;padding:6px 10px;border-top:1px solid rgba(255,255,255,0.06);background:rgba(255,255,255,0.02);flex-shrink:0}
-.ao-input-fake{flex:1;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:7px;padding:6px 11px;font-size:0.65rem;color:rgba(255,255,255,0.3);font-family:inherit;display:flex;align-items:center}
-.ao-send-hint{font-size:0.6rem;font-weight:700;color:rgba(255,255,255,0.2);white-space:nowrap;display:flex;align-items:center;gap:3px}
-.ao-kbd{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);border-radius:4px;padding:1px 5px;font-size:0.58rem;color:rgba(255,255,255,0.35)}
-/* caption below mockup */
-.screen-note{font-size:0.73rem;color:var(--text-subtle);text-align:center;margin-top:14px;display:flex;align-items:center;justify-content:center;gap:6px}
-@media(max-width:600px){
-  .ao-panels{grid-template-columns:1fr}
-  .ao-panel:not(:first-child){display:none}
-  .mac-desktop{min-height:300px}
-}
+.mac-dot-r{background:#ff5f57}
+.mac-dot-y{background:#febc2e}
+.mac-dot-g{background:#28c840}
+.mac-bar-url{font-size:0.62rem;color:rgba(255,255,255,0.2);margin:0 auto;letter-spacing:0.03em}
+.screen-body{background:#0d0d1a;display:grid;grid-template-columns:1fr 1fr;min-height:340px}
+.screen-left{padding:24px;border-right:1px solid rgba(255,255,255,0.06)}
+.screen-right{padding:24px;background:rgba(139,92,246,0.04)}
+.s-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px}
+.s-question{font-size:0.78rem;color:rgba(255,255,255,0.7);line-height:1.7;padding:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:12px}
+.s-answer{font-size:0.76rem;color:rgba(232,232,240,0.85);line-height:1.7}
+.s-answer-word{display:inline;padding:0 1px}
+.typing-cursor{display:inline-block;width:2px;height:12px;background:var(--c2);margin-left:2px;vertical-align:middle;animation:blink 0.9s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+.s-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:20px;padding:3px 10px;font-size:0.62rem;font-weight:700;color:var(--c1);margin-bottom:12px}
+.s-chip-dot{width:5px;height:5px;border-radius:50%;background:var(--c1);animation:pulse 1.5s infinite}
+.s-waveform{display:flex;align-items:center;gap:3px;margin-top:16px}
+.s-bar{width:3px;border-radius:2px;background:var(--c1);opacity:0.7}
+.s-bar:nth-child(1){height:8px;animation:wave 1.2s ease-in-out infinite 0s}
+.s-bar:nth-child(2){height:16px;animation:wave 1.2s ease-in-out infinite 0.1s}
+.s-bar:nth-child(3){height:22px;animation:wave 1.2s ease-in-out infinite 0.2s}
+.s-bar:nth-child(4){height:14px;animation:wave 1.2s ease-in-out infinite 0.3s}
+.s-bar:nth-child(5){height:20px;animation:wave 1.2s ease-in-out infinite 0.4s}
+.s-bar:nth-child(6){height:10px;animation:wave 1.2s ease-in-out infinite 0.5s}
+.s-bar:nth-child(7){height:18px;animation:wave 1.2s ease-in-out infinite 0.6s}
+.s-bar:nth-child(8){height:8px;animation:wave 1.2s ease-in-out infinite 0.7s}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.4)}}
 
-/* ── COMPANIES ── */
-.companies{padding:28px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:var(--bg-alt)}
-.companies-inner{max-width:1000px;margin:0 auto;text-align:center}
-.companies-label{font-size:0.68rem;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:18px}
-.companies-logos{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:28px}
-.co-logo{font-size:0.85rem;font-weight:800;color:#c9cdd4;letter-spacing:-0.01em;transition:color 0.2s}
-.co-logo:hover{color:#6b7280}
+/* ── TICKER ── */
+.ticker-section{position:relative;z-index:1;padding:28px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:rgba(255,255,255,0.01)}
+.ticker-track{display:flex;gap:48px;animation:ticker 28s linear infinite;width:max-content}
+.ticker-item{display:flex;align-items:center;gap:8px;font-size:0.75rem;font-weight:600;color:var(--text-subtle);white-space:nowrap;letter-spacing:0.02em}
+.ticker-item svg{opacity:0.4}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-fade-l,.ticker-fade-r{position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
+.ticker-fade-l{left:0;background:linear-gradient(90deg,#030308,transparent)}
+.ticker-fade-r{right:0;background:linear-gradient(-90deg,#030308,transparent)}
 
-/* ── SECTIONS ── */
-.section{padding:80px 20px}
-.section-inner{max-width:1000px;margin:0 auto}
-.section-label{font-size:0.68rem;font-weight:800;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
-.section-h{font-size:clamp(1.75rem,4vw,2.4rem);font-weight:900;color:var(--black);line-height:1.15;margin-bottom:14px;letter-spacing:-0.025em}
-.section-sub{font-size:0.97rem;color:var(--text-muted);line-height:1.75;max-width:540px}
-.section-alt{background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-
-/* ── HOW IT WORKS ── */
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:48px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-@media(max-width:700px){.steps{grid-template-columns:1fr}}
-.step-card{background:#fff;padding:28px 24px;transition:background 0.15s}
-.step-card:hover{background:#fafafa}
-.step-num{width:32px;height:32px;background:var(--black);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;color:#fff;margin-bottom:16px}
-.step-title{font-size:0.95rem;font-weight:700;color:var(--black);margin-bottom:8px}
-.step-desc{font-size:0.83rem;color:var(--text-muted);line-height:1.65}
+/* ── SECTION BASE ── */
+.section{position:relative;z-index:1;padding:100px 24px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--c2);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:4px 14px;margin-bottom:20px}
+.section-h{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.03em;margin-bottom:16px}
+.section-sub{font-size:1.05rem;color:var(--text-muted);line-height:1.75;max-width:580px}
+.text-center{text-align:center}
+.text-center .section-sub{margin:0 auto}
 
 /* ── FEATURES ── */
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;margin-top:48px;background:var(--border);border:1px solid var(--border);border-radius:14px;overflow:hidden}
-@media(max-width:800px){.features-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:500px){.features-grid{grid-template-columns:1fr}}
-.feat-card{background:#fff;padding:24px;transition:background 0.15s}
-.feat-card:hover{background:#fafafa}
-.feat-ico{font-size:1.4rem;margin-bottom:12px}
-.feat-name{font-size:0.88rem;font-weight:700;color:var(--black);margin-bottom:6px}
-.feat-desc{font-size:0.78rem;color:var(--text-muted);line-height:1.6}
+.features-section{padding:100px 24px;position:relative;z-index:1}
+.features-inner{max-width:1100px;margin:0 auto}
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-top:56px}
+.feat-card{background:#030308;padding:36px 32px;transition:background 0.2s;position:relative;overflow:hidden}
+.feat-card::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity 0.3s}
+.feat-card:hover::before{opacity:0.04}
+.feat-card:hover{background:#08081a}
+.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);position:relative;z-index:1}
+.feat-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:10px;position:relative;z-index:1;letter-spacing:-0.02em}
+.feat-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7;position:relative;z-index:1}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
 
-/* ── REQUIREMENTS ── */
-.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:40px}
-@media(max-width:640px){.req-grid{grid-template-columns:1fr}}
-.req-card{background:#fff;border:1px solid var(--border);border-radius:12px;padding:24px}
-.req-title{font-size:0.72rem;font-weight:800;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle);margin-bottom:14px}
-.req-sub{font-size:0.67rem;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.05em;margin:12px 0 8px}
-.req-item{display:flex;align-items:flex-start;gap:9px;margin-bottom:9px;font-size:0.83rem;color:var(--text)}
-.req-check{color:var(--green);flex-shrink:0;margin-top:1px}
-.req-warn{color:var(--amber);flex-shrink:0;margin-top:1px}
-
-/* ── DOWNLOAD (inverted dark block) ── */
-.dl-section-wrap{background:var(--bg-dark);border-radius:16px;padding:52px 40px;text-align:center;margin-top:40px}
-@media(max-width:600px){.dl-section-wrap{padding:36px 20px}}
-.dl-section-wrap h2{font-size:1.7rem;font-weight:900;color:#fff;margin-bottom:8px}
-.dl-section-wrap p{color:rgba(255,255,255,0.45);margin-bottom:0;font-size:0.9rem}
-.dl-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin:28px 0 24px}
-.dl-btn-mac{display:inline-flex;flex-direction:column;align-items:center;gap:3px;background:#fff;color:#111;padding:14px 28px;border-radius:10px;font-weight:700;text-decoration:none;transition:all 0.15s;border:2px solid #fff}
-.dl-btn-mac:hover{background:#f0f0f0;border-color:#f0f0f0;transform:translateY(-1px)}
-.dl-btn-mac-label{display:flex;align-items:center;gap:7px;font-size:0.95rem}
-.dl-btn-mac-sub{font-size:0.68rem;font-weight:500;opacity:0.5}
-.dl-btn-win{display:inline-flex;flex-direction:column;align-items:center;gap:3px;background:transparent;border:2px solid rgba(255,255,255,0.2);color:#fff;padding:14px 28px;border-radius:10px;font-weight:700;text-decoration:none;transition:all 0.15s}
-.dl-btn-win:hover{background:rgba(255,255,255,0.08);border-color:rgba(255,255,255,0.35);transform:translateY(-1px)}
-.dl-btn-win-label{display:flex;align-items:center;gap:7px;font-size:0.95rem}
-.dl-btn-win-sub{font-size:0.68rem;font-weight:500;opacity:0.4}
-.dl-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:8px}
-.dl-tag{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:6px;padding:4px 11px;font-size:0.72rem;color:rgba(255,255,255,0.4)}
-.dl-gh-link{font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:16px}
-.dl-gh-link a{color:rgba(255,255,255,0.3);text-decoration:underline}
-
-/* ── SETUP GUIDE ── */
-.setup-steps{margin-top:40px}
-.setup-step{display:flex;gap:20px;padding:22px 0;border-bottom:1px solid var(--border)}
-.setup-step:last-child{border-bottom:none}
-.setup-num{width:32px;height:32px;background:var(--black);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.78rem;font-weight:800;color:#fff;flex-shrink:0;margin-top:1px}
-.setup-title{font-size:0.92rem;font-weight:700;color:var(--black);margin-bottom:5px}
-.setup-desc{font-size:0.82rem;color:var(--text-muted);line-height:1.65}
-.setup-code{display:inline-block;background:#f3f4f6;border:1px solid var(--border);border-radius:6px;padding:5px 12px;font-family:monospace;font-size:0.8rem;color:#111;margin-top:7px}
-.setup-note{display:inline-flex;align-items:center;gap:6px;background:var(--amber-bg);border:1px solid #fde68a;border-radius:6px;padding:5px 11px;font-size:0.75rem;color:#92400e;margin-top:7px}
-
-/* ── PRICING ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
-@media(max-width:800px){.pricing-grid{grid-template-columns:1fr;max-width:360px;margin-left:auto;margin-right:auto}}
-.plan-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:28px 24px;position:relative;transition:border-color 0.15s,box-shadow 0.15s}
-.plan-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.06)}
-.plan-card.featured{background:var(--bg-dark);border-color:var(--bg-dark)}
-.plan-popular{position:absolute;top:-11px;left:50%;transform:translateX(-50%);background:var(--black);color:#fff;font-size:0.65rem;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:0.06em;text-transform:uppercase;white-space:nowrap}
-.plan-name{font-size:0.72rem;font-weight:700;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:12px}
-.plan-card.featured .plan-name{color:rgba(255,255,255,0.4)}
-.plan-price{font-size:2.4rem;font-weight:900;color:var(--black);line-height:1;margin-bottom:3px}
-.plan-card.featured .plan-price{color:#fff}
-.plan-price sup{font-size:1.2rem;font-weight:700;vertical-align:top;margin-top:6px}
-.plan-period{font-size:0.78rem;color:var(--text-subtle);margin-bottom:22px}
-.plan-card.featured .plan-period{color:rgba(255,255,255,0.35)}
-.plan-divider{border:none;border-top:1px solid var(--border);margin-bottom:18px}
-.plan-card.featured .plan-divider{border-color:rgba(255,255,255,0.1)}
-.plan-feature{display:flex;align-items:flex-start;gap:8px;font-size:0.81rem;color:var(--text);margin-bottom:9px;line-height:1.45}
-.plan-card.featured .plan-feature{color:rgba(255,255,255,0.8)}
-.plan-check{color:var(--green);flex-shrink:0}
-.plan-x{color:var(--border-dark);flex-shrink:0}
-.plan-card.featured .plan-x{color:rgba(255,255,255,0.2)}
-.plan-btn{width:100%;margin-top:22px;padding:11px;border-radius:9px;font-size:0.85rem;font-weight:700;cursor:pointer;transition:all 0.15s;font-family:inherit}
-.plan-btn-primary{background:#fff;color:#111;border:none}
-.plan-btn-primary:hover{background:#f0f0f0}
-.plan-btn-outline{background:transparent;color:var(--text-muted);border:1px solid var(--border)}
-.plan-btn-outline:hover{background:var(--bg-alt);color:var(--black);border-color:var(--border-dark)}
-.plan-lifetime-tag{font-size:0.7rem;color:var(--green);font-weight:600;margin-top:5px;display:block}
-
-/* ── REVIEWS ── */
-.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
-@media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:580px){.reviews-grid{grid-template-columns:1fr}}
-.review-card{background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px;transition:box-shadow 0.15s}
-.review-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.06)}
-.review-offer{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-weight:800;color:#15803d;margin-bottom:12px}
-.review-stars{color:#f59e0b;font-size:0.8rem;margin-bottom:9px;letter-spacing:2px}
-.review-text{font-size:0.82rem;color:var(--text-muted);line-height:1.7;margin-bottom:14px;font-style:italic}
-.review-author{display:flex;align-items:center;gap:9px}
-.review-avatar{width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.8rem;font-weight:800;color:#fff;flex-shrink:0}
-.review-name{font-size:0.82rem;font-weight:700;color:var(--black)}
-.review-role{font-size:0.71rem;color:var(--text-subtle)}
-
-/* ── STATS STRIP ── */
-.stats-strip{background:#0a0a0a;padding:20px 24px;border-top:1px solid #1a1a1a;border-bottom:1px solid #1a1a1a}
-.stats-strip-inner{max-width:900px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:0}
-.stat-item{display:flex;flex-direction:column;align-items:center;padding:8px 32px;border-right:1px solid rgba(255,255,255,0.08)}
-.stat-item:last-child{border-right:none}
-.stat-num{font-size:1.6rem;font-weight:900;color:#fff;letter-spacing:-0.03em;line-height:1}
-.stat-num span{color:#4ade80}
-.stat-label{font-size:0.68rem;font-weight:600;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.07em;margin-top:4px}
-@media(max-width:600px){.stat-item{padding:10px 18px;border-right:none;border-bottom:1px solid rgba(255,255,255,0.06)}.stat-item:last-child{border-bottom:none}}
+/* ── HOW IT WORKS ── */
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
+.how-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s}
+.how-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.how-num{font-size:3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;letter-spacing:-0.05em}
+.how-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
+.how-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7}
+@media(max-width:768px){.how-grid{grid-template-columns:1fr}}
 
 /* ── BEFORE / AFTER ── */
-.ba-section{padding:80px 20px;background:#fff;border-top:1px solid var(--border)}
-.ba-inner{max-width:1000px;margin:0 auto}
-.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:40px}
-@media(max-width:680px){.ba-grid{grid-template-columns:1fr}}
-.ba-card{border-radius:14px;overflow:hidden;border:1px solid var(--border)}
-.ba-card-head{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--border)}
-.ba-badge-bad{display:inline-flex;align-items:center;gap:5px;background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:3px 10px;font-size:0.7rem;font-weight:700;color:#dc2626}
-.ba-badge-good{display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:6px;padding:3px 10px;font-size:0.7rem;font-weight:700;color:#15803d}
-.ba-question{padding:14px 18px;background:var(--bg-alt);border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text-muted);font-style:italic;line-height:1.5}
-.ba-answer{padding:16px 18px;font-size:0.85rem;line-height:1.75;color:var(--text)}
-.ba-answer-bad{color:#6b7280}
-.ba-answer-good{color:#111}
-.ba-mark-bad{background:#fef2f2;border-radius:3px;padding:0 2px}
-.ba-mark-good{background:#f0fdf4;border-radius:3px;padding:0 2px;color:#15803d;font-weight:600}
-.ba-footer{padding:10px 18px;border-top:1px solid var(--border);display:flex;align-items:center;gap:7px;font-size:0.75rem}
-.ba-footer-bad{color:#dc2626}
-.ba-footer-good{color:#15803d}
+.ba-section{padding:100px 24px;position:relative;z-index:1}
+.ba-inner{max-width:900px;margin:0 auto;text-align:center}
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px;text-align:left}
+.ba-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s}
+.ba-card.good{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.03)}
+.ba-card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02)}
+.ba-badge-bad{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:#f87171;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);border-radius:20px;padding:3px 10px}
+.ba-badge-good{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:3px 10px}
+.ba-question{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.6);padding:16px 20px;border-bottom:1px solid var(--border);font-style:italic}
+.ba-answer{font-size:0.82rem;color:var(--text-muted);line-height:1.7;padding:16px 20px}
+.ba-answer-bad .ba-mark-bad{color:#f87171;background:rgba(248,113,113,0.12);padding:1px 4px;border-radius:3px}
+.ba-answer-good .ba-mark-good{color:#4ade80;background:rgba(74,222,128,0.12);padding:1px 4px;border-radius:3px}
+.ba-footer{display:flex;align-items:center;gap:8px;padding:12px 20px;font-size:0.72rem;font-weight:600;border-top:1px solid var(--border)}
+.ba-footer-bad{color:#f87171}
+.ba-footer-good{color:#4ade80}
+@media(max-width:640px){.ba-grid{grid-template-columns:1fr}}
 
-/* ── ANSWER SHOWCASE ── */
-.showcase-section{padding:80px 20px;background:var(--bg-alt);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
-.showcase-inner{max-width:900px;margin:0 auto}
-.showcase-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-top:36px;margin-bottom:24px}
-.s-tab{display:inline-flex;align-items:center;gap:7px;padding:9px 18px;border-radius:8px;font-size:0.83rem;font-weight:600;cursor:pointer;border:1px solid var(--border);background:#fff;color:var(--text-muted);transition:all 0.15s;user-select:none}
-.s-tab:hover{border-color:var(--border-dark);color:var(--black)}
-.s-tab.active{background:var(--black);color:#fff;border-color:var(--black)}
+/* ── SHOWCASE ── */
+.showcase-section{padding:100px 24px;position:relative;z-index:1}
+.showcase-inner{max-width:860px;margin:0 auto;text-align:center}
+.showcase-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:4px;margin:40px 0 32px;flex-wrap:wrap}
+.s-tab{flex:1;min-width:120px;padding:10px 16px;border-radius:10px;font-size:0.8rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;text-align:center}
+.s-tab.active{background:var(--grad2);color:#fff;box-shadow:0 2px 12px rgba(139,92,246,0.4)}
+.s-tab:hover:not(.active){color:#fff;background:rgba(255,255,255,0.06)}
 .showcase-pane{display:none}
-.showcase-pane.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media(max-width:640px){.showcase-pane.active{grid-template-columns:1fr}}
-.s-box{background:#fff;border:1px solid var(--border);border-radius:12px;overflow:hidden}
-.s-box-head{padding:12px 16px;border-bottom:1px solid var(--border);font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-subtle);display:flex;align-items:center;gap:7px}
-.s-box-q{padding:12px 16px;background:var(--bg-alt);border-bottom:1px solid var(--border);font-size:0.82rem;color:var(--text-muted);font-style:italic;line-height:1.5}
-.s-box-a{padding:14px 16px;font-size:0.83rem;color:var(--text);line-height:1.75}
-.s-box-footer{padding:8px 16px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--green);font-weight:700;display:flex;align-items:center;gap:5px}
+.showcase-pane.active{display:flex;flex-direction:column;gap:16px}
+.s-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-align:left;transition:border-color 0.2s}
+.s-box:hover{border-color:var(--border2)}
+.s-box-head{display:flex;align-items:center;gap:7px;font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:12px}
+.s-box-q{font-size:0.9rem;color:rgba(255,255,255,0.75);line-height:1.65;font-style:italic}
+.s-box-a{font-size:0.85rem;color:var(--text-muted);line-height:1.75}
+.s-box-footer{display:flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:var(--c1);margin-top:14px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.15);border-radius:8px;padding:6px 12px;width:fit-content}
 
-/* ── MOBILE EMAIL CAPTURE ── */
-.mobile-capture{display:none;background:var(--bg-dark);padding:48px 24px;text-align:center}
-.mobile-capture h3{font-size:1.4rem;font-weight:900;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
-.mobile-capture p{font-size:0.9rem;color:rgba(255,255,255,0.45);margin-bottom:24px;line-height:1.65}
-.email-form{display:flex;flex-direction:column;gap:10px;max-width:320px;margin:0 auto}
-.email-input{padding:13px 16px;border-radius:9px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.07);color:#fff;font-size:0.9rem;font-family:inherit;outline:none}
-.email-input::placeholder{color:rgba(255,255,255,0.3)}
-.email-input:focus{border-color:rgba(255,255,255,0.35)}
-.email-submit{padding:13px;border-radius:9px;background:#fff;color:#111;font-size:0.9rem;font-weight:700;border:none;cursor:pointer;font-family:inherit;transition:background 0.15s}
-.email-submit:hover{background:#f0f0f0}
-.email-note{font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:8px}
-@media(max-width:768px){.mobile-capture{display:block}}
+/* ── DOWNLOAD ── */
+.download-section{padding:100px 24px;position:relative;z-index:1}
+.dl-inner{max-width:760px;margin:0 auto;text-align:center}
+.dl-card{background:var(--surface);border:1px solid var(--border2);border-radius:24px;padding:48px 40px;margin-top:48px;position:relative;overflow:hidden}
+.dl-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(139,92,246,0.1) 0%,transparent 70%);pointer-events:none}
+.dl-version{font-size:0.8rem;color:var(--text-subtle);margin-bottom:6px;font-weight:500}
+.dl-title{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-0.03em}
+.dl-sub{font-size:0.85rem;color:var(--text-muted);margin-bottom:32px}
+.dl-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:24px}
+.dl-btn-mac{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--grad2);color:#fff;padding:16px 28px;border-radius:14px;font-weight:700;transition:all 0.2s;box-shadow:0 0 40px rgba(139,92,246,0.35),0 4px 20px rgba(0,0,0,0.4);min-width:220px;position:relative;overflow:hidden}
+.dl-btn-mac::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity 0.2s}
+.dl-btn-mac:hover::before{opacity:1}
+.dl-btn-mac:hover{transform:translateY(-3px);box-shadow:0 0 60px rgba(139,92,246,0.5),0 8px 32px rgba(0,0,0,0.5)}
+.dl-btn-mac-label{display:flex;align-items:center;gap:8px;font-size:0.92rem;font-weight:700}
+.dl-btn-mac-sub{font-size:0.7rem;opacity:0.7;font-weight:500}
+.dl-btn-win{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:16px 28px;border-radius:14px;font-weight:700;transition:all 0.2s;min-width:220px}
+.dl-btn-win:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25);transform:translateY(-3px)}
+.dl-btn-win-label{display:flex;align-items:center;gap:8px;font-size:0.92rem;font-weight:700}
+.dl-btn-win-sub{font-size:0.7rem;opacity:0.6;font-weight:500}
+.dl-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.dl-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--text-subtle);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:4px 12px}
+.dl-gh{margin-top:16px;font-size:0.78rem;color:var(--text-subtle)}
+.dl-gh a{color:var(--c2);text-decoration:none}
+.dl-gh a:hover{text-decoration:underline}
 
-/* ── PLATFORMS ── */
-.platforms{padding:60px 20px;border-top:1px solid var(--border);border-bottom:1px solid var(--border);background:#fff}
-.platforms-inner{max-width:1000px;margin:0 auto;text-align:center}
-.platforms-label{font-size:0.68rem;font-weight:800;color:var(--text-subtle);text-transform:uppercase;letter-spacing:0.1em;margin-bottom:10px}
-.platforms-h{font-size:clamp(1.4rem,3vw,1.9rem);font-weight:900;color:var(--black);letter-spacing:-0.02em;margin-bottom:8px}
-.platforms-sub{font-size:0.88rem;color:var(--text-muted);margin-bottom:40px;line-height:1.6}
-.platform-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:14px;margin-bottom:32px}
-.platform-card{display:flex;flex-direction:column;align-items:center;gap:10px;background:#fff;border:1px solid var(--border);border-radius:14px;padding:22px 20px;width:148px;transition:box-shadow 0.15s,border-color 0.15s;cursor:default}
-.platform-card:hover{box-shadow:0 4px 20px rgba(0,0,0,0.07);border-color:var(--border-dark)}
-.platform-icon-wrap{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-.platform-name{font-size:0.82rem;font-weight:700;color:var(--black)}
-.platform-badge{display:inline-flex;align-items:center;gap:4px;background:var(--green-bg);border:1px solid var(--green-border);border-radius:20px;padding:3px 9px;font-size:0.67rem;font-weight:700;color:#15803d}
-.shield-bar{display:flex;align-items:center;justify-content:center;gap:10px;background:#f8f9fa;border:1px solid var(--border);border-radius:10px;padding:14px 22px;font-size:0.82rem;color:var(--text-muted);max-width:600px;margin:0 auto}
-.shield-bar strong{color:var(--black)}
-@media(max-width:600px){.platform-card{width:calc(50% - 7px)}.platform-grid{gap:10px}}
+/* ── REQUIREMENTS ── */
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px}
+.req-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 28px}
+.req-card:hover{border-color:var(--border2)}
+.req-title{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:18px;letter-spacing:-0.02em}
+.req-sub{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c2);margin:16px 0 10px}
+.req-item{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;line-height:1.5}
+.req-check{color:#4ade80;font-weight:700;flex-shrink:0}
+.req-warn{color:#fbbf24;flex-shrink:0}
+@media(max-width:640px){.req-grid{grid-template-columns:1fr}}
+
+/* ── SETUP ── */
+.setup-steps{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative}
+.setup-steps::before{content:'';position:absolute;left:21px;top:24px;bottom:24px;width:1px;background:linear-gradient(to bottom,var(--c2),var(--c1),transparent);opacity:0.4}
+.setup-step{display:flex;gap:24px;align-items:flex-start;padding:0 0 36px}
+.setup-step:last-child{padding-bottom:0}
+.setup-num{width:44px;height:44px;border-radius:50%;background:var(--grad2);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 20px rgba(139,92,246,0.4);position:relative;z-index:1}
+.setup-content{flex:1;padding-top:10px}
+.setup-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.02em}
+.setup-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7}
+.setup-code{display:inline-block;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.25);border-radius:6px;padding:3px 10px;font-family:monospace;font-size:0.82rem;color:var(--c2);margin:6px 0}
+.setup-note{color:#fbbf24;font-size:0.8rem}
+
+/* ── PRICING ── */
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;position:relative;transition:border-color 0.2s,transform 0.2s}
+.plan-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.plan-card.featured{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.4);transform:scale(1.03)}
+.plan-card.featured:hover{transform:scale(1.03) translateY(-4px)}
+.plan-popular{display:inline-block;font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--c2);background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:4px 12px;margin-bottom:16px}
+.plan-name{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.02em}
+.plan-price{font-size:3rem;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.plan-price sup{font-size:1.2rem;font-weight:700;vertical-align:super;-webkit-text-fill-color:var(--c2)}
+.plan-period{font-size:0.8rem;color:var(--text-subtle);margin-bottom:20px;margin-top:2px}
+.plan-lifetime-tag{display:inline-block;font-size:0.7rem;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);border-radius:6px;padding:3px 9px;margin-bottom:12px}
+.plan-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
+.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--text-muted);margin-bottom:10px;line-height:1.5}
+.plan-check{color:#4ade80;font-weight:700;flex-shrink:0}
+.plan-x{color:rgba(255,255,255,0.2);flex-shrink:0}
+.plan-btn{width:100%;padding:13px;border-radius:10px;font-size:0.87rem;font-weight:700;margin-top:24px;transition:all 0.2s;cursor:pointer}
+.plan-btn-primary{background:var(--grad2);color:#fff;border:none;box-shadow:0 0 30px rgba(139,92,246,0.35)}
+.plan-btn-primary:hover{opacity:0.9;box-shadow:0 0 50px rgba(139,92,246,0.5);transform:translateY(-1px)}
+.plan-btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text-muted)}
+.plan-btn-outline:hover{border-color:rgba(255,255,255,0.3);color:#fff;background:rgba(255,255,255,0.04)}
+@media(max-width:768px){.pricing-grid{grid-template-columns:1fr}.plan-card.featured{transform:scale(1)}}
+
+/* ── REVIEWS ── */
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px 22px;transition:border-color 0.2s,transform 0.2s}
+.review-card:hover{border-color:var(--border2);transform:translateY(-4px)}
+.review-offer{font-size:0.72rem;font-weight:700;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:4px 12px;display:inline-block;margin-bottom:12px}
+.review-stars{color:#fbbf24;font-size:0.85rem;margin-bottom:12px;letter-spacing:2px}
+.review-text{font-size:0.83rem;color:var(--text-muted);line-height:1.75;margin-bottom:18px}
+.review-author{display:flex;align-items:center;gap:11px}
+.review-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
+.review-name{font-size:0.85rem;font-weight:700;color:rgba(255,255,255,0.85)}
+.review-role{font-size:0.72rem;color:var(--text-subtle);margin-top:1px}
+@media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.reviews-grid{grid-template-columns:1fr}}
 
 /* ── FAQ ── */
-.faq-list{margin-top:36px}
-.faq-item{border-bottom:1px solid var(--border)}
-.faq-item:first-child{border-top:1px solid var(--border)}
-.faq-q{width:100%;display:flex;align-items:center;justify-content:space-between;padding:18px 0;font-size:0.92rem;font-weight:600;color:var(--black);text-align:left;cursor:pointer;background:none;border:none;font-family:inherit;gap:12px}
-.faq-q:hover{color:#333}
-.faq-icon{font-size:1.1rem;color:var(--text-subtle);transition:transform 0.2s;flex-shrink:0}
-.faq-a{font-size:0.85rem;color:var(--text-muted);line-height:1.75;padding-bottom:18px;display:none}
-.faq-a.open{display:block}
+.faq-list{max-width:720px;margin:40px auto 0}
+.faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:border-color 0.2s}
+.faq-item:hover{border-color:var(--border2)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 22px;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.85);background:transparent;cursor:pointer;text-align:left;gap:16px;transition:color 0.2s}
+.faq-q:hover{color:#fff}
+.faq-icon{font-size:1.2rem;color:var(--c2);font-weight:300;flex-shrink:0;transition:transform 0.2s}
 .faq-icon.open{transform:rotate(45deg)}
+.faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.2s}
+.faq-a.open{max-height:400px;padding:0 22px 18px}
+.faq-a-inner{font-size:0.85rem;color:var(--text-muted);line-height:1.75}
+.faq-a-inner code{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.82rem;color:var(--c2)}
 
 /* ── FINAL CTA ── */
-.final-cta{padding:80px 20px;text-align:center;background:var(--bg-dark)}
-.final-cta h2{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;color:#fff;margin-bottom:14px;letter-spacing:-0.025em}
-.final-cta p{color:rgba(255,255,255,0.45);margin-bottom:32px;font-size:0.97rem;line-height:1.75}
-.btn-cta-white{display:inline-flex;align-items:center;gap:9px;background:#fff;color:#111;padding:15px 30px;border-radius:10px;font-size:0.95rem;font-weight:700;transition:all 0.15s;border:2px solid #fff}
-.btn-cta-white:hover{background:#f0f0f0;transform:translateY(-1px)}
+.final-cta{position:relative;z-index:1;padding:120px 24px;text-align:center;overflow:hidden}
+.final-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(139,92,246,0.15) 0%,rgba(34,211,238,0.08) 50%,transparent 80%);pointer-events:none}
+.final-cta-inner{max-width:560px;margin:0 auto;position:relative;z-index:1}
+.final-cta h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px}
+.final-cta p{font-size:1.05rem;color:var(--text-muted);line-height:1.75;margin-bottom:36px}
+.cta-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
 
 /* ── FOOTER ── */
-.footer{padding:48px 20px 32px;border-top:1px solid var(--border);background:var(--bg-alt)}
-.footer-inner{max-width:1000px;margin:0 auto}
-.footer-top{display:flex;flex-wrap:wrap;gap:40px;justify-content:space-between;margin-bottom:40px}
-.footer-brand{max-width:240px}
-.footer-logo{display:flex;align-items:center;gap:9px;font-size:0.95rem;font-weight:800;color:var(--black);margin-bottom:9px}
-.footer-tagline{font-size:0.81rem;color:var(--text-muted);line-height:1.6}
-.footer-col h4{font-size:0.67rem;font-weight:800;text-transform:uppercase;letter-spacing:0.08em;color:var(--text-subtle);margin-bottom:12px}
-.footer-col a{display:block;font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;transition:color 0.15s}
-.footer-col a:hover{color:var(--black)}
-.footer-bottom{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;border-top:1px solid var(--border);padding-top:22px}
-.footer-copy{font-size:0.75rem;color:var(--text-subtle)}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60px 24px 32px}
+.footer-inner{max-width:1100px;margin:0 auto}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
+.footer-logo{display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:800;color:#fff;margin-bottom:14px}
+.footer-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+.footer-tagline{font-size:0.83rem;color:var(--text-subtle);line-height:1.65;max-width:260px}
+.footer-col h4{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:16px}
+.footer-col a{display:block;font-size:0.83rem;color:var(--text-muted);margin-bottom:10px;transition:color 0.15s}
+.footer-col a:hover{color:#fff}
+.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:24px}
+.footer-copy{font-size:0.77rem;color:var(--text-subtle)}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}.footer-bottom{flex-direction:column}}
+@media(max-width:480px){.footer-top{grid-template-columns:1fr}}
 
-/* ── UTILS ── */
-.text-center{text-align:center}
-.divider{height:1px;background:var(--border)}
-
-/* ── RESPONSIVE ── */
-@media(max-width:480px){
-  .hero{padding:90px 16px 40px}
-  .section{padding:56px 16px}
-  .dl-section-wrap{border-radius:12px}
-  .pricing-grid{max-width:100%}
-}
+/* ── SCROLL ANIMATIONS ── */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+.reveal.visible{opacity:1;transform:none}
+.reveal-delay-1{transition-delay:0.1s}
+.reveal-delay-2{transition-delay:0.2s}
+.reveal-delay-3{transition-delay:0.3s}
+.reveal-delay-4{transition-delay:0.4s}
+.reveal-delay-5{transition-delay:0.5s}
 </style>
 </head>
 <body>
 
+<!-- Background -->
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+<div class="grid-bg"></div>
+
 <!-- ── NAV ── -->
-<nav class="nav">
+<nav>
   <div class="nav-inner">
     <a href="/" class="nav-logo">
-      <img src="/ao-logo.png" alt="AstraOffer"/>
+      <div class="nav-logo-mark">A</div>
       AstraOffer
     </a>
     <div class="nav-links">
-      <a href="#how-it-works">How it works</a>
       <a href="#features">Features</a>
-      <a href="#download">Download</a>
+      <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-cta">
-      <a href="#download" class="btn-dl">⬇ Download Free</a>
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-nav">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Download Free
+      </a>
     </div>
   </div>
 </nav>
 
 <!-- ── HERO ── -->
 <section class="hero">
-  <div class="hero-bg"></div>
   <div class="hero-badge">
-    <span class="hero-badge-dot"></span>
-    Used by engineers at Google · Meta · Amazon · Stripe · Apple
+    <span class="badge-dot"></span>
+    Live — Real-time AI during interviews
   </div>
-  <h1>Ace every interview.<br><em>Invisible to your interviewer.</em></h1>
-  <p class="hero-sub">AstraOffer Assistant sits invisibly on your screen during Zoom, Teams, or Meet. It hears the interviewer, understands the question, and gives you a perfect answer in seconds — live, only visible to you.</p>
-  <div class="hero-actions">
-    <a href="#download" class="btn-primary" id="dl-hero">⬇ Download Free</a>
-    <a href="#how-it-works" class="btn-ghost">See how it works →</a>
+  <h1>Your invisible<br><span class="grad-text">AI co-pilot</span><br>in every interview</h1>
+  <p class="hero-sub">Real-time AI answers while the interviewer is still speaking. Completely invisible during Zoom, Teams & Meet screen share. Mac + Windows.</p>
+  <div class="hero-btns">
+    <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-primary">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      Download for Mac — Free
+    </a>
+    <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-ghost">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+      Windows
+    </a>
+    <a href="#how" class="btn-ghost">See how it works →</a>
   </div>
-  <div class="hero-platform-tags">
-    <span class="platform-tag">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      macOS 12+ · Apple Silicon
-    </span>
-    <span class="platform-tag" style="color:#d1d5db">·</span>
-    <span class="platform-tag">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-      Windows 10/11 · x64
-    </span>
-    <span class="platform-tag" style="color:#d1d5db">·</span>
-    <span class="platform-tag">No API keys needed</span>
+  <div class="platform-row" style="margin-bottom:56px">
+    <span class="platform-tag">🔒 AI included — no API keys</span>
+    <span class="platform-tag">👁 Invisible on screen share</span>
+    <span class="platform-tag">⚡ Answer in &lt;1 second</span>
+    <span class="platform-tag">🆓 Free to start</span>
   </div>
 
-  <!-- ── DESKTOP MOCKUP ── -->
-  <div class="screen-wrap">
-    <p class="screen-caption">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-      This is your screen during the interview
-    </p>
-
-    <div class="screen-frame">
-      <!-- macOS title bar -->
+  <!-- App mockup -->
+  <div class="mockup-wrap">
+    <div class="mockup-glow"></div>
+    <div class="mockup-frame">
       <div class="mac-bar">
         <div class="mac-dots">
-          <div class="mac-dot" style="background:#ef4444"></div>
-          <div class="mac-dot" style="background:#f59e0b"></div>
-          <div class="mac-dot" style="background:#22c55e"></div>
+          <div class="mac-dot mac-dot-r"></div>
+          <div class="mac-dot mac-dot-y"></div>
+          <div class="mac-dot mac-dot-g"></div>
         </div>
-        <span class="mac-bar-label">Your Mac — AstraOffer window excluded from screen share at OS level</span>
+        <div class="mac-bar-url">AstraOffer Assistant — Google Interview · SWE L5</div>
       </div>
-
-      <!-- macOS desktop -->
-      <div class="mac-desktop" style="min-height:380px">
-
-        <!-- Video call background (what interviewer sees) -->
-        <div class="vc-bg">
-          <!-- Interviewer tile -->
-          <div class="vc-tile">
-            <div class="vc-tile-inner">
-              <div class="vc-avatar">👤</div>
-            </div>
-            <div class="vc-name">Interviewer · Google</div>
-            <div class="vc-status"></div>
-            <div class="vc-sees-label">🔴 Interviewer's screen share shows only this</div>
+      <div class="screen-body">
+        <div class="screen-left">
+          <div class="s-label">Interviewer (system audio)</div>
+          <div class="s-chip"><span class="s-chip-dot"></span>Listening live</div>
+          <div class="s-question">"Tell me about a time you had to make a critical technical decision with incomplete information. How did you handle the uncertainty?"</div>
+          <div class="s-waveform">
+            <div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div>
+            <div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div>
+            <div class="s-bar"></div><div class="s-bar"></div>
           </div>
-          <!-- Your tile -->
-          <div class="vc-tile" style="background:#050514">
-            <div class="vc-tile-inner">
-              <div class="vc-avatar" style="background:rgba(99,102,241,0.15)">🙂</div>
-            </div>
-            <div class="vc-name">You</div>
+          <div style="font-size:0.65rem;color:rgba(255,255,255,0.2);margin-top:10px;font-weight:600">GROQ WHISPER · 5s chunks · 0.4s latency</div>
+        </div>
+        <div class="screen-right">
+          <div class="s-label">AI answer — streaming now</div>
+          <div class="s-answer">At my previous company, we needed to choose between migrating to Kubernetes or staying on ECS with two weeks until a major client launch. The production data was inconclusive — both had tradeoffs under load. I ran a rapid spike: built a minimal K8s cluster, load-tested it against our staging environment over 48 hours, and documented the failure modes. Based on that data I recommended staying on ECS for the launch and planning the K8s migration post-launch. The launch hit 4× our expected traffic with zero incidents.<span class="typing-cursor"></span></div>
+          <div class="s-chip" style="margin-top:14px;background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--c2)">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+            Claude Sonnet · 0.8s · Resume-grounded
           </div>
         </div>
-
-        <!-- Meet-style controls -->
-        <div class="vc-controls">
-          <div class="vc-btn">🎤</div>
-          <div class="vc-btn">📹</div>
-          <div class="vc-btn vc-btn-end">📞</div>
-          <div class="vc-btn">💬</div>
-          <div class="vc-btn">⋯</div>
-        </div>
-
-        <!-- ── AstraOffer overlay (invisible to screen share) ── -->
-        <div class="ao-win">
-
-          <!-- Tab bar -->
-          <div class="ao-titlebar">
-            <div class="ao-tab active">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#a5b4fc" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              AstraOffer
-            </div>
-            <div class="ao-tab">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-              Coding Solver
-            </div>
-            <div class="ao-rec" style="margin-left:10px"></div>
-            <div class="ao-timer">⏱ 08:23</div>
-            <div class="ao-spacer"></div>
-            <div class="ao-shield">
-              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-              Invisible to screen share
-            </div>
-            <div class="ao-settings">⚙</div>
-          </div>
-
-          <!-- Three panels -->
-          <div class="ao-panels">
-
-            <!-- LEFT: Live Transcript -->
-            <div class="ao-panel">
-              <div class="ao-panel-hd">
-                <div class="ao-live-dot"></div>
-                Live Transcript
-              </div>
-
-              <div class="ao-msg">
-                <div class="ao-msg-role">Interviewer</div>
-                <div class="ao-msg-text">Hi, great to meet you. Can you walk me through your background quickly?</div>
-              </div>
-              <div class="ao-msg">
-                <div class="ao-msg-role you">You</div>
-                <div class="ao-msg-text">Sure — 5 years in backend engineering, mostly distributed systems at Series B stage.</div>
-              </div>
-              <div class="ao-msg">
-                <div class="ao-msg-role">Interviewer</div>
-                <div class="ao-msg-text">Tell me about a time you debugged a production incident under pressure.</div>
-              </div>
-              <div class="ao-typing">
-                <span></span><span></span><span></span>
-                <span style="font-size:0.58rem;color:rgba(255,255,255,0.2);margin-left:4px">Interviewer typing…</span>
-              </div>
-            </div>
-
-            <!-- MIDDLE: AI Answer -->
-            <div class="ao-panel">
-              <div class="ao-panel-hd">AI Answer</div>
-              <div class="ao-q-label">"Tell me about a time you debugged a production incident under pressure."</div>
-              <div class="ao-answer-box">
-                I was the on-call engineer when our checkout service hit a 40% error rate at 2 AM. I isolated the root cause in 8 minutes — a missing index on a high-traffic query introduced in a deploy two hours earlier. I rolled back the migration, applied a hotfix, and wrote the post-mortem by morning. We cut P99 latency by 60% and added that query pattern to our pre-deploy checklist.<span class="preview-cursor"></span>
-              </div>
-              <div class="ao-ready-pill">✓ Answer ready · 0.7s</div>
-            </div>
-
-            <!-- RIGHT: History -->
-            <div class="ao-panel">
-              <div class="ao-panel-hd">History · 2 answers</div>
-              <div class="ao-hist">
-                <div class="ao-hist-q">Q: Walk me through your background</div>
-                <div class="ao-hist-a">5 years backend, distributed systems at two Series B startups. Led infra team of 4, shipped 30+ features…</div>
-              </div>
-              <div class="ao-hist" style="margin-top:6px">
-                <div class="ao-hist-q">Q: Why are you interested in this role?</div>
-                <div class="ao-hist-a">The scale of Google's infra is exactly the problem space I want to work in. At my last company I hit the ceiling of…</div>
-              </div>
-            </div>
-
-          </div>
-
-          <!-- Input bar -->
-          <div class="ao-inputbar">
-            <div style="display:flex;align-items:center;gap:6px;color:rgba(255,255,255,0.2);font-size:0.65rem;flex-shrink:0">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 7l-7 5 7 5V7z"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
-            </div>
-            <div class="ao-input-fake">Type a follow-up or override question…</div>
-            <div class="ao-send-hint">
-              <div class="ao-kbd">⌘</div>+<div class="ao-kbd">↵</div>
-            </div>
-          </div>
-
-        </div>
-        <!-- end ao-win -->
-
       </div>
-      <!-- end mac-desktop -->
     </div>
-    <!-- end screen-frame -->
-
-    <p class="screen-note">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      The AstraOffer panel is <strong style="color:#111">only visible to you</strong> — your screen share sends only the video call to your interviewer.
-    </p>
   </div>
 </section>
 
-<!-- ── STATS STRIP ── -->
-<div class="stats-strip">
-  <div class="stats-strip-inner">
-    <div class="stat-item">
-      <div class="stat-num">4,<span>200</span>+</div>
-      <div class="stat-label">Engineers hired</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num">$<span>187K</span></div>
-      <div class="stat-label">Average offer</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num"><span>89</span>%</div>
-      <div class="stat-label">Interview pass rate</div>
-    </div>
-    <div class="stat-item">
-      <div class="stat-num"><span>0.7</span>s</div>
-      <div class="stat-label">Avg answer time</div>
-    </div>
+<!-- ── TICKER ── -->
+<div class="ticker-section">
+  <div class="ticker-fade-l"></div>
+  <div class="ticker-fade-r"></div>
+  <div class="ticker-track">
+    <span class="ticker-item">🎉 Google L5 — $195K + RSUs</span>
+    <span class="ticker-item">🎉 Meta E5 — $220K TC</span>
+    <span class="ticker-item">🎉 Amazon SDE II — $165K</span>
+    <span class="ticker-item">🎉 Stripe L4 — $185K TC</span>
+    <span class="ticker-item">🎉 Microsoft SDE2 — $175K</span>
+    <span class="ticker-item">🎉 Airbnb E5 — $210K TC</span>
+    <span class="ticker-item">🎉 Apple ICT4 — $200K TC</span>
+    <span class="ticker-item">🎉 Uber L5 — $190K TC</span>
+    <!-- dupe for seamless loop -->
+    <span class="ticker-item">🎉 Google L5 — $195K + RSUs</span>
+    <span class="ticker-item">🎉 Meta E5 — $220K TC</span>
+    <span class="ticker-item">🎉 Amazon SDE II — $165K</span>
+    <span class="ticker-item">🎉 Stripe L4 — $185K TC</span>
+    <span class="ticker-item">🎉 Microsoft SDE2 — $175K</span>
+    <span class="ticker-item">🎉 Airbnb E5 — $210K TC</span>
+    <span class="ticker-item">🎉 Apple ICT4 — $200K TC</span>
+    <span class="ticker-item">🎉 Uber L5 — $190K TC</span>
   </div>
 </div>
-
-<!-- ── MOBILE EMAIL CAPTURE ── -->
-<div class="mobile-capture">
-  <h3>Get the download link on your Mac or PC</h3>
-  <p>AstraOffer Assistant is a desktop app — it can't run in a browser. Enter your email and we'll send the download link to open on your computer.</p>
-  <form class="email-form" onsubmit="handleEmailCapture(event)">
-    <input class="email-input" type="email" placeholder="your@email.com" required id="mobile-email"/>
-    <button class="email-submit" type="submit">Send download link →</button>
-    <p class="email-note">No spam. Just the download link + setup guide.</p>
-  </form>
-  <div id="email-success" style="display:none;color:#4ade80;font-size:0.85rem;font-weight:600;margin-top:12px">✓ Sent! Check your inbox.</div>
-</div>
-
-<!-- ── COMPANIES ── -->
-<div class="companies">
-  <div class="companies-inner">
-    <div class="companies-label">Engineers using AstraOffer got hired at</div>
-    <div class="companies-logos">
-      <span class="co-logo">Google</span>
-      <span class="co-logo">Meta</span>
-      <span class="co-logo">Amazon</span>
-      <span class="co-logo">Apple</span>
-      <span class="co-logo">Microsoft</span>
-      <span class="co-logo">Stripe</span>
-      <span class="co-logo">Airbnb</span>
-      <span class="co-logo">Netflix</span>
-      <span class="co-logo">Uber</span>
-      <span class="co-logo">Salesforce</span>
-    </div>
-  </div>
-</div>
-
-<!-- ── PLATFORMS ── -->
-<section class="platforms">
-  <div class="platforms-inner">
-    <div class="platforms-label">Screen share invisibility</div>
-    <h2 class="platforms-h">Use it anywhere. Invisible everywhere.</h2>
-    <p class="platforms-sub">AstraOffer Assistant uses OS-level window exclusion — not a hack, not a filter.<br>It is architecturally excluded from every screen recording API your interviewer can use.</p>
-
-    <div class="platform-grid">
-
-      <!-- Zoom -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#2D8CFF">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M5 11a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v6a3 3 0 0 1-3 3H8a3 3 0 0 1-3-3v-6zm16 1.2 5.4-3.2a.8.8 0 0 1 1.2.7v8.6a.8.8 0 0 1-1.2.7L21 15.8v-3.6z" fill="#fff"/>
-          </svg>
-        </div>
-        <span class="platform-name">Zoom</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-      <!-- Google Meet -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#fff;border:1px solid #e5e7eb">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M19.5 13.5H10a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h9.5a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2z" fill="#00897B"/>
-            <path d="M21.5 14.8l6-3.8v10l-6-3.8v-2.4z" fill="#00897B"/>
-            <circle cx="14.5" cy="11" r="3" fill="#4285F4"/>
-            <path d="M11.5 11a3 3 0 0 1 6 0" fill="#4285F4"/>
-          </svg>
-        </div>
-        <span class="platform-name">Google Meet</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-      <!-- Microsoft Teams -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#5059C9">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M19 14h5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2z" fill="rgba(255,255,255,0.3)"/>
-            <rect x="7" y="10" width="14" height="14" rx="2" fill="#fff"/>
-            <path d="M14 13v8M10.5 13h7" stroke="#5059C9" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <span class="platform-name">Microsoft Teams</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-      <!-- Skype -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#00AFF0">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M27 16.7A11 11 0 0 1 5.3 9c-.2.9-.3 1.9-.3 3a11 11 0 0 0 18.7 7.8c.9.4 1.9.6 2.9.6.4 0 .3-2.1.4-3.7zM5 15.3A11 11 0 0 1 26.7 23c.2-.9.3-1.9.3-3a11 11 0 0 0-18.7-7.8C7.4 11.8 6.4 11.6 5.4 11.6c-.4 0-.3 2.1-.4 3.7z" fill="rgba(255,255,255,0.3)"/>
-            <path d="M16 8a8 8 0 1 0 0 16A8 8 0 0 0 16 8zm1.8 11.5c-3.5.8-5.6-1-5.6-1l1.3-1.5s1.5 1.4 3.7.9c1-.2 1.5-.9 1.3-1.5-.5-1.6-5.5-.9-5.8-3.8-.2-1.8 1.2-3.1 3.3-3.5 3-.5 4.8.9 4.8.9l-1.2 1.6s-1.3-1.1-3.2-.7c-.9.2-1.4.7-1.3 1.3.4 1.5 5.5.8 5.9 3.8.2 1.9-1.1 3.3-3.2 3.5z" fill="#fff"/>
-          </svg>
-        </div>
-        <span class="platform-name">Skype</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-      <!-- Webex -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#00BCF2">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M16 7C11 7 7 11 7 16s4 9 9 9 9-4 9-9-4-9-9-9zm0 14a5 5 0 1 1 0-10 5 5 0 0 1 0 10z" fill="#fff"/>
-            <path d="M16 13a3 3 0 1 0 0 6 3 3 0 0 0 0-6z" fill="#fff"/>
-            <path d="M22 9.5L26 7v4l-4-1.5zM10 9.5L6 7v4l4-1.5z" fill="rgba(255,255,255,0.6)"/>
-          </svg>
-        </div>
-        <span class="platform-name">Webex</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-      <!-- Discord -->
-      <div class="platform-card">
-        <div class="platform-icon-wrap" style="background:#5865F2">
-          <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-            <path d="M22 9.5a17.2 17.2 0 0 0-4.3-1.3l-.5 1a15.9 15.9 0 0 0-4.4 0l-.5-1A17.3 17.3 0 0 0 8 9.5 18.2 18.2 0 0 0 5 21.8a17.2 17.2 0 0 0 5.3 2.7l1.1-1.5A11.3 11.3 0 0 1 9.5 22l.4-.3a12.3 12.3 0 0 0 12.1 0l.4.3a11.3 11.3 0 0 1-1.9 1l1.1 1.5A17.2 17.2 0 0 0 27 21.8 18.2 18.2 0 0 0 22 9.5zM13 19a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm6 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4z" fill="#fff"/>
-          </svg>
-        </div>
-        <span class="platform-name">Discord</span>
-        <span class="platform-badge">✓ Undetectable</span>
-      </div>
-
-    </div>
-
-    <div class="shield-bar">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <span><strong>OS-level window exclusion</strong> — your screen share shows your desktop normally. AstraOffer is excluded at the GPU framebuffer level. No interviewer, no proctoring tool, no screen recording software can see it.</span>
-    </div>
-  </div>
-</section>
 
 <!-- ── HOW IT WORKS ── -->
-<section class="section" id="how-it-works">
-  <div class="section-inner">
-    <div class="section-label">How it works</div>
-    <h2 class="section-h">Three steps. Zero nerves.</h2>
-    <p class="section-sub">From download to your first live interview in under 5 minutes.</p>
-    <div class="steps">
-      <div class="step-card">
-        <div class="step-num">1</div>
-        <div class="step-title">Download & install</div>
-        <div class="step-desc">Download the installer for your platform. Mac: drag to Applications, right-click → Open. Windows: run the .exe and follow the installer. No account required.</div>
+<section class="section" id="how">
+  <div class="section-inner text-center">
+    <div class="section-label reveal">How it works</div>
+    <h2 class="section-h reveal">Zero setup. Instant answers.</h2>
+    <p class="section-sub reveal">Join your interview call as normal. AstraOffer runs silently in the background, invisible to everyone else.</p>
+    <div class="how-grid">
+      <div class="how-card reveal reveal-delay-1">
+        <div class="how-num">01</div>
+        <div class="how-title">Captures interviewer audio</div>
+        <div class="how-desc">Listens to your speakers via system audio loopback — the interviewer's voice, not yours. No microphone. No recording. Works on Zoom, Teams, Meet, and any video call.</div>
       </div>
-      <div class="step-card">
-        <div class="step-num">2</div>
-        <div class="step-title">Sign in to your AstraOffer account</div>
-        <div class="step-desc">Log in with your AstraOffer account. AI is included in your plan — no third-party keys, no extra setup. Free plan gives you 10 answers per day instantly.</div>
+      <div class="how-card reveal reveal-delay-2">
+        <div class="how-num">02</div>
+        <div class="how-title">Transcribes & detects questions</div>
+        <div class="how-desc">Groq Whisper transcribes speech in real-time with 5-second audio chunks for maximum accuracy. Smart question detection fires the moment the interviewer finishes speaking.</div>
       </div>
-      <div class="step-card">
-        <div class="step-num">3</div>
-        <div class="step-title">Use it in your interview</div>
-        <div class="step-desc">Press Cmd+Shift+S (Mac) or Ctrl+Shift+S (Windows) to start listening. Answers appear instantly — invisible to the screen share.</div>
+      <div class="how-card reveal reveal-delay-3">
+        <div class="how-num">03</div>
+        <div class="how-title">Streams a perfect answer</div>
+        <div class="how-desc">Claude Sonnet generates a STAR-structured answer grounded in your actual resume — company names, dates, metrics, projects. Ready to speak in under a second.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ── FEATURES ── -->
-<section class="section section-alt" id="features">
-  <div class="section-inner">
-    <div class="section-label">Features</div>
-    <h2 class="section-h">Everything you need to perform your best.</h2>
-    <div class="features-grid">
+<section class="features-section" id="features">
+  <div class="features-inner">
+    <div class="text-center" style="margin-bottom:0">
+      <div class="section-label reveal">Features</div>
+      <h2 class="section-h reveal">Everything you need to win.</h2>
+      <p class="section-sub text-center reveal" style="margin:0 auto">Built for live interviews. Every feature designed to keep you confident under pressure.</p>
+    </div>
+    <div class="features-grid reveal" style="margin-top:56px">
       <div class="feat-card">
-        <div class="feat-ico">🛡</div>
-        <div class="feat-name">100% Invisible During Screen Share</div>
-        <div class="feat-desc">Uses OS-level window exclusion — CGWindowSharingNone on Mac, WDA_EXCLUDEFROMCAPTURE on Windows. Excluded from every screen capture API. Undetectable on Zoom, Google Meet, Teams, Skype, Webex, Discord, and OBS.</div>
+        <div class="feat-icon">👁</div>
+        <div class="feat-title">Truly invisible</div>
+        <div class="feat-desc">Uses OS-level API to exclude the window from all screen capture. Zoom, Teams, Meet, and OBS cannot see it — architecturally, not just hidden.</div>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">🔊</div>
-        <div class="feat-name">Interviewer Audio Only</div>
-        <div class="feat-desc">Captures system audio via loopback — only what comes through your speakers. Your mic is never touched. Read an answer out loud and the AI won't hear you.</div>
+        <div class="feat-icon">⚡</div>
+        <div class="feat-title">Real-time — under 1 second</div>
+        <div class="feat-desc">Answer starts streaming while you're still processing the question. Groq Whisper + Claude Sonnet streaming gives you words before the interviewer finishes their breath.</div>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">🤖</div>
-        <div class="feat-name">Real-Time AI Answers</div>
-        <div class="feat-desc">Powered by Claude — the most human-sounding AI available. Included in every plan. Answers are grounded in your resume and tailored to the company and role in under 1 second.</div>
+        <div class="feat-icon">📄</div>
+        <div class="feat-title">Resume-grounded answers</div>
+        <div class="feat-desc">Every answer pulls real data from your resume: company names, years, tech stack, metrics, outcomes. Nothing generic. Nothing fabricated.</div>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">💻</div>
-        <div class="feat-name">Live Coding Solver</div>
-        <div class="feat-desc">Capture the coding problem on screen. Get a full coaching sheet: what to say first, complete code, complexity, and a step-by-step narration script.</div>
+        <div class="feat-icon">💻</div>
+        <div class="feat-title">Live coding solver</div>
+        <div class="feat-desc">Hotkey captures your screen. Claude reads the problem and returns a full coaching sheet: what to say first, complete runnable code, complexity, and narration script while typing.</div>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">⌨️</div>
-        <div class="feat-name">Global Hotkeys</div>
-        <div class="feat-desc">Listen, capture screen, hide instantly. Works even when Zoom is in the foreground. Never touch the mouse during the interview.</div>
+        <div class="feat-icon">🎙</div>
+        <div class="feat-title">System audio — no mic</div>
+        <div class="feat-desc">Captures the interviewer's voice from your speakers via loopback. Your voice is never recorded. Push-to-talk available if you need mic input.</div>
       </div>
       <div class="feat-card">
-        <div class="feat-ico">🎯</div>
-        <div class="feat-name">Context-Aware Answers</div>
-        <div class="feat-desc">Upload your resume and job description once. Every answer references your actual experience — no generic responses, no invented facts, no filler phrases.</div>
+        <div class="feat-icon">🔑</div>
+        <div class="feat-title">AI included — zero setup</div>
+        <div class="feat-desc">No Claude key, no Groq key, no OpenAI account. Sign in with your AstraOffer account and the AI works immediately. We handle the infrastructure.</div>
       </div>
     </div>
   </div>
 </section>
 
 <!-- ── BEFORE / AFTER ── -->
-<section class="ba-section" id="before-after">
+<section class="ba-section" id="comparison">
   <div class="ba-inner">
-    <div class="section-label">The difference</div>
-    <h2 class="section-h">What your answers sound like — without vs. with AstraOffer.</h2>
-    <p class="section-sub">Same question. Same candidate. Completely different outcome.</p>
-
-    <div class="ba-grid">
-      <!-- WITHOUT -->
+    <div class="section-label reveal">The difference</div>
+    <h2 class="section-h reveal">What an answer sounds like with and without AstraOffer.</h2>
+    <p class="section-sub reveal" style="margin:0 auto">Same candidate. Same resume. Same question. Different outcome.</p>
+    <div class="ba-grid reveal">
       <div class="ba-card">
         <div class="ba-card-head">
           <div class="ba-badge-bad">✕ Without AstraOffer</div>
         </div>
         <div class="ba-question">"Tell me about a time you led a team through a difficult situation."</div>
-        <div class="ba-answer ba-answer-bad">
-          "Um, yeah so <span class="ba-mark-bad">I think</span> there was this one time where we had like a <span class="ba-mark-bad">kind of</span> hard project and I was <span class="ba-mark-bad">sort of</span> leading it. We had some issues with the timeline and we <span class="ba-mark-bad">basically</span> just pushed through it. I think the team did pretty well. <span class="ba-mark-bad">I'm not sure</span> if that answers the question."
+        <div class="ba-answer">
+          "Um, yeah so <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">I think</span> there was this one time where we had like a <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">kind of</span> hard project and I was <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">sort of</span> leading it. We had some issues with the timeline and we <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">basically</span> just pushed through it."
         </div>
         <div class="ba-footer ba-footer-bad">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
           Vague · No metrics · Filler words · No structure
         </div>
       </div>
-
-      <!-- WITH -->
-      <div class="ba-card" style="border-color:#bbf7d0">
-        <div class="ba-card-head" style="background:#f0fdf4">
+      <div class="ba-card good">
+        <div class="ba-card-head">
           <div class="ba-badge-good">✓ With AstraOffer</div>
         </div>
-        <div class="ba-question" style="background:#f0fdf4;border-color:#bbf7d0">"Tell me about a time you led a team through a difficult situation."</div>
-        <div class="ba-answer ba-answer-good">
-          "At my previous company, we had <span class="ba-mark-good">a production outage 48 hours before a major client demo</span>. I led a team of 4 engineers to isolate the root cause — a memory leak in our message queue — and deploy a fix in under 6 hours. <span class="ba-mark-good">I split the team into two tracks:</span> one debugging, one preparing a rollback plan. The demo went ahead on time. The client signed a $240K contract the following week."
+        <div class="ba-question">"Tell me about a time you led a team through a difficult situation."</div>
+        <div class="ba-answer">
+          "At my previous company, we had <span style="color:#4ade80;background:rgba(74,222,128,0.1);padding:1px 4px;border-radius:3px">a production outage 48 hours before a major client demo</span>. I led a team of 4 engineers to isolate the root cause — a memory leak — and deploy a fix in under 6 hours. <span style="color:#4ade80;background:rgba(74,222,128,0.1);padding:1px 4px;border-radius:3px">The client signed a $240K contract the following week.</span>"
         </div>
         <div class="ba-footer ba-footer-good">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
           Specific · Metric-driven · STAR structure · Memorable
         </div>
       </div>
@@ -832,19 +546,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <!-- ── ANSWER SHOWCASE ── -->
 <section class="showcase-section" id="showcase">
   <div class="showcase-inner">
-    <div class="section-label">Answer quality</div>
-    <h2 class="section-h">Every type of interview question. Covered.</h2>
-    <p class="section-sub">Behavioral, System Design, Coding narration, Culture Fit — AstraOffer generates grounded, resume-backed answers for all of them.</p>
-
-    <div class="showcase-tabs">
+    <div class="section-label reveal">Answer quality</div>
+    <h2 class="section-h reveal">Every interview question type. Covered.</h2>
+    <p class="section-sub reveal" style="margin:0 auto">Behavioral, System Design, Coding narration, Culture Fit — AstraOffer generates grounded, resume-backed answers for all of them.</p>
+    <div class="showcase-tabs reveal">
       <div class="s-tab active" onclick="showTab('behavioral',this)">💬 Behavioral</div>
       <div class="s-tab" onclick="showTab('sysdesign',this)">🏗 System Design</div>
       <div class="s-tab" onclick="showTab('coding',this)">💻 Coding</div>
       <div class="s-tab" onclick="showTab('culture',this)">🎯 Culture Fit</div>
     </div>
-
-    <!-- Behavioral -->
-    <div class="showcase-pane active" id="pane-behavioral">
+    <div class="showcase-pane active reveal" id="pane-behavioral">
       <div class="s-box">
         <div class="s-box-head">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -853,87 +564,62 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <div class="s-box-q">"Describe a time you disagreed with your manager. How did you handle it?"</div>
       </div>
       <div class="s-box">
-        <div class="s-box-head" style="color:#15803d">
+        <div class="s-box-head" style="color:#4ade80">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
           AstraOffer answer
         </div>
-        <div class="s-box-a">In Q3 last year, my manager wanted to delay our API rate-limiting feature to ship a lower-priority UI update instead. I disagreed because we had two enterprise clients actively hitting our limits. I put together a one-page impact analysis showing the churn risk — $80K ARR — and presented it in our next 1-on-1. He agreed to reprioritize. We shipped rate limiting in 2 weeks and retained both accounts.</div>
+        <div class="s-box-a">In Q3 last year, my manager wanted to delay our API rate-limiting feature to ship a lower-priority UI update. I disagreed — two enterprise clients were actively hitting our limits. I put together a one-page impact analysis showing $80K ARR at churn risk and presented it in our next 1-on-1. He agreed to reprioritize. We shipped rate limiting in 2 weeks and retained both accounts.</div>
         <div class="s-box-footer">✓ Answer ready · 0.8s</div>
       </div>
     </div>
-
-    <!-- System Design -->
-    <div class="showcase-pane" id="pane-sysdesign">
+    <div class="showcase-pane reveal" id="pane-sysdesign">
       <div class="s-box">
-        <div class="s-box-head">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Interviewer question
-        </div>
+        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div>
         <div class="s-box-q">"Design a notification service that can handle 10 million users."</div>
       </div>
       <div class="s-box">
-        <div class="s-box-head" style="color:#15803d">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          AstraOffer answer
-        </div>
-        <div class="s-box-a">I'd start with requirements: push, email, SMS. At 10M users, fan-out is the core problem. I'd use a message queue — Kafka — with per-channel consumer groups. Notification preferences sit in Redis for sub-millisecond reads. For email/SMS, delegate to SendGrid/Twilio via async workers. Rate-limit per user at the queue layer. Store delivery receipts in Cassandra for scale. At 10M that's ~50K events/sec at peak — fully horizontal.</div>
+        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div>
+        <div class="s-box-a">I'd start with requirements: push, email, SMS. At 10M users, fan-out is the core problem. I'd use Kafka with per-channel consumer groups. Notification preferences sit in Redis for sub-millisecond reads. Email/SMS delegated to SendGrid/Twilio via async workers. Rate-limit per user at the queue layer. Delivery receipts in Cassandra. At 10M that's ~50K events/sec at peak — fully horizontal.</div>
         <div class="s-box-footer">✓ Answer ready · 1.1s</div>
       </div>
     </div>
-
-    <!-- Coding -->
-    <div class="showcase-pane" id="pane-coding">
+    <div class="showcase-pane reveal" id="pane-coding">
       <div class="s-box">
-        <div class="s-box-head">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Coding problem (screen capture)
-        </div>
-        <div class="s-box-q">"Given an array of integers, return indices of the two numbers that add up to a target. Each input has exactly one solution."</div>
+        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Coding problem (screen capture)</div>
+        <div class="s-box-q">"Given an array of integers, return indices of the two numbers that add up to a target."</div>
       </div>
       <div class="s-box">
-        <div class="s-box-head" style="color:#15803d">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          Coaching sheet
-        </div>
-        <div class="s-box-a" style="font-size:0.78rem">
-          <strong>Say first:</strong> "I'll use a hash map to get O(n) instead of O(n²) brute force."<br><br>
-          <strong>Code:</strong> <code style="background:#f3f4f6;padding:2px 5px;border-radius:4px;font-size:0.75rem">seen = {}; for i,n in enumerate(nums): if target-n in seen: return [seen[target-n], i]; seen[n]=i</code><br><br>
-          <strong>Say while coding:</strong> "For each number I check if its complement is already in the map…"<br>
-          <strong>Complexity:</strong> O(n) time · O(n) space
+        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Coaching sheet</div>
+        <div class="s-box-a" style="font-size:0.82rem">
+          <strong style="color:rgba(255,255,255,0.7)">Say first:</strong> "I'll use a hash map to get O(n) instead of O(n²) brute force."<br><br>
+          <strong style="color:rgba(255,255,255,0.7)">Code:</strong> <code style="background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);padding:2px 8px;border-radius:5px;font-family:monospace;font-size:0.75rem;color:var(--c2)">seen = {}; for i,n in enumerate(nums): if target-n in seen: return [seen[target-n], i]; seen[n]=i</code><br><br>
+          <strong style="color:rgba(255,255,255,0.7)">Say while coding:</strong> "For each number I check if its complement is in the map…"<br>
+          <strong style="color:rgba(255,255,255,0.7)">Complexity:</strong> O(n) time · O(n) space
         </div>
         <div class="s-box-footer">✓ Coaching sheet ready · 0.6s</div>
       </div>
     </div>
-
-    <!-- Culture Fit -->
-    <div class="showcase-pane" id="pane-culture">
+    <div class="showcase-pane reveal" id="pane-culture">
       <div class="s-box">
-        <div class="s-box-head">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Interviewer question
-        </div>
+        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div>
         <div class="s-box-q">"Why do you want to work at Google specifically? What draws you here over other companies?"</div>
       </div>
       <div class="s-box">
-        <div class="s-box-head" style="color:#15803d">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          AstraOffer answer
-        </div>
-        <div class="s-box-a">Two reasons specifically. First, the scale — at my last company I was designing for 500K users. Google's infrastructure problems at a billion users are categorically different and that's the problem space I want to grow in. Second, the open culture around publishing research. The Spanner and Bigtable papers directly shaped how I think about distributed systems. I want to be in the room where those decisions happen.</div>
+        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div>
+        <div class="s-box-a">Two reasons specifically. First, the scale — at my last company I designed for 500K users. Google's infrastructure problems at a billion users are categorically different and that's the problem space I want to grow in. Second, the open culture around publishing research. The Spanner and Bigtable papers directly shaped how I think about distributed systems. I want to be in the room where those decisions happen.</div>
         <div class="s-box-footer">✓ Answer ready · 0.7s</div>
       </div>
     </div>
-
   </div>
 </section>
 
-<!-- ── BEFORE DOWNLOAD ── -->
+<!-- ── REQUIREMENTS ── -->
 <section class="section" id="before-download">
   <div class="section-inner">
-    <div class="section-label">Before you download</div>
-    <h2 class="section-h">Make sure you're ready.</h2>
-    <p class="section-sub">Takes 5 minutes to set up. Here's exactly what you need.</p>
-    <div class="req-grid">
+    <div class="section-label reveal">Before you download</div>
+    <h2 class="section-h reveal">Make sure you're ready.</h2>
+    <p class="section-sub reveal">Takes 5 minutes to set up. Here's exactly what you need.</p>
+    <div class="req-grid reveal">
       <div class="req-card">
         <div class="req-title">System Requirements</div>
         <div class="req-sub">Mac</div>
@@ -948,9 +634,9 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
       </div>
       <div class="req-card">
         <div class="req-title">Your AstraOffer Account</div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong>Free account</strong> — sign up at astraoffer.org in 30 seconds. No credit card needed for the free plan.</span></div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong>AI included</strong> — we provide the AI. No Claude, Groq, or OpenAI keys required from you.</span></div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong>Free plan</strong> — 10 AI answers per day. Upgrade to Pro for unlimited.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">Free account</strong> — sign up at astraoffer.org in 30 seconds. No credit card needed.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">AI included</strong> — we provide the AI. No Claude, Groq, or OpenAI keys required from you.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">Free plan</strong> — 10 AI answers per day. Upgrade to Pro for unlimited.</span></div>
         <div class="req-item" style="margin-top:8px"><span class="req-warn">💡</span><span>Your resume and session data never leave your device.</span></div>
       </div>
     </div>
@@ -958,25 +644,24 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </section>
 
 <!-- ── DOWNLOAD ── -->
-<section class="section section-alt" id="download">
-  <div class="section-inner text-center">
+<section class="download-section" id="download">
+  <div class="dl-inner reveal">
     <div class="section-label">Download</div>
     <h2 class="section-h">Get AstraOffer Assistant</h2>
-    <p class="section-sub" style="margin:0 auto 0">Free to download. AI included — no API keys needed. Sign in with your AstraOffer account and go.</p>
-    <div class="dl-section-wrap">
-      <h2>AstraOffer Assistant v1.0.5</h2>
-      <p>Mac · Windows · Free to start</p>
+    <p class="section-sub" style="margin:0 auto 0;text-align:center">Free to download. AI included — no API keys needed. Sign in and go.</p>
+    <div class="dl-card">
+      <div class="dl-version">v1.0.5 Stable</div>
+      <div class="dl-title">AstraOffer Assistant</div>
+      <div class="dl-sub">Mac · Windows · Free to start</div>
       <div class="dl-btns">
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg"
-           class="dl-btn-mac" id="dl-mac">
+        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="dl-btn-mac" id="dl-mac">
           <span class="dl-btn-mac-label">
             <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
             Download for Mac
           </span>
           <span class="dl-btn-mac-sub">macOS 12+ · Apple Silicon · .dmg</span>
         </a>
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe"
-           class="dl-btn-win" id="dl-win">
+        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="dl-btn-win" id="dl-win">
           <span class="dl-btn-win-label">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
             Download for Windows
@@ -985,14 +670,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         </a>
       </div>
       <div class="dl-tags">
-        <span class="dl-tag">🔒 AI included — no API keys needed</span>
+        <span class="dl-tag">🔒 AI included — no API keys</span>
         <span class="dl-tag">✓ Mac Apple Silicon M1–M4</span>
         <span class="dl-tag">✓ Windows 10 / 11 x64</span>
         <span class="dl-tag">⚡ v1.0.5 Stable</span>
       </div>
-      <div class="dl-gh-link">
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases" target="_blank">View all releases on GitHub →</a>
-      </div>
+      <div class="dl-gh"><a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases" target="_blank">View all releases on GitHub →</a></div>
     </div>
   </div>
 </section>
@@ -1000,16 +683,16 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 <!-- ── SETUP GUIDE ── -->
 <section class="section" id="setup">
   <div class="section-inner">
-    <div class="section-label">After download</div>
-    <h2 class="section-h">Setup guide — 5 minutes.</h2>
-    <p class="section-sub">Follow these steps exactly. Takes one time only.</p>
-    <div class="setup-steps">
+    <div class="section-label reveal">After download</div>
+    <h2 class="section-h reveal">Setup guide — 5 minutes.</h2>
+    <p class="section-sub reveal">Follow these steps exactly. Takes one time only.</p>
+    <div class="setup-steps reveal">
       <div class="setup-step">
         <div class="setup-num">1</div>
         <div class="setup-content">
           <div class="setup-title">Install the app</div>
-          <div class="setup-desc"><strong>Mac:</strong> Double-click the .dmg, drag "AstraOffer Assistant" to Applications, eject the DMG.<br>
-          <strong>Windows:</strong> Run the .exe installer, follow the prompts, launch from the Start menu or Desktop shortcut.</div>
+          <div class="setup-desc"><strong style="color:rgba(255,255,255,0.7)">Mac:</strong> Double-click the .dmg, drag "AstraOffer Assistant" to Applications, eject the DMG.<br>
+          <strong style="color:rgba(255,255,255,0.7)">Windows:</strong> Run the .exe installer, follow the prompts, launch from the Start menu or Desktop shortcut.</div>
         </div>
       </div>
       <div class="setup-step">
@@ -1017,12 +700,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <div class="setup-content">
           <div class="setup-title">First launch — bypass the Mac security warning</div>
           <div class="setup-desc">
-            <strong>Mac — if you see "damaged and can't be opened":</strong><br>
+            <strong style="color:rgba(255,255,255,0.7)">Mac — if you see "damaged and can't be opened":</strong><br>
             Open Terminal (⌘ Space → Terminal) and run:<br>
             <code class="setup-code">xattr -cr "/Applications/AstraOffer Assistant.app"</code><br>
             Then launch the app normally. <span class="setup-note">⚠ One-time only — the app opens instantly from then on.</span><br><br>
-            <strong>Windows — if you see "Windows protected your PC":</strong><br>
-            Click <strong>More info</strong> → <strong>Run anyway</strong>. Safe to proceed.
+            <strong style="color:rgba(255,255,255,0.7)">Windows — if you see "Windows protected your PC":</strong><br>
+            Click <strong style="color:rgba(255,255,255,0.7)">More info</strong> → <strong style="color:rgba(255,255,255,0.7)">Run anyway</strong>. Safe to proceed.
           </div>
         </div>
       </div>
@@ -1037,7 +720,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <div class="setup-num">4</div>
         <div class="setup-content">
           <div class="setup-title">Sign in with your AstraOffer account</div>
-          <div class="setup-desc">Open the app → click Sign In → log in with your AstraOffer account. If you don't have one yet, create a free account at <strong>astraoffer.org</strong> in 30 seconds. No credit card needed for the free plan. AI is included — no extra keys required.</div>
+          <div class="setup-desc">Open the app → enter your email → Continue. If you don't have an account yet, create one at <strong style="color:rgba(255,255,255,0.7)">astraoffer.org</strong> in 30 seconds. No credit card needed. AI is included — no extra keys required.</div>
         </div>
       </div>
       <div class="setup-step">
@@ -1052,12 +735,12 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </section>
 
 <!-- ── PRICING ── -->
-<section class="section section-alt" id="pricing">
+<section class="section" id="pricing">
   <div class="section-inner text-center">
-    <div class="section-label">Pricing</div>
-    <h2 class="section-h">Simple, honest pricing.</h2>
-    <p class="section-sub" style="margin:0 auto">The app is free to download. AI is included in every plan — no API keys, no third-party accounts, no hidden setup.</p>
-    <div class="pricing-grid">
+    <div class="section-label reveal">Pricing</div>
+    <h2 class="section-h reveal">Simple, honest pricing.</h2>
+    <p class="section-sub reveal" style="margin:0 auto">The app is free to download. AI is included in every plan — no API keys, no third-party accounts, no hidden setup.</p>
+    <div class="pricing-grid reveal">
       <div class="plan-card">
         <div class="plan-name">Starter</div>
         <div class="plan-price"><sup>$</sup>0</div>
@@ -1089,7 +772,7 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <div class="plan-name">Lifetime</div>
         <div class="plan-price"><sup>$</sup>149</div>
         <div class="plan-period">one-time payment</div>
-        <span class="plan-lifetime-tag">Equivalent to ~8 months of Pro</span>
+        <span class="plan-lifetime-tag">≈ 8 months of Pro</span>
         <hr class="plan-divider"/>
         <div class="plan-feature"><span class="plan-check">✓</span>Everything in Pro — forever</div>
         <div class="plan-feature"><span class="plan-check">✓</span>All future features included</div>
@@ -1099,68 +782,68 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
         <button class="plan-btn plan-btn-outline" onclick="window.location.href='/'">Get Lifetime →</button>
       </div>
     </div>
-    <p style="font-size:0.75rem;color:var(--text-subtle);margin-top:18px">All plans include AI. No API keys, no third-party accounts, no hidden fees. Cancel Pro anytime.</p>
+    <p style="font-size:0.78rem;color:var(--text-subtle);margin-top:20px">All plans include AI. No API keys, no third-party accounts, no hidden fees. Cancel Pro anytime.</p>
   </div>
 </section>
 
 <!-- ── REVIEWS ── -->
 <section class="section" id="reviews">
   <div class="section-inner">
-    <div class="section-label">Success Stories</div>
-    <h2 class="section-h">Real engineers. Real offers.</h2>
-    <p class="section-sub">What happens when you walk into every interview fully prepared.</p>
+    <div class="section-label reveal">Success Stories</div>
+    <h2 class="section-h reveal">Real engineers. Real offers.</h2>
+    <p class="section-sub reveal">What happens when you walk into every interview fully prepared.</p>
     <div class="reviews-grid">
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-1">
         <div class="review-offer">🎉 Google L5 — $195K + RSUs</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"I'd failed the Google loop twice before. The third time I used AstraOffer for 2 weeks of prep and then live during the virtual onsite. The coding solver gave me the exact narration script. I passed all 5 rounds."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#111">A</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">A</div>
           <div><div class="review-name">Arjun M.</div><div class="review-role">Software Engineer · Bengaluru → Mountain View</div></div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-2">
         <div class="review-offer">🎉 Meta E5 — $220K TC</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"The behavioral questions are what killed me in past loops. AstraOffer pulls my actual resume experience into every answer — the interviewer kept saying 'that's really specific, I like that'."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#374151">S</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">S</div>
           <div><div class="review-name">Sara K.</div><div class="review-role">Senior Engineer · Berlin → London</div></div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-3">
         <div class="review-offer">🎉 Amazon SDE II — $165K</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"I was nervous about the screen share thing but it's genuinely invisible. Did my entire virtual loop on Chime — interviewer was sharing their screen and mine simultaneously and saw nothing."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#4b5563">R</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#f472b6,#a78bfa)">R</div>
           <div><div class="review-name">Rahul P.</div><div class="review-role">Backend Engineer · Hyderabad → Seattle</div></div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-1">
         <div class="review-offer">🎉 Stripe L4 — $185K TC</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"The system design round was what I used it most for. I'd capture the whiteboard diagram they shared and get a full breakdown in seconds. Walked through it like I'd designed similar systems before."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#1f2937">J</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#22d3ee,#6366f1)">J</div>
           <div><div class="review-name">Jamie L.</div><div class="review-role">Full-Stack Engineer · Toronto → San Francisco</div></div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-2">
         <div class="review-offer">🎉 Microsoft SDE2 — $175K</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"Setup took 8 minutes. Once it was running I used it in 4 consecutive interview days — a different company each day. Ended up with 3 offers and took the best one."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#111">P</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#a78bfa,#f472b6)">P</div>
           <div><div class="review-name">Priya N.</div><div class="review-role">Data Engineer · Austin → Redmond</div></div>
         </div>
       </div>
-      <div class="review-card">
+      <div class="review-card reveal reveal-delay-3">
         <div class="review-offer">🎉 Airbnb E5 — $210K TC</div>
         <div class="review-stars">★★★★★</div>
         <div class="review-text">"I'm a non-native English speaker and interviews have always been harder for me. The coaching sheet for coding — 'say this first, say this while typing' — meant I could focus on the code instead of panicking."</div>
         <div class="review-author">
-          <div class="review-avatar" style="background:#374151">L</div>
+          <div class="review-avatar" style="background:linear-gradient(135deg,#34d399,#06b6d4)">L</div>
           <div><div class="review-name">Lei W.</div><div class="review-role">Frontend Engineer · Shanghai → New York</div></div>
         </div>
       </div>
@@ -1169,42 +852,42 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </section>
 
 <!-- ── FAQ ── -->
-<section class="section section-alt" id="faq">
-  <div class="section-inner">
-    <div class="section-label">FAQ</div>
-    <h2 class="section-h">Common questions.</h2>
-    <div class="faq-list">
+<section class="section" id="faq">
+  <div class="section-inner text-center">
+    <div class="section-label reveal">FAQ</div>
+    <h2 class="section-h reveal">Common questions.</h2>
+    <div class="faq-list reveal">
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Is it really invisible during screen share? <span class="faq-icon">+</span></button>
-        <div class="faq-a">Yes. On Mac, the app uses <code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">setContentProtection(true)</code> which calls macOS's <code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">CGWindowSharingNone</code> at the OS level. On Windows it uses <code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">WDA_EXCLUDEFROMCAPTURE</code>. Both exclude the window from the screen capture API that Zoom, Teams, Meet, and OBS use. The window pixels are architecturally excluded — not just hidden.</div>
+        <div class="faq-a"><div class="faq-a-inner">Yes. On Mac, the app uses <code>setContentProtection(true)</code> which calls macOS's <code>CGWindowSharingNone</code> at the OS level. On Windows it uses <code>WDA_EXCLUDEFROMCAPTURE</code>. Both exclude the window from the screen capture API that Zoom, Teams, Meet, and OBS use. The window pixels are architecturally excluded — not just hidden.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">macOS says "damaged and can't be opened." What do I do? <span class="faq-icon">+</span></button>
-        <div class="faq-a">This is macOS Gatekeeper blocking an unsigned app. The app is not damaged. Fix: right-click the app → Open → Open. Or run <code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">xattr -cr "/Applications/AstraOffer Assistant.app"</code> in Terminal. You only need to do this once on first launch.</div>
+        <div class="faq-a"><div class="faq-a-inner">This is macOS Gatekeeper blocking an unsigned app. The app is not damaged. Fix: run <code>xattr -cr "/Applications/AstraOffer Assistant.app"</code> in Terminal. You only need to do this once on first launch.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Windows Defender shows a warning. Is it safe? <span class="faq-icon">+</span></button>
-        <div class="faq-a">Yes. The warning appears because the app is not code-signed (no certificate). The source code is fully open on GitHub. Click "More info" → "Run anyway" to proceed. You only see this once.</div>
+        <div class="faq-a"><div class="faq-a-inner">Yes. The warning appears because the app is not code-signed. The source code is fully open on GitHub. Click "More info" → "Run anyway" to proceed. You only see this once.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Does it record my voice or store my data? <span class="faq-icon">+</span></button>
-        <div class="faq-a">No. The app uses system audio loopback — it only captures what comes through your speakers (the interviewer's voice). Your microphone is not used unless you press the manual push-to-talk button. Your resume and session context stay on your device and are never stored on our servers. AI requests are routed through AstraOffer's secure backend.</div>
+        <div class="faq-a"><div class="faq-a-inner">No. The app uses system audio loopback — it only captures what comes through your speakers (the interviewer's voice). Your microphone is not used. Your resume and session context stay on your device and are never stored on our servers.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Do I need my own API keys? <span class="faq-icon">+</span></button>
-        <div class="faq-a">No. AstraOffer provides AI as part of every plan — including the free tier. You do not need a Claude, Groq, OpenAI, or any other third-party API key. Just sign in with your AstraOffer account and the app works immediately.</div>
+        <div class="faq-a"><div class="faq-a-inner">No. AstraOffer provides AI as part of every plan — including the free tier. You do not need a Claude, Groq, OpenAI, or any other third-party API key. Just sign in with your AstraOffer account and the app works immediately.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Does it work on Intel Macs? <span class="faq-icon">+</span></button>
-        <div class="faq-a">Not yet. The current build targets Apple Silicon (M1/M2/M3/M4) only. An Intel Mac build is planned for a future release. If you're on an Intel Mac, the web-based interview tool at astraoffer.org/interview works in any browser.</div>
+        <div class="faq-a"><div class="faq-a-inner">Not yet. The current build targets Apple Silicon (M1/M2/M3/M4) only. An Intel Mac build is planned. If you're on an Intel Mac, the web-based interview tool at astraoffer.org/interview works in any browser.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">Is this ethical to use? <span class="faq-icon">+</span></button>
-        <div class="faq-a">This is a personal decision. AstraOffer Assistant is a preparation and memory aid — it helps you articulate your real experience clearly and concisely under pressure. Every answer is grounded in your actual resume. Think of it as a very fast coach who knows your background and can suggest how to frame what you already know. How you use it is your call.</div>
+        <div class="faq-a"><div class="faq-a-inner">This is a personal decision. AstraOffer Assistant is a preparation and memory aid — it helps you articulate your real experience clearly under pressure. Every answer is grounded in your actual resume. Think of it as a very fast coach who knows your background and suggests how to frame what you already know.</div></div>
       </div>
       <div class="faq-item">
         <button class="faq-q" onclick="toggleFaq(this)">What's the hotkey to hide the window instantly? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">Cmd+Shift+H</code> (Mac) / <code style="font-family:monospace;background:#f3f4f6;padding:1px 5px;border-radius:4px">Ctrl+Shift+H</code> (Windows) hides the app instantly. Press again to bring it back. Works even when Zoom is in the foreground.</div>
+        <div class="faq-a"><div class="faq-a-inner"><code>Cmd+Shift+H</code> (Mac) / <code>Ctrl+Shift+H</code> (Windows) hides the app instantly. Press again to bring it back. Works even when Zoom is in the foreground.</div></div>
       </div>
     </div>
   </div>
@@ -1212,34 +895,30 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 
 <!-- ── FINAL CTA ── -->
 <section class="final-cta">
-  <div style="max-width:540px;margin:0 auto">
-    <h2>Your next offer is one interview away.</h2>
+  <div class="final-cta-inner reveal">
+    <h2>Your next offer is<br><span class="grad-text">one interview away.</span></h2>
     <p>Download free. Set up in 5 minutes. Walk into your next interview like you've done it a hundred times.</p>
-    <div style="display:flex;flex-wrap:wrap;gap:10px;justify-content:center">
-      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg"
-         class="btn-cta-white" id="dl-footer-mac">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    <div class="cta-btns">
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-primary" id="dl-footer-mac">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         Download for Mac
       </a>
-      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe"
-         style="display:inline-flex;align-items:center;gap:9px;background:transparent;border:2px solid rgba(255,255,255,0.2);color:#fff;padding:15px 28px;border-radius:10px;font-size:0.95rem;font-weight:700;text-decoration:none;transition:all 0.15s"
-         onmouseover="this.style.borderColor='rgba(255,255,255,0.4)'" onmouseout="this.style.borderColor='rgba(255,255,255,0.2)'"
-         id="dl-footer-win">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-ghost" id="dl-footer-win">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
         Download for Windows
       </a>
     </div>
-    <p style="font-size:0.72rem;color:rgba(255,255,255,0.2);margin-top:16px">v1.0.5 · Mac + Windows · AI included · Free plan available</p>
+    <p style="font-size:0.72rem;color:var(--text-subtle);margin-top:20px">v1.0.5 · Mac + Windows · AI included · Free plan available</p>
   </div>
 </section>
 
 <!-- ── FOOTER ── -->
-<footer class="footer">
+<footer>
   <div class="footer-inner">
     <div class="footer-top">
       <div class="footer-brand">
         <div class="footer-logo">
-          <img src="/ao-logo.png" alt="AstraOffer" style="width:26px;height:26px;border-radius:6px"/>
+          <div class="footer-logo-mark">A</div>
           AstraOffer
         </div>
         <p class="footer-tagline">AI-powered career tools to help you land your dream job faster.</p>
@@ -1275,30 +954,27 @@ button{font-family:inherit;cursor:pointer;border:none;background:none}
 </footer>
 
 <script>
+// ── Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target) } });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+// ── FAQ
 function toggleFaq(btn){
-  var a=btn.nextElementSibling,icon=btn.querySelector('.faq-icon');
-  if(a.classList.contains('open')){a.classList.remove('open');icon.classList.remove('open');}
-  else{
-    document.querySelectorAll('.faq-a.open').forEach(function(el){el.classList.remove('open')});
-    document.querySelectorAll('.faq-icon.open').forEach(function(el){el.classList.remove('open')});
-    a.classList.add('open');icon.classList.add('open');
-  }
+  var a=btn.nextElementSibling, icon=btn.querySelector('.faq-icon');
+  var isOpen = a.classList.contains('open');
+  document.querySelectorAll('.faq-a.open').forEach(el=>el.classList.remove('open'));
+  document.querySelectorAll('.faq-icon.open').forEach(el=>el.classList.remove('open'));
+  if(!isOpen){ a.classList.add('open'); icon.classList.add('open'); }
 }
 
+// ── Tabs
 function showTab(id,btn){
-  document.querySelectorAll('.showcase-pane').forEach(function(p){p.classList.remove('active')});
-  document.querySelectorAll('.s-tab').forEach(function(t){t.classList.remove('active')});
+  document.querySelectorAll('.showcase-pane').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('pane-'+id).classList.add('active');
   btn.classList.add('active');
-}
-
-function handleEmailCapture(e){
-  e.preventDefault();
-  var email=document.getElementById('mobile-email').value;
-  // In production: POST to your email service
-  console.log('Email captured:',email);
-  document.querySelector('.email-form').style.display='none';
-  document.getElementById('email-success').style.display='block';
 }
 </script>
 </body>
