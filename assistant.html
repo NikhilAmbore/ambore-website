@@ -13,95 +13,192 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{scroll-behavior:smooth}
-body{font-family:'Inter',sans-serif;background:#030308;color:#e8e8f0;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body{font-family:'Inter',sans-serif;background:#ecedf6;color:#0a0a1a;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 a{text-decoration:none;color:inherit}
 button{font-family:inherit;cursor:pointer;border:none;background:none}
 ::-webkit-scrollbar{width:4px}
-::-webkit-scrollbar-track{background:#0a0a15}
-::-webkit-scrollbar-thumb{background:rgba(139,92,246,0.4);border-radius:4px}
+::-webkit-scrollbar-track{background:#e4e5f0}
+::-webkit-scrollbar-thumb{background:rgba(124,58,237,0.3);border-radius:4px}
 
 :root{
-  --c1:#22d3ee;
-  --c2:#a78bfa;
-  --c3:#f472b6;
-  --grad:linear-gradient(135deg,#22d3ee 0%,#a78bfa 50%,#f472b6 100%);
-  --grad2:linear-gradient(135deg,#8b5cf6,#06b6d4);
-  --surface:rgba(255,255,255,0.03);
-  --surface2:rgba(255,255,255,0.06);
-  --border:rgba(255,255,255,0.08);
-  --border2:rgba(255,255,255,0.14);
-  --text:#e8e8f0;
-  --text-muted:rgba(232,232,240,0.55);
-  --text-subtle:rgba(232,232,240,0.32);
+  --bg:#ecedf6;
+  --surface:#ffffff;
+  --border:rgba(10,10,26,0.08);
+  --border2:rgba(10,10,26,0.14);
+  --text:#0a0a1a;
+  --text-muted:rgba(10,10,26,0.52);
+  --text-subtle:rgba(10,10,26,0.34);
+  --purple:#7c3aed;
+  --purple2:#9333ea;
+  --purple-light:#a78bfa;
+  --grad:linear-gradient(135deg,#7c3aed,#a855f7);
+  --grad2:linear-gradient(135deg,#6d28d9,#9333ea);
+  --shadow:0 2px 16px rgba(10,10,26,0.07);
+  --shadow-lg:0 12px 48px rgba(10,10,26,0.11);
 }
 
-/* ── ORBS / BACKGROUND ── */
-.orb{position:fixed;border-radius:50%;pointer-events:none;filter:blur(80px);z-index:0}
-.orb-1{width:700px;height:700px;top:-200px;right:-150px;background:radial-gradient(circle,rgba(139,92,246,0.25) 0%,transparent 70%);animation:float1 20s ease-in-out infinite}
-.orb-2{width:600px;height:600px;top:30%;left:-200px;background:radial-gradient(circle,rgba(34,211,238,0.18) 0%,transparent 70%);animation:float2 25s ease-in-out infinite}
-.orb-3{width:500px;height:500px;bottom:10%;right:5%;background:radial-gradient(circle,rgba(244,114,182,0.15) 0%,transparent 70%);animation:float3 18s ease-in-out infinite}
-@keyframes float1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-40px,60px) scale(1.05)}66%{transform:translate(30px,-40px) scale(0.97)}}
-@keyframes float2{0%,100%{transform:translate(0,0) scale(1)}40%{transform:translate(50px,-70px) scale(1.08)}70%{transform:translate(-20px,40px) scale(0.94)}}
-@keyframes float3{0%,100%{transform:translate(0,0) scale(1)}30%{transform:translate(-60px,-30px) scale(1.1)}70%{transform:translate(40px,50px) scale(0.96)}}
-
-/* grid pattern */
-.grid-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,0.025) 1px,transparent 1px);background-size:60px 60px;mask-image:radial-gradient(ellipse 80% 60% at 50% 0%,black 40%,transparent 100%)}
+/* ── PARTICLE BACKGROUND ── */
+.particle-bg{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(circle,rgba(100,70,200,0.13) 1.5px,transparent 1.5px);
+  background-size:38px 38px}
+.particle-bg::after{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 55% at 72% 18%,rgba(167,139,250,0.22) 0%,transparent 65%),
+             radial-gradient(ellipse 45% 35% at 10% 85%,rgba(124,58,237,0.09) 0%,transparent 60%)}
 
 /* ── NAV ── */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;padding:0 24px;background:rgba(3,3,8,0.7);backdrop-filter:blur(20px);border-bottom:1px solid var(--border)}
-.nav-inner{max-width:1140px;margin:0 auto;width:100%;display:flex;align-items:center;gap:0}
-.nav-logo{display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:800;color:#fff;margin-right:36px;letter-spacing:-0.02em}
-.nav-logo-mark{width:30px;height:30px;border-radius:8px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:900;color:#fff;flex-shrink:0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;align-items:center;padding:0 32px;
+  background:rgba(236,237,246,0.88);backdrop-filter:blur(20px);
+  border-bottom:1px solid rgba(124,58,237,0.1)}
+.nav-inner{max-width:1160px;margin:0 auto;width:100%;display:flex;align-items:center}
+.nav-logo{display:flex;align-items:center;gap:10px;font-size:0.94rem;font-weight:800;color:var(--text);margin-right:40px;letter-spacing:-0.02em}
+.nav-logo-mark{width:30px;height:30px;border-radius:9px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;color:#fff}
 .nav-links{display:flex;align-items:center;gap:1px;flex:1}
-.nav-links a{font-size:0.82rem;font-weight:500;color:var(--text-muted);padding:6px 12px;border-radius:7px;transition:all 0.15s}
-.nav-links a:hover{color:#fff;background:rgba(255,255,255,0.06)}
-.nav-cta{display:flex;align-items:center;gap:8px}
-.btn-nav{display:inline-flex;align-items:center;gap:7px;background:var(--grad2);color:#fff;padding:8px 18px;border-radius:8px;font-size:0.82rem;font-weight:700;transition:all 0.2s;box-shadow:0 0 20px rgba(139,92,246,0.3)}
-.btn-nav:hover{opacity:0.9;box-shadow:0 0 30px rgba(139,92,246,0.5);transform:translateY(-1px)}
+.nav-links a{font-size:0.83rem;font-weight:500;color:var(--text-muted);padding:6px 13px;border-radius:8px;transition:all 0.15s}
+.nav-links a:hover{color:var(--text);background:rgba(124,58,237,0.07)}
+.btn-nav{display:inline-flex;align-items:center;gap:7px;background:#0f0f1a;color:#fff;padding:9px 20px;border-radius:9px;font-size:0.82rem;font-weight:700;transition:all 0.2s;box-shadow:0 2px 10px rgba(10,10,26,0.18)}
+.btn-nav:hover{background:#1a1a2e;box-shadow:0 4px 20px rgba(10,10,26,0.28);transform:translateY(-1px)}
 @media(max-width:768px){.nav-links{display:none}.nav-logo{margin-right:auto}}
 
 /* ── HERO ── */
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:120px 24px 80px;position:relative;z-index:1}
-.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.3);border-radius:100px;padding:6px 16px;font-size:0.72rem;font-weight:700;color:var(--c2);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:32px;backdrop-filter:blur(12px)}
-.badge-dot{width:6px;height:6px;background:var(--c1);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 8px var(--c1)}
-@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.5;transform:scale(0.8)}}
-.hero h1{font-size:clamp(2.6rem,7vw,5.2rem);font-weight:900;line-height:1.04;color:#fff;margin-bottom:24px;letter-spacing:-0.04em}
-.grad-text{background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.hero-sub{font-size:clamp(1rem,2.2vw,1.2rem);color:var(--text-muted);max-width:560px;margin:0 auto 40px;line-height:1.8}
-.hero-btns{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:12px;margin-bottom:56px}
-.btn-primary{display:inline-flex;align-items:center;gap:10px;background:var(--grad2);color:#fff;padding:16px 32px;border-radius:12px;font-size:0.95rem;font-weight:700;transition:all 0.2s;box-shadow:0 0 40px rgba(139,92,246,0.4),0 4px 20px rgba(0,0,0,0.4);position:relative;overflow:hidden}
-.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.15),transparent);opacity:0;transition:opacity 0.2s}
-.btn-primary:hover::before{opacity:1}
-.btn-primary:hover{transform:translateY(-2px);box-shadow:0 0 60px rgba(139,92,246,0.6),0 8px 32px rgba(0,0,0,0.5)}
-.btn-ghost{display:inline-flex;align-items:center;gap:9px;background:rgba(255,255,255,0.04);border:1px solid var(--border2);color:var(--text-muted);padding:16px 28px;border-radius:12px;font-size:0.93rem;font-weight:600;transition:all 0.2s;backdrop-filter:blur(12px)}
-.btn-ghost:hover{border-color:rgba(255,255,255,0.28);color:#fff;background:rgba(255,255,255,0.07)}
-.platform-row{display:flex;align-items:center;gap:20px;justify-content:center;flex-wrap:wrap}
-.platform-tag{display:inline-flex;align-items:center;gap:6px;font-size:0.75rem;color:var(--text-subtle);font-weight:500}
+.hero{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;
+  padding:104px 48px 80px;max-width:1200px;margin:0 auto;position:relative;z-index:1;gap:40px}
+.hero-text{max-width:520px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(124,58,237,0.08);
+  border:1px solid rgba(124,58,237,0.2);border-radius:100px;padding:5px 14px;
+  font-size:0.69rem;font-weight:700;color:var(--purple);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:26px}
+.badge-dot{width:6px;height:6px;background:var(--purple);border-radius:50%;animation:pulse 2s infinite;box-shadow:0 0 6px var(--purple)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.35;transform:scale(0.65)}}
+.hero h1{font-size:clamp(2.4rem,5vw,3.9rem);font-weight:900;line-height:1.05;color:var(--text);margin-bottom:20px;letter-spacing:-0.04em}
+.hero h1 em{font-style:normal;color:var(--purple)}
+.hero-sub{font-size:1.05rem;color:var(--text-muted);line-height:1.78;margin-bottom:34px;max-width:460px}
+.hero-btns{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:28px}
+.btn-dark{display:inline-flex;align-items:center;gap:9px;background:#0f0f1a;color:#fff;
+  padding:14px 26px;border-radius:11px;font-size:0.92rem;font-weight:700;
+  transition:all 0.2s;box-shadow:0 4px 18px rgba(10,10,26,0.22)}
+.btn-dark:hover{background:#1c1c30;transform:translateY(-2px);box-shadow:0 8px 30px rgba(10,10,26,0.3)}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.7);
+  border:1.5px solid var(--border2);color:var(--text-muted);
+  padding:13px 22px;border-radius:11px;font-size:0.89rem;font-weight:600;transition:all 0.2s}
+.btn-outline:hover{border-color:rgba(124,58,237,0.35);color:var(--purple);background:rgba(255,255,255,0.9)}
+.hero-tags{display:flex;flex-wrap:wrap;gap:7px}
+.hero-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.71rem;font-weight:600;
+  color:var(--text-subtle);background:rgba(255,255,255,0.75);
+  border:1px solid var(--border);border-radius:20px;padding:5px 11px}
+
+/* ── HERO 3D VISUAL ── */
+.hero-visual{position:relative;height:580px}
+/* Soft glow aura */
+.v-aura{position:absolute;width:460px;height:460px;top:50%;left:50%;
+  transform:translate(-50%,-50%);
+  background:radial-gradient(circle,rgba(167,139,250,0.3) 0%,rgba(124,58,237,0.1) 40%,transparent 72%);
+  border-radius:50%;filter:blur(28px);
+  animation:aura 7s ease-in-out infinite}
+@keyframes aura{0%,100%{opacity:0.7;transform:translate(-50%,-50%) scale(1)}50%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}}
+
+/* Main ribbon — tall curved white tube */
+.v-ribbon{position:absolute;width:148px;height:460px;
+  left:50%;top:50%;transform:translate(-28%,-52%) rotate(-9deg);
+  background:linear-gradient(155deg,rgba(255,255,255,1) 0%,rgba(228,218,255,0.9) 55%,rgba(200,185,255,0.7) 100%);
+  border-radius:74px 74px 110px 110px / 36px 36px 72px 72px;
+  box-shadow:-10px 0 50px rgba(124,58,237,0.55),6px 0 24px rgba(167,139,250,0.2),
+             0 50px 100px rgba(10,10,26,0.1),inset 1px 1px 0 rgba(255,255,255,0.9);
+  animation:rib1 9s ease-in-out infinite}
+.v-ribbon::before{content:'';position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(155deg,rgba(255,255,255,0.5) 0%,rgba(167,139,250,0.25) 50%,transparent 75%)}
+@keyframes rib1{0%,100%{transform:translate(-28%,-52%) rotate(-9deg) translateY(0)}50%{transform:translate(-28%,-52%) rotate(-9deg) translateY(-20px)}}
+
+/* Arrow pointing up */
+.v-arrow{position:absolute;right:4%;top:5%;width:120px;height:320px;
+  background:linear-gradient(168deg,rgba(255,255,255,0.97) 0%,rgba(218,208,255,0.88) 100%);
+  clip-path:polygon(35% 0%,65% 0%,65% 52%,100% 52%,50% 100%,0% 52%,35% 52%);
+  filter:drop-shadow(-5px -5px 24px rgba(124,58,237,0.45));
+  animation:arr 7.5s ease-in-out infinite 1.2s}
+@keyframes arr{0%,100%{transform:rotate(14deg) translateY(0)}50%{transform:rotate(14deg) translateY(-22px)}}
+
+/* Second smaller ribbon behind */
+.v-ribbon2{position:absolute;width:96px;height:280px;
+  left:55%;top:56%;transform:translate(32%,-38%) rotate(22deg);
+  background:linear-gradient(140deg,rgba(255,255,255,0.88) 0%,rgba(196,178,255,0.72) 100%);
+  border-radius:48px;
+  box-shadow:-6px 0 28px rgba(124,58,237,0.32),0 18px 44px rgba(10,10,26,0.07);
+  opacity:0.82;animation:rib2 10s ease-in-out infinite 2.5s}
+@keyframes rib2{0%,100%{transform:translate(32%,-38%) rotate(22deg) translateY(0)}50%{transform:translate(32%,-38%) rotate(22deg) translateY(-15px)}}
+
+/* Gold coin */
+.v-coin{position:absolute;width:68px;height:68px;right:20%;bottom:25%;
+  background:conic-gradient(from 0deg,#f8d060,#d4a017,#e8c040,#b8840a,#f8d060);
+  border-radius:50%;
+  box-shadow:0 8px 28px rgba(200,148,10,0.45),0 2px 6px rgba(10,10,26,0.14),
+             inset 0 2px 4px rgba(255,230,80,0.55);
+  animation:coin 6.5s ease-in-out infinite 0.7s}
+.v-coin::before{content:'';position:absolute;inset:8px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(255,238,100,0.45),transparent)}
+@keyframes coin{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-13px) rotate(10deg)}}
+
+/* Floating accent dots */
+.v-dot{position:absolute;border-radius:50%;animation:dot 5.5s ease-in-out infinite}
+.v-dot-1{width:14px;height:14px;background:var(--purple);left:10%;top:18%;opacity:0.45;filter:blur(2px);animation-delay:0s}
+.v-dot-2{width:9px;height:9px;background:#a855f7;right:7%;top:38%;opacity:0.38;filter:blur(1px);animation-delay:1.8s}
+.v-dot-3{width:18px;height:18px;background:rgba(124,58,237,0.28);left:22%;bottom:12%;filter:blur(3px);animation-delay:3.2s}
+@keyframes dot{0%,100%{transform:translateY(0)}50%{transform:translateY(-11px)}}
+
+@media(max-width:900px){
+  .hero{grid-template-columns:1fr;padding:100px 24px 56px;gap:36px}
+  .hero-visual{height:300px;width:100%}
+  .v-ribbon{width:90px;height:260px}
+  .v-arrow{width:72px;height:190px}
+  .v-ribbon2{display:none}
+}
+
+/* ── TICKER ── */
+.ticker-section{position:relative;z-index:1;padding:22px 0;
+  border-top:1px solid var(--border);border-bottom:1px solid var(--border);
+  overflow:hidden;background:rgba(255,255,255,0.55)}
+.ticker-track{display:flex;gap:48px;animation:ticker 30s linear infinite;width:max-content}
+.ticker-item{display:flex;align-items:center;gap:8px;font-size:0.73rem;font-weight:600;color:var(--text-subtle);white-space:nowrap}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+.ticker-fade-l,.ticker-fade-r{position:absolute;top:0;bottom:0;width:100px;z-index:2;pointer-events:none}
+.ticker-fade-l{left:0;background:linear-gradient(90deg,rgba(236,237,246,0.95),transparent)}
+.ticker-fade-r{right:0;background:linear-gradient(-90deg,rgba(236,237,246,0.95),transparent)}
+
+/* ── SECTIONS ── */
+.section{position:relative;z-index:1;padding:96px 32px}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-label{display:inline-block;font-size:0.68rem;font-weight:700;letter-spacing:0.12em;
+  text-transform:uppercase;color:var(--purple);
+  background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.17);
+  border-radius:20px;padding:4px 14px;margin-bottom:16px}
+.section-h{font-size:clamp(1.8rem,3.8vw,2.75rem);font-weight:800;color:var(--text);
+  line-height:1.13;letter-spacing:-0.035em;margin-bottom:13px}
+.section-sub{font-size:1rem;color:var(--text-muted);line-height:1.78;max-width:560px}
+.text-center{text-align:center}.text-center .section-sub{margin:0 auto}
+.section-divider{border:none;border-top:1px solid var(--border);margin:0}
 
 /* ── MOCKUP ── */
-.mockup-wrap{width:100%;max-width:960px;margin:0 auto;position:relative;z-index:1}
-.mockup-glow{position:absolute;inset:-60px;background:radial-gradient(ellipse 80% 50% at 50% 100%,rgba(139,92,246,0.2) 0%,transparent 70%);pointer-events:none;z-index:0}
-.mockup-frame{border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);box-shadow:0 40px 100px rgba(0,0,0,0.6),0 0 0 1px rgba(255,255,255,0.05),0 0 80px rgba(139,92,246,0.15);position:relative;z-index:1}
-.mac-bar{height:28px;background:rgba(15,15,25,0.98);display:flex;align-items:center;padding:0 14px;flex-shrink:0;border-bottom:1px solid rgba(255,255,255,0.06)}
+.mockup-wrap{max-width:920px;margin:0 auto}
+.mockup-frame{border-radius:16px;overflow:hidden;
+  border:1px solid rgba(10,10,26,0.09);
+  box-shadow:0 28px 72px rgba(10,10,26,0.11),0 6px 20px rgba(10,10,26,0.06)}
+.mac-bar{height:36px;background:#f5f5f7;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid rgba(10,10,26,0.07)}
 .mac-dots{display:flex;gap:6px;margin-right:12px}
-.mac-dot{width:10px;height:10px;border-radius:50%}
-.mac-dot-r{background:#ff5f57}
-.mac-dot-y{background:#febc2e}
-.mac-dot-g{background:#28c840}
-.mac-bar-url{font-size:0.62rem;color:rgba(255,255,255,0.2);margin:0 auto;letter-spacing:0.03em}
-.screen-body{background:#0d0d1a;display:grid;grid-template-columns:1fr 1fr;min-height:340px}
-.screen-left{padding:24px;border-right:1px solid rgba(255,255,255,0.06)}
-.screen-right{padding:24px;background:rgba(139,92,246,0.04)}
-.s-label{font-size:0.6rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px}
-.s-question{font-size:0.78rem;color:rgba(255,255,255,0.7);line-height:1.7;padding:14px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.06);border-radius:10px;margin-bottom:12px}
-.s-answer{font-size:0.76rem;color:rgba(232,232,240,0.85);line-height:1.7}
-.s-answer-word{display:inline;padding:0 1px}
-.typing-cursor{display:inline-block;width:2px;height:12px;background:var(--c2);margin-left:2px;vertical-align:middle;animation:blink 0.9s infinite}
+.mac-dot{width:11px;height:11px;border-radius:50%}
+.mac-dot-r{background:#ff5f57}.mac-dot-y{background:#febc2e}.mac-dot-g{background:#28c840}
+.mac-bar-url{font-size:0.61rem;color:rgba(10,10,26,0.28);margin:0 auto;letter-spacing:0.02em}
+.screen-body{display:grid;grid-template-columns:1fr 1fr;min-height:280px;background:#fafafa}
+.screen-left{padding:22px;border-right:1px solid rgba(10,10,26,0.06)}
+.screen-right{padding:22px;background:#fff}
+.s-label{font-size:0.59rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:11px}
+.s-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(124,58,237,0.07);
+  border:1px solid rgba(124,58,237,0.18);border-radius:20px;padding:3px 10px;
+  font-size:0.61rem;font-weight:700;color:var(--purple);margin-bottom:10px}
+.s-chip-dot{width:5px;height:5px;border-radius:50%;background:var(--purple);animation:pulse 1.6s infinite}
+.s-question{font-size:0.77rem;color:var(--text-muted);line-height:1.68;padding:12px 14px;
+  background:#f4f4f8;border:1px solid rgba(10,10,26,0.06);border-radius:10px;margin-bottom:12px;font-style:italic}
+.s-answer{font-size:0.77rem;color:var(--text-muted);line-height:1.72}
+.typing-cursor{display:inline-block;width:2px;height:12px;background:var(--purple);margin-left:2px;vertical-align:middle;animation:blink 0.9s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
-.s-chip{display:inline-flex;align-items:center;gap:5px;background:rgba(34,211,238,0.1);border:1px solid rgba(34,211,238,0.2);border-radius:20px;padding:3px 10px;font-size:0.62rem;font-weight:700;color:var(--c1);margin-bottom:12px}
-.s-chip-dot{width:5px;height:5px;border-radius:50%;background:var(--c1);animation:pulse 1.5s infinite}
-.s-waveform{display:flex;align-items:center;gap:3px;margin-top:16px}
-.s-bar{width:3px;border-radius:2px;background:var(--c1);opacity:0.7}
+.s-waveform{display:flex;align-items:center;gap:3px;margin-top:14px}
+.s-bar{width:3px;border-radius:2px;background:var(--purple);opacity:0.55}
 .s-bar:nth-child(1){height:8px;animation:wave 1.2s ease-in-out infinite 0s}
 .s-bar:nth-child(2){height:16px;animation:wave 1.2s ease-in-out infinite 0.1s}
 .s-bar:nth-child(3){height:22px;animation:wave 1.2s ease-in-out infinite 0.2s}
@@ -110,229 +207,217 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 .s-bar:nth-child(6){height:10px;animation:wave 1.2s ease-in-out infinite 0.5s}
 .s-bar:nth-child(7){height:18px;animation:wave 1.2s ease-in-out infinite 0.6s}
 .s-bar:nth-child(8){height:8px;animation:wave 1.2s ease-in-out infinite 0.7s}
-@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.4)}}
-
-/* ── TICKER ── */
-.ticker-section{position:relative;z-index:1;padding:28px 0;border-top:1px solid var(--border);border-bottom:1px solid var(--border);overflow:hidden;background:rgba(255,255,255,0.01)}
-.ticker-track{display:flex;gap:48px;animation:ticker 28s linear infinite;width:max-content}
-.ticker-item{display:flex;align-items:center;gap:8px;font-size:0.75rem;font-weight:600;color:var(--text-subtle);white-space:nowrap;letter-spacing:0.02em}
-.ticker-item svg{opacity:0.4}
-@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-.ticker-fade-l,.ticker-fade-r{position:absolute;top:0;bottom:0;width:120px;z-index:2;pointer-events:none}
-.ticker-fade-l{left:0;background:linear-gradient(90deg,#030308,transparent)}
-.ticker-fade-r{right:0;background:linear-gradient(-90deg,#030308,transparent)}
-
-/* ── SECTION BASE ── */
-.section{position:relative;z-index:1;padding:100px 24px}
-.section-inner{max-width:1100px;margin:0 auto}
-.section-label{display:inline-block;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:var(--c2);background:rgba(167,139,250,0.1);border:1px solid rgba(167,139,250,0.2);border-radius:20px;padding:4px 14px;margin-bottom:20px}
-.section-h{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;color:#fff;line-height:1.15;letter-spacing:-0.03em;margin-bottom:16px}
-.section-sub{font-size:1.05rem;color:var(--text-muted);line-height:1.75;max-width:580px}
-.text-center{text-align:center}
-.text-center .section-sub{margin:0 auto}
-
-/* ── FEATURES ── */
-.features-section{padding:100px 24px;position:relative;z-index:1}
-.features-inner{max-width:1100px;margin:0 auto}
-.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:20px;overflow:hidden;margin-top:56px}
-.feat-card{background:#030308;padding:36px 32px;transition:background 0.2s;position:relative;overflow:hidden}
-.feat-card::before{content:'';position:absolute;inset:0;background:var(--grad);opacity:0;transition:opacity 0.3s}
-.feat-card:hover::before{opacity:0.04}
-.feat-card:hover{background:#08081a}
-.feat-icon{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;font-size:20px;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);position:relative;z-index:1}
-.feat-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:10px;position:relative;z-index:1;letter-spacing:-0.02em}
-.feat-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7;position:relative;z-index:1}
-@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+@keyframes wave{0%,100%{transform:scaleY(1)}50%{transform:scaleY(0.32)}}
+@media(max-width:580px){.screen-body{grid-template-columns:1fr}.screen-right{border-top:1px solid rgba(10,10,26,0.06)}}
 
 /* ── HOW IT WORKS ── */
-.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px}
-.how-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;position:relative;overflow:hidden;transition:border-color 0.2s,transform 0.2s}
-.how-card:hover{border-color:var(--border2);transform:translateY(-4px)}
-.how-num{font-size:3rem;font-weight:900;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;line-height:1;margin-bottom:16px;letter-spacing:-0.05em}
-.how-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:-0.02em}
-.how-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:48px}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:30px 26px;box-shadow:var(--shadow);transition:all 0.22s}
+.card:hover{border-color:rgba(124,58,237,0.2);box-shadow:0 10px 36px rgba(10,10,26,0.1);transform:translateY(-4px)}
+.how-num{font-size:2.6rem;font-weight:900;color:var(--purple);line-height:1;margin-bottom:16px;letter-spacing:-0.04em;opacity:0.8}
+.card-title{font-size:0.97rem;font-weight:700;color:var(--text);margin-bottom:9px;letter-spacing:-0.02em}
+.card-desc{font-size:0.83rem;color:var(--text-muted);line-height:1.7}
 @media(max-width:768px){.how-grid{grid-template-columns:1fr}}
 
-/* ── BEFORE / AFTER ── */
-.ba-section{padding:100px 24px;position:relative;z-index:1}
-.ba-inner{max-width:900px;margin:0 auto;text-align:center}
-.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px;text-align:left}
-.ba-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;transition:border-color 0.2s}
-.ba-card.good{border-color:rgba(34,197,94,0.3);background:rgba(34,197,94,0.03)}
-.ba-card-head{padding:14px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.02)}
-.ba-badge-bad{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:#f87171;background:rgba(248,113,113,0.1);border:1px solid rgba(248,113,113,0.2);border-radius:20px;padding:3px 10px}
-.ba-badge-good{display:inline-flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:3px 10px}
-.ba-question{font-size:0.82rem;font-weight:600;color:rgba(255,255,255,0.6);padding:16px 20px;border-bottom:1px solid var(--border);font-style:italic}
-.ba-answer{font-size:0.82rem;color:var(--text-muted);line-height:1.7;padding:16px 20px}
-.ba-answer-bad .ba-mark-bad{color:#f87171;background:rgba(248,113,113,0.12);padding:1px 4px;border-radius:3px}
-.ba-answer-good .ba-mark-good{color:#4ade80;background:rgba(74,222,128,0.12);padding:1px 4px;border-radius:3px}
-.ba-footer{display:flex;align-items:center;gap:8px;padding:12px 20px;font-size:0.72rem;font-weight:600;border-top:1px solid var(--border)}
-.ba-footer-bad{color:#f87171}
-.ba-footer-good{color:#4ade80}
+/* ── FEATURES ── */
+.features-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.feat-icon{width:42px;height:42px;border-radius:12px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:17px;font-size:19px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.14)}
+@media(max-width:768px){.features-grid{grid-template-columns:1fr}}
+
+/* ── BEFORE/AFTER ── */
+.ba-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+.ba-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow)}
+.ba-card.good{border-color:rgba(22,163,74,0.2)}
+.ba-card-head{padding:12px 18px;border-bottom:1px solid var(--border);background:rgba(10,10,26,0.02);display:flex;align-items:center}
+.ba-badge-bad{font-size:0.69rem;font-weight:700;color:#dc2626;background:rgba(220,38,38,0.07);border:1px solid rgba(220,38,38,0.16);border-radius:20px;padding:3px 10px}
+.ba-badge-good{font-size:0.69rem;font-weight:700;color:#16a34a;background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.16);border-radius:20px;padding:3px 10px}
+.ba-question{font-size:0.81rem;font-weight:600;color:var(--text-muted);padding:13px 18px;border-bottom:1px solid var(--border);font-style:italic}
+.ba-answer{font-size:0.81rem;color:var(--text-muted);line-height:1.7;padding:14px 18px}
+.ba-mark-bad{color:#dc2626;background:rgba(220,38,38,0.07);padding:1px 4px;border-radius:3px}
+.ba-mark-good{color:#16a34a;background:rgba(22,163,74,0.07);padding:1px 4px;border-radius:3px}
+.ba-footer{padding:10px 18px;font-size:0.69rem;font-weight:600;border-top:1px solid var(--border)}
+.ba-footer-bad{color:#dc2626}.ba-footer-good{color:#16a34a}
 @media(max-width:640px){.ba-grid{grid-template-columns:1fr}}
 
 /* ── SHOWCASE ── */
-.showcase-section{padding:100px 24px;position:relative;z-index:1}
-.showcase-inner{max-width:860px;margin:0 auto;text-align:center}
-.showcase-tabs{display:flex;gap:4px;background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:14px;padding:4px;margin:40px 0 32px;flex-wrap:wrap}
-.s-tab{flex:1;min-width:120px;padding:10px 16px;border-radius:10px;font-size:0.8rem;font-weight:600;color:var(--text-muted);cursor:pointer;transition:all 0.2s;text-align:center}
-.s-tab.active{background:var(--grad2);color:#fff;box-shadow:0 2px 12px rgba(139,92,246,0.4)}
-.s-tab:hover:not(.active){color:#fff;background:rgba(255,255,255,0.06)}
-.showcase-pane{display:none}
-.showcase-pane.active{display:flex;flex-direction:column;gap:16px}
-.s-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:20px 22px;text-align:left;transition:border-color 0.2s}
-.s-box:hover{border-color:var(--border2)}
-.s-box-head{display:flex;align-items:center;gap:7px;font-size:0.7rem;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:12px}
-.s-box-q{font-size:0.9rem;color:rgba(255,255,255,0.75);line-height:1.65;font-style:italic}
-.s-box-a{font-size:0.85rem;color:var(--text-muted);line-height:1.75}
-.s-box-footer{display:flex;align-items:center;gap:6px;font-size:0.7rem;font-weight:700;color:var(--c1);margin-top:14px;background:rgba(34,211,238,0.08);border:1px solid rgba(34,211,238,0.15);border-radius:8px;padding:6px 12px;width:fit-content}
+.showcase-tabs{display:flex;gap:3px;background:rgba(10,10,26,0.04);border:1px solid var(--border);
+  border-radius:12px;padding:4px;margin:34px 0 24px;flex-wrap:wrap}
+.s-tab{flex:1;min-width:108px;padding:9px 13px;border-radius:9px;font-size:0.78rem;font-weight:600;
+  color:var(--text-muted);cursor:pointer;transition:all 0.18s;text-align:center}
+.s-tab.active{background:#0f0f1a;color:#fff;box-shadow:0 2px 8px rgba(10,10,26,0.18)}
+.s-tab:hover:not(.active){color:var(--text);background:rgba(10,10,26,0.05)}
+.showcase-pane{display:none}.showcase-pane.active{display:flex;flex-direction:column;gap:12px}
+.s-box{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 20px;box-shadow:var(--shadow);transition:border-color 0.2s}
+.s-box:hover{border-color:rgba(124,58,237,0.18)}
+.s-box-head{display:flex;align-items:center;gap:7px;font-size:0.67rem;font-weight:700;letter-spacing:0.07em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:10px}
+.s-box-q{font-size:0.87rem;color:var(--text-muted);line-height:1.64;font-style:italic}
+.s-box-a{font-size:0.83rem;color:var(--text-muted);line-height:1.75}
+.s-box-footer{display:inline-flex;align-items:center;gap:6px;font-size:0.68rem;font-weight:700;color:var(--purple);margin-top:11px;background:rgba(124,58,237,0.06);border:1px solid rgba(124,58,237,0.14);border-radius:8px;padding:5px 11px}
 
 /* ── DOWNLOAD ── */
-.download-section{padding:100px 24px;position:relative;z-index:1}
-.dl-inner{max-width:760px;margin:0 auto;text-align:center}
-.dl-card{background:var(--surface);border:1px solid var(--border2);border-radius:24px;padding:48px 40px;margin-top:48px;position:relative;overflow:hidden}
-.dl-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% -20%,rgba(139,92,246,0.1) 0%,transparent 70%);pointer-events:none}
-.dl-version{font-size:0.8rem;color:var(--text-subtle);margin-bottom:6px;font-weight:500}
-.dl-title{font-size:1.4rem;font-weight:800;color:#fff;margin-bottom:4px;letter-spacing:-0.03em}
-.dl-sub{font-size:0.85rem;color:var(--text-muted);margin-bottom:32px}
-.dl-btns{display:flex;justify-content:center;gap:14px;flex-wrap:wrap;margin-bottom:24px}
-.dl-btn-mac{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:var(--grad2);color:#fff;padding:16px 28px;border-radius:14px;font-weight:700;transition:all 0.2s;box-shadow:0 0 40px rgba(139,92,246,0.35),0 4px 20px rgba(0,0,0,0.4);min-width:220px;position:relative;overflow:hidden}
-.dl-btn-mac::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,0.1),transparent);opacity:0;transition:opacity 0.2s}
-.dl-btn-mac:hover::before{opacity:1}
-.dl-btn-mac:hover{transform:translateY(-3px);box-shadow:0 0 60px rgba(139,92,246,0.5),0 8px 32px rgba(0,0,0,0.5)}
-.dl-btn-mac-label{display:flex;align-items:center;gap:8px;font-size:0.92rem;font-weight:700}
-.dl-btn-mac-sub{font-size:0.7rem;opacity:0.7;font-weight:500}
-.dl-btn-win{display:flex;flex-direction:column;align-items:flex-start;gap:4px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.15);color:#fff;padding:16px 28px;border-radius:14px;font-weight:700;transition:all 0.2s;min-width:220px}
-.dl-btn-win:hover{background:rgba(255,255,255,0.1);border-color:rgba(255,255,255,0.25);transform:translateY(-3px)}
-.dl-btn-win-label{display:flex;align-items:center;gap:8px;font-size:0.92rem;font-weight:700}
-.dl-btn-win-sub{font-size:0.7rem;opacity:0.6;font-weight:500}
-.dl-tags{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
-.dl-tag{display:inline-flex;align-items:center;gap:5px;font-size:0.72rem;font-weight:600;color:var(--text-subtle);background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:20px;padding:4px 12px}
-.dl-gh{margin-top:16px;font-size:0.78rem;color:var(--text-subtle)}
-.dl-gh a{color:var(--c2);text-decoration:none}
-.dl-gh a:hover{text-decoration:underline}
+.dl-card{background:var(--surface);border:1px solid var(--border);border-radius:22px;
+  padding:44px 40px;box-shadow:var(--shadow-lg);position:relative;overflow:hidden;text-align:center;max-width:660px}
+.dl-card::before{content:'';position:absolute;top:-80px;right:-80px;width:300px;height:300px;
+  background:radial-gradient(circle,rgba(167,139,250,0.16) 0%,transparent 70%);
+  border-radius:50%;pointer-events:none}
+.dl-version{font-size:0.76rem;color:var(--text-subtle);margin-bottom:5px;font-weight:500}
+.dl-title{font-size:1.45rem;font-weight:800;color:var(--text);margin-bottom:3px;letter-spacing:-0.03em}
+.dl-sub{font-size:0.84rem;color:var(--text-muted);margin-bottom:28px}
+.dl-btns{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.dl-btn-mac{display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+  background:#0f0f1a;color:#fff;padding:15px 26px;border-radius:13px;font-weight:700;
+  transition:all 0.2s;min-width:210px;box-shadow:0 4px 18px rgba(10,10,26,0.22)}
+.dl-btn-mac:hover{background:#1c1c30;transform:translateY(-2px);box-shadow:0 8px 28px rgba(10,10,26,0.3)}
+.dl-btn-mac-label{display:flex;align-items:center;gap:7px;font-size:0.9rem;font-weight:700}
+.dl-btn-mac-sub{font-size:0.68rem;opacity:0.5;font-weight:500}
+.dl-btn-win{display:flex;flex-direction:column;align-items:flex-start;gap:3px;
+  background:rgba(10,10,26,0.05);border:1.5px solid var(--border2);color:var(--text);
+  padding:14px 26px;border-radius:13px;font-weight:700;transition:all 0.2s;min-width:210px}
+.dl-btn-win:hover{background:rgba(10,10,26,0.08);border-color:rgba(10,10,26,0.22);transform:translateY(-2px)}
+.dl-btn-win-label{display:flex;align-items:center;gap:7px;font-size:0.9rem;font-weight:700}
+.dl-btn-win-sub{font-size:0.68rem;opacity:0.42;font-weight:500}
+.dl-tags{display:flex;flex-wrap:wrap;gap:7px;justify-content:center}
+.dl-tag{display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;color:var(--text-subtle);background:rgba(10,10,26,0.04);border:1px solid var(--border);border-radius:20px;padding:4px 11px}
+.dl-gh{margin-top:14px;font-size:0.77rem;color:var(--text-subtle)}
+.dl-gh a{color:var(--purple)}.dl-gh a:hover{text-decoration:underline}
 
 /* ── REQUIREMENTS ── */
-.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:48px}
-.req-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:28px 28px}
-.req-card:hover{border-color:var(--border2)}
-.req-title{font-size:0.95rem;font-weight:700;color:#fff;margin-bottom:18px;letter-spacing:-0.02em}
-.req-sub{font-size:0.72rem;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:var(--c2);margin:16px 0 10px}
-.req-item{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--text-muted);margin-bottom:8px;line-height:1.5}
-.req-check{color:#4ade80;font-weight:700;flex-shrink:0}
-.req-warn{color:#fbbf24;flex-shrink:0}
+.req-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;margin-top:40px}
+.req-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:26px;box-shadow:var(--shadow)}
+.req-card:hover{border-color:rgba(124,58,237,0.16)}
+.req-title{font-size:0.94rem;font-weight:700;color:var(--text);margin-bottom:14px;letter-spacing:-0.02em}
+.req-sub{font-size:0.67rem;font-weight:700;letter-spacing:0.09em;text-transform:uppercase;color:var(--purple);margin:13px 0 8px}
+.req-item{display:flex;align-items:flex-start;gap:8px;font-size:0.81rem;color:var(--text-muted);margin-bottom:7px;line-height:1.54}
+.req-check{color:#16a34a;font-weight:700;flex-shrink:0}
+.req-warn{color:#d97706;flex-shrink:0}
 @media(max-width:640px){.req-grid{grid-template-columns:1fr}}
 
 /* ── SETUP ── */
-.setup-steps{display:flex;flex-direction:column;gap:0;margin-top:48px;position:relative}
-.setup-steps::before{content:'';position:absolute;left:21px;top:24px;bottom:24px;width:1px;background:linear-gradient(to bottom,var(--c2),var(--c1),transparent);opacity:0.4}
-.setup-step{display:flex;gap:24px;align-items:flex-start;padding:0 0 36px}
+.setup-steps{display:flex;flex-direction:column;margin-top:40px;position:relative;max-width:700px}
+.setup-steps::before{content:'';position:absolute;left:21px;top:22px;bottom:22px;width:1px;
+  background:linear-gradient(to bottom,var(--purple),rgba(124,58,237,0.15),transparent);opacity:0.35}
+.setup-step{display:flex;gap:20px;align-items:flex-start;padding:0 0 32px}
 .setup-step:last-child{padding-bottom:0}
-.setup-num{width:44px;height:44px;border-radius:50%;background:var(--grad2);color:#fff;font-size:0.85rem;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 20px rgba(139,92,246,0.4);position:relative;z-index:1}
-.setup-content{flex:1;padding-top:10px}
-.setup-title{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.02em}
-.setup-desc{font-size:0.85rem;color:var(--text-muted);line-height:1.7}
-.setup-code{display:inline-block;background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.25);border-radius:6px;padding:3px 10px;font-family:monospace;font-size:0.82rem;color:var(--c2);margin:6px 0}
-.setup-note{color:#fbbf24;font-size:0.8rem}
+.setup-num{width:44px;height:44px;border-radius:50%;background:var(--grad);color:#fff;
+  font-size:0.84rem;font-weight:800;display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;box-shadow:0 4px 14px rgba(124,58,237,0.32);position:relative;z-index:1}
+.setup-content{flex:1;padding-top:11px}
+.setup-title{font-size:0.97rem;font-weight:700;color:var(--text);margin-bottom:7px;letter-spacing:-0.02em}
+.setup-desc{font-size:0.83rem;color:var(--text-muted);line-height:1.7}
+.setup-code{display:inline-block;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.17);
+  border-radius:5px;padding:2px 9px;font-family:monospace;font-size:0.81rem;color:var(--purple);margin:4px 0}
+.setup-note{color:#d97706;font-size:0.78rem}
 
 /* ── PRICING ── */
-.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
-.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:32px 28px;position:relative;transition:border-color 0.2s,transform 0.2s}
-.plan-card:hover{border-color:var(--border2);transform:translateY(-4px)}
-.plan-card.featured{background:rgba(139,92,246,0.08);border-color:rgba(139,92,246,0.4);transform:scale(1.03)}
-.plan-card.featured:hover{transform:scale(1.03) translateY(-4px)}
-.plan-popular{display:inline-block;font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--c2);background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.3);border-radius:20px;padding:4px 12px;margin-bottom:16px}
-.plan-name{font-size:1rem;font-weight:700;color:#fff;margin-bottom:8px;letter-spacing:-0.02em}
-.plan-price{font-size:3rem;font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1;background:var(--grad);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
-.plan-price sup{font-size:1.2rem;font-weight:700;vertical-align:super;-webkit-text-fill-color:var(--c2)}
-.plan-period{font-size:0.8rem;color:var(--text-subtle);margin-bottom:20px;margin-top:2px}
-.plan-lifetime-tag{display:inline-block;font-size:0.7rem;color:#fbbf24;background:rgba(251,191,36,0.1);border:1px solid rgba(251,191,36,0.2);border-radius:6px;padding:3px 9px;margin-bottom:12px}
-.plan-divider{border:none;border-top:1px solid var(--border);margin:20px 0}
-.plan-feature{display:flex;align-items:flex-start;gap:10px;font-size:0.83rem;color:var(--text-muted);margin-bottom:10px;line-height:1.5}
-.plan-check{color:#4ade80;font-weight:700;flex-shrink:0}
-.plan-x{color:rgba(255,255,255,0.2);flex-shrink:0}
-.plan-btn{width:100%;padding:13px;border-radius:10px;font-size:0.87rem;font-weight:700;margin-top:24px;transition:all 0.2s;cursor:pointer}
-.plan-btn-primary{background:var(--grad2);color:#fff;border:none;box-shadow:0 0 30px rgba(139,92,246,0.35)}
-.plan-btn-primary:hover{opacity:0.9;box-shadow:0 0 50px rgba(139,92,246,0.5);transform:translateY(-1px)}
-.plan-btn-outline{background:transparent;border:1px solid var(--border2);color:var(--text-muted)}
-.plan-btn-outline:hover{border-color:rgba(255,255,255,0.3);color:#fff;background:rgba(255,255,255,0.04)}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:48px}
+.plan-card{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:30px 24px;position:relative;transition:all 0.22s;box-shadow:var(--shadow)}
+.plan-card:hover{border-color:rgba(124,58,237,0.18);box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.plan-card.featured{background:linear-gradient(158deg,#0f0f1a 0%,#18102e 100%);border-color:transparent;color:#fff;transform:scale(1.035)}
+.plan-card.featured:hover{transform:scale(1.035) translateY(-4px);box-shadow:0 20px 64px rgba(10,10,26,0.22)}
+.plan-popular{display:inline-block;font-size:0.64rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--purple-light);background:rgba(167,139,250,0.15);border:1px solid rgba(167,139,250,0.28);border-radius:20px;padding:3px 11px;margin-bottom:13px}
+.plan-name{font-size:0.95rem;font-weight:700;margin-bottom:7px;letter-spacing:-0.02em}
+.plan-card:not(.featured) .plan-name{color:var(--text)}
+.plan-card.featured .plan-name{color:rgba(255,255,255,0.8)}
+.plan-price{font-size:3rem;font-weight:900;line-height:1;letter-spacing:-0.05em}
+.plan-card:not(.featured) .plan-price{color:var(--text)}
+.plan-card.featured .plan-price{color:#fff}
+.plan-price sup{font-size:1.15rem;font-weight:700;vertical-align:super}
+.plan-card:not(.featured) .plan-price sup{color:var(--purple)}
+.plan-card.featured .plan-price sup{color:var(--purple-light)}
+.plan-period{font-size:0.77rem;margin-bottom:16px;margin-top:2px}
+.plan-card:not(.featured) .plan-period{color:var(--text-subtle)}
+.plan-card.featured .plan-period{color:rgba(255,255,255,0.35)}
+.plan-lifetime-tag{display:inline-block;font-size:0.68rem;color:#d97706;background:rgba(217,119,6,0.08);border:1px solid rgba(217,119,6,0.18);border-radius:5px;padding:2px 8px;margin-bottom:9px}
+.plan-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
+.plan-card.featured .plan-divider{border-color:rgba(255,255,255,0.08)}
+.plan-feature{display:flex;align-items:flex-start;gap:8px;font-size:0.81rem;margin-bottom:8px;line-height:1.5}
+.plan-card:not(.featured) .plan-feature{color:var(--text-muted)}
+.plan-card.featured .plan-feature{color:rgba(255,255,255,0.65)}
+.plan-check{color:#22c55e;font-weight:700;flex-shrink:0}
+.plan-card.featured .plan-check{color:#4ade80}
+.plan-x{color:rgba(10,10,26,0.2);flex-shrink:0}
+.plan-btn{width:100%;padding:12px;border-radius:10px;font-size:0.85rem;font-weight:700;margin-top:20px;transition:all 0.2s;cursor:pointer}
+.plan-btn-dark{background:#0f0f1a;color:#fff;border:none;box-shadow:0 2px 10px rgba(10,10,26,0.18)}
+.plan-btn-dark:hover{background:#1c1c30;transform:translateY(-1px)}
+.plan-btn-purple{background:var(--grad2);color:#fff;border:none;box-shadow:0 4px 18px rgba(124,58,237,0.38)}
+.plan-btn-purple:hover{opacity:0.9;box-shadow:0 6px 26px rgba(124,58,237,0.48);transform:translateY(-1px)}
+.plan-btn-outline{background:transparent;border:1.5px solid var(--border2);color:var(--text-muted)}
+.plan-btn-outline:hover{border-color:rgba(124,58,237,0.32);color:var(--purple);background:rgba(124,58,237,0.04)}
 @media(max-width:768px){.pricing-grid{grid-template-columns:1fr}.plan-card.featured{transform:scale(1)}}
 
 /* ── REVIEWS ── */
-.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:56px}
-.review-card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px 22px;transition:border-color 0.2s,transform 0.2s}
-.review-card:hover{border-color:var(--border2);transform:translateY(-4px)}
-.review-offer{font-size:0.72rem;font-weight:700;color:#4ade80;background:rgba(74,222,128,0.1);border:1px solid rgba(74,222,128,0.2);border-radius:20px;padding:4px 12px;display:inline-block;margin-bottom:12px}
-.review-stars{color:#fbbf24;font-size:0.85rem;margin-bottom:12px;letter-spacing:2px}
-.review-text{font-size:0.83rem;color:var(--text-muted);line-height:1.75;margin-bottom:18px}
-.review-author{display:flex;align-items:center;gap:11px}
-.review-avatar{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:#fff;flex-shrink:0}
-.review-name{font-size:0.85rem;font-weight:700;color:rgba(255,255,255,0.85)}
-.review-role{font-size:0.72rem;color:var(--text-subtle);margin-top:1px}
+.reviews-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:48px}
+.review-card{background:var(--surface);border:1px solid var(--border);border-radius:17px;padding:22px 20px;box-shadow:var(--shadow);transition:all 0.22s}
+.review-card:hover{border-color:rgba(124,58,237,0.16);box-shadow:var(--shadow-lg);transform:translateY(-4px)}
+.review-offer{font-size:0.69rem;font-weight:700;color:#16a34a;background:rgba(22,163,74,0.07);border:1px solid rgba(22,163,74,0.16);border-radius:20px;padding:3px 11px;display:inline-block;margin-bottom:10px}
+.review-stars{color:#f59e0b;font-size:0.8rem;margin-bottom:10px;letter-spacing:2px}
+.review-text{font-size:0.81rem;color:var(--text-muted);line-height:1.74;margin-bottom:15px}
+.review-author{display:flex;align-items:center;gap:9px}
+.review-avatar{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#fff;flex-shrink:0}
+.review-name{font-size:0.83rem;font-weight:700;color:var(--text)}
+.review-role{font-size:0.69rem;color:var(--text-subtle);margin-top:1px}
 @media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.reviews-grid{grid-template-columns:1fr}}
+@media(max-width:540px){.reviews-grid{grid-template-columns:1fr}}
 
 /* ── FAQ ── */
-.faq-list{max-width:720px;margin:40px auto 0}
-.faq-item{border:1px solid var(--border);border-radius:14px;margin-bottom:8px;overflow:hidden;transition:border-color 0.2s}
-.faq-item:hover{border-color:var(--border2)}
-.faq-q{display:flex;justify-content:space-between;align-items:center;width:100%;padding:18px 22px;font-size:0.92rem;font-weight:600;color:rgba(255,255,255,0.85);background:transparent;cursor:pointer;text-align:left;gap:16px;transition:color 0.2s}
-.faq-q:hover{color:#fff}
-.faq-icon{font-size:1.2rem;color:var(--c2);font-weight:300;flex-shrink:0;transition:transform 0.2s}
+.faq-list{max-width:680px;margin:32px auto 0}
+.faq-item{border:1px solid var(--border);border-radius:13px;margin-bottom:7px;background:var(--surface);overflow:hidden;box-shadow:0 1px 6px rgba(10,10,26,0.04);transition:border-color 0.18s}
+.faq-item:hover{border-color:rgba(124,58,237,0.18)}
+.faq-q{display:flex;justify-content:space-between;align-items:center;width:100%;padding:16px 18px;font-size:0.89rem;font-weight:600;color:var(--text);background:transparent;cursor:pointer;text-align:left;gap:14px}
+.faq-icon{font-size:1.05rem;color:var(--purple);font-weight:300;flex-shrink:0;transition:transform 0.2s}
 .faq-icon.open{transform:rotate(45deg)}
 .faq-a{max-height:0;overflow:hidden;transition:max-height 0.3s ease,padding 0.2s}
-.faq-a.open{max-height:400px;padding:0 22px 18px}
-.faq-a-inner{font-size:0.85rem;color:var(--text-muted);line-height:1.75}
-.faq-a-inner code{background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);border-radius:5px;padding:2px 8px;font-family:monospace;font-size:0.82rem;color:var(--c2)}
+.faq-a.open{max-height:400px;padding:0 18px 15px}
+.faq-a-inner{font-size:0.83rem;color:var(--text-muted);line-height:1.75}
+.faq-a-inner code{background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.16);border-radius:4px;padding:1px 7px;font-family:monospace;font-size:0.79rem;color:var(--purple)}
 
 /* ── FINAL CTA ── */
-.final-cta{position:relative;z-index:1;padding:120px 24px;text-align:center;overflow:hidden}
-.final-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 70% 80% at 50% 50%,rgba(139,92,246,0.15) 0%,rgba(34,211,238,0.08) 50%,transparent 80%);pointer-events:none}
-.final-cta-inner{max-width:560px;margin:0 auto;position:relative;z-index:1}
-.final-cta h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.1;margin-bottom:16px}
-.final-cta p{font-size:1.05rem;color:var(--text-muted);line-height:1.75;margin-bottom:36px}
-.cta-btns{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.final-cta{position:relative;z-index:1;padding:120px 32px;text-align:center;overflow:hidden}
+.cta-bg{position:absolute;inset:0;background:linear-gradient(155deg,#0f0f1a 0%,#160d2e 50%,#0f0f1a 100%);z-index:0}
+.cta-bg::before{content:'';position:absolute;inset:0;background-image:radial-gradient(circle,rgba(167,139,250,0.1) 1.5px,transparent 1.5px);background-size:38px 38px}
+.cta-bg::after{content:'';position:absolute;width:560px;height:560px;top:50%;left:50%;transform:translate(-50%,-50%);background:radial-gradient(circle,rgba(167,139,250,0.22) 0%,rgba(124,58,237,0.07) 50%,transparent 74%);border-radius:50%;filter:blur(36px)}
+.cta-inner{max-width:520px;margin:0 auto;position:relative;z-index:1}
+.cta-inner h2{font-size:clamp(2rem,5vw,3.1rem);font-weight:900;color:#fff;letter-spacing:-0.04em;line-height:1.1;margin-bottom:13px}
+.cta-inner h2 span{color:var(--purple-light)}
+.cta-inner p{font-size:1rem;color:rgba(255,255,255,0.5);line-height:1.74;margin-bottom:32px}
+.cta-btns{display:flex;flex-wrap:wrap;gap:11px;justify-content:center}
+.btn-white{display:inline-flex;align-items:center;gap:9px;background:#fff;color:#0f0f1a;padding:14px 26px;border-radius:11px;font-size:0.92rem;font-weight:700;transition:all 0.2s;box-shadow:0 4px 18px rgba(255,255,255,0.14)}
+.btn-white:hover{background:rgba(255,255,255,0.92);transform:translateY(-2px);box-shadow:0 8px 28px rgba(255,255,255,0.2)}
+.btn-ghost-white{display:inline-flex;align-items:center;gap:8px;background:transparent;border:1.5px solid rgba(255,255,255,0.18);color:rgba(255,255,255,0.65);padding:13px 22px;border-radius:11px;font-size:0.89rem;font-weight:600;transition:all 0.2s}
+.btn-ghost-white:hover{border-color:rgba(255,255,255,0.45);color:#fff;background:rgba(255,255,255,0.05)}
 
 /* ── FOOTER ── */
-footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60px 24px 32px}
+footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:56px 32px 30px;background:rgba(255,255,255,0.6);backdrop-filter:blur(12px)}
 .footer-inner{max-width:1100px;margin:0 auto}
-.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:48px}
-.footer-logo{display:flex;align-items:center;gap:10px;font-size:1rem;font-weight:800;color:#fff;margin-bottom:14px}
-.footer-logo-mark{width:28px;height:28px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
-.footer-tagline{font-size:0.83rem;color:var(--text-subtle);line-height:1.65;max-width:260px}
-.footer-col h4{font-size:0.72rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:16px}
-.footer-col a{display:block;font-size:0.83rem;color:var(--text-muted);margin-bottom:10px;transition:color 0.15s}
-.footer-col a:hover{color:#fff}
-.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--border);padding-top:24px}
-.footer-copy{font-size:0.77rem;color:var(--text-subtle)}
-@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}.footer-bottom{flex-direction:column}}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-logo{display:flex;align-items:center;gap:9px;font-size:0.93rem;font-weight:800;color:var(--text);margin-bottom:11px}
+.footer-logo-mark{width:27px;height:27px;border-radius:7px;background:var(--grad);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+.footer-tagline{font-size:0.81rem;color:var(--text-subtle);line-height:1.64;max-width:230px}
+.footer-col h4{font-size:0.67rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-subtle);margin-bottom:13px}
+.footer-col a{display:block;font-size:0.81rem;color:var(--text-muted);margin-bottom:8px;transition:color 0.14s}
+.footer-col a:hover{color:var(--purple)}
+.footer-bottom{display:flex;justify-content:space-between;flex-wrap:wrap;gap:7px;border-top:1px solid var(--border);padding-top:20px}
+.footer-copy{font-size:0.75rem;color:var(--text-subtle)}
+@media(max-width:768px){.footer-top{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.footer-top{grid-template-columns:1fr}}
 
-/* ── SCROLL ANIMATIONS ── */
-.reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}
+/* ── REVEAL ── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity 0.55s ease,transform 0.55s ease}
 .reveal.visible{opacity:1;transform:none}
-.reveal-delay-1{transition-delay:0.1s}
-.reveal-delay-2{transition-delay:0.2s}
-.reveal-delay-3{transition-delay:0.3s}
-.reveal-delay-4{transition-delay:0.4s}
-.reveal-delay-5{transition-delay:0.5s}
+.rd1{transition-delay:0.07s}.rd2{transition-delay:0.14s}.rd3{transition-delay:0.21s}
+.rd4{transition-delay:0.28s}.rd5{transition-delay:0.35s}
 </style>
 </head>
 <body>
 
-<!-- Background -->
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-<div class="orb orb-3"></div>
-<div class="grid-bg"></div>
+<div class="particle-bg"></div>
 
-<!-- ── NAV ── -->
+<!-- NAV -->
 <nav>
   <div class="nav-inner">
-    <a href="/" class="nav-logo">
-      <div class="nav-logo-mark">A</div>
-      AstraOffer
-    </a>
+    <a href="/" class="nav-logo"><div class="nav-logo-mark">A</div>AstraOffer</a>
     <div class="nav-links">
       <a href="#features">Features</a>
       <a href="#how">How it works</a>
@@ -340,82 +425,54 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
       <a href="#reviews">Reviews</a>
       <a href="#faq">FAQ</a>
     </div>
-    <div class="nav-cta">
-      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-nav">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download Free
-      </a>
-    </div>
+    <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-nav">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+      Download Free
+    </a>
   </div>
 </nav>
 
-<!-- ── HERO ── -->
+<!-- HERO -->
 <section class="hero">
-  <div class="hero-badge">
-    <span class="badge-dot"></span>
-    Live — Real-time AI during interviews
-  </div>
-  <h1>Your invisible<br><span class="grad-text">AI co-pilot</span><br>in every interview</h1>
-  <p class="hero-sub">Real-time AI answers while the interviewer is still speaking. Completely invisible during Zoom, Teams & Meet screen share. Mac + Windows.</p>
-  <div class="hero-btns">
-    <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-primary">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-      Download for Mac — Free
-    </a>
-    <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-ghost">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-      Windows
-    </a>
-    <a href="#how" class="btn-ghost">See how it works →</a>
-  </div>
-  <div class="platform-row" style="margin-bottom:56px">
-    <span class="platform-tag">🔒 AI included — no API keys</span>
-    <span class="platform-tag">👁 Invisible on screen share</span>
-    <span class="platform-tag">⚡ Answer in &lt;1 second</span>
-    <span class="platform-tag">🆓 Free to start</span>
+  <div class="hero-text">
+    <div class="hero-badge"><span class="badge-dot"></span>Live — Real-time AI</div>
+    <h1>The <em>smarter</em><br>AI-powered<br>interview<br>co-pilot</h1>
+    <p class="hero-sub">Real-time answers while the interviewer is still speaking. Completely invisible during Zoom, Teams &amp; Meet screen share. Mac + Windows.</p>
+    <div class="hero-btns">
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-dark" id="dl-mac">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+        Download for Mac
+      </a>
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-outline" id="dl-win">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+        Windows
+      </a>
+      <a href="#how" class="btn-outline">See how it works →</a>
+    </div>
+    <div class="hero-tags">
+      <span class="hero-tag">🔒 AI included</span>
+      <span class="hero-tag">👁 Invisible on screen share</span>
+      <span class="hero-tag">⚡ &lt;1s answer</span>
+      <span class="hero-tag">🆓 Free to start</span>
+    </div>
   </div>
 
-  <!-- App mockup -->
-  <div class="mockup-wrap">
-    <div class="mockup-glow"></div>
-    <div class="mockup-frame">
-      <div class="mac-bar">
-        <div class="mac-dots">
-          <div class="mac-dot mac-dot-r"></div>
-          <div class="mac-dot mac-dot-y"></div>
-          <div class="mac-dot mac-dot-g"></div>
-        </div>
-        <div class="mac-bar-url">AstraOffer Assistant — Google Interview · SWE L5</div>
-      </div>
-      <div class="screen-body">
-        <div class="screen-left">
-          <div class="s-label">Interviewer (system audio)</div>
-          <div class="s-chip"><span class="s-chip-dot"></span>Listening live</div>
-          <div class="s-question">"Tell me about a time you had to make a critical technical decision with incomplete information. How did you handle the uncertainty?"</div>
-          <div class="s-waveform">
-            <div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div>
-            <div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div>
-            <div class="s-bar"></div><div class="s-bar"></div>
-          </div>
-          <div style="font-size:0.65rem;color:rgba(255,255,255,0.2);margin-top:10px;font-weight:600">GROQ WHISPER · 5s chunks · 0.4s latency</div>
-        </div>
-        <div class="screen-right">
-          <div class="s-label">AI answer — streaming now</div>
-          <div class="s-answer">At my previous company, we needed to choose between migrating to Kubernetes or staying on ECS with two weeks until a major client launch. The production data was inconclusive — both had tradeoffs under load. I ran a rapid spike: built a minimal K8s cluster, load-tested it against our staging environment over 48 hours, and documented the failure modes. Based on that data I recommended staying on ECS for the launch and planning the K8s migration post-launch. The launch hit 4× our expected traffic with zero incidents.<span class="typing-cursor"></span></div>
-          <div class="s-chip" style="margin-top:14px;background:rgba(167,139,250,0.1);border-color:rgba(167,139,250,0.25);color:var(--c2)">
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
-            Claude Sonnet · 0.8s · Resume-grounded
-          </div>
-        </div>
-      </div>
-    </div>
+  <!-- 3D CSS shapes -->
+  <div class="hero-visual">
+    <div class="v-aura"></div>
+    <div class="v-ribbon"></div>
+    <div class="v-arrow"></div>
+    <div class="v-ribbon2"></div>
+    <div class="v-coin"></div>
+    <div class="v-dot v-dot-1"></div>
+    <div class="v-dot v-dot-2"></div>
+    <div class="v-dot v-dot-3"></div>
   </div>
 </section>
 
-<!-- ── TICKER ── -->
+<!-- TICKER -->
 <div class="ticker-section">
-  <div class="ticker-fade-l"></div>
-  <div class="ticker-fade-r"></div>
+  <div class="ticker-fade-l"></div><div class="ticker-fade-r"></div>
   <div class="ticker-track">
     <span class="ticker-item">🎉 Google L5 — $195K + RSUs</span>
     <span class="ticker-item">🎉 Meta E5 — $220K TC</span>
@@ -425,7 +482,6 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
     <span class="ticker-item">🎉 Airbnb E5 — $210K TC</span>
     <span class="ticker-item">🎉 Apple ICT4 — $200K TC</span>
     <span class="ticker-item">🎉 Uber L5 — $190K TC</span>
-    <!-- dupe for seamless loop -->
     <span class="ticker-item">🎉 Google L5 — $195K + RSUs</span>
     <span class="ticker-item">🎉 Meta E5 — $220K TC</span>
     <span class="ticker-item">🎉 Amazon SDE II — $165K</span>
@@ -437,118 +493,111 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
   </div>
 </div>
 
-<!-- ── HOW IT WORKS ── -->
+<!-- APP MOCKUP -->
+<section class="section">
+  <div class="section-inner">
+    <div class="text-center" style="margin-bottom:32px">
+      <div class="section-label reveal">Live in action</div>
+      <h2 class="section-h reveal">Answer streaming before you even think.</h2>
+    </div>
+    <div class="mockup-wrap reveal">
+      <div class="mockup-frame">
+        <div class="mac-bar">
+          <div class="mac-dots"><div class="mac-dot mac-dot-r"></div><div class="mac-dot mac-dot-y"></div><div class="mac-dot mac-dot-g"></div></div>
+          <div class="mac-bar-url">AstraOffer Assistant — Google SWE L5 · Virtual Onsite</div>
+        </div>
+        <div class="screen-body">
+          <div class="screen-left">
+            <div class="s-label">Interviewer (system audio)</div>
+            <div class="s-chip"><span class="s-chip-dot"></span>Listening live</div>
+            <div class="s-question">"Tell me about a time you had to make a critical technical decision with incomplete information. How did you handle the uncertainty?"</div>
+            <div class="s-waveform"><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div><div class="s-bar"></div></div>
+            <div style="font-size:0.59rem;color:rgba(10,10,26,0.22);margin-top:9px;font-weight:600">GROQ WHISPER · 5s chunks · 0.4s latency</div>
+          </div>
+          <div class="screen-right">
+            <div class="s-label">AI answer — streaming</div>
+            <div class="s-answer">At my previous company, we needed to choose between migrating to Kubernetes or staying on ECS — two weeks before a major client launch. The production data was inconclusive. I ran a rapid spike: built a minimal K8s cluster, load-tested it against staging over 48 hours, and documented the failure modes. I recommended staying on ECS for the launch. The launch hit 4× expected traffic with zero incidents.<span class="typing-cursor"></span></div>
+            <div class="s-chip" style="margin-top:12px">
+              <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+              Claude Sonnet · 0.8s · Resume-grounded
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- HOW IT WORKS -->
 <section class="section" id="how">
   <div class="section-inner text-center">
     <div class="section-label reveal">How it works</div>
     <h2 class="section-h reveal">Zero setup. Instant answers.</h2>
     <p class="section-sub reveal">Join your interview call as normal. AstraOffer runs silently in the background, invisible to everyone else.</p>
     <div class="how-grid">
-      <div class="how-card reveal reveal-delay-1">
-        <div class="how-num">01</div>
-        <div class="how-title">Captures interviewer audio</div>
-        <div class="how-desc">Listens to your speakers via system audio loopback — the interviewer's voice, not yours. No microphone. No recording. Works on Zoom, Teams, Meet, and any video call.</div>
-      </div>
-      <div class="how-card reveal reveal-delay-2">
-        <div class="how-num">02</div>
-        <div class="how-title">Transcribes & detects questions</div>
-        <div class="how-desc">Groq Whisper transcribes speech in real-time with 5-second audio chunks for maximum accuracy. Smart question detection fires the moment the interviewer finishes speaking.</div>
-      </div>
-      <div class="how-card reveal reveal-delay-3">
-        <div class="how-num">03</div>
-        <div class="how-title">Streams a perfect answer</div>
-        <div class="how-desc">Claude Sonnet generates a STAR-structured answer grounded in your actual resume — company names, dates, metrics, projects. Ready to speak in under a second.</div>
-      </div>
+      <div class="card reveal rd1"><div class="how-num">01</div><div class="card-title">Captures interviewer audio</div><div class="card-desc">Listens to your speakers via system audio loopback — the interviewer's voice, not yours. No microphone. Works on Zoom, Teams, Meet, and any video call.</div></div>
+      <div class="card reveal rd2"><div class="how-num">02</div><div class="card-title">Transcribes &amp; detects questions</div><div class="card-desc">Groq Whisper transcribes speech in real-time with 5-second audio chunks. Smart question detection fires the moment the interviewer finishes speaking.</div></div>
+      <div class="card reveal rd3"><div class="how-num">03</div><div class="card-title">Streams a perfect answer</div><div class="card-desc">Claude Sonnet generates a STAR-structured answer grounded in your actual resume — company names, dates, metrics, projects. Ready to speak in under a second.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── FEATURES ── -->
-<section class="features-section" id="features">
-  <div class="features-inner">
-    <div class="text-center" style="margin-bottom:0">
+<hr class="section-divider"/>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="section-inner">
+    <div class="text-center">
       <div class="section-label reveal">Features</div>
       <h2 class="section-h reveal">Everything you need to win.</h2>
-      <p class="section-sub text-center reveal" style="margin:0 auto">Built for live interviews. Every feature designed to keep you confident under pressure.</p>
+      <p class="section-sub reveal" style="margin:0 auto">Built for live interviews. Every feature designed to keep you confident under pressure.</p>
     </div>
-    <div class="features-grid reveal" style="margin-top:56px">
-      <div class="feat-card">
-        <div class="feat-icon">👁</div>
-        <div class="feat-title">Truly invisible</div>
-        <div class="feat-desc">Uses OS-level API to exclude the window from all screen capture. Zoom, Teams, Meet, and OBS cannot see it — architecturally, not just hidden.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">⚡</div>
-        <div class="feat-title">Real-time — under 1 second</div>
-        <div class="feat-desc">Answer starts streaming while you're still processing the question. Groq Whisper + Claude Sonnet streaming gives you words before the interviewer finishes their breath.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">📄</div>
-        <div class="feat-title">Resume-grounded answers</div>
-        <div class="feat-desc">Every answer pulls real data from your resume: company names, years, tech stack, metrics, outcomes. Nothing generic. Nothing fabricated.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">💻</div>
-        <div class="feat-title">Live coding solver</div>
-        <div class="feat-desc">Hotkey captures your screen. Claude reads the problem and returns a full coaching sheet: what to say first, complete runnable code, complexity, and narration script while typing.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🎙</div>
-        <div class="feat-title">System audio — no mic</div>
-        <div class="feat-desc">Captures the interviewer's voice from your speakers via loopback. Your voice is never recorded. Push-to-talk available if you need mic input.</div>
-      </div>
-      <div class="feat-card">
-        <div class="feat-icon">🔑</div>
-        <div class="feat-title">AI included — zero setup</div>
-        <div class="feat-desc">No Claude key, no Groq key, no OpenAI account. Sign in with your AstraOffer account and the AI works immediately. We handle the infrastructure.</div>
-      </div>
+    <div class="features-grid">
+      <div class="card reveal rd1"><div class="feat-icon">👁</div><div class="card-title">Truly invisible</div><div class="card-desc">Uses OS-level API to exclude the window from all screen capture. Zoom, Teams, Meet, and OBS cannot see it — architecturally, not just hidden.</div></div>
+      <div class="card reveal rd2"><div class="feat-icon">⚡</div><div class="card-title">Real-time — under 1 second</div><div class="card-desc">Answer starts streaming while you're still processing the question. Groq Whisper + Claude Sonnet streaming gives you words in milliseconds.</div></div>
+      <div class="card reveal rd3"><div class="feat-icon">📄</div><div class="card-title">Resume-grounded answers</div><div class="card-desc">Every answer pulls real data from your resume: company names, years, tech stack, metrics, outcomes. Nothing generic. Nothing fabricated.</div></div>
+      <div class="card reveal rd1"><div class="feat-icon">💻</div><div class="card-title">Live coding solver</div><div class="card-desc">Hotkey captures your screen. Claude reads the problem and returns a coaching sheet: say this first, complete runnable code, complexity, and narration script.</div></div>
+      <div class="card reveal rd2"><div class="feat-icon">🎙</div><div class="card-title">System audio — no mic</div><div class="card-desc">Captures the interviewer's voice from your speakers via loopback. Your microphone is never used. Push-to-talk available if you need mic input.</div></div>
+      <div class="card reveal rd3"><div class="feat-icon">🔑</div><div class="card-title">AI included — zero setup</div><div class="card-desc">No Claude key, no Groq key, no OpenAI account. Sign in with your AstraOffer account and the AI works immediately.</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── BEFORE / AFTER ── -->
-<section class="ba-section" id="comparison">
-  <div class="ba-inner">
+<hr class="section-divider"/>
+
+<!-- BEFORE / AFTER -->
+<section class="section" id="comparison">
+  <div class="section-inner text-center">
     <div class="section-label reveal">The difference</div>
-    <h2 class="section-h reveal">What an answer sounds like with and without AstraOffer.</h2>
+    <h2 class="section-h reveal">With and without AstraOffer.</h2>
     <p class="section-sub reveal" style="margin:0 auto">Same candidate. Same resume. Same question. Different outcome.</p>
     <div class="ba-grid reveal">
       <div class="ba-card">
-        <div class="ba-card-head">
-          <div class="ba-badge-bad">✕ Without AstraOffer</div>
-        </div>
+        <div class="ba-card-head"><div class="ba-badge-bad">✕ Without AstraOffer</div></div>
         <div class="ba-question">"Tell me about a time you led a team through a difficult situation."</div>
-        <div class="ba-answer">
-          "Um, yeah so <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">I think</span> there was this one time where we had like a <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">kind of</span> hard project and I was <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">sort of</span> leading it. We had some issues with the timeline and we <span class="ba-mark-bad" style="color:#f87171;background:rgba(248,113,113,0.1);padding:1px 4px;border-radius:3px">basically</span> just pushed through it."
-        </div>
-        <div class="ba-footer ba-footer-bad">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
-          Vague · No metrics · Filler words · No structure
-        </div>
+        <div class="ba-answer">"Um, yeah so <span class="ba-mark-bad">I think</span> there was this one time where we had like a <span class="ba-mark-bad">kind of</span> hard project and I was <span class="ba-mark-bad">sort of</span> leading it. We had some issues with the timeline and we <span class="ba-mark-bad">basically</span> just pushed through it."</div>
+        <div class="ba-footer ba-footer-bad">✕ Vague · No metrics · Filler words · No structure</div>
       </div>
       <div class="ba-card good">
-        <div class="ba-card-head">
-          <div class="ba-badge-good">✓ With AstraOffer</div>
-        </div>
+        <div class="ba-card-head"><div class="ba-badge-good">✓ With AstraOffer</div></div>
         <div class="ba-question">"Tell me about a time you led a team through a difficult situation."</div>
-        <div class="ba-answer">
-          "At my previous company, we had <span style="color:#4ade80;background:rgba(74,222,128,0.1);padding:1px 4px;border-radius:3px">a production outage 48 hours before a major client demo</span>. I led a team of 4 engineers to isolate the root cause — a memory leak — and deploy a fix in under 6 hours. <span style="color:#4ade80;background:rgba(74,222,128,0.1);padding:1px 4px;border-radius:3px">The client signed a $240K contract the following week.</span>"
-        </div>
-        <div class="ba-footer ba-footer-good">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-          Specific · Metric-driven · STAR structure · Memorable
-        </div>
+        <div class="ba-answer">"At my previous company, we had <span class="ba-mark-good">a production outage 48 hours before a major client demo</span>. I led a team of 4 engineers to isolate the root cause — a memory leak — and deploy a fix in under 6 hours. <span class="ba-mark-good">The client signed a $240K contract the following week.</span>"</div>
+        <div class="ba-footer ba-footer-good">✓ Specific · Metric-driven · STAR structure · Memorable</div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── ANSWER SHOWCASE ── -->
-<section class="showcase-section" id="showcase">
-  <div class="showcase-inner">
+<hr class="section-divider"/>
+
+<!-- SHOWCASE -->
+<section class="section" id="showcase">
+  <div class="section-inner text-center">
     <div class="section-label reveal">Answer quality</div>
-    <h2 class="section-h reveal">Every interview question type. Covered.</h2>
-    <p class="section-sub reveal" style="margin:0 auto">Behavioral, System Design, Coding narration, Culture Fit — AstraOffer generates grounded, resume-backed answers for all of them.</p>
+    <h2 class="section-h reveal">Every question type. Covered.</h2>
+    <p class="section-sub reveal" style="margin:0 auto">Behavioral, System Design, Coding, Culture Fit — AstraOffer generates grounded, resume-backed answers for all of them.</p>
     <div class="showcase-tabs reveal">
       <div class="s-tab active" onclick="showTab('behavioral',this)">💬 Behavioral</div>
       <div class="s-tab" onclick="showTab('sysdesign',this)">🏗 System Design</div>
@@ -556,64 +605,27 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
       <div class="s-tab" onclick="showTab('culture',this)">🎯 Culture Fit</div>
     </div>
     <div class="showcase-pane active reveal" id="pane-behavioral">
-      <div class="s-box">
-        <div class="s-box-head">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-          Interviewer question
-        </div>
-        <div class="s-box-q">"Describe a time you disagreed with your manager. How did you handle it?"</div>
-      </div>
-      <div class="s-box">
-        <div class="s-box-head" style="color:#4ade80">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-          AstraOffer answer
-        </div>
-        <div class="s-box-a">In Q3 last year, my manager wanted to delay our API rate-limiting feature to ship a lower-priority UI update. I disagreed — two enterprise clients were actively hitting our limits. I put together a one-page impact analysis showing $80K ARR at churn risk and presented it in our next 1-on-1. He agreed to reprioritize. We shipped rate limiting in 2 weeks and retained both accounts.</div>
-        <div class="s-box-footer">✓ Answer ready · 0.8s</div>
-      </div>
+      <div class="s-box"><div class="s-box-head"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div><div class="s-box-q">"Describe a time you disagreed with your manager. How did you handle it?"</div></div>
+      <div class="s-box"><div class="s-box-head" style="color:#16a34a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div><div class="s-box-a">In Q3 last year, my manager wanted to delay our API rate-limiting feature to ship a lower-priority UI update. I disagreed — two enterprise clients were actively hitting our limits. I put together a one-page impact analysis showing $80K ARR at churn risk and presented it in our next 1-on-1. He agreed to reprioritize. We shipped rate limiting in 2 weeks and retained both accounts.</div><div class="s-box-footer">✓ Answer ready · 0.8s</div></div>
     </div>
     <div class="showcase-pane reveal" id="pane-sysdesign">
-      <div class="s-box">
-        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div>
-        <div class="s-box-q">"Design a notification service that can handle 10 million users."</div>
-      </div>
-      <div class="s-box">
-        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div>
-        <div class="s-box-a">I'd start with requirements: push, email, SMS. At 10M users, fan-out is the core problem. I'd use Kafka with per-channel consumer groups. Notification preferences sit in Redis for sub-millisecond reads. Email/SMS delegated to SendGrid/Twilio via async workers. Rate-limit per user at the queue layer. Delivery receipts in Cassandra. At 10M that's ~50K events/sec at peak — fully horizontal.</div>
-        <div class="s-box-footer">✓ Answer ready · 1.1s</div>
-      </div>
+      <div class="s-box"><div class="s-box-head"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div><div class="s-box-q">"Design a notification service that can handle 10 million users."</div></div>
+      <div class="s-box"><div class="s-box-head" style="color:#16a34a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div><div class="s-box-a">I'd start with requirements: push, email, SMS. At 10M users, fan-out is the core problem. I'd use Kafka with per-channel consumer groups. Notification preferences sit in Redis for sub-millisecond reads. Email/SMS delegated to SendGrid/Twilio via async workers. Rate-limit per user at the queue layer. Delivery receipts in Cassandra. At 10M that's ~50K events/sec at peak — fully horizontal.</div><div class="s-box-footer">✓ Answer ready · 1.1s</div></div>
     </div>
     <div class="showcase-pane reveal" id="pane-coding">
-      <div class="s-box">
-        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Coding problem (screen capture)</div>
-        <div class="s-box-q">"Given an array of integers, return indices of the two numbers that add up to a target."</div>
-      </div>
-      <div class="s-box">
-        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Coaching sheet</div>
-        <div class="s-box-a" style="font-size:0.82rem">
-          <strong style="color:rgba(255,255,255,0.7)">Say first:</strong> "I'll use a hash map to get O(n) instead of O(n²) brute force."<br><br>
-          <strong style="color:rgba(255,255,255,0.7)">Code:</strong> <code style="background:rgba(139,92,246,0.12);border:1px solid rgba(139,92,246,0.2);padding:2px 8px;border-radius:5px;font-family:monospace;font-size:0.75rem;color:var(--c2)">seen = {}; for i,n in enumerate(nums): if target-n in seen: return [seen[target-n], i]; seen[n]=i</code><br><br>
-          <strong style="color:rgba(255,255,255,0.7)">Say while coding:</strong> "For each number I check if its complement is in the map…"<br>
-          <strong style="color:rgba(255,255,255,0.7)">Complexity:</strong> O(n) time · O(n) space
-        </div>
-        <div class="s-box-footer">✓ Coaching sheet ready · 0.6s</div>
-      </div>
+      <div class="s-box"><div class="s-box-head"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Coding problem (screen capture)</div><div class="s-box-q">"Given an array of integers, return indices of the two numbers that add up to a target."</div></div>
+      <div class="s-box"><div class="s-box-head" style="color:#16a34a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>Coaching sheet</div><div class="s-box-a"><strong style="color:var(--text)">Say first:</strong> "I'll use a hash map to get O(n) instead of O(n²) brute force."<br><br><strong style="color:var(--text)">Code:</strong> <code style="background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.16);padding:2px 8px;border-radius:4px;font-family:monospace;font-size:0.75rem;color:var(--purple)">seen = {}; for i,n in enumerate(nums): if target-n in seen: return [seen[target-n],i]; seen[n]=i</code><br><br><strong style="color:var(--text)">Say while coding:</strong> "For each number I check if its complement is in the map…"<br><strong style="color:var(--text)">Complexity:</strong> O(n) time · O(n) space</div><div class="s-box-footer">✓ Coaching sheet ready · 0.6s</div></div>
     </div>
     <div class="showcase-pane reveal" id="pane-culture">
-      <div class="s-box">
-        <div class="s-box-head"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div>
-        <div class="s-box-q">"Why do you want to work at Google specifically? What draws you here over other companies?"</div>
-      </div>
-      <div class="s-box">
-        <div class="s-box-head" style="color:#4ade80"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div>
-        <div class="s-box-a">Two reasons specifically. First, the scale — at my last company I designed for 500K users. Google's infrastructure problems at a billion users are categorically different and that's the problem space I want to grow in. Second, the open culture around publishing research. The Spanner and Bigtable papers directly shaped how I think about distributed systems. I want to be in the room where those decisions happen.</div>
-        <div class="s-box-footer">✓ Answer ready · 0.7s</div>
-      </div>
+      <div class="s-box"><div class="s-box-head"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Interviewer question</div><div class="s-box-q">"Why do you want to work at Google specifically?"</div></div>
+      <div class="s-box"><div class="s-box-head" style="color:#16a34a"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>AstraOffer answer</div><div class="s-box-a">Two reasons. First, the scale — at my last company I designed for 500K users. Google's infrastructure problems at a billion users are categorically different and that's the problem space I want to grow in. Second, the open research culture. The Spanner and Bigtable papers directly shaped how I think about distributed systems. I want to be in the room where those decisions happen.</div><div class="s-box-footer">✓ Answer ready · 0.7s</div></div>
     </div>
   </div>
 </section>
 
-<!-- ── REQUIREMENTS ── -->
+<hr class="section-divider"/>
+
+<!-- REQUIREMENTS -->
 <section class="section" id="before-download">
   <div class="section-inner">
     <div class="section-label reveal">Before you download</div>
@@ -629,49 +641,42 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
         <div class="req-sub">Windows</div>
         <div class="req-item"><span class="req-check">✓</span><span>Windows 10 (version 2004+) or Windows 11</span></div>
         <div class="req-item"><span class="req-check">✓</span><span>x64 processor (Intel or AMD)</span></div>
-        <div class="req-item"><span class="req-check">✓</span><span>Allow screen capture when prompted on first launch</span></div>
         <div class="req-item"><span class="req-warn">⚠</span><span>Intel Mac: not yet supported</span></div>
       </div>
       <div class="req-card">
         <div class="req-title">Your AstraOffer Account</div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">Free account</strong> — sign up at astraoffer.org in 30 seconds. No credit card needed.</span></div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">AI included</strong> — we provide the AI. No Claude, Groq, or OpenAI keys required from you.</span></div>
-        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:rgba(255,255,255,0.7)">Free plan</strong> — 10 AI answers per day. Upgrade to Pro for unlimited.</span></div>
-        <div class="req-item" style="margin-top:8px"><span class="req-warn">💡</span><span>Your resume and session data never leave your device.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:var(--text)">Free account</strong> — sign up at astraoffer.org in 30 seconds. No credit card.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:var(--text)">AI included</strong> — no Claude, Groq, or OpenAI keys required.</span></div>
+        <div class="req-item"><span class="req-check">✓</span><span><strong style="color:var(--text)">Free plan</strong> — 10 AI answers per day. Upgrade to Pro for unlimited.</span></div>
+        <div class="req-item" style="margin-top:6px"><span class="req-warn">💡</span><span>Your resume and session data never leave your device.</span></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ── DOWNLOAD ── -->
-<section class="download-section" id="download">
-  <div class="dl-inner reveal">
-    <div class="section-label">Download</div>
-    <h2 class="section-h">Get AstraOffer Assistant</h2>
-    <p class="section-sub" style="margin:0 auto 0;text-align:center">Free to download. AI included — no API keys needed. Sign in and go.</p>
-    <div class="dl-card">
+<!-- DOWNLOAD -->
+<section class="section" id="download">
+  <div class="section-inner">
+    <div class="section-label reveal">Download</div>
+    <h2 class="section-h reveal">Get AstraOffer Assistant</h2>
+    <p class="section-sub reveal">Free to download. AI included — no API keys needed.</p>
+    <div class="dl-card reveal">
       <div class="dl-version">v1.0.5 Stable</div>
       <div class="dl-title">AstraOffer Assistant</div>
       <div class="dl-sub">Mac · Windows · Free to start</div>
       <div class="dl-btns">
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="dl-btn-mac" id="dl-mac">
-          <span class="dl-btn-mac-label">
-            <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-            Download for Mac
-          </span>
+        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="dl-btn-mac">
+          <span class="dl-btn-mac-label"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>Download for Mac</span>
           <span class="dl-btn-mac-sub">macOS 12+ · Apple Silicon · .dmg</span>
         </a>
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="dl-btn-win" id="dl-win">
-          <span class="dl-btn-win-label">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-            Download for Windows
-          </span>
-          <span class="dl-btn-win-sub">Windows 10/11 · x64 · .exe installer</span>
+        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="dl-btn-win">
+          <span class="dl-btn-win-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>Download for Windows</span>
+          <span class="dl-btn-win-sub">Windows 10/11 · x64 · .exe</span>
         </a>
       </div>
       <div class="dl-tags">
-        <span class="dl-tag">🔒 AI included — no API keys</span>
-        <span class="dl-tag">✓ Mac Apple Silicon M1–M4</span>
+        <span class="dl-tag">🔒 AI included</span>
+        <span class="dl-tag">✓ Apple Silicon M1–M4</span>
         <span class="dl-tag">✓ Windows 10 / 11 x64</span>
         <span class="dl-tag">⚡ v1.0.5 Stable</span>
       </div>
@@ -680,66 +685,32 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
   </div>
 </section>
 
-<!-- ── SETUP GUIDE ── -->
+<hr class="section-divider"/>
+
+<!-- SETUP -->
 <section class="section" id="setup">
   <div class="section-inner">
     <div class="section-label reveal">After download</div>
-    <h2 class="section-h reveal">Setup guide — 5 minutes.</h2>
+    <h2 class="section-h reveal">Setup in 5 minutes.</h2>
     <p class="section-sub reveal">Follow these steps exactly. Takes one time only.</p>
     <div class="setup-steps reveal">
-      <div class="setup-step">
-        <div class="setup-num">1</div>
-        <div class="setup-content">
-          <div class="setup-title">Install the app</div>
-          <div class="setup-desc"><strong style="color:rgba(255,255,255,0.7)">Mac:</strong> Double-click the .dmg, drag "AstraOffer Assistant" to Applications, eject the DMG.<br>
-          <strong style="color:rgba(255,255,255,0.7)">Windows:</strong> Run the .exe installer, follow the prompts, launch from the Start menu or Desktop shortcut.</div>
-        </div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-num">2</div>
-        <div class="setup-content">
-          <div class="setup-title">First launch — bypass the Mac security warning</div>
-          <div class="setup-desc">
-            <strong style="color:rgba(255,255,255,0.7)">Mac — if you see "damaged and can't be opened":</strong><br>
-            Open Terminal (⌘ Space → Terminal) and run:<br>
-            <code class="setup-code">xattr -cr "/Applications/AstraOffer Assistant.app"</code><br>
-            Then launch the app normally. <span class="setup-note">⚠ One-time only — the app opens instantly from then on.</span><br><br>
-            <strong style="color:rgba(255,255,255,0.7)">Windows — if you see "Windows protected your PC":</strong><br>
-            Click <strong style="color:rgba(255,255,255,0.7)">More info</strong> → <strong style="color:rgba(255,255,255,0.7)">Run anyway</strong>. Safe to proceed.
-          </div>
-        </div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-num">3</div>
-        <div class="setup-content">
-          <div class="setup-title">Grant Screen Recording permission (Mac only)</div>
-          <div class="setup-desc">System Settings → Privacy & Security → Screen Recording → enable AstraOffer Assistant. Restart the app after granting.</div>
-        </div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-num">4</div>
-        <div class="setup-content">
-          <div class="setup-title">Sign in with your AstraOffer account</div>
-          <div class="setup-desc">Open the app → enter your email → Continue. If you don't have an account yet, create one at <strong style="color:rgba(255,255,255,0.7)">astraoffer.org</strong> in 30 seconds. No credit card needed. AI is included — no extra keys required.</div>
-        </div>
-      </div>
-      <div class="setup-step">
-        <div class="setup-num">5</div>
-        <div class="setup-content">
-          <div class="setup-title">Upload your resume and start your session</div>
-          <div class="setup-desc">In the app → Setup → paste your resume and job description → Start Session. During interviews: <code class="setup-code">Cmd+Shift+S</code> (Mac) / <code class="setup-code">Ctrl+Shift+S</code> (Windows) to listen, or <code class="setup-code">Cmd+Shift+C</code> / <code class="setup-code">Ctrl+Shift+C</code> to capture a coding problem.</div>
-        </div>
-      </div>
+      <div class="setup-step"><div class="setup-num">1</div><div class="setup-content"><div class="setup-title">Install the app</div><div class="setup-desc"><strong style="color:var(--text)">Mac:</strong> Double-click the .dmg, drag to Applications, eject the DMG.<br><strong style="color:var(--text)">Windows:</strong> Run the .exe installer, launch from the Start menu.</div></div></div>
+      <div class="setup-step"><div class="setup-num">2</div><div class="setup-content"><div class="setup-title">Bypass the security warning (one time only)</div><div class="setup-desc"><strong style="color:var(--text)">Mac — "damaged and can't be opened":</strong> Open Terminal and run:<br><code class="setup-code">xattr -cr "/Applications/AstraOffer Assistant.app"</code><br><span class="setup-note">⚠ One-time only.</span><br><br><strong style="color:var(--text)">Windows — "Windows protected your PC":</strong> Click <strong style="color:var(--text)">More info → Run anyway</strong>.</div></div></div>
+      <div class="setup-step"><div class="setup-num">3</div><div class="setup-content"><div class="setup-title">Grant Screen Recording (Mac only)</div><div class="setup-desc">System Settings → Privacy &amp; Security → Screen Recording → enable AstraOffer Assistant. Restart the app.</div></div></div>
+      <div class="setup-step"><div class="setup-num">4</div><div class="setup-content"><div class="setup-title">Sign in with your AstraOffer account</div><div class="setup-desc">Open the app → enter your email → Continue. No account yet? Create one at <strong style="color:var(--text)">astraoffer.org</strong>. AI is included — no extra keys needed.</div></div></div>
+      <div class="setup-step"><div class="setup-num">5</div><div class="setup-content"><div class="setup-title">Upload your resume and start</div><div class="setup-desc">Setup → paste your resume + job description → Start Session.<br>During interviews: <code class="setup-code">Cmd+Shift+S</code> to listen · <code class="setup-code">Cmd+Shift+C</code> to capture a coding problem.</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- ── PRICING ── -->
+<hr class="section-divider"/>
+
+<!-- PRICING -->
 <section class="section" id="pricing">
   <div class="section-inner text-center">
     <div class="section-label reveal">Pricing</div>
     <h2 class="section-h reveal">Simple, honest pricing.</h2>
-    <p class="section-sub reveal" style="margin:0 auto">The app is free to download. AI is included in every plan — no API keys, no third-party accounts, no hidden setup.</p>
+    <p class="section-sub reveal" style="margin:0 auto">The app is free to download. AI is included in every plan — no API keys, no hidden setup.</p>
     <div class="pricing-grid reveal">
       <div class="plan-card">
         <div class="plan-name">Starter</div>
@@ -763,10 +734,10 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
         <div class="plan-feature"><span class="plan-check">✓</span>Everything in Starter</div>
         <div class="plan-feature"><span class="plan-check">✓</span>Unlimited AI answers</div>
         <div class="plan-feature"><span class="plan-check">✓</span>Live coding solver + coaching sheet</div>
-        <div class="plan-feature"><span class="plan-check">✓</span>Faster AI (priority response speed)</div>
+        <div class="plan-feature"><span class="plan-check">✓</span>Faster AI (priority speed)</div>
         <div class="plan-feature"><span class="plan-check">✓</span>Unlimited screen captures</div>
         <div class="plan-feature"><span class="plan-check">✓</span>Priority support</div>
-        <button class="plan-btn plan-btn-primary" onclick="window.location.href='/'">Get Pro →</button>
+        <button class="plan-btn plan-btn-purple" onclick="window.location.href='/'">Get Pro →</button>
       </div>
       <div class="plan-card">
         <div class="plan-name">Lifetime</div>
@@ -782,169 +753,80 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
         <button class="plan-btn plan-btn-outline" onclick="window.location.href='/'">Get Lifetime →</button>
       </div>
     </div>
-    <p style="font-size:0.78rem;color:var(--text-subtle);margin-top:20px">All plans include AI. No API keys, no third-party accounts, no hidden fees. Cancel Pro anytime.</p>
+    <p style="font-size:0.76rem;color:var(--text-subtle);margin-top:16px">All plans include AI. No API keys, no third-party accounts. Cancel Pro anytime.</p>
   </div>
 </section>
 
-<!-- ── REVIEWS ── -->
+<hr class="section-divider"/>
+
+<!-- REVIEWS -->
 <section class="section" id="reviews">
   <div class="section-inner">
     <div class="section-label reveal">Success Stories</div>
     <h2 class="section-h reveal">Real engineers. Real offers.</h2>
     <p class="section-sub reveal">What happens when you walk into every interview fully prepared.</p>
     <div class="reviews-grid">
-      <div class="review-card reveal reveal-delay-1">
-        <div class="review-offer">🎉 Google L5 — $195K + RSUs</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"I'd failed the Google loop twice before. The third time I used AstraOffer for 2 weeks of prep and then live during the virtual onsite. The coding solver gave me the exact narration script. I passed all 5 rounds."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">A</div>
-          <div><div class="review-name">Arjun M.</div><div class="review-role">Software Engineer · Bengaluru → Mountain View</div></div>
-        </div>
-      </div>
-      <div class="review-card reveal reveal-delay-2">
-        <div class="review-offer">🎉 Meta E5 — $220K TC</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"The behavioral questions are what killed me in past loops. AstraOffer pulls my actual resume experience into every answer — the interviewer kept saying 'that's really specific, I like that'."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">S</div>
-          <div><div class="review-name">Sara K.</div><div class="review-role">Senior Engineer · Berlin → London</div></div>
-        </div>
-      </div>
-      <div class="review-card reveal reveal-delay-3">
-        <div class="review-offer">🎉 Amazon SDE II — $165K</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"I was nervous about the screen share thing but it's genuinely invisible. Did my entire virtual loop on Chime — interviewer was sharing their screen and mine simultaneously and saw nothing."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#f472b6,#a78bfa)">R</div>
-          <div><div class="review-name">Rahul P.</div><div class="review-role">Backend Engineer · Hyderabad → Seattle</div></div>
-        </div>
-      </div>
-      <div class="review-card reveal reveal-delay-1">
-        <div class="review-offer">🎉 Stripe L4 — $185K TC</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"The system design round was what I used it most for. I'd capture the whiteboard diagram they shared and get a full breakdown in seconds. Walked through it like I'd designed similar systems before."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#22d3ee,#6366f1)">J</div>
-          <div><div class="review-name">Jamie L.</div><div class="review-role">Full-Stack Engineer · Toronto → San Francisco</div></div>
-        </div>
-      </div>
-      <div class="review-card reveal reveal-delay-2">
-        <div class="review-offer">🎉 Microsoft SDE2 — $175K</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"Setup took 8 minutes. Once it was running I used it in 4 consecutive interview days — a different company each day. Ended up with 3 offers and took the best one."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#a78bfa,#f472b6)">P</div>
-          <div><div class="review-name">Priya N.</div><div class="review-role">Data Engineer · Austin → Redmond</div></div>
-        </div>
-      </div>
-      <div class="review-card reveal reveal-delay-3">
-        <div class="review-offer">🎉 Airbnb E5 — $210K TC</div>
-        <div class="review-stars">★★★★★</div>
-        <div class="review-text">"I'm a non-native English speaker and interviews have always been harder for me. The coaching sheet for coding — 'say this first, say this while typing' — meant I could focus on the code instead of panicking."</div>
-        <div class="review-author">
-          <div class="review-avatar" style="background:linear-gradient(135deg,#34d399,#06b6d4)">L</div>
-          <div><div class="review-name">Lei W.</div><div class="review-role">Frontend Engineer · Shanghai → New York</div></div>
-        </div>
-      </div>
+      <div class="review-card reveal rd1"><div class="review-offer">🎉 Google L5 — $195K + RSUs</div><div class="review-stars">★★★★★</div><div class="review-text">"I'd failed the Google loop twice before. The third time I used AstraOffer live during the virtual onsite. The coding solver gave me the exact narration script. I passed all 5 rounds."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#6366f1,#8b5cf6)">A</div><div><div class="review-name">Arjun M.</div><div class="review-role">Software Engineer · Bengaluru → Mountain View</div></div></div></div>
+      <div class="review-card reveal rd2"><div class="review-offer">🎉 Meta E5 — $220K TC</div><div class="review-stars">★★★★★</div><div class="review-text">"The behavioral questions are what killed me in past loops. AstraOffer pulls my actual resume experience into every answer — the interviewer kept saying 'that's really specific, I like that'."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">S</div><div><div class="review-name">Sara K.</div><div class="review-role">Senior Engineer · Berlin → London</div></div></div></div>
+      <div class="review-card reveal rd3"><div class="review-offer">🎉 Amazon SDE II — $165K</div><div class="review-stars">★★★★★</div><div class="review-text">"I was nervous about screen share but it's genuinely invisible. Did my entire virtual loop on Chime — interviewer was sharing their screen and mine simultaneously and saw nothing."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#7c3aed,#a855f7)">R</div><div><div class="review-name">Rahul P.</div><div class="review-role">Backend Engineer · Hyderabad → Seattle</div></div></div></div>
+      <div class="review-card reveal rd1"><div class="review-offer">🎉 Stripe L4 — $185K TC</div><div class="review-stars">★★★★★</div><div class="review-text">"The system design round was what I used it most for. I'd capture the whiteboard they shared and get a full breakdown in seconds. Walked through it like I'd designed similar systems before."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#0891b2,#6366f1)">J</div><div><div class="review-name">Jamie L.</div><div class="review-role">Full-Stack Engineer · Toronto → San Francisco</div></div></div></div>
+      <div class="review-card reveal rd2"><div class="review-offer">🎉 Microsoft SDE2 — $175K</div><div class="review-stars">★★★★★</div><div class="review-text">"Setup took 8 minutes. I used it 4 days in a row — a different company each day. Ended up with 3 offers and took the best one."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#9333ea,#ec4899)">P</div><div><div class="review-name">Priya N.</div><div class="review-role">Data Engineer · Austin → Redmond</div></div></div></div>
+      <div class="review-card reveal rd3"><div class="review-offer">🎉 Airbnb E5 — $210K TC</div><div class="review-stars">★★★★★</div><div class="review-text">"I'm a non-native English speaker and interviews have always been harder. The coaching sheet — 'say this first, say this while typing' — meant I could focus on the code instead of panicking."</div><div class="review-author"><div class="review-avatar" style="background:linear-gradient(135deg,#059669,#0891b2)">L</div><div><div class="review-name">Lei W.</div><div class="review-role">Frontend Engineer · Shanghai → New York</div></div></div></div>
     </div>
   </div>
 </section>
 
-<!-- ── FAQ ── -->
+<hr class="section-divider"/>
+
+<!-- FAQ -->
 <section class="section" id="faq">
   <div class="section-inner text-center">
     <div class="section-label reveal">FAQ</div>
     <h2 class="section-h reveal">Common questions.</h2>
     <div class="faq-list reveal">
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Is it really invisible during screen share? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">Yes. On Mac, the app uses <code>setContentProtection(true)</code> which calls macOS's <code>CGWindowSharingNone</code> at the OS level. On Windows it uses <code>WDA_EXCLUDEFROMCAPTURE</code>. Both exclude the window from the screen capture API that Zoom, Teams, Meet, and OBS use. The window pixels are architecturally excluded — not just hidden.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">macOS says "damaged and can't be opened." What do I do? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">This is macOS Gatekeeper blocking an unsigned app. The app is not damaged. Fix: run <code>xattr -cr "/Applications/AstraOffer Assistant.app"</code> in Terminal. You only need to do this once on first launch.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Windows Defender shows a warning. Is it safe? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">Yes. The warning appears because the app is not code-signed. The source code is fully open on GitHub. Click "More info" → "Run anyway" to proceed. You only see this once.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Does it record my voice or store my data? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">No. The app uses system audio loopback — it only captures what comes through your speakers (the interviewer's voice). Your microphone is not used. Your resume and session context stay on your device and are never stored on our servers.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Do I need my own API keys? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">No. AstraOffer provides AI as part of every plan — including the free tier. You do not need a Claude, Groq, OpenAI, or any other third-party API key. Just sign in with your AstraOffer account and the app works immediately.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Does it work on Intel Macs? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">Not yet. The current build targets Apple Silicon (M1/M2/M3/M4) only. An Intel Mac build is planned. If you're on an Intel Mac, the web-based interview tool at astraoffer.org/interview works in any browser.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">Is this ethical to use? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner">This is a personal decision. AstraOffer Assistant is a preparation and memory aid — it helps you articulate your real experience clearly under pressure. Every answer is grounded in your actual resume. Think of it as a very fast coach who knows your background and suggests how to frame what you already know.</div></div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q" onclick="toggleFaq(this)">What's the hotkey to hide the window instantly? <span class="faq-icon">+</span></button>
-        <div class="faq-a"><div class="faq-a-inner"><code>Cmd+Shift+H</code> (Mac) / <code>Ctrl+Shift+H</code> (Windows) hides the app instantly. Press again to bring it back. Works even when Zoom is in the foreground.</div></div>
-      </div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is it really invisible during screen share? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes. On Mac, the app uses <code>setContentProtection(true)</code> which calls macOS's <code>CGWindowSharingNone</code> at the OS level. On Windows it uses <code>WDA_EXCLUDEFROMCAPTURE</code>. Both exclude the window from the capture API that Zoom, Teams, Meet, and OBS use — architecturally, not just hidden.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">macOS says "damaged and can't be opened." What do I do? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">This is macOS Gatekeeper blocking an unsigned app. The app is not damaged. Fix: run <code>xattr -cr "/Applications/AstraOffer Assistant.app"</code> in Terminal. You only need to do this once.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Windows Defender shows a warning. Is it safe? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Yes. The warning appears because the app is not code-signed. The source code is fully open on GitHub. Click "More info" → "Run anyway" to proceed. You only see this once.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Does it record my voice or store my data? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">No. The app uses system audio loopback — only the interviewer's voice from your speakers. Your microphone is not used. Your resume and session context stay on your device.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Do I need my own API keys? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">No. AstraOffer provides AI as part of every plan including the free tier. No Claude, Groq, OpenAI, or any other third-party API key needed. Sign in and go.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Does it work on Intel Macs? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">Not yet. The current build targets Apple Silicon (M1–M4) only. An Intel Mac build is planned.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">Is this ethical to use? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner">This is a personal decision. AstraOffer helps you articulate your real experience clearly under pressure. Every answer is grounded in your actual resume — it's a fast coach who knows your background, not a fabrication tool.</div></div></div>
+      <div class="faq-item"><button class="faq-q" onclick="toggleFaq(this)">What's the hotkey to hide the window instantly? <span class="faq-icon">+</span></button><div class="faq-a"><div class="faq-a-inner"><code>Cmd+Shift+H</code> (Mac) / <code>Ctrl+Shift+H</code> (Windows) hides the app instantly. Press again to bring it back. Works even when Zoom is in the foreground.</div></div></div>
     </div>
   </div>
 </section>
 
-<!-- ── FINAL CTA ── -->
+<!-- FINAL CTA -->
 <section class="final-cta">
-  <div class="final-cta-inner reveal">
-    <h2>Your next offer is<br><span class="grad-text">one interview away.</span></h2>
+  <div class="cta-bg"></div>
+  <div class="cta-inner reveal">
+    <h2>Your next offer is<br><span>one interview away.</span></h2>
     <p>Download free. Set up in 5 minutes. Walk into your next interview like you've done it a hundred times.</p>
     <div class="cta-btns">
-      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-primary" id="dl-footer-mac">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-arm64.dmg" class="btn-white">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
         Download for Mac
       </a>
-      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-ghost" id="dl-footer-win">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
-        Download for Windows
+      <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases/download/v1.0.5/AstraOffer-Assistant-1.0.5-x64.exe" class="btn-ghost-white">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801"/></svg>
+        Windows
       </a>
     </div>
-    <p style="font-size:0.72rem;color:var(--text-subtle);margin-top:20px">v1.0.5 · Mac + Windows · AI included · Free plan available</p>
+    <p style="font-size:0.7rem;color:rgba(255,255,255,0.28);margin-top:16px">v1.0.5 · Mac + Windows · AI included · Free plan available</p>
   </div>
 </section>
 
-<!-- ── FOOTER ── -->
+<!-- FOOTER -->
 <footer>
   <div class="footer-inner">
     <div class="footer-top">
-      <div class="footer-brand">
-        <div class="footer-logo">
-          <div class="footer-logo-mark">A</div>
-          AstraOffer
-        </div>
+      <div>
+        <div class="footer-logo"><div class="footer-logo-mark">A</div>AstraOffer</div>
         <p class="footer-tagline">AI-powered career tools to help you land your dream job faster.</p>
       </div>
-      <div class="footer-col">
-        <h4>Product</h4>
-        <a href="#features">Features</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#download">Download</a>
-        <a href="#setup">Setup Guide</a>
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases" target="_blank">Release Notes</a>
-      </div>
-      <div class="footer-col">
-        <h4>Other Tools</h4>
-        <a href="/resume">AI Resume Tailor</a>
-        <a href="/cover-letter">Cover Letter</a>
-        <a href="/jobs">Job Portal</a>
-        <a href="/linkedin">LinkedIn Optimizer</a>
-      </div>
-      <div class="footer-col">
-        <h4>Company</h4>
-        <a href="/">AstraOffer.org</a>
-        <a href="/privacy">Privacy Policy</a>
-        <a href="/terms">Terms of Service</a>
-        <a href="https://github.com/NikhilAmbore/astraoffer-assistant" target="_blank">GitHub</a>
-      </div>
+      <div class="footer-col"><h4>Product</h4><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#download">Download</a><a href="#setup">Setup Guide</a><a href="https://github.com/NikhilAmbore/astraoffer-assistant/releases" target="_blank">Release Notes</a></div>
+      <div class="footer-col"><h4>Other Tools</h4><a href="/resume">AI Resume Tailor</a><a href="/cover-letter">Cover Letter</a><a href="/jobs">Job Portal</a><a href="/linkedin">LinkedIn Optimizer</a></div>
+      <div class="footer-col"><h4>Company</h4><a href="/">AstraOffer.org</a><a href="/privacy">Privacy Policy</a><a href="/terms">Terms of Service</a><a href="https://github.com/NikhilAmbore/astraoffer-assistant" target="_blank">GitHub</a></div>
     </div>
     <div class="footer-bottom">
       <span class="footer-copy">© 2025 AstraOffer. Built by Nikhil Ambore.</span>
@@ -954,22 +836,14 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:60
 </footer>
 
 <script>
-// ── Scroll reveal
-const obs = new IntersectionObserver(entries => {
-  entries.forEach(e => { if(e.isIntersecting){ e.target.classList.add('visible'); obs.unobserve(e.target) } });
-}, { threshold: 0.12 });
-document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
-
-// ── FAQ
+const obs=new IntersectionObserver(e=>{e.forEach(el=>{if(el.isIntersecting){el.target.classList.add('visible');obs.unobserve(el.target)}})},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
 function toggleFaq(btn){
-  var a=btn.nextElementSibling, icon=btn.querySelector('.faq-icon');
-  var isOpen = a.classList.contains('open');
+  var a=btn.nextElementSibling,icon=btn.querySelector('.faq-icon'),isOpen=a.classList.contains('open');
   document.querySelectorAll('.faq-a.open').forEach(el=>el.classList.remove('open'));
   document.querySelectorAll('.faq-icon.open').forEach(el=>el.classList.remove('open'));
-  if(!isOpen){ a.classList.add('open'); icon.classList.add('open'); }
+  if(!isOpen){a.classList.add('open');icon.classList.add('open')}
 }
-
-// ── Tabs
 function showTab(id,btn){
   document.querySelectorAll('.showcase-pane').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.s-tab').forEach(t=>t.classList.remove('active'));
