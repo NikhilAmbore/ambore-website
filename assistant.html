@@ -505,6 +505,21 @@ nav{position:fixed;top:0;left:0;right:0;z-index:100;height:64px;display:flex;ali
 @media(max-width:900px){.reviews-grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:540px){.reviews-grid{grid-template-columns:1fr}}
 
+/* ── VS COMPETITORS TABLE ── */
+.vs-wrap{overflow-x:auto;margin-top:48px}
+.vs-table{width:100%;border-collapse:collapse;font-size:0.82rem}
+.vs-table th{padding:10px 16px;font-weight:700;font-size:0.72rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--text-subtle);border-bottom:2px solid var(--border);white-space:nowrap}
+.vs-table th.vs-ao{background:rgba(124,58,237,0.06);color:var(--purple);border-bottom-color:var(--purple)}
+.vs-table td{padding:11px 16px;border-bottom:1px solid var(--border);color:var(--text-muted);vertical-align:middle}
+.vs-table td.vs-ao{background:rgba(124,58,237,0.04);font-weight:600;color:var(--text)}
+.vs-table tr:last-child td{border-bottom:none}
+.vs-table tr:hover td{background:rgba(124,58,237,0.03)}
+.vs-table tr:hover td.vs-ao{background:rgba(124,58,237,0.08)}
+.vs-yes{color:#16a34a;font-weight:700;font-size:1rem}
+.vs-no{color:rgba(10,10,26,0.22);font-size:1rem}
+.vs-ao-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(124,58,237,0.1);border:1px solid rgba(124,58,237,0.25);border-radius:8px;padding:3px 12px;font-size:0.76rem;font-weight:700;color:var(--purple)}
+@media(max-width:640px){.vs-table{font-size:0.75rem}.vs-table th,.vs-table td{padding:8px 10px}}
+
 /* ── FAQ ── */
 .faq-list{max-width:680px;margin:32px auto 0}
 .faq-item{border:1px solid var(--border);border-radius:13px;margin-bottom:7px;background:var(--surface);overflow:hidden;box-shadow:0 1px 6px rgba(10,10,26,0.04);transition:border-color 0.18s}
@@ -564,6 +579,7 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:56
     <a href="/" class="nav-logo"><div class="nav-logo-mark">A</div>AstraOffer</a>
     <div class="nav-links">
       <a href="#features">Features</a>
+      <a href="#vs">vs Competitors</a>
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#reviews">Reviews</a>
@@ -597,6 +613,8 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:56
       <span class="hero-tag">🔒 AI included</span>
       <span class="hero-tag">👁 Invisible on screen share</span>
       <span class="hero-tag">⚡ &lt;1s answer</span>
+      <span class="hero-tag">🧠 Claude Sonnet + Groq Whisper</span>
+      <span class="hero-tag">🔮 Follow-up predictions</span>
       <span class="hero-tag">🆓 Free to start</span>
     </div>
   </div>
@@ -778,7 +796,107 @@ footer{position:relative;z-index:1;border-top:1px solid var(--border);padding:56
       <div class="card reveal rd1"><div class="feat-icon">💻</div><div class="card-title">Live coding solver</div><div class="card-desc">Hotkey captures your screen. Claude reads the problem and returns a coaching sheet: say this first, complete runnable code, complexity, and narration script.</div></div>
       <div class="card reveal rd2"><div class="feat-icon">🎙</div><div class="card-title">System audio — no mic</div><div class="card-desc">Captures the interviewer's voice from your speakers via loopback. Your microphone is never used. Push-to-talk available if you need mic input.</div></div>
       <div class="card reveal rd3"><div class="feat-icon">🔑</div><div class="card-title">AI included — zero setup</div><div class="card-desc">No Claude key, no Groq key, no OpenAI account. Sign in with your AstraOffer account and the AI works immediately.</div></div>
+      <div class="card reveal rd1"><div class="feat-icon">🔮</div><div class="card-title">Follow-up predictions</div><div class="card-desc">After every answer, AstraOffer predicts the 3 most likely follow-up questions the interviewer will ask — so you're always one step ahead.</div></div>
+      <div class="card reveal rd2"><div class="feat-icon">📋</div><div class="card-title">Session notes export</div><div class="card-desc">Every Q&A pair is logged during your interview. One click exports the full session as a structured text file — review it, share it, learn from it.</div></div>
+      <div class="card reveal rd3"><div class="feat-icon">🎭</div><div class="card-title">Answer style presets</div><div class="card-desc">Switch between Normal, Short (2 sentences max), and STAR format mid-interview. The next answer immediately adapts to your chosen style.</div></div>
     </div>
+  </div>
+</section>
+
+<hr class="section-divider"/>
+
+<!-- VS COMPETITORS -->
+<section class="section" id="vs">
+  <div class="section-inner text-center">
+    <div class="section-label reveal">Competitor comparison</div>
+    <h2 class="section-h reveal">How we stack up.</h2>
+    <p class="section-sub reveal" style="margin:0 auto">We researched every major AI interview tool. Here's the honest breakdown.</p>
+    <div class="vs-wrap reveal">
+      <table class="vs-table">
+        <thead>
+          <tr>
+            <th style="text-align:left">Feature</th>
+            <th class="vs-ao"><span class="vs-ao-badge">✦ AstraOffer</span></th>
+            <th>HuddleMate</th>
+            <th>Parakeet</th>
+            <th>Cluely</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Invisible on screen share</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Real-time AI answers</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Resume-grounded, personalized answers</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+          </tr>
+          <tr>
+            <td>STAR format + Short mode toggle</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text)">Live coding solver with full coaching script</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text)">Follow-up question predictions</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Session notes export</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>System audio capture (no bot joins)</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-yes">✓</span></td>
+          </tr>
+          <tr>
+            <td>Manual question input + Push-to-talk</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+          </tr>
+          <tr>
+            <td style="font-weight:600;color:var(--text)">Powered by Claude Sonnet + Groq Whisper</td>
+            <td class="vs-ao"><span class="vs-yes">✓</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+            <td><span class="vs-no">✕</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p style="margin-top:18px;font-size:0.75rem;color:var(--text-subtle)">Based on publicly available information from each product's website as of July 2026.</p>
   </div>
 </section>
 
