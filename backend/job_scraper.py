@@ -2466,7 +2466,8 @@ class ApifyJobsScraper(BaseScraper):
       bebity/linkedin-jobs-scraper      — LinkedIn (fast, popular)
       misceres/indeed-scraper           — Indeed
       curious_coder/glassdoor-scraper   — Glassdoor
-      compass/google-jobs-scraper       — Google Jobs (alternative to SerpAPI)
+      johnvc/Google-Jobs-Scraper        — Google Jobs (alternative to SerpAPI)
+                                          input: {"query": "...", "country": "us"}
     """
 
     ATS_NAME  = "apify"
@@ -2530,20 +2531,25 @@ class ApifyJobsScraper(BaseScraper):
                 continue
 
             # Normalise across different actor schemas
+            ext     = raw.get("detected_extensions") or {}   # Google Jobs
             title   = (raw.get("title")   or raw.get("positionName")  or
                        raw.get("jobTitle") or raw.get("name", ""))
             company = (raw.get("company") or raw.get("companyName")    or
-                       raw.get("employer") or "")
+                       raw.get("employer") or raw.get("company_name") or "")
             location= (raw.get("location") or raw.get("place")         or
                        raw.get("jobLocation") or "")
             url     = (raw.get("url")      or raw.get("jobUrl")        or
-                       raw.get("applyUrl")  or raw.get("link", ""))
+                       raw.get("applyUrl")  or raw.get("link")          or
+                       (raw.get("apply_options") or [{}])[0].get("link") or
+                       raw.get("share_link", ""))
             desc    = (raw.get("description") or raw.get("jobDescription") or "")
             dept    = (raw.get("department")  or raw.get("category")       or "")
-            emp_type= (raw.get("employmentType") or raw.get("jobType")     or "")
+            emp_type= (raw.get("employmentType") or raw.get("jobType")     or
+                       ext.get("schedule_type") or "")
             posted  = (raw.get("postedAt")   or raw.get("publishedAt")     or
-                       raw.get("datePosted") or None)
-            sal_raw = (raw.get("salary")     or raw.get("salaryRange")     or "")
+                       raw.get("datePosted") or ext.get("posted_at") or None)
+            sal_raw = (raw.get("salary")     or raw.get("salaryRange")     or
+                       ext.get("salary")     or "")
 
             if not title or not url:
                 continue
